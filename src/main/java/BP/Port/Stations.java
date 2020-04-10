@@ -1,0 +1,50 @@
+package BP.Port;
+
+import BP.En.*;
+import java.util.*;
+
+/** 
+ 岗位s
+*/
+public class Stations extends EntitiesNoName
+{
+	/** 
+	 岗位
+	*/
+	public Stations()
+	{
+	}
+	/** 
+	 得到它的 Entity
+	*/
+	@Override
+	public Entity getNewEntity()
+	{
+		return new Station();
+	}
+
+
+	/** 
+	 转化成 java list,C#不能调用.
+	 
+	 @return List
+	*/
+	public final List<Station> ToJavaList()
+	{
+		return (List<Station>)(Object)this;
+	}
+	/** 
+	 转化成list
+	 
+	 @return List
+	*/
+	public final ArrayList<Station> Tolist()
+	{
+		ArrayList<Station> list = new ArrayList<Station>();
+		for (int i = 0; i < this.size(); i++)
+		{
+			list.add((Station)this.get(i));
+		}
+		return list;
+	}
+}

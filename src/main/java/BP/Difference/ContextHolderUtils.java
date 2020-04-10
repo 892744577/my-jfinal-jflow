@@ -1,0 +1,157 @@
+package BP.Difference;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.sql.DataSource;
+
+import com.jfinal.kit.Prop;
+import com.jfinal.plugin.druid.DruidPlugin;
+
+import BP.Difference.Handler.CommonUtils;
+
+/**
+ * JFlow上下文工具类
+ * @version 2016-5-9
+ */
+public class ContextHolderUtils {
+
+	private static ContextHolderUtils contextHolder;
+	
+	// 数据源设置
+	private DataSource dataSource;
+	
+	// 第三方系统session中的用户编码，设置后将不用再调用登录方法，直接获取当前session进行登录。
+	private String userNoSessionKey;
+
+	public synchronized static ContextHolderUtils getInstance() {
+		if (contextHolder == null) {
+			DruidPlugin druidPlugin = JFinalUtils.getDruidPlugin();
+			druidPlugin.start();
+			
+			contextHolder = new ContextHolderUtils();
+			contextHolder.setDataSource(druidPlugin.getDataSource());
+		}
+		return contextHolder;
+	}
+
+	/**
+	 * SpringMvc下获取request
+	 * 
+	 * @return
+	 */
+	public static HttpServletRequest getRequest() {
+		return CommonUtils.getRequest();
+	}
+
+	public static HttpServletResponse getResponse() {
+        return CommonUtils.getResponse();
+	}
+
+	/**
+	 * SpringMvc下获取session
+	 * @return
+	 */
+	public static HttpSession getSession() {
+		HttpSession session = getRequest().getSession();
+//		java.util.Enumeration e = session.getAttributeNames();
+//		while (e.hasMoreElements()) {
+//			String name = (String) e.nextElement();
+//			String value = session.getAttribute(name).toString();
+//			System.out.println(name + " = " + value);
+//		}
+		return session;
+	}
+
+	public static void addCookie(String name, int expiry, String value) {
+
+		if(getRequest()!= null){
+			Cookie cookies[] = getRequest().getCookies() ;
+			if (cookies == null) {
+				Cookie cookie = new Cookie(name, value);
+				cookie.setMaxAge(expiry);
+				getResponse().addCookie(cookie);
+			} else {
+				for (Cookie cookie : cookies) {
+					if (name.equals(cookie.getName())) {
+						cookie.setValue(value);
+						cookie.setMaxAge(expiry);
+						getResponse().addCookie(cookie);
+						return;
+					}
+				}
+				Cookie cookie = new Cookie(name, value);
+				cookie.setMaxAge(expiry);
+				getResponse().addCookie(cookie);
+			}
+		}
+	}
+
+	public static Cookie getCookie(String name) {
+		Cookie cookies[] = getRequest().getCookies();
+		if (cookies == null || name == null || name.length() == 0)
+			return null;
+		for (Cookie cookie : cookies) {
+			if (name.equals(cookie.getName())) {
+				return cookie;
+			}
+		}
+		return null;
+	}
+
+	public static void deleteCookie(String name) {
+		Cookie cookies[] = getRequest().getCookies();
+		if (cookies == null || name == null || name.length() == 0)
+			return;
+		for (Cookie cookie : cookies) {
+			if (name.equals(cookie.getName())) {
+				cookie.setValue("");
+				cookie.setMaxAge(0);
+				getResponse().addCookie(cookie);
+			}
+		}
+	}
+
+	public static void clearCookie() {
+		Cookie[] cookies = getRequest().getCookies();
+		if (null == cookies)
+			return;
+		for (Cookie cookie : cookies) {
+			cookie.setValue("");
+			cookie.setMaxAge(0);
+			getResponse().addCookie(cookie);
+
+		}
+	}
+
+	/**
+	 * 获取数据源
+	 */
+	public DataSource getDataSource() {
+		return dataSource;
+	}
+
+	/**
+	 * 获取数据源
+	 */
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+
+	/**
+	 * 获取第三方系统session中的用户编码
+	 * @return
+	 */
+	public String getUserNoSessionKey() {
+		return userNoSessionKey;
+	}
+
+	/**
+	 * 设置第三方系统session中的用户编码
+	 * @param userNoSessionKey
+	 */
+	public void setUserNoSessionKey(String userNoSessionKey) {
+		this.userNoSessionKey = userNoSessionKey;
+	}
+}
