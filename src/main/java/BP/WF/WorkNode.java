@@ -1105,7 +1105,7 @@ public class WorkNode {
 			}
 
 			// 获取它的下一步节点.
-			Node nd = this.NodeSend_GenerNextStepNode_Ext(mynd);
+			Node nd = this.NodeSend_GenerNextStepNode_Ext(mynd);   // tangmanrong keyMethod 根据设置方向条件获取下一步节点的关键方法
 			nd.WorkID = this.getWorkID(); // 为获取表单ID ( NodeFrmID )提供参数.
 
 			mynd = nd;
@@ -1862,7 +1862,7 @@ public class WorkNode {
 		if (this.SendNodeWFState == WFState.ReturnSta) {
 		}
 
-		Nodes nds = currNode.getHisToNodes();
+		Nodes nds = currNode.getHisToNodes();   //tangmanrong keyMethod 获取当前节点他的下个节点列表
 		if (nds.size() == 1) {
 			Node toND = (Node) nds.get(0);
 			return toND;
@@ -1878,7 +1878,7 @@ public class WorkNode {
 
 		/// #region 获取能够通过的节点集合，如果没有设置方向条件就默认通过.
 		Nodes myNodes = new Nodes();
-		for (Node nd : nds.ToJavaList()) {
+		for (Node nd : nds.ToJavaList()) { //explain by tangmanrong  从获取当前节点他的下个节点列表中找出有设置方向条件
 			Conds dcs = new Conds();
 			for (Cond dc : dcsAll.ToJavaList()) {
 				if (dc.getToNodeID() != nd.getNodeID()) {
@@ -3472,7 +3472,7 @@ public class WorkNode {
 
 		switch (this.getHisNode().getHisRunModel()) {
 		case Ordinary: // 1： 普通节点向下发送的
-			Node toND = this.NodeSend_GenerNextStepNode();
+			Node toND = this.NodeSend_GenerNextStepNode();   //tangmanrong keyMethod 计算下个节点并返回
 			if (this.getIsStopFlow()) {
 				return;
 			}
@@ -6735,7 +6735,7 @@ public class WorkNode {
 				/* 是跳转的情况，并且是最后的节点，就不检查流程完成条件。 */
 			} else {
 				// 检查流程完成条件.
-				this.CheckCompleteCondition();
+				this.CheckCompleteCondition();  // 流程检查，是否结束 tangmanrong
 			}
 
 			// 处理自由流程. add by stone. 2014-11-23.
@@ -6908,7 +6908,7 @@ public class WorkNode {
 			/// #region 第二步: 进入核心的流程运转计算区域. 5*5 的方式处理不同的发送情况.
 
 			// 执行节点向下发送的25种情况的判断.
-			this.NodeSend_Send_5_5();
+			this.NodeSend_Send_5_5();  //tangmanrong 下一节点情况选则，重点方法
 
 			// 通过 55 之后要判断是否要结束流程，如果结束流程就执行相关的更新。
 			if (this.getIsStopFlow()) {

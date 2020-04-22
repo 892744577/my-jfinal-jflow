@@ -7974,6 +7974,8 @@ public class Dev2Interface
 		wn.title = title; // 设置标题，有可能是从外部传递过来的标题.
 		wn.SendHTOfTemp = htWork;
 
+
+		//真正执行发送的发送，计算出发送节点和接受人的方法 tangmanrong
 		if (ndOfToNode == null)
 		{
 			objs = wn.NodeSend(null, toEmps);

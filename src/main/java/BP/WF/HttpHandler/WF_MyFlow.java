@@ -1718,7 +1718,7 @@ public class WF_MyFlow extends WebContralBase {
 			}
 
 			objs = BP.WF.Dev2Interface.Node_SendWork(this.getFK_Flow(), this.getWorkID(), ht, null, this.getToNode(),
-					null);
+					null);   //流程发送接口，该接口会自动计算下一节点是是哪个
 			msg = objs.ToMsgOfHtml();
 			BP.WF.Glo.setSessionMsg(msg);
 

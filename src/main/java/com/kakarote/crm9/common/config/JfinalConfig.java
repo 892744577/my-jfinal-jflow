@@ -9,6 +9,7 @@ import cn.hutool.core.util.ClassLoaderUtil;
 import com.jfinal.aop.Aop;
 import com.jfinal.ext.proxy.CglibProxyFactory;
 import com.jfinal.plugin.activerecord.dialect.*;
+import com.jfinal.plugin.druid.IDruidStatViewAuth;
 import com.kakarote.crm9.common.config.cache.CaffeineCache;
 import com.kakarote.crm9.common.config.druid.DruidConfig;
 import com.kakarote.crm9.common.config.json.ErpJsonFactory;
@@ -37,6 +38,8 @@ import com.jfinal.render.RenderManager;
 import com.jfinal.template.Engine;
 import com.kakarote.crm9.erp.work.service.WorkService;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.sql.Connection;
 import java.util.Map;
@@ -115,7 +118,8 @@ public class JfinalConfig extends JFinalConfig {
         druidPlugin.setValidationQuery("select 1");
         druidPlugin.setTimeBetweenEvictionRunsMillis(60000);
         druidPlugin.setMinEvictableIdleTimeMillis(30000);
-        druidPlugin.setFilters("stat,wall");//modify by tangmanrong 20200409
+        druidPlugin.setFilters("stat");
+        //druidPlugin.setFilters("stat,wall");//modify by tangmanrong 20200409，stat是收集各种信息的,wall是sql防注入的，防sql注入导致jflow很多sql报错
         me.add(druidPlugin);
         // 配置ActiveRecord插件
         ActiveRecordPlugin arp = new ActiveRecordPlugin("druidPlugin1",druidPlugin);
@@ -184,6 +188,17 @@ public class JfinalConfig extends JFinalConfig {
         //流程的handler add by tangmanrong 20200408
         me.add(new StaticHandler());
         //me.add(new FakeStaticHandler(".do"));
+
+        //druid监控页面 add by tangmanrong 20200415
+        //配置druid 的状态页面访问URI,//设置访问路径
+        DruidStatViewHandler dsvh = new DruidStatViewHandler("/druid",
+        new IDruidStatViewAuth(){
+            public boolean isPermitted(HttpServletRequest request) {
+                //通过权限判断工具类判断此用户是否有PermissionKey.DRUID_MONITOR这个权限
+                return true;
+            }
+        });
+        me.add(dsvh);
     }
 
     @Override
