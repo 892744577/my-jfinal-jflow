@@ -3633,7 +3633,7 @@ public abstract class Entity implements Serializable {
 		if (this._row == null)
 		{
 			this._row = new Row();
-			this._row.LoadAttrs(this.getEnMap().getAttrs());
+			this._row.LoadAttrs(this.getEnMap().getAttrs()); // 关键，初始化实例的属性的值，跟数据库无关 tangmanrong
 		}
 		return this._row;
 	}
