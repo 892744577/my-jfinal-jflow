@@ -1717,6 +1717,7 @@ public class WF_MyFlow extends WebContralBase {
 				return "该流程的工作已删除,请联系管理员";
 			}
 
+			//流程发送按钮的接口  tangmanrong
 			objs = BP.WF.Dev2Interface.Node_SendWork(this.getFK_Flow(), this.getWorkID(), ht, null, this.getToNode(),
 					null);   //流程发送接口，该接口会自动计算下一节点是是哪个
 			msg = objs.ToMsgOfHtml();
