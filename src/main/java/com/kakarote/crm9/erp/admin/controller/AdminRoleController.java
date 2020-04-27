@@ -64,7 +64,7 @@ public class AdminRoleController extends Controller {
     @NotNullValidate(value = "roleId",message = "角色id不能为空")
     @NotNullValidate(value = "roleName",message = "角色名称不能为空")
     public void update(@Para("")AdminRole adminRole){
-        Integer number = Db.queryInt("select count(*) from 72crm_admin_role where role_name = ? and role_type = ? and role_id != ?", adminRole.getRoleName(),adminRole.getRoleType(),adminRole.getRoleId());
+        Integer number = Db.queryInt("select count(*) from aptenon_admin_role where role_name = ? and role_type = ? and role_id != ?", adminRole.getRoleName(),adminRole.getRoleType(),adminRole.getRoleId());
         if (number > 0){
             renderJson(R.error("角色名已存在"));
         }else {

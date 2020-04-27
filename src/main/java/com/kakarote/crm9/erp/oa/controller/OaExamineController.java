@@ -90,7 +90,7 @@ public class OaExamineController extends Controller {
      */
     public void queryExamineRecordList(){
         Integer recordId = getInt("recordId");
-        Integer examineId = Db.queryInt("select examine_id from `72crm_oa_examine_record` where record_id = ?",recordId);
+        Integer examineId = Db.queryInt("select examine_id from `aptenon_oa_examine_record` where record_id = ?",recordId);
         boolean oaAuth = AuthUtil.isOaAuth(- 1, examineId);
         if(oaAuth){renderJson(R.noAuth());return;}
         renderJson(oaExamineService.queryExamineRecordList(recordId));
@@ -103,7 +103,7 @@ public class OaExamineController extends Controller {
     @NotNullValidate(value = "recordId",message = "记录id不能为空")
     public void queryExamineLogList(){
         Integer recordId = getInt("recordId");
-        Integer examineId = Db.queryInt("select examine_id from `72crm_oa_examine_record` where record_id = ?",recordId);
+        Integer examineId = Db.queryInt("select examine_id from `aptenon_oa_examine_record` where record_id = ?",recordId);
         boolean oaAuth = AuthUtil.isOaAuth(- 1, examineId);
         if(oaAuth){renderJson(R.noAuth());return;}
         renderJson(oaExamineService.queryExamineLogList(recordId));

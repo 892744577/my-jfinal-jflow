@@ -89,7 +89,7 @@ public class CrmProductController extends Controller {
     @Permissions("crm:product:read")
     @NotNullValidate(value = "productId", message = "产品id不能为空")
     public void queryById(@Para("productId") Integer productId) {
-        Integer number = Db.queryInt("select count(1) from `72crm_crm_product` where product_id = ? and status != 3",productId);
+        Integer number = Db.queryInt("select count(1) from `aptenon_crm_product` where product_id = ? and status != 3",productId);
         if (number == 0) {
             renderJson(R.error("产品已删除"));
             return;
@@ -228,7 +228,7 @@ public class CrmProductController extends Controller {
         titleRow.getCell(0).setCellStyle(cellStyle);
         CellRangeAddress region = new CellRangeAddress(0,0 , 0, recordList.size()-1);
         sheet.addMergedRegion(region);
-        List<String> categoryList = Db.query("select name from 72crm_crm_product_category");
+        List<String> categoryList = Db.query("select name from aptenon_crm_product_category");
         try {
             HSSFRow row = sheet.createRow(1);
             for (int i = 0; i < recordList.size(); i++) {

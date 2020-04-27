@@ -44,7 +44,7 @@ public class OaEventService {
         List<Record> recordList = Db.find(Db.getSql("oa.event.queryList"),endTime,startTime,userId,userId);
         if (recordList != null){
             for (Record record : recordList){
-                record.set("createUser", Db.findFirst("select user_id,realname,img from 72crm_admin_user where user_id = ?", record.getLong("create_user_id")));
+                record.set("createUser", Db.findFirst("select user_id,realname,img from aptenon_admin_user where user_id = ?", record.getLong("create_user_id")));
                 queryRelateList(record);
             }
         }
@@ -104,7 +104,7 @@ public class OaEventService {
             oaEvent.update();
             oaActionRecordService.addRecord(oaEvent.getEventId(), OaEnum.EVENT_TYPE_KEY.getTypes(),2,oaActionRecordService.getJoinIds(user.getUserId(),oaEvent.getOwnerUserIds()),"");
             oaEventRelation.setEventId(oaEvent.getEventId());
-            Record eventRelation= Db.findFirst("select eventrelation_id from 72crm_oa_event_relation where event_id = ?",oaEvent.getEventId());
+            Record eventRelation= Db.findFirst("select eventrelation_id from aptenon_oa_event_relation where event_id = ?",oaEvent.getEventId());
             oaEventRelation.setEventrelationId(eventRelation.getInt("eventrelation_id"));
             oaEventRelation.update();
             return true;
@@ -177,7 +177,7 @@ public class OaEventService {
 
     public Record queryById(Integer eventId){
         Record record = Db.findFirst(Db.getSql("oa.event.queryById"),eventId);
-        record.set("createUser", Db.findFirst("select user_id,realname,img from 72crm_admin_user where user_id = ?", record.getLong("create_user_id")));
+        record.set("createUser", Db.findFirst("select user_id,realname,img from aptenon_admin_user where user_id = ?", record.getLong("create_user_id")));
         queryRelateList(record);
         return record;
     }

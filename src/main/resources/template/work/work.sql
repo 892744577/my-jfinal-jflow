@@ -1,7 +1,7 @@
 #namespace("work")
   #sql("queryWorkNameList")
     select  a.work_id,a.name,owner_user_id
-    from 72crm_work a
+    from aptenon_work a
     where 1 = 1 and status = 1
       #if(userId)
       and (owner_user_id like concat('%,',#para(userId),',%') and is_open = 0) or is_open = 1
@@ -9,7 +9,7 @@
   #end
   #sql("queryOwnerWorkIdList")
       select  a.work_id
-      from 72crm_work a
+      from aptenon_work a
       where 1 = 1
         #if(userId)
       and (owner_user_id like concat('%,',#para(userId),',%') and is_open = 0) or is_open = 1
@@ -17,11 +17,11 @@
   #end
   #sql("queryTaskByWorkId")
     select a.*,ifnull(b.name,'未分组') as className,ifnull(b.class_id,0) as classId,b.order_num as classOrder,
-      (select count(*) from 72crm_task_comment where type_id = a.task_id and type = 1) as commentCount,
-      (select count(*) from 72crm_task where pid = a.task_id and status = 5) as childWCCount,
-      (select count(*) from 72crm_task where pid = a.task_id) as childAllCount,
-      (select count(*) from 72crm_admin_file where batch_id = a.batch_id) as fileCount
-      from 72crm_task a left join 72crm_work_task_class b on a.class_id = b.class_id where a.work_id = #para(workId)
+      (select count(*) from aptenon_task_comment where type_id = a.task_id and type = 1) as commentCount,
+      (select count(*) from aptenon_task where pid = a.task_id and status = 5) as childWCCount,
+      (select count(*) from aptenon_task where pid = a.task_id) as childAllCount,
+      (select count(*) from aptenon_admin_file where batch_id = a.batch_id) as fileCount
+      from aptenon_task a left join aptenon_work_task_class b on a.class_id = b.class_id where a.work_id = #para(workId)
       and a.status != 3  and a.ishidden = 0 and is_archive = 0
       #if(classId == -1)
          and a.class_id is null
@@ -65,7 +65,7 @@
       count(is_archive=1 or null) as archive,
       ifnull(ROUND((count(status=5 or null)/count(*))*100,2),0) as completionRate,
       ifnull(ROUND((count(status=2 or null)/count(*))*100,2),0) as overdueRate
-      from 72crm_task where 1 = 1 and ishidden = 0
+      from aptenon_task where 1 = 1 and ishidden = 0
       #if(workId)
         and work_id = #para(workId)
       #end
@@ -81,43 +81,43 @@
   #end
 
   #sql("queryRoleList")
-  select role_id,role_name,remark from 72crm_admin_role where role_type in (5,6) and status = 1
+  select role_id,role_name,remark from aptenon_admin_role where role_type in (5,6) and status = 1
   #end
 
   #sql ("queryOwnerRoleList")
   select a.user_id,b.realname,a.role_id,c.role_name,b.img
-  from 72crm_work_user as a left join 72crm_admin_user as b on a.user_id = b.user_id
-  left join 72crm_admin_role as c on a.role_id = c.role_id
+  from aptenon_work_user as a left join aptenon_admin_user as b on a.user_id = b.user_id
+  left join aptenon_admin_role as c on a.role_id = c.role_id
   where a.work_id = ?
   #end
   #sql ("queryRealmByRoleId")
-    select concat((select realm from `72crm_admin_menu` where menu_id = b.parent_id),':',b.realm) from `72crm_admin_role_menu` a left join `72crm_admin_menu` b on a.menu_id = b.menu_id where a.role_id = ? and b.menu_type = 3
+    select concat((select realm from `aptenon_admin_menu` where menu_id = b.parent_id),':',b.realm) from `aptenon_admin_role_menu` a left join `aptenon_admin_menu` b on a.menu_id = b.menu_id where a.role_id = ? and b.menu_type = 3
   #end
   #sql("archList")
-  select a.*,b.name as workName,(select count(*) from 72crm_task_comment where type_id = a.task_id and type = 1) as commentCount,
-         (select count(*) from 72crm_task where pid = a.task_id and status = 5) as childWCCount,
-         (select count(*) from 72crm_task where pid = a.task_id) as childAllCount,
-         (select count(*) from 72crm_admin_file where batch_id = a.batch_id) as fileCount
-  from 72crm_task a left join 72crm_work b on a.work_id = b.work_id where a.work_id = ? and a.is_archive = 1 and a.ishidden = 0
+  select a.*,b.name as workName,(select count(*) from aptenon_task_comment where type_id = a.task_id and type = 1) as commentCount,
+         (select count(*) from aptenon_task where pid = a.task_id and status = 5) as childWCCount,
+         (select count(*) from aptenon_task where pid = a.task_id) as childAllCount,
+         (select count(*) from aptenon_admin_file where batch_id = a.batch_id) as fileCount
+  from aptenon_task a left join aptenon_work b on a.work_id = b.work_id where a.work_id = ? and a.is_archive = 1 and a.ishidden = 0
   #end
   #sql("queryTaskFileByWorkId")
     SELECT a.file_id,a.name, CONCAT(FLOOR(a.size/1000),'KB') as size,a.create_user_id,b.realname as create_user_name,a.create_time,a.file_path,a.file_type,a.batch_id
-    FROM `72crm_admin_file` as a inner join `72crm_admin_user` as b on a.create_user_id = b.user_id
-    where a.batch_id in (select batch_id from `72crm_task` where work_id = #para(workId) and ishidden = 0)
+    FROM `aptenon_admin_file` as a inner join `aptenon_admin_user` as b on a.create_user_id = b.user_id
+    where a.batch_id in (select batch_id from `aptenon_task` where work_id = #para(workId) and ishidden = 0)
   #end
   #sql("leave")
-    update `72crm_task` set main_user_id = null where work_id =  #para(workId) and main_user_id = #para(userId);
+    update `aptenon_task` set main_user_id = null where work_id =  #para(workId) and main_user_id = #para(userId);
   #end
   #sql("leave1")
-    update `72crm_task` set owner_user_id = replace(owner_user_id,concat(',',#para(userId),','),',') where work_id = #para(workId) and  owner_user_id like concat(',',#para(userId),',');
+    update `aptenon_task` set owner_user_id = replace(owner_user_id,concat(',',#para(userId),','),',') where work_id = #para(workId) and  owner_user_id like concat(',',#para(userId),',');
   #end
   #sql("getTaskOwnerOnWork")
-    select user_id,img,realname from `72crm_admin_user` where user_id in (select main_user_id from `72crm_task` where ishidden = 0 and work_id in (?))
+    select user_id,img,realname from `aptenon_admin_user` where user_id in (select main_user_id from `aptenon_task` where ishidden = 0 and work_id in (?))
   #end
 
   #sql ("queryProjectUser")
-  select user_id,realname from 72crm_admin_user as a left join 72crm_admin_user_role as b on a.user_id = b.user_id
-  left join 72crm_admin_role_menu as c on b.role_id = c.role_id
+  select user_id,realname from aptenon_admin_user as a left join aptenon_admin_user_role as b on a.user_id = b.user_id
+  left join aptenon_admin_role_menu as c on b.role_id = c.role_id
   where d.menu_id = ?
   #end
 #end

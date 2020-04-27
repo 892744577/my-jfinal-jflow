@@ -187,7 +187,7 @@ public class AdminSceneService{
         Long userId = BaseUtil.getUser().getUserId();
         AdminScene oldAdminScene = AdminScene.dao.findById(adminScene.getSceneId());
         if(1 == adminScene.getIsDefault()){
-            Db.update("update 72crm_admin_scene_default set scene_id = ? where user_id = ? and type = ?", adminScene.getSceneId(), userId, oldAdminScene.getType());
+            Db.update("update aptenon_admin_scene_default set scene_id = ? where user_id = ? and type = ?", adminScene.getSceneId(), userId, oldAdminScene.getType());
         }
         adminScene.setUserId(userId).setType(oldAdminScene.getType()).setSort(oldAdminScene.getSort()).setIsSystem(oldAdminScene.getIsSystem()).setUpdateTime(DateUtil.date());
         return R.isSuccess(adminScene.update());
@@ -201,7 +201,7 @@ public class AdminSceneService{
     public R setDefaultScene(Integer sceneId){
         Long userId = BaseUtil.getUser().getUserId();
         AdminScene oldAdminScene = AdminScene.dao.findById(sceneId);
-        Db.delete("delete from 72crm_admin_scene_default where user_id = ? and type = ?", userId, oldAdminScene.getType());
+        Db.delete("delete from aptenon_admin_scene_default where user_id = ? and type = ?", userId, oldAdminScene.getType());
         AdminSceneDefault adminSceneDefault = new AdminSceneDefault();
         return adminSceneDefault.setSceneId(sceneId).setType(oldAdminScene.getType()).setUserId(userId).save() ? R.ok() : R.error();
     }
@@ -289,7 +289,7 @@ public class AdminSceneService{
     public String getSubUserId(Long userId, Integer deepness){
         StringBuilder ids = new StringBuilder();
         if(deepness > 0){
-            List<Long> list = Db.query("select user_id from 72crm_admin_user where parent_id = ?", userId);
+            List<Long> list = Db.query("select user_id from aptenon_admin_user where parent_id = ?", userId);
             if(list != null && list.size() > 0){
                 for(Long l : list){
                     ids.append(",").append(l).append(getSubUserId(l, deepness - 1));
@@ -407,7 +407,7 @@ public class AdminSceneService{
                 if(jsonObject.getJSONObject("data").containsKey("create_time")){
                     JSONObject sqlObject = new JSONObject();
                     JSONObject date=jsonObject.getJSONObject("data").getJSONObject("create_time");
-                    sqlObject.put("sql", "and (SELECT COUNT(*) FROM 72crm_crm_business_change as b WHERE b.business_id = a.business_id and (b.create_time between '"+date.getString("start")+"' and  '"+date.getString("end")+"'))>0");
+                    sqlObject.put("sql", "and (SELECT COUNT(*) FROM aptenon_crm_business_change as b WHERE b.business_id = a.business_id and (b.create_time between '"+date.getString("start")+"' and  '"+date.getString("end")+"'))>0");
                     sqlObject.put("type", 1);
                     queryList.add(sqlObject);
                     jsonObject.getJSONObject("data").remove("create_time");
@@ -475,10 +475,10 @@ public class AdminSceneService{
         String selectSql;
         JSONObject resultJsonObject = new JSONObject();
         if(2 == type){
-            Integer configType = Db.queryInt("select status from 72crm_admin_config where name = 'customerPoolSetting'");
-            selectSql = 1 == configType ? Db.getSql("admin.scene.getCustomerPageList") : "select *,(select count(*) from 72crm_crm_business as a where a.customer_id = views.customer_id) as business_count";
+            Integer configType = Db.queryInt("select status from aptenon_admin_config where name = 'customerPoolSetting'");
+            selectSql = 1 == configType ? Db.getSql("admin.scene.getCustomerPageList") : "select *,(select count(*) from aptenon_crm_business as a where a.customer_id = views.customer_id) as business_count";
         }else if(6 == type){
-            selectSql = "select *,IFNULL((select SUM(a.money) from 72crm_crm_receivables as a where a.check_status = '1' and a.contract_id = views.contract_id),0) as receivedMoney,(IFNUll(money,0) - IFNULL((select SUM(a.money) from 72crm_crm_receivables as a where a.check_status = '1' and a.contract_id = views.contract_id),0)) as unreceivedMoney";
+            selectSql = "select *,IFNULL((select SUM(a.money) from aptenon_crm_receivables as a where a.check_status = '1' and a.contract_id = views.contract_id),0) as receivedMoney,(IFNUll(money,0) - IFNULL((select SUM(a.money) from aptenon_crm_receivables as a where a.check_status = '1' and a.contract_id = views.contract_id),0)) as unreceivedMoney";
         }else if(9 == type){
             Integer putInPoolTodayNum = Db.queryInt(Db.getSql("admin.scene.queryPutInPoolTodayNum"));
             selectSql = "select *";
@@ -513,7 +513,7 @@ public class AdminSceneService{
         }else if (type == CrmEnum.CRM_CONTRACT.getType()){
             if(recordPage.size() > 0){
                 List<Integer> contractIds = recordPage.stream().map(record -> record.getInt("contract_id")).collect(Collectors.toList());
-                Record record = Db.findFirst("SELECT IFNULL(SUM(money),0) AS contractMoney,IFNULL(SUM(receivedMoney),0) AS receivedMoney from (SELECT a.money,(SELECT SUM(money) FROM 72crm_crm_receivables AS b where b.contract_id=a.contract_id and b.check_status = 1) as receivedMoney FROM 72crm_crm_contract AS a WHERE a.check_status = '1' AND a.contract_id IN (" + StrUtil.join(",", contractIds) + ")) as x");
+                Record record = Db.findFirst("SELECT IFNULL(SUM(money),0) AS contractMoney,IFNULL(SUM(receivedMoney),0) AS receivedMoney from (SELECT a.money,(SELECT SUM(money) FROM aptenon_crm_receivables AS b where b.contract_id=a.contract_id and b.check_status = 1) as receivedMoney FROM aptenon_crm_contract AS a WHERE a.check_status = '1' AND a.contract_id IN (" + StrUtil.join(",", contractIds) + ")) as x");
                 resultJsonObject.put("money", record);
             }
         }
@@ -677,7 +677,7 @@ public class AdminSceneService{
     public Map<String,AdminField> getAdminFieldMap(Integer type){
         Map<String,AdminField> adminFieldMap = CaffeineCache.ME.get("field", type);
         if(adminFieldMap == null){
-            List<AdminField> adminFields = AdminField.dao.find("SELECT field_name,field_type,type FROM 72crm_admin_field WHERE label=?", type);
+            List<AdminField> adminFields = AdminField.dao.find("SELECT field_name,field_type,type FROM aptenon_admin_field WHERE label=?", type);
             adminFieldMap = new HashMap<>();
             for(AdminField adminField : adminFields){
                 adminFieldMap.put(adminField.getFieldName(), adminField);
@@ -709,17 +709,17 @@ public class AdminSceneService{
     public void setBusinessStatus(List<Record> list){
         list.forEach(record -> {
             if(record.getInt("is_end") == 0){
-                Integer sortNum = Db.queryInt("select order_num from 72crm_crm_business_status where status_id = ?", record.getInt("status_id"));
-                int totalStatsNum = Db.queryInt("select count(*) from 72crm_crm_business_status where type_id = ?", record.getInt("type_id")) + 1;
+                Integer sortNum = Db.queryInt("select order_num from aptenon_crm_business_status where status_id = ?", record.getInt("status_id"));
+                int totalStatsNum = Db.queryInt("select count(*) from aptenon_crm_business_status where type_id = ?", record.getInt("type_id")) + 1;
                 if(sortNum == null){
                     sortNum = 0;
                 }
                 record.set("progressBar", sortNum + "/" + totalStatsNum);
             }else if(record.getInt("is_end") == 1){
-                int totalStatsNum = Db.queryInt("select count(*) from 72crm_crm_business_status where type_id = ?", record.getInt("type_id")) + 1;
+                int totalStatsNum = Db.queryInt("select count(*) from aptenon_crm_business_status where type_id = ?", record.getInt("type_id")) + 1;
                 record.set("progressBar", totalStatsNum + "/" + totalStatsNum);
             }else if(record.getInt("is_end") == 2){
-                int totalStatsNum = Db.queryInt("select count(*) from 72crm_crm_business_status where type_id = ?", record.getInt("type_id")) + 1;
+                int totalStatsNum = Db.queryInt("select count(*) from aptenon_crm_business_status where type_id = ?", record.getInt("type_id")) + 1;
                 record.set("progressBar", "0/" + totalStatsNum);
             }else if(record.getInt("is_end") == 3){
                 record.set("progressBar", "0/0");

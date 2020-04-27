@@ -65,7 +65,7 @@ public class OaExamineCategoryService{
         //设置审批步骤
         if(oaExamineCategory.getExamineType() == 1){
             if(examineStepList.size() != 0){
-                Db.delete("delete from 72crm_oa_examine_step where category_id = ?", categoryId);
+                Db.delete("delete from aptenon_oa_examine_step where category_id = ?", categoryId);
                 examineStepList.forEach(x -> {
                     x.setCategoryId(categoryId);
                     x.save();
@@ -76,9 +76,9 @@ public class OaExamineCategoryService{
     }
 
     public R queryExamineCategoryList(BasePageRequest basePageRequest){
-        Page<Record> paginate = Db.paginate(basePageRequest.getPage(), basePageRequest.getLimit(), "select * ", "from 72crm_oa_examine_category where is_deleted = 0");
+        Page<Record> paginate = Db.paginate(basePageRequest.getPage(), basePageRequest.getLimit(), "select * ", "from aptenon_oa_examine_category where is_deleted = 0");
         paginate.getList().forEach(record -> {
-                    List<Record> stepList = Db.find("select * from 72crm_oa_examine_step where category_id = ?", record.getStr("category_id"));
+                    List<Record> stepList = Db.find("select * from aptenon_oa_examine_step where category_id = ?", record.getStr("category_id"));
                     stepList.forEach(step -> {
                         if(step.getStr("check_user_id") != null && step.getStr("check_user_id").split(",").length > 0){
                             List<Record> userList = Db.find(Db.getSqlPara("admin.user.queryByIds", Kv.by("ids", step.getStr("check_user_id").split(","))));
@@ -106,24 +106,24 @@ public class OaExamineCategoryService{
     }
 
     public R deleteExamineCategory(String id){
-        int update = Db.update("update 72crm_oa_examine_category set is_deleted = 1,delete_user_id = ?,delete_time = now() where category_id = ?", BaseUtil.getUser().getUserId(), id);
+        int update = Db.update("update aptenon_oa_examine_category set is_deleted = 1,delete_user_id = ?,delete_time = now() where category_id = ?", BaseUtil.getUser().getUserId(), id);
         return update > 0 ? R.ok() : R.error();
     }
 
 
     public R queryUserList(){
-        List<Record> recordList = Db.find("select a.user_id,a.realname,a.username,a.img,b.name as deptName from 72crm_admin_user a left join 72crm_admin_dept b on a.dept_id = b.dept_id");
+        List<Record> recordList = Db.find("select a.user_id,a.realname,a.username,a.img,b.name as deptName from aptenon_admin_user a left join aptenon_admin_dept b on a.dept_id = b.dept_id");
         return R.ok().put("data", recordList);
     }
 
     public R queryDeptList(){
-        List<Record> recordList = Db.find("select * from 72crm_admin_dept");
+        List<Record> recordList = Db.find("select * from aptenon_admin_dept");
         return R.ok().put("data", recordList);
     }
 
     public R queryExamineCategoryById(String id){
-        Record examineCategory = Db.findFirst("select * from 72crm_oa_examine_category where category_id = ?", id);
-        List<Record> stepList = Db.find("select a.*,b.realname,b.img from 72crm_oa_examine_step a left join 72crm_admin_user b on a.user_id = b.user_id where category_id = ?", id);
+        Record examineCategory = Db.findFirst("select * from aptenon_oa_examine_category where category_id = ?", id);
+        List<Record> stepList = Db.find("select a.*,b.realname,b.img from aptenon_oa_examine_step a left join aptenon_admin_user b on a.user_id = b.user_id where category_id = ?", id);
         examineCategory.set("stepList", stepList);
         return R.ok().put("data", examineCategory);
     }
@@ -135,7 +135,7 @@ public class OaExamineCategoryService{
     }
 
     public List<Record> queryField(Integer id){
-        List<Record> list = Db.find("select * from `72crm_admin_field` where examine_category_id = ?", id);
+        List<Record> list = Db.find("select * from `aptenon_admin_field` where examine_category_id = ?", id);
         adminFieldService.recordToFormType(list);
         return list;
     }
@@ -159,7 +159,7 @@ public class OaExamineCategoryService{
     }
 
     public R updateStatus(String id){
-        int update = Db.update("update 72crm_oa_examine_category set status = abs(status-1) where category_id = ?", id);
+        int update = Db.update("update aptenon_oa_examine_category set status = abs(status-1) where category_id = ?", id);
         return update > 0 ? R.ok() : R.error();
     }
 

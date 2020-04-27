@@ -49,7 +49,7 @@ public class TrashService{
         if(task.getIshidden() != 1){
             return R.error("任务不在回收站！");
         }
-        adminFileService.removeByBatchId(Db.queryStr("select batch_id from `72crm_task` where task_id = ?",taskId));
+        adminFileService.removeByBatchId(Db.queryStr("select batch_id from `aptenon_task` where task_id = ?",taskId));
         return task.delete()?R.ok():R.error();
     }
 
@@ -61,12 +61,12 @@ public class TrashService{
         if(task.getIshidden() != 1){
             return R.error("任务不在回收站！");
         }
-        Integer count = Db.queryInt("select count(*) from `72crm_work_task_class` where class_id = ?", task.getClassId());
+        Integer count = Db.queryInt("select count(*) from `aptenon_work_task_class` where class_id = ?", task.getClassId());
         int update;
         if(count>0){
-            update = Db.update("update 72crm_task set ishidden = 0,hidden_time = null where task_id = ?", taskId);
+            update = Db.update("update aptenon_task set ishidden = 0,hidden_time = null where task_id = ?", taskId);
         }else {
-            update = Db.update("update 72crm_task set ishidden = 0,class_id = null,hidden_time = null where task_id = ?", taskId);
+            update = Db.update("update aptenon_task set ishidden = 0,class_id = null,hidden_time = null where task_id = ?", taskId);
         }
         return update>0?R.ok():R.error();
     }

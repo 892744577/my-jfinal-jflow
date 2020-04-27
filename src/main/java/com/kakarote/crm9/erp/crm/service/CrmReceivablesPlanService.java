@@ -45,7 +45,7 @@ public class CrmReceivablesPlanService {
             }
             return crmReceivablesPlan.save() ? R.ok() : R.error();
         } else {
-            Integer number = Db.queryInt("select count(*) from 72crm_crm_receivables where plan_id = ?",crmReceivablesPlan.getPlanId());
+            Integer number = Db.queryInt("select count(*) from aptenon_crm_receivables where plan_id = ?",crmReceivablesPlan.getPlanId());
             if (number > 0 ){
                 return R.error("该回款计划已收到回款，请勿编辑");
             }

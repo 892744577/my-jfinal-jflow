@@ -111,7 +111,7 @@ public class CrmLeadsService {
      */
     public Record queryById(Integer leadsId) {
         Record record = Db.findFirst(Db.getSql("crm.leads.queryById"), leadsId);
-        List<Record> recordList = Db.find("select name,value from `72crm_admin_fieldv` where batch_id = ?", record.getStr("batch_id"));
+        List<Record> recordList = Db.find("select name,value from `aptenon_admin_fieldv` where batch_id = ?", record.getStr("batch_id"));
         recordList.forEach(field->record.set(field.getStr("name"),field.getStr("value")));
         return record;
     }
@@ -138,7 +138,7 @@ public class CrmLeadsService {
         List<Record> batchIdList = Db.find(Db.getSqlPara("crm.leads.queryBatchIdByIds",Kv.by("ids",idsArr)));
         return Db.tx(() -> {
             Db.batch(Db.getSql("crm.leads.deleteByIds"), "leads_id", idsList, 100);
-            Db.batch("delete from 72crm_admin_fieldv where batch_id = ?","batch_id",batchIdList,100);
+            Db.batch("delete from aptenon_admin_fieldv where batch_id = ?","batch_id",batchIdList,100);
             return true;
         }) ? R.ok() : R.error();
     }
@@ -190,7 +190,7 @@ public class CrmLeadsService {
             crmCustomer.setRemark("");
             String customerBatchId = IdUtil.simpleUUID();
             crmCustomer.setBatchId(customerBatchId);
-            List<AdminField> customerFields = AdminField.dao.find("select field_id,name,field_name,field_type,is_null,is_unique from 72crm_admin_field where label = '2'");
+            List<AdminField> customerFields = AdminField.dao.find("select field_id,name,field_name,field_type,is_null,is_unique from aptenon_admin_field where label = '2'");
             List<AdminFieldv> adminFieldvList = new ArrayList<>();
             for (Record leadsField : leadsFields) {
                 for (AdminField customerField : customerFields) {
@@ -267,10 +267,10 @@ public class CrmLeadsService {
             }
             crmRecordService.addConversionCustomerRecord(crmCustomer.getCustomerId(), CrmEnum.CRM_CUSTOMER.getType()+"", crmCustomer.getCustomerName());
             adminFieldService.save(adminFieldvList, customerBatchId);
-            Db.update("update 72crm_crm_leads set is_transform = 1,update_time = ?,customer_id = ? where leads_id = ?",
+            Db.update("update aptenon_crm_leads set is_transform = 1,update_time = ?,customer_id = ? where leads_id = ?",
                     DateUtil.date(), crmCustomer.getCustomerId(), Integer.valueOf(leadsId));
-            List<AdminRecord> adminRecordList = AdminRecord.dao.find("select * from 72crm_admin_record where types = 'crm_leads' and types_id = ?",Integer.valueOf(leadsId));
-            List<CrmActionRecord> crmActionRecordList = CrmActionRecord.dao.find("select * from `72crm_crm_action_record` where action_id = ? and types = 1", Integer.valueOf(leadsId));
+            List<AdminRecord> adminRecordList = AdminRecord.dao.find("select * from aptenon_admin_record where types = 'crm_leads' and types_id = ?",Integer.valueOf(leadsId));
+            List<CrmActionRecord> crmActionRecordList = CrmActionRecord.dao.find("select * from `aptenon_crm_action_record` where action_id = ? and types = 1", Integer.valueOf(leadsId));
             List<AdminFile> adminFileList = new ArrayList<>();
             crmActionRecordList.forEach(crmActionRecord -> {
                 crmActionRecord.setId(null);
@@ -280,7 +280,7 @@ public class CrmLeadsService {
             Db.batchSave(crmActionRecordList,500);
             if (adminRecordList.size() != 0){
                 adminRecordList.forEach(adminRecord -> {
-                    List<AdminFile> leadsRecordFiles = AdminFile.dao.find("select file_id, name, size, create_user_id, create_time, file_path, file_type from 72crm_admin_file where batch_id = ?",adminRecord.getBatchId());
+                    List<AdminFile> leadsRecordFiles = AdminFile.dao.find("select file_id, name, size, create_user_id, create_time, file_path, file_type from aptenon_admin_file where batch_id = ?",adminRecord.getBatchId());
                     String customerRecordBatchId = IdUtil.simpleUUID();
                     leadsRecordFiles.forEach(adminFile -> {
                         adminFile.setBatchId(customerRecordBatchId);
@@ -295,7 +295,7 @@ public class CrmLeadsService {
                 });
                 Db.batchSave(adminRecordList,100);
             }
-            List<AdminFile> fileList = AdminFile.dao.find("select file_id, name, size, create_user_id, create_time, file_path, file_type from 72crm_admin_file where batch_id = ?",crmLeads.getStr("batch_id"));
+            List<AdminFile> fileList = AdminFile.dao.find("select file_id, name, size, create_user_id, create_time, file_path, file_type from aptenon_admin_file where batch_id = ?",crmLeads.getStr("batch_id"));
             if (fileList.size() != 0){
                 fileList.forEach(adminFile -> {
                     adminFile.setBatchId(customerBatchId);

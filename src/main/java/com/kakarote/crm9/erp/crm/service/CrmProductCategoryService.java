@@ -49,7 +49,7 @@ public class CrmProductCategoryService {
     }
 
     public List<Record> queryListByPid(Integer pid){
-        StringBuffer sql = new StringBuffer("select * from 72crm_crm_product_category ");
+        StringBuffer sql = new StringBuffer("select * from aptenon_crm_product_category ");
         if (pid != null){
             sql.append(" where pid = ").append(pid);
         }

@@ -34,7 +34,7 @@ public class AdminBusinessTypeService {
             crmBusinessType.setCreateUserId(BaseUtil.getUser().getUserId());
             crmBusinessType.save();
         } else {
-            Integer count = Db.queryInt("select count(*) from 72crm_crm_business where type_id = ?", crmBusinessType.getTypeId());
+            Integer count = Db.queryInt("select count(*) from aptenon_crm_business where type_id = ?", crmBusinessType.getTypeId());
             if (count > 0) {
                 return R.error("使用中的商机组不可以修改");
             }
@@ -82,12 +82,12 @@ public class AdminBusinessTypeService {
 
     @Before(Tx.class)
     public R deleteById(String typeId) {
-        Integer count = Db.queryInt("select count(*) from 72crm_crm_business where type_id = ?", typeId);
+        Integer count = Db.queryInt("select count(*) from aptenon_crm_business where type_id = ?", typeId);
         if (count > 0) {
             return R.error("使用中的商机组不可以删除");
         }
-        Db.deleteById("72crm_crm_business_type", "type_id", typeId);
-        Db.deleteById("72crm_crm_business_status", "type_id", typeId);
+        Db.deleteById("aptenon_crm_business_type", "type_id", typeId);
+        Db.deleteById("aptenon_crm_business_status", "type_id", typeId);
         return R.ok();
     }
 

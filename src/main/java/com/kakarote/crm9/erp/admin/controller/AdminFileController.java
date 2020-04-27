@@ -77,7 +77,7 @@ public class AdminFileController extends Controller {
      */
     public void downFile(@Para("fileId") String fileId) {
         fileId="/file/downFile?fileId="+fileId;
-        AdminFile adminFile = AdminFile.dao.findFirst("SELECT * FROM `72crm_admin_file` where file_path=? LIMIT 0,1",fileId);
+        AdminFile adminFile = AdminFile.dao.findFirst("SELECT * FROM `aptenon_admin_file` where file_path=? LIMIT 0,1",fileId);
         if (adminFile != null) {
             renderFile(new File(adminFile.getPath()));
             return;

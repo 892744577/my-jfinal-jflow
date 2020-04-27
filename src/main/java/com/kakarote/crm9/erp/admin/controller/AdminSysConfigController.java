@@ -51,7 +51,7 @@ public class AdminSysConfigController extends Controller {
             R r=adminFileService.upload(file,null,"file","/"+prefix,getRequest());
             kv.set("logo",r.get("url"));
         }
-        Db.deleteById("72crm_admin_config","name",SYS_CONFIG_KEY);
+        Db.deleteById("aptenon_admin_config","name",SYS_CONFIG_KEY);
         AdminConfig adminConfig=new AdminConfig();
         adminConfig.setStatus(1);
         adminConfig.setName(SYS_CONFIG_KEY);
@@ -80,7 +80,7 @@ public class AdminSysConfigController extends Controller {
      */
     @Permissions("manage:configSet:read")
     public void queryModuleSetting(){
-        List<Record> recordList = Db.find("select setting_id,name as module,status,value as type,description as name from 72crm_admin_config where name in ('oa','crm','project','hrm','jxc') ");
+        List<Record> recordList = Db.find("select setting_id,name as module,status,value as type,description as name from aptenon_admin_config where name in ('oa','crm','project','hrm','jxc') ");
         renderJson(R.ok().put("data",recordList));
     }
 

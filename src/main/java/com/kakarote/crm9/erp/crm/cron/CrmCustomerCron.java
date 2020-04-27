@@ -9,9 +9,9 @@ import com.jfinal.plugin.activerecord.Record;
 public class CrmCustomerCron implements Runnable {
     @Override
     public void run() {
-        String dealDay = Db.queryStr("select value from 72crm_admin_config where name = 'customerPoolSettingDealDays'");
-        String followupDay = Db.queryStr("select value from 72crm_admin_config where name = 'customerPoolSettingFollowupDays'");
-        Integer type = Db.queryInt("select status from 72crm_admin_config where name = 'customerPoolSetting'");
+        String dealDay = Db.queryStr("select value from aptenon_admin_config where name = 'customerPoolSettingDealDays'");
+        String followupDay = Db.queryStr("select value from aptenon_admin_config where name = 'customerPoolSettingFollowupDays'");
+        Integer type = Db.queryInt("select status from aptenon_admin_config where name = 'customerPoolSetting'");
         //获取是否启动客户保护规则设置
         if (dealDay == null || followupDay == null || type == null ){
             if (dealDay == null){

@@ -238,7 +238,7 @@ public class CrmCustomerController extends Controller {
         String[] customerIdsArr = crmCustomer.getCustomerIds().split(",");
         Db.tx(()->{
             for (String customerId : customerIdsArr) {
-                if(Db.queryInt("select count(*) from `72crm_crm_customer` where find_in_set(?,ro_user_id) and customer_id = ?",BaseUtil.getUserId(),customerId)>0){
+                if(Db.queryInt("select count(*) from `aptenon_crm_customer` where find_in_set(?,ro_user_id) and customer_id = ?",BaseUtil.getUserId(),customerId)>0){
                     renderJson(R.error("没有权限"));
                     return false;
                 }
@@ -668,7 +668,7 @@ public class CrmCustomerController extends Controller {
                     // 设置第一行，存省的信息
                     Row provinceRow = hideSheet.createRow(rowId++);
                     provinceRow.createCell(0).setCellValue("省列表");
-                    List<String> provinceList = Db.query("select city_name from 72crm_crm_area where parent_id = ?", 100000);
+                    List<String> provinceList = Db.query("select city_name from aptenon_crm_area where parent_id = ?", 100000);
                     for (int x = 0; x < provinceList.size(); x++) {
                         Cell provinceCell = provinceRow.createCell(x + 1);
                         provinceCell.setCellValue(provinceList.get(x));

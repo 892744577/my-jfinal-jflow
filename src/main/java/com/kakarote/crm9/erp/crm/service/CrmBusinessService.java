@@ -113,7 +113,7 @@ public class CrmBusinessService {
      */
     public Record queryById(Integer businessId) {
         Record crmBusiness = Db.findFirst(Db.getSql("crm.business.queryById"), businessId);
-        List<Record> recordList = Db.find("select name,value from `72crm_admin_fieldv` where batch_id = ?", crmBusiness.getStr("batch_id"));
+        List<Record> recordList = Db.find("select name,value from `aptenon_admin_fieldv` where batch_id = ?", crmBusiness.getStr("batch_id"));
         recordList.forEach(field -> crmBusiness.set(field.getStr("name"), field.getStr("value")));
         return crmBusiness;
     }
@@ -193,7 +193,7 @@ public class CrmBusinessService {
      */
     public R relateContacts(Integer businessId, String contactsIds) {
         String[] contactsIdsArr = contactsIds.split(",");
-        Db.delete("delete from 72crm_crm_contacts_business where business_id = ?", businessId);
+        Db.delete("delete from aptenon_crm_contacts_business where business_id = ?", businessId);
         List<CrmContactsBusiness> crmContactsBusinessList = new ArrayList<>();
         for (String id : contactsIdsArr) {
             CrmContactsBusiness crmContactsBusiness = new CrmContactsBusiness();
@@ -234,7 +234,7 @@ public class CrmBusinessService {
         List<Record> batchIdList = Db.find(Db.getSqlPara("crm.business.queryBatchIdByIds", Kv.by("ids", idsArr)));
         return Db.tx(() -> {
             Db.batch(Db.getSql("crm.business.deleteByIds"), "business_id", idsList, 100);
-            Db.batch("delete from 72crm_admin_fieldv where batch_id = ?", "batch_id", batchIdList, 100);
+            Db.batch("delete from aptenon_admin_fieldv where batch_id = ?", "batch_id", batchIdList, 100);
             return true;
         }) ? R.ok() : R.error();
     }
@@ -249,7 +249,7 @@ public class CrmBusinessService {
         crmBusiness.setNewOwnerUserId(crmCustomer.getNewOwnerUserId());
         crmBusiness.setTransferType(crmCustomer.getTransferType());
         crmBusiness.setPower(crmCustomer.getPower());
-        String businessIds = Db.queryStr("select GROUP_CONCAT(business_id) from 72crm_crm_business where customer_id in (" + crmCustomer.getCustomerIds() + ")");
+        String businessIds = Db.queryStr("select GROUP_CONCAT(business_id) from aptenon_crm_business where customer_id in (" + crmCustomer.getCustomerIds() + ")");
         if (StrUtil.isEmpty(businessIds)) {
             return R.ok();
         }
@@ -343,12 +343,12 @@ public class CrmBusinessService {
                 if (1 == crmBusiness.getPower()) {
                     stringBuffer.setLength(0);
                     String roUserId = stringBuffer.append(CrmBusiness.dao.findById(Integer.valueOf(id)).getRoUserId()).append(crmBusiness.getMemberIds()).append(",").toString();
-                    Db.update("update 72crm_crm_business set ro_user_id = ? where business_id = ?", roUserId, Integer.valueOf(id));
+                    Db.update("update aptenon_crm_business set ro_user_id = ? where business_id = ?", roUserId, Integer.valueOf(id));
                 }
                 if (2 == crmBusiness.getPower()) {
                     stringBuffer.setLength(0);
                     String rwUserId = stringBuffer.append(CrmBusiness.dao.findById(Integer.valueOf(id)).getRwUserId()).append(crmBusiness.getMemberIds()).append(",").toString();
-                    Db.update("update 72crm_crm_business set rw_user_id = ? where business_id = ?", rwUserId, Integer.valueOf(id));
+                    Db.update("update aptenon_crm_business set rw_user_id = ? where business_id = ?", rwUserId, Integer.valueOf(id));
                 }
             }
 
@@ -430,10 +430,10 @@ public class CrmBusinessService {
      * 查询商机状态组及商机状态
      */
     public List<Record> queryBusinessStatusOptions(String type) {
-        List<Record> businessTypeList = Db.find("select * from 72crm_crm_business_type where status = 1");
+        List<Record> businessTypeList = Db.find("select * from aptenon_crm_business_type where status = 1");
         for (Record record : businessTypeList) {
             Integer typeId = record.getInt("type_id");
-            List<Record> businessStatusList = Db.find("select * from 72crm_crm_business_status where type_id = ?", typeId);
+            List<Record> businessStatusList = Db.find("select * from aptenon_crm_business_status where type_id = ?", typeId);
             if ("condition".equals(type)) {
                 Record win = new Record();
                 win.set("name", "赢单").set("typeId", typeId).set("statusId", "win");

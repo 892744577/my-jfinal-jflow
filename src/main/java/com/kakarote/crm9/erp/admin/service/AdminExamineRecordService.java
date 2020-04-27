@@ -479,7 +479,7 @@ public class AdminExamineRecordService {
         } else {
             jsonObject.put("examineType", 1);
             //固定审批
-            List<Record> steps = Db.find("select * from 72crm_admin_examine_step where  examine_id = ? ORDER BY step_num", adminExamine.getExamineId());
+            List<Record> steps = Db.find("select * from aptenon_admin_examine_step where  examine_id = ? ORDER BY step_num", adminExamine.getExamineId());
                //上一审核步骤
                 Long lsatuUserId = null;
             for (Record step: steps) {

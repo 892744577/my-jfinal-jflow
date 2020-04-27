@@ -16,70 +16,231 @@ import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 public class _MappingKit {
 	
 	public static void mapping(ActiveRecordPlugin arp) {
-		arp.addMapping("72crm_admin_config", "setting_id", AdminConfig.class);
-		arp.addMapping("72crm_admin_dept", "dept_id", AdminDept.class);
-		arp.addMapping("72crm_admin_examine", "examine_id", AdminExamine.class);
-		arp.addMapping("72crm_admin_examine_log", "log_id", AdminExamineLog.class);
-		arp.addMapping("72crm_admin_examine_record", "record_id", AdminExamineRecord.class);
-		arp.addMapping("72crm_admin_examine_step", "step_id", AdminExamineStep.class);
-		arp.addMapping("72crm_admin_field", "field_id", AdminField.class);
-		arp.addMapping("72crm_admin_field_sort", "id", AdminFieldSort.class);
-		arp.addMapping("72crm_admin_field_style", "id", AdminFieldStyle.class);
-		arp.addMapping("72crm_admin_fieldv", "id", AdminFieldv.class);
-		arp.addMapping("72crm_admin_file", "file_id", AdminFile.class);
-		arp.addMapping("72crm_admin_menu", "menu_id", AdminMenu.class);
-		arp.addMapping("72crm_admin_message", "message_id", AdminMessage.class);
-		arp.addMapping("72crm_admin_record", "record_id", AdminRecord.class);
-		arp.addMapping("72crm_admin_role", "role_id", AdminRole.class);
-		arp.addMapping("72crm_admin_role_menu", "id", AdminRoleMenu.class);
-		arp.addMapping("72crm_admin_scene", "scene_id", AdminScene.class);
-		arp.addMapping("72crm_admin_scene_default", "default_id", AdminSceneDefault.class);
-		arp.addMapping("72crm_admin_user", "user_id", AdminUser.class);
-		arp.addMapping("72crm_admin_user_role", "id", AdminUserRole.class);
-		arp.addMapping("72crm_crm_achievement", "achievement_id", CrmAchievement.class);
-		arp.addMapping("72crm_crm_action_record", "id", CrmActionRecord.class);
-		arp.addMapping("72crm_crm_area", "code_id", CrmArea.class);
-		arp.addMapping("72crm_crm_business", "business_id", CrmBusiness.class);
-		arp.addMapping("72crm_crm_business_change", "change_id", CrmBusinessChange.class);
-		arp.addMapping("72crm_crm_business_product", "r_id", CrmBusinessProduct.class);
-		arp.addMapping("72crm_crm_business_status", "status_id", CrmBusinessStatus.class);
-		arp.addMapping("72crm_crm_business_type", "type_id", CrmBusinessType.class);
-		arp.addMapping("72crm_crm_contacts", "contacts_id", CrmContacts.class);
-		arp.addMapping("72crm_crm_contacts_business", "id", CrmContactsBusiness.class);
-		arp.addMapping("72crm_crm_contract", "contract_id", CrmContract.class);
-		arp.addMapping("72crm_crm_contract_product", "r_id", CrmContractProduct.class);
-		arp.addMapping("72crm_crm_customer", "customer_id", CrmCustomer.class);
-		arp.addMapping("72crm_crm_customer_setting", "setting_id", CrmCustomerSetting.class);
-		arp.addMapping("72crm_crm_customer_settinguser", "id", CrmCustomerSettinguser.class);
-		arp.addMapping("72crm_crm_customer_stats", "id", CrmCustomerStats.class);
-		arp.addMapping("72crm_crm_leads", "leads_id", CrmLeads.class);
-		arp.addMapping("72crm_crm_owner_record", "record_id", CrmOwnerRecord.class);
-		arp.addMapping("72crm_crm_product", "product_id", CrmProduct.class);
-		arp.addMapping("72crm_crm_product_category", "category_id", CrmProductCategory.class);
-		arp.addMapping("72crm_crm_receivables", "receivables_id", CrmReceivables.class);
-		arp.addMapping("72crm_crm_receivables_plan", "plan_id", CrmReceivablesPlan.class);
-		arp.addMapping("72crm_oa_action_record", "log_id", OaActionRecord.class);
-		arp.addMapping("72crm_oa_announcement", "announcement_id", OaAnnouncement.class);
-		arp.addMapping("72crm_oa_event", "event_id", OaEvent.class);
-		arp.addMapping("72crm_oa_event_notice", "id", OaEventNotice.class);
-		arp.addMapping("72crm_oa_event_relation", "eventrelation_id", OaEventRelation.class);
-		arp.addMapping("72crm_oa_examine", "examine_id", OaExamine.class);
-		arp.addMapping("72crm_oa_examine_category", "category_id", OaExamineCategory.class);
-		arp.addMapping("72crm_oa_examine_log", "log_id", OaExamineLog.class);
-		arp.addMapping("72crm_oa_examine_record", "record_id", OaExamineRecord.class);
-		arp.addMapping("72crm_oa_examine_relation", "r_id", OaExamineRelation.class);
-		arp.addMapping("72crm_oa_examine_step", "step_id", OaExamineStep.class);
-		arp.addMapping("72crm_oa_examine_travel", "travel_id", OaExamineTravel.class);
-		arp.addMapping("72crm_oa_log", "log_id", OaLog.class);
-		arp.addMapping("72crm_oa_log_relation", "r_id", OaLogRelation.class);
-		arp.addMapping("72crm_task", "task_id", Task.class);
-		arp.addMapping("72crm_task_comment", "comment_id", TaskComment.class);
-		arp.addMapping("72crm_task_relation", "r_id", TaskRelation.class);
-		arp.addMapping("72crm_work", "work_id", Work.class);
-		arp.addMapping("72crm_work_task_class", "class_id", WorkTaskClass.class);
-		arp.addMapping("72crm_work_task_label", "label_id", WorkTaskLabel.class);
-		arp.addMapping("72crm_work_task_log", "log_id", WorkTaskLog.class);
-		arp.addMapping("72crm_work_user", "id", WorkUser.class);
+		arp.addMapping("aptenon_admin_config", "setting_id", AdminConfig.class);
+		arp.addMapping("aptenon_admin_dept", "dept_id", AdminDept.class);
+		arp.addMapping("aptenon_admin_examine", "examine_id", AdminExamine.class);
+		arp.addMapping("aptenon_admin_examine_log", "log_id", AdminExamineLog.class);
+		arp.addMapping("aptenon_admin_examine_record", "record_id", AdminExamineRecord.class);
+		arp.addMapping("aptenon_admin_examine_step", "step_id", AdminExamineStep.class);
+		arp.addMapping("aptenon_admin_field", "field_id", AdminField.class);
+		arp.addMapping("aptenon_admin_field_sort", "id", AdminFieldSort.class);
+		arp.addMapping("aptenon_admin_field_style", "id", AdminFieldStyle.class);
+		arp.addMapping("aptenon_admin_fieldv", "id", AdminFieldv.class);
+		arp.addMapping("aptenon_admin_file", "file_id", AdminFile.class);
+		arp.addMapping("aptenon_admin_menu", "menu_id", AdminMenu.class);
+		arp.addMapping("aptenon_admin_message", "message_id", AdminMessage.class);
+		arp.addMapping("aptenon_admin_record", "record_id", AdminRecord.class);
+		arp.addMapping("aptenon_admin_role", "role_id", AdminRole.class);
+		arp.addMapping("aptenon_admin_role_menu", "id", AdminRoleMenu.class);
+		arp.addMapping("aptenon_admin_scene", "scene_id", AdminScene.class);
+		arp.addMapping("aptenon_admin_scene_default", "default_id", AdminSceneDefault.class);
+		arp.addMapping("aptenon_admin_user", "user_id", AdminUser.class);
+		arp.addMapping("aptenon_admin_user_role", "id", AdminUserRole.class);
+		arp.addMapping("aptenon_crm_achievement", "achievement_id", CrmAchievement.class);
+		arp.addMapping("aptenon_crm_action_record", "id", CrmActionRecord.class);
+		arp.addMapping("aptenon_crm_area", "code_id", CrmArea.class);
+		arp.addMapping("aptenon_crm_business", "business_id", CrmBusiness.class);
+		arp.addMapping("aptenon_crm_business_change", "change_id", CrmBusinessChange.class);
+		arp.addMapping("aptenon_crm_business_product", "r_id", CrmBusinessProduct.class);
+		arp.addMapping("aptenon_crm_business_status", "status_id", CrmBusinessStatus.class);
+		arp.addMapping("aptenon_crm_business_type", "type_id", CrmBusinessType.class);
+		arp.addMapping("aptenon_crm_contacts", "contacts_id", CrmContacts.class);
+		arp.addMapping("aptenon_crm_contacts_business", "id", CrmContactsBusiness.class);
+		arp.addMapping("aptenon_crm_contract", "contract_id", CrmContract.class);
+		arp.addMapping("aptenon_crm_contract_product", "r_id", CrmContractProduct.class);
+		arp.addMapping("aptenon_crm_customer", "customer_id", CrmCustomer.class);
+		arp.addMapping("aptenon_crm_customer_setting", "setting_id", CrmCustomerSetting.class);
+		arp.addMapping("aptenon_crm_customer_settinguser", "id", CrmCustomerSettinguser.class);
+		arp.addMapping("aptenon_crm_customer_stats", "id", CrmCustomerStats.class);
+		arp.addMapping("aptenon_crm_leads", "leads_id", CrmLeads.class);
+		arp.addMapping("aptenon_crm_owner_record", "record_id", CrmOwnerRecord.class);
+		arp.addMapping("aptenon_crm_product", "product_id", CrmProduct.class);
+		arp.addMapping("aptenon_crm_product_category", "category_id", CrmProductCategory.class);
+		arp.addMapping("aptenon_crm_receivables", "receivables_id", CrmReceivables.class);
+		arp.addMapping("aptenon_crm_receivables_plan", "plan_id", CrmReceivablesPlan.class);
+		arp.addMapping("aptenon_oa_action_record", "log_id", OaActionRecord.class);
+		arp.addMapping("aptenon_oa_announcement", "announcement_id", OaAnnouncement.class);
+		arp.addMapping("aptenon_oa_event", "event_id", OaEvent.class);
+		arp.addMapping("aptenon_oa_event_notice", "id", OaEventNotice.class);
+		arp.addMapping("aptenon_oa_event_relation", "eventrelation_id", OaEventRelation.class);
+		arp.addMapping("aptenon_oa_examine", "examine_id", OaExamine.class);
+		arp.addMapping("aptenon_oa_examine_category", "category_id", OaExamineCategory.class);
+		arp.addMapping("aptenon_oa_examine_log", "log_id", OaExamineLog.class);
+		arp.addMapping("aptenon_oa_examine_record", "record_id", OaExamineRecord.class);
+		arp.addMapping("aptenon_oa_examine_relation", "r_id", OaExamineRelation.class);
+		arp.addMapping("aptenon_oa_examine_step", "step_id", OaExamineStep.class);
+		arp.addMapping("aptenon_oa_examine_travel", "travel_id", OaExamineTravel.class);
+		arp.addMapping("aptenon_oa_log", "log_id", OaLog.class);
+		arp.addMapping("aptenon_oa_log_relation", "r_id", OaLogRelation.class);
+		arp.addMapping("aptenon_task", "task_id", Task.class);
+		arp.addMapping("aptenon_task_comment", "comment_id", TaskComment.class);
+		arp.addMapping("aptenon_task_relation", "r_id", TaskRelation.class);
+		arp.addMapping("aptenon_work", "work_id", Work.class);
+		arp.addMapping("aptenon_work_task_class", "class_id", WorkTaskClass.class);
+		arp.addMapping("aptenon_work_task_label", "label_id", WorkTaskLabel.class);
+		arp.addMapping("aptenon_work_task_log", "log_id", WorkTaskLog.class);
+		arp.addMapping("aptenon_work_user", "id", WorkUser.class);
+		// Composite Primary Key order: FK_Dept,FrmID
+		arp.addMapping("frm_deptcreate", "FK_Dept,FrmID", FrmDeptcreate.class);
+		// Composite Primary Key order: FK_Emp,FrmID
+		arp.addMapping("frm_empcreate", "FK_Emp,FrmID", FrmEmpcreate.class);
+		arp.addMapping("frm_generbill", "WorkID", FrmGenerbill.class);
+		arp.addMapping("frm_method", "MyPK", FrmMethod.class);
+		// Composite Primary Key order: FK_Station,FrmID
+		arp.addMapping("frm_stationcreate", "FK_Station,FrmID", FrmStationcreate.class);
+		arp.addMapping("frm_track", "MyPK", FrmTrack.class);
+		arp.addMapping("gpm_app", "No", GpmApp.class);
+		arp.addMapping("gpm_appsort", "No", GpmAppsort.class);
+		arp.addMapping("gpm_bar", "No", GpmBar.class);
+		arp.addMapping("gpm_baremp", "MyPK", GpmBaremp.class);
+		arp.addMapping("gpm_empapp", "MyPK", GpmEmpapp.class);
+		// Composite Primary Key order: FK_Emp,FK_Menu
+		arp.addMapping("gpm_empmenu", "FK_Emp,FK_Menu", GpmEmpmenu.class);
+		arp.addMapping("gpm_group", "No", GpmGroup.class);
+		// Composite Primary Key order: FK_Emp,FK_Group
+		arp.addMapping("gpm_groupemp", "FK_Emp,FK_Group", GpmGroupemp.class);
+		// Composite Primary Key order: FK_Group,FK_Menu
+		arp.addMapping("gpm_groupmenu", "FK_Group,FK_Menu", GpmGroupmenu.class);
+		// Composite Primary Key order: FK_Group,FK_Station
+		arp.addMapping("gpm_groupstation", "FK_Group,FK_Station", GpmGroupstation.class);
+		arp.addMapping("gpm_menu", "No", GpmMenu.class);
+		arp.addMapping("gpm_persetting", "MyPK", GpmPersetting.class);
+		// Composite Primary Key order: FK_Menu,FK_Station
+		arp.addMapping("gpm_stationmenu", "FK_Menu,FK_Station", GpmStationmenu.class);
+		arp.addMapping("hr_baoxiao", "OID", HrBaoxiao.class);
+		arp.addMapping("hr_baoxiaodan", "OID", HrBaoxiaodan.class);
+		arp.addMapping("hr_gongshang", "OID", HrGongshang.class);
+		arp.addMapping("hr_nianjia", "OID", HrNianjia.class);
+		arp.addMapping("hr_qingjia", "OID", HrQingjia.class);
+		arp.addMapping("ht_yongyin", "OID", HtYongyin.class);
+		arp.addMapping("nd1track", "MyPK", Nd1track.class);
+		arp.addMapping("nd2track", "MyPK", Nd2track.class);
+		arp.addMapping("nd3track", "MyPK", Nd3track.class);
+		arp.addMapping("nd4track", "MyPK", Nd4track.class);
+		arp.addMapping("nd5track", "MyPK", Nd5track.class);
+		arp.addMapping("nd6track", "MyPK", Nd6track.class);
+		arp.addMapping("port_dept", "No", PortDept.class);
+		arp.addMapping("port_deptemp", "MyPK", PortDeptemp.class);
+		arp.addMapping("port_deptempstation", "MyPK", PortDeptempstation.class);
+		// Composite Primary Key order: FK_Dept,FK_Station
+		arp.addMapping("port_deptstation", "FK_Dept,FK_Station", PortDeptstation.class);
+		arp.addMapping("port_emp", "No", PortEmp.class);
+		arp.addMapping("port_org", "No", PortOrg.class);
+		arp.addMapping("port_station", "No", PortStation.class);
+		arp.addMapping("port_stationtype", "No", PortStationtype.class);
+		arp.addMapping("pub_nd", "No", PubNd.class);
+		arp.addMapping("pub_ny", "No", PubNy.class);
+		arp.addMapping("pub_yf", "No", PubYf.class);
+		arp.addMapping("sys_docfile", "MyPK", SysDocfile.class);
+		arp.addMapping("sys_encfg", "No", SysEncfg.class);
+		arp.addMapping("sys_enum", "MyPK", SysEnum.class);
+		arp.addMapping("sys_enummain", "No", SysEnummain.class);
+		arp.addMapping("sys_enver", "MyPK", SysEnver.class);
+		arp.addMapping("sys_enverdtl", "MyPK", SysEnverdtl.class);
+		arp.addMapping("sys_excelfield", "No", SysExcelfield.class);
+		arp.addMapping("sys_excelfile", "No", SysExcelfile.class);
+		arp.addMapping("sys_excelsheet", "No", SysExcelsheet.class);
+		arp.addMapping("sys_exceltable", "No", SysExceltable.class);
+		arp.addMapping("sys_filemanager", "OID", SysFilemanager.class);
+		arp.addMapping("sys_formtree", "No", SysFormtree.class);
+		arp.addMapping("sys_frmattachment", "MyPK", SysFrmattachment.class);
+		arp.addMapping("sys_frmattachmentdb", "MyPK", SysFrmattachmentdb.class);
+		arp.addMapping("sys_frmbtn", "MyPK", SysFrmbtn.class);
+		arp.addMapping("sys_frmele", "MyPK", SysFrmele.class);
+		arp.addMapping("sys_frmeledb", "MyPK", SysFrmeledb.class);
+		arp.addMapping("sys_frmevent", "MyPK", SysFrmevent.class);
+		arp.addMapping("sys_frmimg", "MyPK", SysFrmimg.class);
+		arp.addMapping("sys_frmimgath", "MyPK", SysFrmimgath.class);
+		arp.addMapping("sys_frmimgathdb", "MyPK", SysFrmimgathdb.class);
+		arp.addMapping("sys_frmlab", "MyPK", SysFrmlab.class);
+		arp.addMapping("sys_frmline", "MyPK", SysFrmline.class);
+		arp.addMapping("sys_frmlink", "MyPK", SysFrmlink.class);
+		arp.addMapping("sys_frmrb", "MyPK", SysFrmrb.class);
+		arp.addMapping("sys_frmreportfield", "MyPK", SysFrmreportfield.class);
+		arp.addMapping("sys_frmrpt", "No", SysFrmrpt.class);
+		arp.addMapping("sys_frmsln", "MyPK", SysFrmsln.class);
+		arp.addMapping("sys_glovar", "No", SysGlovar.class);
+		arp.addMapping("sys_groupenstemplate", "OID", SysGroupenstemplate.class);
+		arp.addMapping("sys_groupfield", "OID", SysGroupfield.class);
+		arp.addMapping("sys_langue", "MyPK", SysLangue.class);
+		arp.addMapping("sys_mapattr", "MyPK", SysMapattr.class);
+		arp.addMapping("sys_mapdata", "No", SysMapdata.class);
+		arp.addMapping("sys_mapdtl", "No", SysMapdtl.class);
+		arp.addMapping("sys_mapext", "MyPK", SysMapext.class);
+		arp.addMapping("sys_mapframe", "MyPK", SysMapframe.class);
+		// Composite Primary Key order: FK_Dept,FK_Rpt
+		arp.addMapping("sys_rptdept", "FK_Dept,FK_Rpt", SysRptdept.class);
+		// Composite Primary Key order: FK_Emp,FK_Rpt
+		arp.addMapping("sys_rptemp", "FK_Emp,FK_Rpt", SysRptemp.class);
+		// Composite Primary Key order: FK_Rpt,FK_Station
+		arp.addMapping("sys_rptstation", "FK_Rpt,FK_Station", SysRptstation.class);
+		arp.addMapping("sys_rpttemplate", "MyPK", SysRpttemplate.class);
+		arp.addMapping("sys_serial", "CfgKey", SysSerial.class);
+		arp.addMapping("sys_sfdbsrc", "No", SysSfdbsrc.class);
+		arp.addMapping("sys_sftable", "No", SysSftable.class);
+		arp.addMapping("sys_sms", "MyPK", SysSms.class);
+		arp.addMapping("sys_userlogt", "MyPK", SysUserlogt.class);
+		arp.addMapping("sys_userregedit", "MyPK", SysUserregedit.class);
+		arp.addMapping("sys_wfsealdata", "MyPK", SysWfsealdata.class);
+		arp.addMapping("wf_accepterrole", "OID", WfAccepterrole.class);
+		arp.addMapping("wf_athunreadlog", "MyPK", WfAthunreadlog.class);
+		arp.addMapping("wf_auth", "MyPK", WfAuth.class);
+		arp.addMapping("wf_bill", "MyPK", WfBill.class);
+		arp.addMapping("wf_billtemplate", "No", WfBilltemplate.class);
+		// Composite Primary Key order: FK_Dept,FK_Node
+		arp.addMapping("wf_ccdept", "FK_Dept,FK_Node", WfCcdept.class);
+		// Composite Primary Key order: FK_Emp,FK_Node
+		arp.addMapping("wf_ccemp", "FK_Emp,FK_Node", WfCcemp.class);
+		arp.addMapping("wf_cclist", "MyPK", WfCclist.class);
+		// Composite Primary Key order: FK_Node,FK_Station
+		arp.addMapping("wf_ccstation", "FK_Node,FK_Station", WfCcstation.class);
+		arp.addMapping("wf_ch", "MyPK", WfCh.class);
+		arp.addMapping("wf_cheval", "MyPK", WfCheval.class);
+		arp.addMapping("wf_cond", "MyPK", WfCond.class);
+		arp.addMapping("wf_deptflowsearch", "MyPK", WfDeptflowsearch.class);
+		arp.addMapping("wf_direction", "MyPK", WfDirection.class);
+		// Composite Primary Key order: FK_Direction,FK_Station
+		arp.addMapping("wf_directionstation", "FK_Direction,FK_Station", WfDirectionstation.class);
+		arp.addMapping("wf_emp", "No", WfEmp.class);
+		arp.addMapping("wf_findworkerrole", "OID", WfFindworkerrole.class);
+		arp.addMapping("wf_flow", "No", WfFlow.class);
+		// Composite Primary Key order: FlowNo,OrgNo
+		arp.addMapping("wf_floworg", "FlowNo,OrgNo", WfFloworg.class);
+		arp.addMapping("wf_flowsort", "No", WfFlowsort.class);
+		arp.addMapping("wf_frmnode", "MyPK", WfFrmnode.class);
+		// Composite Primary Key order: FK_Emp,FK_Node,WorkID
+		arp.addMapping("wf_generworkerlist", "FK_Emp,FK_Node,WorkID", WfGenerworkerlist.class);
+		arp.addMapping("wf_generworkflow", "WorkID", WfGenerworkflow.class);
+		arp.addMapping("wf_hungup", "MyPK", WfHungup.class);
+		arp.addMapping("wf_labnote", "MyPK", WfLabnote.class);
+		arp.addMapping("wf_node", "NodeID", WfNode.class);
+		// Composite Primary Key order: CancelTo,FK_Node
+		arp.addMapping("wf_nodecancel", "CancelTo,FK_Node", WfNodecancel.class);
+		// Composite Primary Key order: FK_Dept,FK_Node
+		arp.addMapping("wf_nodedept", "FK_Dept,FK_Node", WfNodedept.class);
+		// Composite Primary Key order: FK_Emp,FK_Node
+		arp.addMapping("wf_nodeemp", "FK_Emp,FK_Node", WfNodeemp.class);
+		// Composite Primary Key order: FK_Node,ReturnTo
+		arp.addMapping("wf_nodereturn", "FK_Node,ReturnTo", WfNodereturn.class);
+		// Composite Primary Key order: FK_Node,FK_Station
+		arp.addMapping("wf_nodestation", "FK_Node,FK_Station", WfNodestation.class);
+		arp.addMapping("wf_nodesubflow", "MyPK", WfNodesubflow.class);
+		arp.addMapping("wf_nodetoolbar", "OID", WfNodetoolbar.class);
+		arp.addMapping("wf_part", "MyPK", WfPart.class);
+		arp.addMapping("wf_powermodel", "MyPK", WfPowermodel.class);
+		arp.addMapping("wf_pushmsg", "MyPK", WfPushmsg.class);
+		arp.addMapping("wf_rememberme", "MyPK", WfRememberme.class);
+		arp.addMapping("wf_returnwork", "MyPK", WfReturnwork.class);
+		arp.addMapping("wf_selectaccper", "MyPK", WfSelectaccper.class);
+		arp.addMapping("wf_shiftwork", "MyPK", WfShiftwork.class);
+		arp.addMapping("wf_sqltemplate", "No", WfSqltemplate.class);
+		arp.addMapping("wf_task", "MyPK", WfTask.class);
+		arp.addMapping("wf_testapi", "No", WfTestapi.class);
+		arp.addMapping("wf_testcase", "MyPK", WfTestcase.class);
+		arp.addMapping("wf_testsample", "MyPK", WfTestsample.class);
+		arp.addMapping("wf_testver", "No", WfTestver.class);
+		arp.addMapping("wf_transfercustom", "MyPK", WfTransfercustom.class);
+		arp.addMapping("wf_workflowdeletelog", "OID", WfWorkflowdeletelog.class);
 	}
 }
 

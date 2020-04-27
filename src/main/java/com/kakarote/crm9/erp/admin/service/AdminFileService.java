@@ -123,9 +123,9 @@ public class AdminFileService {
         List<String> paths=Db.query(Db.getSql("admin.file.queryPathByBatchId"), batchId);
 
         paths.stream().map(File::new).filter(file -> file.exists() && !file.isDirectory()).forEach(File::delete);
-        Db.deleteById("72crm_admin_file","batch_id",batchId);
+        Db.deleteById("aptenon_admin_file","batch_id",batchId);
     }
     public boolean renameFileById(AdminFile file){
-        return Db.update("72crm_admin_file","file_id",file.toRecord());
+        return Db.update("aptenon_admin_file","file_id",file.toRecord());
     }
 }

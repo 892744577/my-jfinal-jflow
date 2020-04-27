@@ -89,13 +89,13 @@ public class CrmBackLogService {
         JSONObject jsonObject = basePageRequest.getJsonObject();
         Integer type = jsonObject.getInteger("type");
         Integer isSub = jsonObject.getInteger("isSub");
-        StringBuffer stringBuffer = new StringBuffer("select customer_id from 72crm_crm_customer as a where ");
+        StringBuffer stringBuffer = new StringBuffer("select customer_id from aptenon_crm_customer as a where ");
         if (type == 1){
-            stringBuffer.append(" a.customer_id not in (IFNULL((select GROUP_CONCAT(types_id) from 72crm_admin_record where types = 'crm_customer' and to_days(create_time) = to_days(now())),0)) and to_days(a.next_time) = to_days(now())");
+            stringBuffer.append(" a.customer_id not in (IFNULL((select GROUP_CONCAT(types_id) from aptenon_admin_record where types = 'crm_customer' and to_days(create_time) = to_days(now())),0)) and to_days(a.next_time) = to_days(now())");
         }else if (type == 2){
-            stringBuffer.append(" a.customer_id not in (IFNULL((select GROUP_CONCAT(types_id) from 72crm_admin_record where types = 'crm_customer' and to_days(create_time) >= to_days(a.next_time)),0)) and to_days(a.next_time) < to_days(now())");
+            stringBuffer.append(" a.customer_id not in (IFNULL((select GROUP_CONCAT(types_id) from aptenon_admin_record where types = 'crm_customer' and to_days(create_time) >= to_days(a.next_time)),0)) and to_days(a.next_time) < to_days(now())");
         }else if (type == 3){
-            stringBuffer.append(" a.customer_id = any(select types_id from 72crm_admin_record where types = 'crm_customer' and to_days(create_time) = to_days(now())) and to_days(a.next_time) = to_days(now())");
+            stringBuffer.append(" a.customer_id = any(select types_id from aptenon_admin_record where types = 'crm_customer' and to_days(create_time) = to_days(now())) and to_days(a.next_time) = to_days(now())");
         }else {
             return R.error("type类型不正确");
         }
@@ -136,7 +136,7 @@ public class CrmBackLogService {
         JSONObject jsonObject = basePageRequest.getJsonObject();
         Integer type = jsonObject.getInteger("type");
         Integer isSub = jsonObject.getInteger("isSub");
-        StringBuffer stringBuffer = new StringBuffer("select leads_id from 72crm_crm_leads as a where");
+        StringBuffer stringBuffer = new StringBuffer("select leads_id from aptenon_crm_leads as a where");
         if (type == 1){
             stringBuffer.append(" a.followup = 0 and a.is_transform = 0");
         }else if (type == 2){
@@ -184,7 +184,7 @@ public class CrmBackLogService {
         JSONObject jsonObject = basePageRequest.getJsonObject();
         Integer type = jsonObject.getInteger("type");
         Integer isSub = jsonObject.getInteger("isSub");
-        StringBuilder stringBuffer = new StringBuilder("select customer_id from 72crm_crm_customer as a where");
+        StringBuilder stringBuffer = new StringBuilder("select customer_id from aptenon_crm_customer as a where");
         if (type == 1){
             stringBuffer.append(" a.followup = 0");
         }else if (type == 2){
@@ -221,7 +221,7 @@ public class CrmBackLogService {
         JSONObject jsonObject = basePageRequest.getJsonObject();
         Integer type = jsonObject.getInteger("type");
         Integer isSub = jsonObject.getInteger("isSub");
-        StringBuffer stringBuffer = new StringBuffer("select contract_id from 72crm_crm_contract as a inner join 72crm_admin_examine_record as b on a.examine_record_id = b.record_id left join 72crm_admin_examine_log as c on b.record_id = c.record_id where c.is_recheck != 1 and ifnull(b.examine_step_id, 1) = ifnull(c.examine_step_id, 1) and");
+        StringBuffer stringBuffer = new StringBuffer("select contract_id from aptenon_crm_contract as a inner join aptenon_admin_examine_record as b on a.examine_record_id = b.record_id left join aptenon_admin_examine_log as c on b.record_id = c.record_id where c.is_recheck != 1 and ifnull(b.examine_step_id, 1) = ifnull(c.examine_step_id, 1) and");
         if (type == 1){
             stringBuffer.append(" a.check_status in (0,3) and c.examine_status in (0,3)");
         }else if (type == 2){
@@ -258,7 +258,7 @@ public class CrmBackLogService {
         JSONObject jsonObject = basePageRequest.getJsonObject();
         Integer type = jsonObject.getInteger("type");
         Integer isSub = jsonObject.getInteger("isSub");
-        StringBuilder stringBuffer = new StringBuilder("select receivables_id from 72crm_crm_receivables as a inner join 72crm_admin_examine_record as b on a.examine_record_id = b.record_id left join 72crm_admin_examine_log as c on b.record_id = c.record_id where ifnull(b.examine_step_id, 1) = ifnull(c.examine_step_id, 1) and");
+        StringBuilder stringBuffer = new StringBuilder("select receivables_id from aptenon_crm_receivables as a inner join aptenon_admin_examine_record as b on a.examine_record_id = b.record_id left join aptenon_admin_examine_log as c on b.record_id = c.record_id where ifnull(b.examine_step_id, 1) = ifnull(c.examine_step_id, 1) and");
         if (type == 1) {
             stringBuffer.append(" a.check_status in (0,3) and c.examine_status in (0,3)");
         } else if (type == 2) {
@@ -295,7 +295,7 @@ public class CrmBackLogService {
         JSONObject jsonObject = basePageRequest.getJsonObject();
         Integer type = jsonObject.getInteger("type");
         Integer isSub = jsonObject.getInteger("isSub");
-        StringBuffer stringBuffer = new StringBuffer("from 72crm_crm_receivables_plan as a inner join 72crm_crm_customer as b on a.customer_id = b.customer_id inner join 72crm_crm_contract as c on a.contract_id = c.contract_id where");
+        StringBuffer stringBuffer = new StringBuffer("from aptenon_crm_receivables_plan as a inner join aptenon_crm_customer as b on a.customer_id = b.customer_id inner join aptenon_crm_contract as c on a.contract_id = c.contract_id where");
         if (type == 1){
             stringBuffer.append(" to_days(a.return_date) >= to_days(now()) and to_days(a.return_date) <= to_days(now())+a.remind and receivables_id is null");
         }else if (type == 2){
@@ -328,8 +328,8 @@ public class CrmBackLogService {
         JSONObject jsonObject = basePageRequest.getJsonObject();
         Integer type = jsonObject.getInteger("type");
         Integer isSub = jsonObject.getInteger("isSub");
-        AdminConfig adminConfig = AdminConfig.dao.findFirst("select * from 72crm_admin_config where name = 'expiringContractDays'");
-        StringBuffer stringBuffer = new StringBuffer("select contract_id from 72crm_crm_contract as a where a.check_status = 1 ");
+        AdminConfig adminConfig = AdminConfig.dao.findFirst("select * from aptenon_admin_config where name = 'expiringContractDays'");
+        StringBuffer stringBuffer = new StringBuffer("select contract_id from aptenon_crm_contract as a where a.check_status = 1 ");
         if (type == 1){
             if (adminConfig.getStatus() == 0 || ObjectUtil.isNull(adminConfig)){
                 return R.ok().put("data",new Page<>());
@@ -369,18 +369,18 @@ public class CrmBackLogService {
     public R putInPoolRemind(BasePageRequest basePageRequest){
         JSONObject jsonObject = basePageRequest.getJsonObject();
         Integer isSub = jsonObject.getInteger("isSub");
-        Integer poolSetting = Db.queryInt("select status from 72crm_admin_config where name = 'customerPoolSetting' limit 1");
-        String dealDays = Db.queryStr("select value from 72crm_admin_config where name = 'customerPoolSettingDealDays' limit 1");
-        String followUpDays = Db.queryStr("select value from 72crm_admin_config where name = 'customerPoolSettingFollowupDays' limit 1");
-        AdminConfig remindConfig = AdminConfig.dao.findFirst("select * from 72crm_admin_config where name = 'putInPoolRemindDays'");
-        StringBuffer stringBuffer = new StringBuffer("select customer_id from 72crm_crm_customer as a");
+        Integer poolSetting = Db.queryInt("select status from aptenon_admin_config where name = 'customerPoolSetting' limit 1");
+        String dealDays = Db.queryStr("select value from aptenon_admin_config where name = 'customerPoolSettingDealDays' limit 1");
+        String followUpDays = Db.queryStr("select value from aptenon_admin_config where name = 'customerPoolSettingFollowupDays' limit 1");
+        AdminConfig remindConfig = AdminConfig.dao.findFirst("select * from aptenon_admin_config where name = 'putInPoolRemindDays'");
+        StringBuffer stringBuffer = new StringBuffer("select customer_id from aptenon_crm_customer as a");
             if (poolSetting != 1 || remindConfig.getStatus() == 0 || ObjectUtil.isNull(remindConfig)){
                 return R.ok().put("data",new Page<>());
             }
             int remindDays = Integer.parseInt(remindConfig.getValue());
             Integer startDealDays = Integer.parseInt(dealDays) - remindDays;
             Integer startFollowUpDays = Integer.parseInt(followUpDays) - remindDays;
-            stringBuffer.append(" where owner_user_id is not null and deal_status = 0 and is_lock = 0 and ((to_days(now()) - to_days(IFNULL((SELECT car.create_time FROM 72crm_admin_record as car where car.types = 'crm_customer' and car.types_id = a.customer_id ORDER BY car.create_time DESC LIMIT 1),a.create_time))) between ").append(startFollowUpDays).append(" and ").append(followUpDays).append(" or (to_days(now()) - to_days(create_time)) between ").append(startDealDays).append(" and ").append(dealDays).append(")");
+            stringBuffer.append(" where owner_user_id is not null and deal_status = 0 and is_lock = 0 and ((to_days(now()) - to_days(IFNULL((SELECT car.create_time FROM aptenon_admin_record as car where car.types = 'crm_customer' and car.types_id = a.customer_id ORDER BY car.create_time DESC LIMIT 1),a.create_time))) between ").append(startFollowUpDays).append(" and ").append(followUpDays).append(" or (to_days(now()) - to_days(create_time)) between ").append(startDealDays).append(" and ").append(dealDays).append(")");
             if (isSub == 1){
                 stringBuffer.append(" and owner_user_id = ").append(BaseUtil.getUserId());
             }else if (isSub == 2){

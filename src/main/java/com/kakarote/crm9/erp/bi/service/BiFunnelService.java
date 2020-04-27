@@ -53,9 +53,9 @@ public class BiFunnelService {
         Integer beginTime = record.getInt("beginTime");
         StringBuilder stringBuilder = new StringBuilder();
         for (int i=1; i <= cycleNum;i++){
-            stringBuilder.append("select '").append(beginTime).append("' as type,IFNULL((select count(1) from 72crm_crm_business where DATE_FORMAT(create_time,'")
+            stringBuilder.append("select '").append(beginTime).append("' as type,IFNULL((select count(1) from aptenon_crm_business where DATE_FORMAT(create_time,'")
                     .append(sqlDateFormat).append("') = '").append(beginTime).append("' and owner_user_id in (").append(userIds)
-                    .append(")),0) as businessNum,IFNULL(sum(money),0) as businessMoney from 72crm_crm_business  where DATE_FORMAT(create_time,'")
+                    .append(")),0) as businessNum,IFNULL(sum(money),0) as businessMoney from aptenon_crm_business  where DATE_FORMAT(create_time,'")
                     .append(sqlDateFormat).append("') = '").append(beginTime).append("' and owner_user_id in (").append(userIds).append(")");
             if (i != cycleNum){
                 stringBuilder.append(" union all ");
@@ -99,12 +99,12 @@ public class BiFunnelService {
         Integer beginTime = record.getInt("beginTime");
         StringBuffer sqlStringBuffer = new StringBuffer();
         for (int i=1; i <= cycleNum;i++){
-            sqlStringBuffer.append("select '").append(beginTime).append("' as type,IFNULL((select count(1) from 72crm_crm_business where DATE_FORMAT(create_time,'")
+            sqlStringBuffer.append("select '").append(beginTime).append("' as type,IFNULL((select count(1) from aptenon_crm_business where DATE_FORMAT(create_time,'")
                     .append(sqlDateFormat).append("') = '").append(beginTime).append("'and is_end = 1 and owner_user_id in (").append(userIds)
-                    .append(")),0) as businessEnd,COUNT(1) as businessNum,").append(" IFNULL((select count(1) from 72crm_crm_business where DATE_FORMAT(create_time,'")
+                    .append(")),0) as businessEnd,COUNT(1) as businessNum,").append(" IFNULL((select count(1) from aptenon_crm_business where DATE_FORMAT(create_time,'")
                     .append(sqlDateFormat).append("') = '").append(beginTime).append("'and is_end = 1 and owner_user_id in (").append(userIds).
                     append(")) / COUNT(1),0 )").append(" as proportion ").
-                    append(" from 72crm_crm_business  where DATE_FORMAT(create_time,'")
+                    append(" from aptenon_crm_business  where DATE_FORMAT(create_time,'")
                     .append(sqlDateFormat).append("') = '").append(beginTime).append("' and owner_user_id in (").append(userIds).append(")");
             if (i != cycleNum){
                 sqlStringBuffer.append(" union all ");

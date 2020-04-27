@@ -125,7 +125,7 @@ public class CrmReceivablesService {
      */
     public Record queryById(Integer id) {
         Record record = Db.findFirst(Db.getSql("crm.receivables.queryReceivablesById"), id);
-        List<Record> recordList = Db.find("select name,value from `72crm_admin_fieldv` where batch_id = ?", record.getStr("batch_id"));
+        List<Record> recordList = Db.find("select name,value from `aptenon_admin_fieldv` where batch_id = ?", record.getStr("batch_id"));
         recordList.forEach(field -> record.set(field.getStr("name"), field.getStr("value")));
         return record;
     }
@@ -166,7 +166,7 @@ public class CrmReceivablesService {
             if (bol){
                 return R.noAuth();
             }
-            Db.delete("delete FROM 72crm_admin_fieldv where batch_id = ?", receivables.getBatchId());
+            Db.delete("delete FROM aptenon_admin_fieldv where batch_id = ?", receivables.getBatchId());
             if (!CrmReceivables.dao.deleteById(id)) {
                 return R.error();
             }
@@ -193,7 +193,7 @@ public class CrmReceivablesService {
      * 根据条件查询回款
      */
     public List<Record> queryList(CrmReceivables receivables) {
-        String sq = "select * from 72crm_crm_receivables where 1 = 1 ";
+        String sq = "select * from aptenon_crm_receivables where 1 = 1 ";
         StringBuffer sql = new StringBuffer(sq);
         if (receivables.getCustomerId() != null) {
             sql.append(" and customer_id = ").append(receivables.getCustomerId());

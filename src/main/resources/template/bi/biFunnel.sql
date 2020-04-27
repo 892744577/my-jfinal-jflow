@@ -4,8 +4,8 @@
       ccbs.`name`,
       ccbs.order_num,IFNULL(SUM(ccb.money),0) as money,
       ccb.type_id
-      FROM 72crm_crm_business as ccb
-      LEFT JOIN 72crm_crm_business_status as ccbs ON ccbs.status_id = ccb.status_id
+      FROM aptenon_crm_business as ccb
+      LEFT JOIN aptenon_crm_business_status as ccbs ON ccbs.status_id = ccb.status_id
       where
         ccbs.type_id = #para(typeId)
         and is_end = 0
@@ -51,8 +51,8 @@
     #end
     #sql ("sellFunnelSum")
       SELECT IFNULL(SUM(ccb.money),0) as money
-      FROM 72crm_crm_business as ccb
-      LEFT JOIN 72crm_crm_business_status as ccbs ON ccbs.status_id = ccb.status_id
+      FROM aptenon_crm_business as ccb
+      LEFT JOIN aptenon_crm_business_status as ccbs ON ccbs.status_id = ccb.status_id
       where
         ccbs.type_id = #para(typeId)
          and  ccb.owner_user_id in (#for(x:userIds)
@@ -109,12 +109,12 @@
              WHEN a.is_end = 2 THEN '输单'
              WHEN a.is_end = 3 THEN '无效' END as status_name,
          a.type_id,f.name as type_name
-        FROM 72crm_crm_business  a
-        left join 72crm_admin_user b on a.create_user_id = b.user_id
-        left join 72crm_admin_user c on a.owner_user_id = c.user_id
-        left join 72crm_crm_customer d on d.customer_id = a.customer_id
-        left join 72crm_crm_business_status e on e.status_id = a.status_id
-        left join 72crm_crm_business_type f on f.type_id = a.type_id
+        FROM aptenon_crm_business  a
+        left join aptenon_admin_user b on a.create_user_id = b.user_id
+        left join aptenon_admin_user c on a.owner_user_id = c.user_id
+        left join aptenon_crm_customer d on d.customer_id = a.customer_id
+        left join aptenon_crm_business_status e on e.status_id = a.status_id
+        left join aptenon_crm_business_type f on f.type_id = a.type_id
         where
         a.owner_user_id in (#for(x:userIds)
           #(for.index == 0 ? "" : ",")

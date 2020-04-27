@@ -36,7 +36,7 @@ public class AdminUserService {
         boolean bol;
         updateScene(adminUser);
         if (adminUser.getUserId() == null) {
-            Integer count = Db.queryInt("select count(*) from 72crm_admin_user where username = ?", adminUser.getUsername());
+            Integer count = Db.queryInt("select count(*) from aptenon_admin_user where username = ?", adminUser.getUsername());
             if (count > 0) {
                 return R.error("手机号重复！");
             }
@@ -61,13 +61,13 @@ public class AdminUserService {
                     return R.error("该员工的下级员工不能设置为直属上级");
                 }
             }
-            String username = Db.queryStr("select username from 72crm_admin_user where user_id = ?", adminUser.getUserId());
+            String username = Db.queryStr("select username from aptenon_admin_user where user_id = ?", adminUser.getUserId());
             if (!username.equals(adminUser.getUsername())) {
                 return R.error("用户名不能修改！");
             }
             bol = adminUser.update();
-            Db.delete("delete from 72crm_admin_user_role where user_id = ?", adminUser.getUserId());
-            Db.delete("delete from 72crm_admin_scene where user_id = ? and is_system = 1", adminUser.getUserId());
+            Db.delete("delete from aptenon_admin_user_role where user_id = ?", adminUser.getUserId());
+            Db.delete("delete from aptenon_admin_scene where user_id = ? and is_system = 1", adminUser.getUserId());
         }
         if (StrUtil.isNotBlank(roleIds)) {
             Long userId = adminUser.getUserId();
@@ -158,7 +158,7 @@ public class AdminUserService {
      * 查询可设置为上级的user
      */
     public List<Record> queryTopUserList(Long userId) {
-        List<Record> recordList = Db.find("select user_id,realname,parent_id from 72crm_admin_user");
+        List<Record> recordList = Db.find("select user_id,realname,parent_id from aptenon_admin_user");
         List<Long> subUserList = queryChileUserIds(userId,BaseConstant.AUTH_DATA_RECURSION_NUM);
         recordList.removeIf(record -> subUserList.contains(record.getLong("user_id")));
         recordList.removeIf(record -> record.getLong("user_id").equals(userId));
@@ -171,7 +171,7 @@ public class AdminUserService {
      * @param deptId 当前部门id
      */
     public List<Integer> queryChileDeptIds(Integer deptId,Integer deepness) {
-        List<Integer> list = Db.query("select dept_id from 72crm_admin_dept where pid = ?", deptId);
+        List<Integer> list = Db.query("select dept_id from aptenon_admin_dept where pid = ?", deptId);
         if (list.size() != 0 && deepness > 0) {
             int size = list.size();
             for (int i = 0; i < size; i++) {
@@ -187,7 +187,7 @@ public class AdminUserService {
      * @param userId 当前用户id
      */
     public List<Long> queryChileUserIds(Long userId,Integer deepness) {
-        List<Long> query = Db.query("select user_id from 72crm_admin_user where parent_id = ?", userId);
+        List<Long> query = Db.query("select user_id from aptenon_admin_user where parent_id = ?", userId);
         if (deepness > 0) {
             for (int i = 0,size=query.size(); i < size; i++) {
                 query.addAll(queryChileUserIds(query.get(i),deepness-1));
@@ -204,7 +204,7 @@ public class AdminUserService {
         for (String id : ids.split(",")) {
             AdminUser adminUser = new AdminUser().dao().findById(id);
             String password = BaseUtil.sign(adminUser.getUsername() + pwd, adminUser.getSalt());
-            Db.update("update 72crm_admin_user set password = ? where user_id = ?", password, id);
+            Db.update("update aptenon_admin_user set password = ? where user_id = ?", password, id);
             BaseUtil.userExit(adminUser.getUserId(),null);
         }
         return R.ok();
@@ -226,7 +226,7 @@ public class AdminUserService {
      * 查询系统下属用户列表
      */
     public List<Long> queryUserIdsByParentId(Long userId) {
-        String sql = "select user_id from 72crm_admin_user where parent_id = ? ";
+        String sql = "select user_id from aptenon_admin_user where parent_id = ? ";
         List<Record> records = Db.find(sql, userId);
         List<Long> userIds = new ArrayList<>();
         for (Record record : records) {
@@ -269,7 +269,7 @@ public class AdminUserService {
 
     public R setUserStatus(String ids, String status) {
         for (Integer id : TagUtil.toSet(ids)) {
-            Db.update("update 72crm_admin_user set status = ? where user_id = ?", status, id);
+            Db.update("update aptenon_admin_user set status = ? where user_id = ?", status, id);
             if("0".equals(status)){
                 BaseUtil.userExit(Long.valueOf(id),null);
             }
@@ -410,7 +410,7 @@ public class AdminUserService {
     public List<Long> queryUserByParentUser(Long userId, Integer deepness) {
         List<Long> recordList = new ArrayList<>();
         if (deepness > 0) {
-            List<Long> records = Db.query("SELECT b.user_id FROM 72crm_admin_user AS b WHERE b.parent_id = ?", userId);
+            List<Long> records = Db.query("SELECT b.user_id FROM aptenon_admin_user AS b WHERE b.parent_id = ?", userId);
             recordList.addAll(records);
             int size = recordList.size();
             for (int i = 0; i < size; i++) {
@@ -436,7 +436,7 @@ public class AdminUserService {
      */
     public Record queryByDeptIds(String deptIds,String userIds){
         Record record = new Record();
-        List<Record> allDepts = Db.find("select * from 72crm_admin_dept where dept_id in ( ? )",deptIds);
+        List<Record> allDepts = Db.find("select * from aptenon_admin_dept where dept_id in ( ? )",deptIds);
         deptIds = getDeptIds(null,allDepts);
 
         String arrUserIds  = queryUserIdsByDept(deptIds);
@@ -453,7 +453,7 @@ public class AdminUserService {
         for ( Record dept: allDepts) {
             Integer pid =   dept.getInt("pid");
             if (pid != 0){
-                deptIds = getDeptIds(deptIds,  Db.find("select * from 72crm_admin_dept where dept_id in ( ? )",pid));
+                deptIds = getDeptIds(deptIds,  Db.find("select * from aptenon_admin_dept where dept_id in ( ? )",pid));
             }else {
                 if (deptIds == null){
                     deptIds = dept.getStr("dept_id");
@@ -482,7 +482,7 @@ public class AdminUserService {
         if(adminUser.getUsername().equals(username)){
             return R.error("账号不能和原账号相同");
         }
-        Integer count = Db.queryInt("select count(*) from 72crm_admin_user where username = ?", username);
+        Integer count = Db.queryInt("select count(*) from aptenon_admin_user where username = ?", username);
         if (count > 0) {
             return R.error("手机号重复！");
         }
@@ -494,7 +494,7 @@ public class AdminUserService {
     }
 
     private String getUserIds(String deptIds,String userIds){
-        List<Record> allUsers = Db.find("select * from 72crm_admin_user where dept_id NOT in (?) and user_id in (?)", deptIds, userIds);
+        List<Record> allUsers = Db.find("select * from aptenon_admin_user where dept_id NOT in (?) and user_id in (?)", deptIds, userIds);
         userIds = null;
         for ( Record user: allUsers) {
             if (userIds == null){

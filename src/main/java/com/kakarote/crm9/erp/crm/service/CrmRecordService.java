@@ -95,7 +95,7 @@ public class CrmRecordService<T extends Model>{
         if(jsonArray == null){
             return;
         }
-        List<AdminFieldv> oldFieldList = new AdminFieldv().dao().find("select * from 72crm_admin_fieldv where batch_id = ?", batchId);
+        List<AdminFieldv> oldFieldList = new AdminFieldv().dao().find("select * from aptenon_admin_fieldv where batch_id = ?", batchId);
         oldFieldList.forEach(oldField -> {
             jsonArray.forEach(json -> {
                 AdminFieldv newField = TypeUtils.castToJavaBean(json, AdminFieldv.class);
@@ -137,20 +137,20 @@ public class CrmRecordService<T extends Model>{
                 }
                 if(x.getKey().equals(y.getKey()) && ! oldValue.equals(newValue)){
                     if("owner_user_id".equals(x.getKey())){
-                        newValue = Db.queryStr("select realname from `72crm_admin_user` where user_id = ?", newValue);
-                        oldValue = Db.queryStr("select realname from `72crm_admin_user` where user_id = ?", oldValue);
+                        newValue = Db.queryStr("select realname from `aptenon_admin_user` where user_id = ?", newValue);
+                        oldValue = Db.queryStr("select realname from `aptenon_admin_user` where user_id = ?", oldValue);
                     }else if("customer_id".equals(x.getKey())){
-                        newValue = Db.queryStr("select customer_name from `72crm_crm_customer` where customer_id = ?", newValue);
-                        oldValue = Db.queryStr("select customer_name from `72crm_crm_customer` where customer_id = ?", oldValue);
+                        newValue = Db.queryStr("select customer_name from `aptenon_crm_customer` where customer_id = ?", newValue);
+                        oldValue = Db.queryStr("select customer_name from `aptenon_crm_customer` where customer_id = ?", oldValue);
                     }else if("business_id".equals(x.getKey())){
-                        newValue = Db.queryStr("select business_name from `72crm_crm_business` where business_name = ?", newValue);
-                        oldValue = Db.queryStr("select business_name from `72crm_crm_business` where business_name = ?", oldValue);
+                        newValue = Db.queryStr("select business_name from `aptenon_crm_business` where business_name = ?", newValue);
+                        oldValue = Db.queryStr("select business_name from `aptenon_crm_business` where business_name = ?", oldValue);
                     }else if("contract_id".equals(x.getKey())){
-                        newValue = Db.queryStr("select name from `72crm_crm_contract` where contract_id = ?", newValue);
-                        oldValue = Db.queryStr("select name from `72crm_crm_contract` where contract_id = ?", oldValue);
+                        newValue = Db.queryStr("select name from `aptenon_crm_contract` where contract_id = ?", newValue);
+                        oldValue = Db.queryStr("select name from `aptenon_crm_contract` where contract_id = ?", oldValue);
                     }else if("category_id".equals(x.getKey())){
-                        newValue = Db.queryStr("select name from `72crm_crm_product_category` where category_id = ?", newValue);
-                        oldValue = Db.queryStr("select name from `72crm_crm_product_category` where category_id = ?", oldValue);
+                        newValue = Db.queryStr("select name from `aptenon_crm_product_category` where category_id = ?", newValue);
+                        oldValue = Db.queryStr("select name from `aptenon_crm_product_category` where category_id = ?", oldValue);
                     }
                     if(! "update_time".equals(x.getKey()) && ! "create_user_id".equals(x.getKey())){
                         textList.add("将" + propertiesMap.get(crmTypes).get(x.getKey()) + " 由" + oldValue + "修改为" + newValue + "。");
@@ -175,7 +175,7 @@ public class CrmRecordService<T extends Model>{
      * @param actionId
      */
     public void addConversionRecord(Integer actionId, CrmEnum crmEnum, Long userId){
-        String name = Db.queryStr("select realname from 72crm_admin_user where user_id = ?", userId);
+        String name = Db.queryStr("select realname from aptenon_admin_user where user_id = ?", userId);
         CrmActionRecord crmActionRecord = new CrmActionRecord();
         crmActionRecord.setCreateUserId(BaseUtil.getUser().getUserId());
         crmActionRecord.setCreateTime(new Date());
@@ -261,7 +261,7 @@ public class CrmRecordService<T extends Model>{
                 continue;
             }
             ArrayList<String> strings = new ArrayList<>();
-            String name = Db.queryStr("select realname from 72crm_admin_user where user_id = ?", userId);
+            String name = Db.queryStr("select realname from aptenon_admin_user where user_id = ?", userId);
             CrmActionRecord crmActionRecord = new CrmActionRecord();
             crmActionRecord.setCreateUserId(BaseUtil.getUser().getUserId());
             crmActionRecord.setCreateTime(new Date());
@@ -285,7 +285,7 @@ public class CrmRecordService<T extends Model>{
      * 删除跟进记录
      */
     public R deleteFollowRecord(Integer recordId){
-        adminFileService.removeByBatchId(Db.queryStr("select batch_id from `72crm_admin_record` where record_id = ?",recordId));
+        adminFileService.removeByBatchId(Db.queryStr("select batch_id from `aptenon_admin_record` where record_id = ?",recordId));
         return AdminRecord.dao.deleteById(recordId) ? R.ok() : R.error();
     }
 
@@ -294,7 +294,7 @@ public class CrmRecordService<T extends Model>{
      * 查询跟进记录类型
      */
     public R queryRecordOptions(){
-        List<String> list = Db.query("select value from 72crm_admin_config where name = 'followRecordOption'");
+        List<String> list = Db.query("select value from aptenon_admin_config where name = 'followRecordOption'");
         return R.ok().put("data", list);
     }
 
@@ -304,7 +304,7 @@ public class CrmRecordService<T extends Model>{
      */
     @Before(Tx.class)
     public R setRecordOptions(List<String> list){
-        Db.delete("delete from 72crm_admin_config where name = 'followRecordOption'");
+        Db.delete("delete from aptenon_admin_config where name = 'followRecordOption'");
         for(int i = 0; i < list.size(); i++){
             AdminConfig adminConfig = new AdminConfig();
             adminConfig.setName("followRecordOption");

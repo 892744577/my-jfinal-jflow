@@ -81,7 +81,7 @@ public class CrmContactsService {
      */
     public Record queryById(Integer contactsId){
         Record crmContacts = Db.findFirst(Db.getSql("crm.contact.queryById"),contactsId);
-        List<Record> recordList = Db.find("select name,value from `72crm_admin_fieldv` where batch_id = ?", crmContacts.getStr("batch_id"));
+        List<Record> recordList = Db.find("select name,value from `aptenon_admin_fieldv` where batch_id = ?", crmContacts.getStr("batch_id"));
         recordList.forEach(field->crmContacts.set(field.getStr("name"),field.getStr("value")));
         return crmContacts;
     }
@@ -127,7 +127,7 @@ public class CrmContactsService {
     @Before(Tx.class)
     public R relateBusiness(Integer contactsId, String businessIds){
         String[] businessIdsArr = businessIds.split(",");
-        Db.delete("delete from 72crm_crm_contacts_business where contacts_id = ?",contactsId);
+        Db.delete("delete from aptenon_crm_contacts_business where contacts_id = ?",contactsId);
         List<CrmContactsBusiness> crmContactsBusinessList = new ArrayList<>();
         for (String id:businessIdsArr){
             CrmContactsBusiness crmContactsBusiness = new CrmContactsBusiness();
@@ -198,7 +198,7 @@ public class CrmContactsService {
         List<Record> batchIdList = Db.find(Db.getSqlPara("crm.contact.queryBatchIdByIds",Kv.by("ids",idsArr)));
         return Db.tx(() ->{
             Db.batch(Db.getSql("crm.contact.deleteByIds"),"contacts_id",idsList,100);
-            Db.batch("delete from 72crm_admin_fieldv where batch_id = ?","batch_id",batchIdList,100);
+            Db.batch("delete from aptenon_admin_fieldv where batch_id = ?","batch_id",batchIdList,100);
             return true;
         }) ? R.ok() : R.error();
     }
@@ -226,13 +226,13 @@ public class CrmContactsService {
      * @param ownerUserId 负责人ID
      */
     public R updateOwnerUserId(Integer customerId,Long ownerUserId){
-        List<Integer> contactsIdList = Db.query("select contacts_id from 72crm_crm_contacts where customer_id = ?",customerId);
+        List<Integer> contactsIdList = Db.query("select contacts_id from aptenon_crm_contacts where customer_id = ?",customerId);
         for (Integer contactsId : contactsIdList) {
             if (!BaseUtil.getUserId().equals(BaseConstant.SUPER_ADMIN_USER_ID) && !AuthUtil.isRwAuth(contactsId, "contacts")) {
                 return R.error("无权限转移");
             }
         }
-        Db.update("update 72crm_crm_contacts set owner_user_id = " + ownerUserId + " where customer_id = "+customerId);
+        Db.update("update aptenon_crm_contacts set owner_user_id = " + ownerUserId + " where customer_id = "+customerId);
         crmRecordService.addConversionRecord(customerId,CrmEnum.CRM_CUSTOMER,ownerUserId);
         return R.ok();
     }

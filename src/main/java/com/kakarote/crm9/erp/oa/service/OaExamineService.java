@@ -75,7 +75,7 @@ public class OaExamineService{
     public void transfer(List<Record> recordList){
         recordList.forEach(record -> {
             setRelation(record);
-            record.set("createUser", Db.findFirst("select user_id,realname,img from 72crm_admin_user where user_id = ?", record.getLong("create_user_id")));
+            record.set("createUser", Db.findFirst("select user_id,realname,img from aptenon_admin_user where user_id = ?", record.getLong("create_user_id")));
             String batchId = record.getStr("batch_id");
             adminFileService.queryByBatchId(batchId, record);
             setCountRecord(record);
@@ -106,7 +106,7 @@ public class OaExamineService{
     private void setCountRecord(Record record){
         Integer examineId = record.getInt("examine_id");
         String categoryTitle = record.getStr("categoryTitle");
-        Integer count = Db.queryInt("select count(*) as count from 72crm_oa_examine_travel where examine_id = ?", examineId);
+        Integer count = Db.queryInt("select count(*) as count from aptenon_oa_examine_travel where examine_id = ?", examineId);
         StringBuilder causeTitle = new StringBuilder();
         if(count > 0){
             causeTitle.append(count);
@@ -159,7 +159,7 @@ public class OaExamineService{
         OaExamineStep oaExamineStep = new OaExamineStep();
         Integer examineType = oaExamineCategory.getExamineType();
         if(oaExamineCategory.getExamineType() == 1){
-            oaExamineStep = OaExamineStep.dao.findFirst("SELECT * FROM 72crm_oa_examine_step WHERE category_id = ? ORDER BY step_num LIMIT 0,1", categoryId);
+            oaExamineStep = OaExamineStep.dao.findFirst("SELECT * FROM aptenon_oa_examine_step WHERE category_id = ? ORDER BY step_num LIMIT 0,1", categoryId);
         }
         Integer recordId = null;
         //创建审批记录
@@ -170,9 +170,9 @@ public class OaExamineService{
         }else{
             oaExamine.setUpdateTime(new Date());
             bol = oaExamine.update();
-            Db.delete("delete from 72crm_oa_examine_travel where examine_id = ?", oaExamine.getExamineId());
-            Db.delete("delete from 72crm_oa_examine_relation where examine_id = ?", oaExamine.getExamineId());
-            recordId = Db.queryInt("select  record_id from 72crm_oa_examine_record where examine_id = ? limit 1", oaExamine.getExamineId());
+            Db.delete("delete from aptenon_oa_examine_travel where examine_id = ?", oaExamine.getExamineId());
+            Db.delete("delete from aptenon_oa_examine_relation where examine_id = ?", oaExamine.getExamineId());
+            recordId = Db.queryInt("select  record_id from aptenon_oa_examine_record where examine_id = ? limit 1", oaExamine.getExamineId());
         }
         oaExamine = new OaExamine().findById(oaExamine.getExamineId());
         OaExamineRecord oaExamineRecord = new OaExamineRecord();
@@ -189,16 +189,16 @@ public class OaExamineService{
             oaExamineRecord.setRecordId(recordId);
             oaExamineRecord.update();
             //更新审核日志状态
-            Db.update("update 72crm_oa_examine_log set is_recheck = 1 where record_id = ?", recordId);
+            Db.update("update aptenon_oa_examine_log set is_recheck = 1 where record_id = ?", recordId);
         }
 
         //生成审批日志
         if(examineType == 1){
             Integer stepType = oaExamineStep.getStepType();
             if(stepType == 1){
-                checkUserIds = Db.queryInt("select parent_id from 72crm_admin_user where user_id = ?", BaseUtil.getUser().getUserId()) + "";
+                checkUserIds = Db.queryInt("select parent_id from aptenon_admin_user where user_id = ?", BaseUtil.getUser().getUserId()) + "";
             }else if(stepType == 4){
-                checkUserIds = Db.queryInt("select parent_id from 72crm_admin_user where user_id = (select parent_id from 72crm_admin_user where user_id = ?)", BaseUtil.getUser().getUserId()) + "";
+                checkUserIds = Db.queryInt("select parent_id from aptenon_admin_user where user_id = (select parent_id from aptenon_admin_user where user_id = ?)", BaseUtil.getUser().getUserId()) + "";
             }else{
                 checkUserIds = oaExamineStep.getCheckUserId();
             }
@@ -291,9 +291,9 @@ public class OaExamineService{
         Long createUserId = examine.getCreateUserId();
         Record log;
         if(examineCategory.getExamineType() == 1){
-            log = Db.findFirst("select log_id,order_id from 72crm_oa_examine_log where record_id = ? and examine_step_id = ? and examine_user = ? and is_recheck = 0", examineRecord.getRecordId(), examineRecord.getExamineStepId(), auditUserId);
+            log = Db.findFirst("select log_id,order_id from aptenon_oa_examine_log where record_id = ? and examine_step_id = ? and examine_user = ? and is_recheck = 0", examineRecord.getRecordId(), examineRecord.getExamineStepId(), auditUserId);
         }else{
-            log = Db.findFirst("select log_id,order_id from 72crm_oa_examine_log where record_id = ? and examine_status = 0 and examine_user = ? and is_recheck = 0", examineRecord.getRecordId(), auditUserId);
+            log = Db.findFirst("select log_id,order_id from aptenon_oa_examine_log where record_id = ? and examine_status = 0 and examine_user = ? and is_recheck = 0", examineRecord.getRecordId(), auditUserId);
         }
         nowadayExamineLog.setExamineUser(auditUserId);
         if(log != null){
@@ -318,7 +318,7 @@ public class OaExamineService{
         }else if(status == 4){
             examineRecord.setExamineStatus(4);
             //先查询该审批流程的审批步骤的第一步
-            OaExamineStep oneExamineStep = OaExamineStep.dao.findFirst("SELECT * FROM 72crm_oa_examine_step WHERE category_id = ? ORDER BY step_num LIMIT 0,1", examine.getCategoryId());
+            OaExamineStep oneExamineStep = OaExamineStep.dao.findFirst("SELECT * FROM aptenon_oa_examine_step WHERE category_id = ? ORDER BY step_num LIMIT 0,1", examine.getCategoryId());
             //判断审核撤回
             OaExamineLog examineLog = new OaExamineLog();
             examineLog.setExamineUser(auditUserId);
@@ -332,7 +332,7 @@ public class OaExamineService{
                 examineLog.setExamineStepId(examineStep.getStepId());
                 examineLog.setOrderId(examineStep.getStepNum());
             }else{
-                Integer orderId = Db.queryInt("select order_id from 72crm_oa_examine_log where record_id = ? and is_recheck = 0 and examine_status !=0 order by order_id desc limit 1 ", recordId);
+                Integer orderId = Db.queryInt("select order_id from aptenon_oa_examine_log where record_id = ? and is_recheck = 0 and examine_status !=0 order by order_id desc limit 1 ", recordId);
                 if(orderId == null){
                     orderId = 1;
                 }
@@ -342,7 +342,7 @@ public class OaExamineService{
             examineLog.setRemarks(nowadayExamineLog.getRemarks());
             examineLog.save();
             //更新审核日志状态
-            Db.update("update 72crm_oa_examine_log set is_recheck = 1 where record_id = ?", recordId);
+            Db.update("update aptenon_oa_examine_log set is_recheck = 1 where record_id = ?", recordId);
         }else{
             //审核通过
             //判断该审批流程类型
@@ -383,7 +383,7 @@ public class OaExamineService{
                         Integer stepType = nextExamineStep.getStepType();
                         //生成审批日志
                         if(stepType == 1){
-                            checkUserIds = Db.queryInt("select parent_id from 72crm_admin_user where user_id = ?", createUserId) + "";
+                            checkUserIds = Db.queryInt("select parent_id from aptenon_admin_user where user_id = ?", createUserId) + "";
                         }else if(stepType == 4){
                             AdminUser adminUser = AdminUser.dao.findById(nowadayExamineLog.getExamineUser());
                             if (adminUser != null && adminUser.getParentId() != null) {
@@ -406,7 +406,7 @@ public class OaExamineService{
             }else{
                 examineRecord.setExamineStatus(3);
                 //把下一步审批人放入操作记录中
-                OaActionRecord oaActionRecord = new OaActionRecord().findFirst("select * from `72crm_oa_action_record` where type = 5 and action_id = ? and content = '添加了审批' limit 1", examineId);
+                OaActionRecord oaActionRecord = new OaActionRecord().findFirst("select * from `aptenon_oa_action_record` where type = 5 and action_id = ? and content = '添加了审批' limit 1", examineId);
                 String joinUserIds = oaActionRecord.getJoinUserIds();
                 joinUserIds += checkUserIds;
                 oaActionRecord.setJoinUserIds(TagUtil.fromString(joinUserIds));
@@ -435,21 +435,21 @@ public class OaExamineService{
 
     public R queryOaExamineInfo(String id){
         Record oaExamineInfo = Db.findFirst(Db.getSql("oa.examine.queryExamineById"), id);
-        oaExamineInfo.set("createUser", Db.findFirst("select user_id,realname,img from 72crm_admin_user where user_id = ?", oaExamineInfo.getLong("create_user_id")));
+        oaExamineInfo.set("createUser", Db.findFirst("select user_id,realname,img from aptenon_admin_user where user_id = ?", oaExamineInfo.getLong("create_user_id")));
         String batchId = oaExamineInfo.getStr("batch_id");
         setRelation(oaExamineInfo);
-        Record first = Db.findFirst("select * from 72crm_oa_examine_record where examine_id = ?", id);
+        Record first = Db.findFirst("select * from aptenon_oa_examine_record where examine_id = ?", id);
         oaExamineInfo.set("record", first);
         oaExamineInfo.set("examine_record_id", first.get("record_id"));
         adminFileService.queryByBatchId(batchId, oaExamineInfo);
-        List<Record> examineTravelList = Db.find("select * from 72crm_oa_examine_travel where examine_id = ?", id);
+        List<Record> examineTravelList = Db.find("select * from aptenon_oa_examine_travel where examine_id = ?", id);
         examineTravelList.forEach(record -> adminFileService.queryByBatchId(record.getStr("batch_id"), record));
         oaExamineInfo.set("examineTravelList", examineTravelList);
         return R.ok().put("data", oaExamineInfo);
     }
 
     public R getField(String id, Integer isDetail){
-        Record oaExamineInfo = Db.findFirst("select * from 72crm_oa_examine where examine_id = ?", id);
+        Record oaExamineInfo = Db.findFirst("select * from aptenon_oa_examine where examine_id = ?", id);
         String categoryId = oaExamineInfo.getStr("category_id");
         OaExamineCategory oaExamineCategory = new OaExamineCategory().findById(categoryId);
         List<Record> examineTravelList = Db.find(Db.getSql("oa.examine.queryTravel"), oaExamineInfo.getInt("examine_id"));
@@ -508,7 +508,7 @@ public class OaExamineService{
 
 
     private void setRelation(Record relationRecord){
-        List<Record> recordList = Db.find("select * from 72crm_oa_examine_relation where examine_id = ?", relationRecord.getInt("examine_id"));
+        List<Record> recordList = Db.find("select * from aptenon_oa_examine_relation where examine_id = ?", relationRecord.getInt("examine_id"));
         for(Record record : recordList){
             List<CrmCustomer> customerList = new ArrayList<>();
             if(record.getStr("customer_ids") != null && ! record.getStr("customer_ids").isEmpty()){
@@ -556,22 +556,22 @@ public class OaExamineService{
 
     @Before(Tx.class)
     public R deleteOaExamine(Integer oaExamineId){
-        Integer recordId = Db.queryInt("select record_id from 72crm_oa_examine_record where examine_id  = ? limit 1", oaExamineId);
-        Db.delete("delete from `72crm_admin_fieldv` where batch_id = (select `72crm_oa_examine`.batch_id from `72crm_oa_examine` where examine_id = ?)", oaExamineId);
-        Db.delete("delete from 72crm_oa_examine where examine_id = ?", oaExamineId);
-        Db.delete("delete from 72crm_oa_examine_relation where examine_id = ?", oaExamineId);
-        Db.delete("delete from 72crm_oa_examine_travel where examine_id = ?", oaExamineId);
-        Db.delete("delete from 72crm_oa_examine_record where record_id = ?", recordId);
-        Db.delete("delete from 72crm_oa_examine_log where record_id = ?", recordId);
+        Integer recordId = Db.queryInt("select record_id from aptenon_oa_examine_record where examine_id  = ? limit 1", oaExamineId);
+        Db.delete("delete from `aptenon_admin_fieldv` where batch_id = (select `aptenon_oa_examine`.batch_id from `aptenon_oa_examine` where examine_id = ?)", oaExamineId);
+        Db.delete("delete from aptenon_oa_examine where examine_id = ?", oaExamineId);
+        Db.delete("delete from aptenon_oa_examine_relation where examine_id = ?", oaExamineId);
+        Db.delete("delete from aptenon_oa_examine_travel where examine_id = ?", oaExamineId);
+        Db.delete("delete from aptenon_oa_examine_record where record_id = ?", recordId);
+        Db.delete("delete from aptenon_oa_examine_log where record_id = ?", recordId);
         oaActionRecordService.deleteRecord(OaEnum.EXAMINE_TYPE_KEY.getTypes(), oaExamineId);
         return R.ok();
     }
 
     public R queryExaminStep(String categoryId){
-        Record record = Db.findFirst("select examine_type from 72crm_oa_examine_category where category_id = ?", categoryId);
+        Record record = Db.findFirst("select examine_type from aptenon_oa_examine_category where category_id = ?", categoryId);
         Integer examineType = record.getInt("examine_type");
         if(examineType == 1){
-            List<Record> recordList = Db.find("select * from 72crm_oa_examine_step where category_id = ?", categoryId);
+            List<Record> recordList = Db.find("select * from aptenon_oa_examine_step where category_id = ?", categoryId);
             recordList.forEach(step -> {
                 List<Record> userList = Db.find(Db.getSqlPara("admin.user.queryByIds", Kv.by("ids", step.getStr("check_user_id").split(","))));
                 step.set("userList", userList);
@@ -641,7 +641,7 @@ public class OaExamineService{
         }else{
             jsonObject.put("examineType", 1);
             //固定审批
-            List<Record> steps = Db.find("select * from 72crm_oa_examine_step where  category_id = ? ORDER BY step_num", oaExamineCategory.getCategoryId());
+            List<Record> steps = Db.find("select * from aptenon_oa_examine_step where  category_id = ? ORDER BY step_num", oaExamineCategory.getCategoryId());
             //上一审核步骤
             AtomicReference<Long> lsatuUserId = null;
 

@@ -9,9 +9,9 @@
       soal.business_ids,
       soal.contract_ids
     FROM
-	    72crm_oa_log as a
-    LEFT JOIN 72crm_admin_user as b on a.create_user_id=b.user_id
-    LEFT JOIN 72crm_oa_log_relation as soal on soal.log_id=a.log_id
+	    aptenon_oa_log as a
+    LEFT JOIN aptenon_admin_user as b on a.create_user_id=b.user_id
+    LEFT JOIN aptenon_oa_log_relation as soal on soal.log_id=a.log_id
     WHERE 1 = 1
     #if(create_user_id)
       and a.create_user_id = #para(create_user_id)
@@ -51,9 +51,9 @@
       soal.contacts_ids,
       soal.business_ids,
       soal.contract_ids
-    FROM 72crm_oa_log as a left join 72crm_oa_log_relation as d on a.log_id = d.log_id
-    LEFT JOIN 72crm_admin_user as b on a.create_user_id=b.user_id
-     LEFT JOIN 72crm_oa_log_relation as soal on soal.log_id=a.log_id
+    FROM aptenon_oa_log as a left join aptenon_oa_log_relation as d on a.log_id = d.log_id
+    LEFT JOIN aptenon_admin_user as b on a.create_user_id=b.user_id
+     LEFT JOIN aptenon_oa_log_relation as soal on soal.log_id=a.log_id
     WHERE 1 = 2
     #if(businessIds)
       or d.business_ids like concat('%,',#para(businessIds),',%')

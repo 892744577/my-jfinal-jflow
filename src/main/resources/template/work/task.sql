@@ -1,19 +1,19 @@
 #namespace("work.task")
   #sql("myWorkLog")
     SELECT wtl.log_id, wtl.content, wtl.create_time ,au.img,au.realname
-      FROM 72crm_work_task_log as wtl
-      LEFT JOIN 72crm_admin_user as au on au.user_id = wtl.user_id
+      FROM aptenon_work_task_log as wtl
+      LEFT JOIN aptenon_admin_user as au on au.user_id = wtl.user_id
       where wtl.task_id = #para(taskId) and wtl.status != 4
       order by wtl.create_time desc
   #end
    #sql("queryTaskRelation")
      SELECT st.*,
-      (select count(*) from 72crm_task_comment where type_id = st.task_id and type = 1) as commentCount,
-      (select count(*) from 72crm_task where pid = st.task_id and status = 5) as childWCCount,
-      (select count(*) from 72crm_task where pid = st.task_id) as childAllCount,
-      (select count(*) from 72crm_admin_file where batch_id = st.batch_id) as fileCount
-      FROM 72crm_task as st
-      LEFT JOIN 72crm_task_relation as str on str.task_id = st.task_id
+      (select count(*) from aptenon_task_comment where type_id = st.task_id and type = 1) as commentCount,
+      (select count(*) from aptenon_task where pid = st.task_id and status = 5) as childWCCount,
+      (select count(*) from aptenon_task where pid = st.task_id) as childAllCount,
+      (select count(*) from aptenon_admin_file where batch_id = st.batch_id) as fileCount
+      FROM aptenon_task as st
+      LEFT JOIN aptenon_task_relation as str on str.task_id = st.task_id
       where 1 = 2
        #if(businessIds)
         or str.business_ids like concat('%,',#para(businessIds),',%')
@@ -30,11 +30,11 @@
   #end
   #sql("getTaskList")
     select a.*,
-      (select count(*) from 72crm_task_comment where type_id = a.task_id and type = 1) as commentCount,
-      (select count(*) from 72crm_task where pid = a.task_id and status = 5) as childWCCount,
-      (select count(*) from 72crm_task where pid = a.task_id) as childAllCount,
-      (select count(*) from 72crm_admin_file where batch_id = a.batch_id) as fileCount
-      from 72crm_task a
+      (select count(*) from aptenon_task_comment where type_id = a.task_id and type = 1) as commentCount,
+      (select count(*) from aptenon_task where pid = a.task_id and status = 5) as childWCCount,
+      (select count(*) from aptenon_task where pid = a.task_id) as childAllCount,
+      (select count(*) from aptenon_admin_file where batch_id = a.batch_id) as fileCount
+      from aptenon_task a
       where a.pid = 0 and a.ishidden = 0
       #if(type == null  || type == 0)
         and ( a.main_user_id in (

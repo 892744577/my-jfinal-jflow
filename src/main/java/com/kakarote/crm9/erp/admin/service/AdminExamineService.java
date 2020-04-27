@@ -195,7 +195,7 @@ public class AdminExamineService {
                         }
                     }
                     if (recordId != null) {
-                        AdminExamineLog examineLog = AdminExamineLog.dao.findFirst("select * from 72crm_admin_examine_log where record_id = ? and is_recheck = 0", recordId);
+                        AdminExamineLog examineLog = AdminExamineLog.dao.findFirst("select * from aptenon_admin_examine_log where record_id = ? and is_recheck = 0", recordId);
                         if(examineLog != null){
                             record.set("examineUser", examineLog.getExamineUser());
                             AdminUser user = AdminUser.dao.findById(examineLog.getExamineUser());

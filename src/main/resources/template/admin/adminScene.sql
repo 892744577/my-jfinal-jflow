@@ -1,15 +1,15 @@
 #namespace("admin.scene")
     #sql ("queryScene")
     select a.scene_id,a.data,a.name,if(b.default_id is null,0,1) as is_default,a.is_system,a.bydata
-    from 72crm_admin_scene as a left join 72crm_admin_scene_default as b on a.scene_id = b.scene_id
+    from aptenon_admin_scene as a left join aptenon_admin_scene_default as b on a.scene_id = b.scene_id
     where a.type = ? and a.user_id = ? and is_hide = 0 order by a.sort asc
     #end
     #sql ("queryCrmPageListByFieldType1")
       #(select) FROM (
         SELECT
           `a`.*,
-          (SELECT realname FROM 72crm_admin_user WHERE user_id=`a`.`create_user_id`) AS `create_user_name`,
-          (SELECT realname FROM 72crm_admin_user WHERE user_id=`a`.`owner_user_id`) AS `owner_user_name`,
+          (SELECT realname FROM aptenon_admin_user WHERE user_id=`a`.`create_user_id`) AS `create_user_name`,
+          (SELECT realname FROM aptenon_admin_user WHERE user_id=`a`.`owner_user_id`) AS `owner_user_name`,
           #if(label==3)
           `d`.`customer_name` AS `customer_name`,
           #elseif(label==4)
@@ -32,24 +32,24 @@
           #end
           `z`.*
         FROM
-          `72crm_crm_#(realm)` as `a`
+          `aptenon_crm_#(realm)` as `a`
         #if(label==3)
-          LEFT JOIN `72crm_crm_customer` `d` ON `a`.`customer_id` = `d`.`customer_id`
+          LEFT JOIN `aptenon_crm_customer` `d` ON `a`.`customer_id` = `d`.`customer_id`
         #elseif(label==4)
-          LEFT JOIN `72crm_crm_product_category` `d` ON `a`.`category_id` = `d`.`category_id`
+          LEFT JOIN `aptenon_crm_product_category` `d` ON `a`.`category_id` = `d`.`category_id`
         #elseif(label==5)
-          LEFT JOIN `72crm_crm_customer` `d` ON `a`.`customer_id` = `d`.`customer_id`
-          LEFT JOIN `72crm_crm_business_type` `e` ON `a`.`type_id` = `e`.`type_id`
-          LEFT JOIN `72crm_crm_business_status` `f` ON `a`.`status_id` = `f`.`status_id`
+          LEFT JOIN `aptenon_crm_customer` `d` ON `a`.`customer_id` = `d`.`customer_id`
+          LEFT JOIN `aptenon_crm_business_type` `e` ON `a`.`type_id` = `e`.`type_id`
+          LEFT JOIN `aptenon_crm_business_status` `f` ON `a`.`status_id` = `f`.`status_id`
         #elseif(label==6)
-          LEFT JOIN `72crm_crm_customer` `d` ON `a`.`customer_id` = `d`.`customer_id`
-					LEFT JOIN `72crm_crm_business` `e` ON `a`.`business_id` = `e`.`business_id`
-					LEFT JOIN `72crm_crm_contacts` `f` ON `a`.`contacts_id` = `f`.`contacts_id`
-					LEFT JOIN `72crm_admin_user` `g` ON `a`.`company_user_id` = `g`.`user_id`
+          LEFT JOIN `aptenon_crm_customer` `d` ON `a`.`customer_id` = `d`.`customer_id`
+					LEFT JOIN `aptenon_crm_business` `e` ON `a`.`business_id` = `e`.`business_id`
+					LEFT JOIN `aptenon_crm_contacts` `f` ON `a`.`contacts_id` = `f`.`contacts_id`
+					LEFT JOIN `aptenon_admin_user` `g` ON `a`.`company_user_id` = `g`.`user_id`
 				#elseif(label==7)
-          LEFT JOIN `72crm_crm_customer` `d` ON `a`.`customer_id` = `d`.`customer_id`
-          LEFT JOIN `72crm_crm_contract` `e` ON `a`.`contract_id` = `e`.`contract_id`
-          LEFT JOIN `72crm_crm_receivables_plan` `f` ON `a`.`plan_id` = `f`.`plan_id`
+          LEFT JOIN `aptenon_crm_customer` `d` ON `a`.`customer_id` = `d`.`customer_id`
+          LEFT JOIN `aptenon_crm_contract` `e` ON `a`.`contract_id` = `e`.`contract_id`
+          LEFT JOIN `aptenon_crm_receivables_plan` `f` ON `a`.`plan_id` = `f`.`plan_id`
         #end
         JOIN (
           SELECT
@@ -65,7 +65,7 @@
                 #end
               #end
             #end
-            FROM 72crm_admin_fieldv AS a RIGHT JOIN (SELECT batch_id FROM 72crm_crm_#(realm) as a
+            FROM aptenon_admin_fieldv AS a RIGHT JOIN (SELECT batch_id FROM aptenon_crm_#(realm) as a
             WHERE 1=1
             #if(batchList&&batchList.size()>0)
               and batch_id in ( #fori(batchList))
@@ -74,10 +74,10 @@
 
             ) AS b ON a.batch_id = b.batch_id
             #if(fieldMap.containsKey("user"))
-              left join 72crm_admin_user d on find_in_set(d.user_id,ifnull(a.value,0))
+              left join aptenon_admin_user d on find_in_set(d.user_id,ifnull(a.value,0))
             #end
             #if(fieldMap.containsKey("dept"))
-              left join 72crm_admin_dept c on find_in_set(c.dept_id,ifnull(a.value,0))
+              left join aptenon_admin_dept c on find_in_set(c.dept_id,ifnull(a.value,0))
             #end
             GROUP BY b.batch_id
         ) `z` ON `a`.`batch_id` = `z`.`field_batch_id`
@@ -92,8 +92,8 @@
       #(select) FROM (
         SELECT
           `a`.*,
-          (SELECT realname FROM 72crm_admin_user WHERE user_id=`a`.`create_user_id`) AS `create_user_name`,
-          (SELECT realname FROM 72crm_admin_user WHERE user_id=`a`.`owner_user_id`) AS `owner_user_name`,
+          (SELECT realname FROM aptenon_admin_user WHERE user_id=`a`.`create_user_id`) AS `create_user_name`,
+          (SELECT realname FROM aptenon_admin_user WHERE user_id=`a`.`owner_user_id`) AS `owner_user_name`,
           #if(label==3)
           `d`.`customer_name` AS `customer_name`,
           #elseif(label==4)
@@ -116,24 +116,24 @@
           #end
           `z`.*
         FROM
-        `72crm_crm_#(realm)` as `a`
+        `aptenon_crm_#(realm)` as `a`
         #if(label==3)
-          LEFT JOIN `72crm_crm_customer` `d` ON `a`.`customer_id` = `d`.`customer_id`
+          LEFT JOIN `aptenon_crm_customer` `d` ON `a`.`customer_id` = `d`.`customer_id`
         #elseif(label==4)
-          LEFT JOIN `72crm_crm_product_category` `d` ON `a`.`category_id` = `d`.`category_id`
+          LEFT JOIN `aptenon_crm_product_category` `d` ON `a`.`category_id` = `d`.`category_id`
         #elseif(label==5)
-          LEFT JOIN `72crm_crm_customer` `d` ON `a`.`customer_id` = `d`.`customer_id`
-          LEFT JOIN `72crm_crm_business_type` `e` ON `a`.`type_id` = `e`.`type_id`
-          LEFT JOIN `72crm_crm_business_status` `f` ON `a`.`status_id` = `f`.`status_id`
+          LEFT JOIN `aptenon_crm_customer` `d` ON `a`.`customer_id` = `d`.`customer_id`
+          LEFT JOIN `aptenon_crm_business_type` `e` ON `a`.`type_id` = `e`.`type_id`
+          LEFT JOIN `aptenon_crm_business_status` `f` ON `a`.`status_id` = `f`.`status_id`
         #elseif(label==6)
-          LEFT JOIN `72crm_crm_customer` `d` ON `a`.`customer_id` = `d`.`customer_id`
-					LEFT JOIN `72crm_crm_business` `e` ON `a`.`business_id` = `e`.`business_id`
-					LEFT JOIN `72crm_crm_contacts` `f` ON `a`.`contacts_id` = `f`.`contacts_id`
-					LEFT JOIN `72crm_admin_user` `g` ON `a`.`company_user_id` = `g`.`user_id`
+          LEFT JOIN `aptenon_crm_customer` `d` ON `a`.`customer_id` = `d`.`customer_id`
+					LEFT JOIN `aptenon_crm_business` `e` ON `a`.`business_id` = `e`.`business_id`
+					LEFT JOIN `aptenon_crm_contacts` `f` ON `a`.`contacts_id` = `f`.`contacts_id`
+					LEFT JOIN `aptenon_admin_user` `g` ON `a`.`company_user_id` = `g`.`user_id`
 		    #elseif(label==7)
-          LEFT JOIN `72crm_crm_customer` `d` ON `a`.`customer_id` = `d`.`customer_id`
-          LEFT JOIN `72crm_crm_contract` `e` ON `a`.`contract_id` = `e`.`contract_id`
-          LEFT JOIN `72crm_crm_receivables_plan` `f` ON `a`.`plan_id` = `f`.`plan_id`
+          LEFT JOIN `aptenon_crm_customer` `d` ON `a`.`customer_id` = `d`.`customer_id`
+          LEFT JOIN `aptenon_crm_contract` `e` ON `a`.`contract_id` = `e`.`contract_id`
+          LEFT JOIN `aptenon_crm_receivables_plan` `f` ON `a`.`plan_id` = `f`.`plan_id`
         #end
         LEFT JOIN (
           SELECT
@@ -150,13 +150,13 @@
               #end
             #end
           FROM
-            72crm_admin_fieldv AS a
-          JOIN 72crm_admin_field as f on a.field_id=f.field_id and f.label=#para(label)
+            aptenon_admin_fieldv AS a
+          JOIN aptenon_admin_field as f on a.field_id=f.field_id and f.label=#para(label)
           #if(fieldMap.containsKey("user"))
-            left join 72crm_admin_user d on find_in_set(d.user_id,ifnull(a.value,0))
+            left join aptenon_admin_user d on find_in_set(d.user_id,ifnull(a.value,0))
           #end
           #if(fieldMap.containsKey("dept"))
-            left join 72crm_admin_dept c on find_in_set(c.dept_id,ifnull(a.value,0))
+            left join aptenon_admin_dept c on find_in_set(c.dept_id,ifnull(a.value,0))
           #end
           GROUP BY a.batch_id
         ) `z` ON `a`.`batch_id` = `z`.`field_batch_id`
@@ -171,7 +171,7 @@
         #end
     #end
     #sql ("queryCrmPageListCount")
-      SELECT count(1) FROM 72crm_crm_#(realm) as a
+      SELECT count(1) FROM aptenon_crm_#(realm) as a
       WHERE 1=1
       #if(batchList&&batchList.size()>0)
           and batch_id in ( #for(str:batchList) #(for.index == 0 ? "" : ",") #para(str) #end)
@@ -181,19 +181,19 @@
       #end
     #end
     #sql ("queryHideScene")
-    select scene_id,name,data from 72crm_admin_scene where type = ? and user_id = ? and is_hide = 1
+    select scene_id,name,data from aptenon_admin_scene where type = ? and user_id = ? and is_hide = 1
     #end
 
     #sql ("querySystemNumber")
-    select count(*) from 72crm_admin_scene where is_system = 1 and type = ? and user_id = ?
+    select count(*) from aptenon_admin_scene where is_system = 1 and type = ? and user_id = ?
     #end
 
     #sql ("sort")
-    update 72crm_admin_scene set is_hide = 0,sort = ? where type = ? and user_id = ? and scene_id = ?
+    update aptenon_admin_scene set is_hide = 0,sort = ? where type = ? and user_id = ? and scene_id = ?
     #end
 
     #sql ("queryIsHideSystem")
-    select count(scene_id) as number from 72crm_admin_scene where scene_id in (
+    select count(scene_id) as number from aptenon_admin_scene where scene_id in (
        #for(i : ids)
            #(for.index > 0 ? "," : "")#para(i)
        #end
@@ -201,7 +201,7 @@
     #end
 
     #sql ("isHide")
-    update 72crm_admin_scene set is_hide = 1,sort = 0
+    update aptenon_admin_scene set is_hide = 1,sort = 0
     where scene_id in (
        #for(i : ids)
            #(for.index > 0 ? "," : "")#para(i)
@@ -212,25 +212,25 @@
     #sql ("getCustomerPageList")
     select *,
     IF(deal_status = 0,(TO_DAYS(
-      IFNULL((SELECT car.create_time FROM 72crm_admin_record as car where car.types = 'crm_customer' and car.types_id = views.customer_id ORDER BY car.create_time DESC LIMIT 1),create_time))
-      + CAST((SELECT value FROM 72crm_admin_config WHERE name= 'customerPoolSettingFollowupDays') as SIGNED) - TO_DAYS(NOW())
+      IFNULL((SELECT car.create_time FROM aptenon_admin_record as car where car.types = 'crm_customer' and car.types_id = views.customer_id ORDER BY car.create_time DESC LIMIT 1),create_time))
+      + CAST((SELECT value FROM aptenon_admin_config WHERE name= 'customerPoolSettingFollowupDays') as SIGNED) - TO_DAYS(NOW())
     ),'') as pool_day,
-    (select count(*) from 72crm_crm_business as a where a.customer_id = views.customer_id) as business_count
+    (select count(*) from aptenon_crm_business as a where a.customer_id = views.customer_id) as business_count
     #end
 
     #sql("queryPutInPoolToday")
     select IFNULL(GROUP_CONCAT(customer_id),0)
-    from 72crm_crm_customer as a left join 72crm_crm_owner_record as b on a.customer_id = b.type_id
+    from aptenon_crm_customer as a left join aptenon_crm_owner_record as b on a.customer_id = b.type_id
     where b.type = 8 and TO_DAYS(b.create_time) = TO_DAYS(NOW())
     #end
 
     #sql ("queryPutInPoolTodayNum")
       select count(*)
-      from 72crm_crm_customer as a left join 72crm_crm_owner_record as b on a.customer_id = b.type_id
+      from aptenon_crm_customer as a left join aptenon_crm_owner_record as b on a.customer_id = b.type_id
       where b.type = 8 and TO_DAYS(b.create_time) = TO_DAYS(NOW())
     #end
     #sql ("queryBatchId")
-      select batch_id from 72crm_admin_fieldv where name=#para(name) and `value` #(connector) #(value)
+      select batch_id from aptenon_admin_fieldv where name=#para(name) and `value` #(connector) #(value)
       #if(batchList&&batchList.size()>0)
         and batch_id in ( #fori(batchList))
       #end

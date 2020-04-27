@@ -106,7 +106,7 @@ public class WorkService{
                     ownerUserIds.removeAll(intersection);
                     for(Long next : oldOwnerUserIds){
                         leave(work.getWorkId().toString(), next);
-                        Db.delete("delete from `72crm_work_user` where work_id = ? and user_id = ?", workId, next);
+                        Db.delete("delete from `aptenon_work_user` where work_id = ? and user_id = ?", workId, next);
                     }
                     for(Long ownerUserId : ownerUserIds){
                         WorkUser workUser = new WorkUser();
@@ -116,7 +116,7 @@ public class WorkService{
                         workUser.save();
                     }
                 }else{
-                    Db.delete("delete from `72crm_work_user` where work_id = ?", workId);
+                    Db.delete("delete from `aptenon_work_user` where work_id = ?", workId);
                     work.setOwnerUserId("," + userId + ",");
                     WorkUser workUser = new WorkUser();
                     workUser.setWorkId(work.getWorkId());
@@ -129,9 +129,9 @@ public class WorkService{
                 if(work.getIsOpen() == 1){
                     //公开项目删除负责人
                     work.setOwnerUserId(null);
-                    Db.delete("delete from `72crm_work_user` where work_id = ?", workId);
+                    Db.delete("delete from `aptenon_work_user` where work_id = ?", workId);
                 }else if(work.getIsOpen() == 0){
-                    List<Long> userList = Db.query("select user_id from `72crm_admin_user` where status != 0");
+                    List<Long> userList = Db.query("select user_id from `aptenon_admin_user` where status != 0");
                     userList.remove(Long.valueOf(userId));
                     List<WorkUser> workUserList = new ArrayList<>();
                     WorkUser nowWorkUser = new WorkUser();
@@ -160,10 +160,10 @@ public class WorkService{
     }
 
     public R deleteWork(String workId){
-        Db.delete("delete from `72crm_task_relation` where task_id in (select `72crm_task`.task_id from `72crm_task` where work_id = ?)", workId);
-        Db.delete("delete from `72crm_task` where work_id = ?", workId);
-        Db.delete("delete from `72crm_work_user` where work_id = ?", workId);
-        int update = Db.delete("delete from `72crm_work` where work_id = ?", workId);
+        Db.delete("delete from `aptenon_task_relation` where task_id in (select `aptenon_task`.task_id from `aptenon_task` where work_id = ?)", workId);
+        Db.delete("delete from `aptenon_task` where work_id = ?", workId);
+        Db.delete("delete from `aptenon_work_user` where work_id = ?", workId);
+        int update = Db.delete("delete from `aptenon_work` where work_id = ?", workId);
         return update > 0 ? R.ok() : R.error();
     }
 
@@ -179,7 +179,7 @@ public class WorkService{
 
     public R queryTaskByWorkId(JSONObject jsonObject){
         Integer workId = jsonObject.getInteger("workId");
-        List<Record> classList = Db.find("select class_id as classId, name as className from `72crm_work_task_class` where work_id = ? order by order_num", workId);
+        List<Record> classList = Db.find("select class_id as classId, name as className from `aptenon_work_task_class` where work_id = ? order by order_num", workId);
         LinkedList<Record> linkedList = new LinkedList<>(classList);
         Record item = new Record();
         item.set("className", "(未分组)");
@@ -211,7 +211,7 @@ public class WorkService{
     }
 
     public R queryArchiveWorkList(BasePageRequest request){
-        Page<Record> recordPage = Db.paginate(request.getPage(), request.getLimit(), "select work_id,archive_time,name,color ", "from 72crm_work where status = 3");
+        Page<Record> recordPage = Db.paginate(request.getPage(), request.getLimit(), "select work_id,archive_time,name,color ", "from aptenon_work where status = 3");
         return R.ok().put("data", recordPage);
     }
 
@@ -222,7 +222,7 @@ public class WorkService{
             List<Record> memberTaskStatistics = new ArrayList<>();
             if(AuthUtil.isWorkAdmin()){
                 taskStatistics = Db.findFirst(Db.getSqlPara("work.workStatistics"));
-                memberTaskStatistics = Db.find("select user_id,img,realname from `72crm_admin_user` where user_id in (select main_user_id from `72crm_task` where ishidden = 0 and work_id > 0)");
+                memberTaskStatistics = Db.find("select user_id,img,realname from `aptenon_admin_user` where user_id in (select main_user_id from `aptenon_task` where ishidden = 0 and work_id > 0)");
                 memberTaskStatistics.forEach(record -> {
                     Record first = Db.findFirst(Db.getSqlPara("work.workStatistics", Kv.by("mainUserId", record.getInt("user_id"))));
                     record.setColumns(first);
@@ -245,34 +245,34 @@ public class WorkService{
             return R.ok().put("data", Kv.by("taskStatistics", taskStatistics).set("memberTaskStatistics", memberTaskStatistics));
         }
         Record taskStatistics = Db.findFirst(Db.getSqlPara("work.workStatistics", Kv.by("workId", workId)));
-        String ownerUserId = Db.queryStr("select owner_user_id from `72crm_work` where work_id = ?", workId);
+        String ownerUserId = Db.queryStr("select owner_user_id from `aptenon_work` where work_id = ?", workId);
         List<Record> ownerList = new ArrayList<>();
         for(Integer userId : TagUtil.toSet(ownerUserId)){
-            Record ownerUser = Db.findFirst("select b.user_id,realname,img from `72crm_work_user` a left join `72crm_admin_user` b on a.user_id = b.user_id where a.work_id = ? and a.user_id = ? and a.role_id = ?", workId, userId, BaseConstant.SMALL_WORK_ADMIN_ROLE_ID);
+            Record ownerUser = Db.findFirst("select b.user_id,realname,img from `aptenon_work_user` a left join `aptenon_admin_user` b on a.user_id = b.user_id where a.work_id = ? and a.user_id = ? and a.role_id = ?", workId, userId, BaseConstant.SMALL_WORK_ADMIN_ROLE_ID);
             if(ownerUser != null){
                 ownerList.add(ownerUser);
             }
         }
         List<Record> userList = new ArrayList<>();
         for(Integer userId : TagUtil.toSet(ownerUserId)){
-            userList.add(Db.findFirst("select user_id,realname,username,img from `72crm_admin_user` where user_id = ?", userId));
+            userList.add(Db.findFirst("select user_id,realname,username,img from `aptenon_admin_user` where user_id = ?", userId));
         }
         List<Record> classStatistics = new ArrayList<>();
         List<Record> labelStatistics = new ArrayList<>();
-        List<Record> recordList = Db.find("select class_id classId,name className from 72crm_work_task_class a  where a.work_id = ?", workId);
+        List<Record> recordList = Db.find("select class_id classId,name className from aptenon_work_task_class a  where a.work_id = ?", workId);
         Map<String,Object> classMap = new HashMap<>();
         recordList.forEach(record -> classMap.put(record.getStr("classId"), record.getStr("className")));
         classMap.forEach((classId, name) -> {
-            Record first = Db.findFirst("select count(status = 5 or null) as complete,count(status != 5 or null) as undone from 72crm_task where class_id = ? and work_id = ? and ishidden = 0 and (is_archive = 0 or (is_archive = 1 and status = 5))", classId, workId);
+            Record first = Db.findFirst("select count(status = 5 or null) as complete,count(status != 5 or null) as undone from aptenon_task where class_id = ? and work_id = ? and ishidden = 0 and (is_archive = 0 or (is_archive = 1 and status = 5))", classId, workId);
             first.set("className", classMap.get(classId));
             classStatistics.add(first);
         });
-        List<Record> labelList = Db.find("select label_id,status from `72crm_task` where work_id  = ? and label_id is not null and ishidden = 0 and (is_archive = 0 or (is_archive = 1 and status = 5))", workId);
+        List<Record> labelList = Db.find("select label_id,status from `aptenon_task` where work_id  = ? and label_id is not null and ishidden = 0 and (is_archive = 0 or (is_archive = 1 and status = 5))", workId);
         List<String> labelIdList = labelList.stream().map(record -> record.getStr("label_id")).collect(Collectors.toList());
         Set<Integer> labelIdSet = new HashSet<>(toList(labelIdList));
         Map<Integer,Record> labelMap = new HashMap<>();
         labelIdSet.forEach(id -> {
-            Record record = Db.findFirst("select label_id,name,color from 72crm_work_task_label where label_id = ?", id);
+            Record record = Db.findFirst("select label_id,name,color from aptenon_work_task_label where label_id = ?", id);
             labelMap.put(record.getInt("label_id"), record);
         });
         labelMap.forEach((id, record) -> {
@@ -327,7 +327,7 @@ public class WorkService{
                 record.setColumns(first);
             });
         }else{
-            String ownerUserIds = Db.queryStr("select owner_user_id from 72crm_work where work_id = ?", workId);
+            String ownerUserIds = Db.queryStr("select owner_user_id from aptenon_work where work_id = ?", workId);
             if(StrUtil.isEmpty(ownerUserIds)){
                 return list;
             }
@@ -335,7 +335,7 @@ public class WorkService{
                 if(StrUtil.isEmpty(userId)){
                     continue;
                 }
-                Record user = Db.findFirst("select user_id,realname,img from 72crm_admin_user where user_id = ?", userId);
+                Record user = Db.findFirst("select user_id,realname,img from aptenon_admin_user where user_id = ?", userId);
                 Record first = Db.findFirst(Db.getSqlPara("work.workStatistics", Kv.by("workId", workId).set("userId", userId)));
                 user.setColumns(first);
                 list.add(user);
@@ -345,16 +345,16 @@ public class WorkService{
     }
 
     public R queryWorkOwnerList(String workId){
-        String ownerUserId = Db.queryStr("select owner_user_id from `72crm_work` where work_id = ?", workId);
+        String ownerUserId = Db.queryStr("select owner_user_id from `aptenon_work` where work_id = ?", workId);
         List<Record> userList = new ArrayList<>();
         for(Integer userId : TagUtil.toSet(ownerUserId)){
-            userList.add(Db.findFirst("select user_id,realname,username,img from `72crm_admin_user` where user_id = ?", userId));
+            userList.add(Db.findFirst("select user_id,realname,username,img from `aptenon_admin_user` where user_id = ?", userId));
         }
         return R.ok().put("data", userList);
     }
 
     public R updateOrder(JSONObject jsonObject){
-        String updateSql = "update `72crm_task` set class_id = ?,order_num = ? where task_id = ?";
+        String updateSql = "update `aptenon_task` set class_id = ?,order_num = ? where task_id = ?";
         if(jsonObject.containsKey("toList")){
             JSONArray tolist = jsonObject.getJSONArray("toList");
             Integer toId = jsonObject.getInteger("toId");
@@ -384,7 +384,7 @@ public class WorkService{
         ownerUserIds.remove(userId);
         work.setOwnerUserId(TagUtil.fromLongSet(ownerUserIds));
         boolean update = work.update();
-        Db.update("delete from `72crm_work_user` where work_id = ? and user_id = ?", workId, userId);
+        Db.update("delete from `aptenon_work_user` where work_id = ? and user_id = ?", workId, userId);
         return update ? R.ok() : R.error();
     }
 
@@ -399,10 +399,10 @@ public class WorkService{
         }
         AdminUser user = BaseUtil.getUser();
         Long userId = BaseUtil.getUserId();
-        Integer roleId = Db.queryInt("select role_id from `72crm_work_user` where work_id = ? and user_id = ?", workId, userId);
+        Integer roleId = Db.queryInt("select role_id from `aptenon_work_user` where work_id = ? and user_id = ?", workId, userId);
         JSONObject root = new JSONObject();
         List<Record> menuRecords = Db.find(Db.getSql("admin.menu.queryWorkMenuByRoleId"), roleId);
-        Integer workMenuId = Db.queryInt("select menu_id from `72crm_admin_menu` where parent_id = 0 and realm = 'work'");
+        Integer workMenuId = Db.queryInt("select menu_id from `aptenon_admin_menu` where parent_id = 0 and realm = 'work'");
         List<AdminMenu> adminMenus = adminMenuService.queryMenuByParentId(workMenuId);
         JSONObject object = new JSONObject();
         adminMenus.forEach(menu -> {
@@ -453,10 +453,10 @@ public class WorkService{
      * 查询项目成员所属角色列表
      */
     public R queryOwnerRoleList(Integer workId){
-        Integer isOpen = Db.queryInt("select is_open from 72crm_work where work_id = ?", workId);
+        Integer isOpen = Db.queryInt("select is_open from aptenon_work where work_id = ?", workId);
         if(workId == 0 || isOpen == 1){
             return R.ok().put("data", Db.find("sel" +
-                    "ect user_id,realname from 72crm_admin_user"));
+                    "ect user_id,realname from aptenon_admin_user"));
         }
         return R.ok().put("data", Db.find(Db.getSql("work.queryOwnerRoleList"), workId));
     }
@@ -470,7 +470,7 @@ public class WorkService{
         List<WorkUser> workUserList = jsonObject.getJSONArray("list").toJavaList(WorkUser.class);
         Integer workId = jsonObject.getInteger("workId");
         workUserList.forEach(workUser -> workUser.setWorkId(workId));
-        Db.delete("delete from 72crm_work_user where work_id = ?", workId);
+        Db.delete("delete from aptenon_work_user where work_id = ?", workId);
         Db.batchSave(workUserList, 100);
         List<Record> recordList = Db.find(Db.getSql("work.queryOwnerRoleList"), workId);
         return R.ok().put("data", recordList);
@@ -478,17 +478,17 @@ public class WorkService{
 
     @Before(Tx.class)
     public R deleteTaskList(String workId, String classId){
-        Db.update("update  `72crm_task` set ishidden = 1,class_id = null,hidden_time = now() where class_id = ? and work_id = ? and is_archive != 1", classId, workId);
+        Db.update("update  `aptenon_task` set ishidden = 1,class_id = null,hidden_time = now() where class_id = ? and work_id = ? and is_archive != 1", classId, workId);
         boolean delete = new WorkTaskClass().deleteById(classId);
         return delete ? R.ok() : R.error();
     }
 
     public R archiveTask(String classId){
-        Integer count = Db.queryInt("select count(*) from `72crm_task` where class_id = ? and status = 5 and ishidden = 0", classId);
+        Integer count = Db.queryInt("select count(*) from `aptenon_task` where class_id = ? and status = 5 and ishidden = 0", classId);
         if(count == 0){
             return R.error("暂无已完成任务，归档失败!");
         }
-        int update = Db.update("update  `72crm_task` set is_archive = 1,archive_time = now() where class_id = ? and status = 5 and ishidden = 0", classId);
+        int update = Db.update("update  `aptenon_task` set is_archive = 1,archive_time = now() where class_id = ? and status = 5 and ishidden = 0", classId);
         return update > 0 ? R.ok() : R.error();
     }
 
@@ -499,7 +499,7 @@ public class WorkService{
     }
 
     public R remove(Integer userId, Integer workId){
-        Integer roleId = Db.queryInt("select role_id from `72crm_work_user` where work_id = ? and user_id = ?", workId, userId);
+        Integer roleId = Db.queryInt("select role_id from `aptenon_work_user` where work_id = ? and user_id = ?", workId, userId);
         if(roleId.equals(BaseConstant.SMALL_WORK_ADMIN_ROLE_ID)){
             return R.error("管理员不能被删除！");
         }
@@ -508,12 +508,12 @@ public class WorkService{
         userIds.remove(userId);
         work.setOwnerUserId(TagUtil.fromSet(userIds));
         boolean update = work.update();
-        Db.delete("delete from `72crm_work_user` where work_id = ? and user_id = ?", workId, userId);
+        Db.delete("delete from `aptenon_work_user` where work_id = ? and user_id = ?", workId, userId);
         return update ? R.ok() : R.error();
     }
 
     public R updateClassOrder(JSONObject jsonObject){
-        String sql = "update `72crm_work_task_class` set order_num = ? where work_id = ? and class_id = ?";
+        String sql = "update `aptenon_work_task_class` set order_num = ? where work_id = ? and class_id = ?";
         Integer workId = jsonObject.getInteger("workId");
         JSONArray classIds = jsonObject.getJSONArray("classIds");
         for(int i = 0; i < classIds.size(); i++){
@@ -524,12 +524,12 @@ public class WorkService{
 
     public R activation(Integer taskId){
         Task task = new Task().findById(taskId);
-        Integer count = Db.queryInt("select count(*) from `72crm_work_task_class` where class_id = ?", task.getClassId());
+        Integer count = Db.queryInt("select count(*) from `aptenon_work_task_class` where class_id = ?", task.getClassId());
         int update;
         if(count>0){
-            update = Db.update("update  `72crm_task` set is_archive = 0,archive_time = null where task_id = ?", taskId);
+            update = Db.update("update  `aptenon_task` set is_archive = 0,archive_time = null where task_id = ?", taskId);
         }else {
-            update = Db.update("update  `72crm_task` set is_archive = 0,archive_time = null,class_id = null where task_id = ?", taskId);
+            update = Db.update("update  `aptenon_task` set is_archive = 0,archive_time = null,class_id = null where task_id = ?", taskId);
         }
         return update > 0 ? R.ok() : R.error();
     }
@@ -538,9 +538,9 @@ public class WorkService{
      * 项目启动时初始化项目角色
      */
     public void initialization(){
-        BaseConstant.WORK_ADMIN_ROLE_ID = Db.queryInt("select role_id from `72crm_admin_role` where label = 1");
-        BaseConstant.SMALL_WORK_ADMIN_ROLE_ID = Db.queryInt("select role_id from `72crm_admin_role` where label = 2");
-        BaseConstant.SMALL_WORK_EDIT_ROLE_ID = Db.queryInt("select role_id from `72crm_admin_role` where label = 3");
+        BaseConstant.WORK_ADMIN_ROLE_ID = Db.queryInt("select role_id from `aptenon_admin_role` where label = 1");
+        BaseConstant.SMALL_WORK_ADMIN_ROLE_ID = Db.queryInt("select role_id from `aptenon_admin_role` where label = 2");
+        BaseConstant.SMALL_WORK_EDIT_ROLE_ID = Db.queryInt("select role_id from `aptenon_admin_role` where label = 3");
     }
 
     /**

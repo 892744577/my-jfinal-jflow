@@ -512,7 +512,7 @@ public class CrmExcelUtil {
                     } else {
                         try {
                             String customeName = rowList.get(kv.getInt("customer_id")).toString();
-                            CrmCustomer customer = CrmCustomer.dao.findFirstByCache("CUSTOME_NAME", customeName, "select customer_id from 72crm_crm_customer where customer_name = ? limit 1", customeName);
+                            CrmCustomer customer = CrmCustomer.dao.findFirstByCache("CUSTOME_NAME", customeName, "select customer_id from aptenon_crm_customer where customer_name = ? limit 1", customeName);
                             if (customer == null) {
                                 rowList.add(0, "填写的客户不存在");
                                 errorList.add(rowList);
@@ -617,7 +617,7 @@ public class CrmExcelUtil {
                     } else {
                         try {
                             String categoryName = rowList.get(kv.getInt("category_id")).toString();
-                            CrmProductCategory category = CrmProductCategory.dao.findFirstByCache("CATEGORY_NAME", categoryName, "select category_id from 72crm_crm_product_category where name = ? limit 1", categoryName);
+                            CrmProductCategory category = CrmProductCategory.dao.findFirstByCache("CATEGORY_NAME", categoryName, "select category_id from aptenon_crm_product_category where name = ? limit 1", categoryName);
                             if (category == null) {
                                 rowList.add(0, "填写的产品类型不存在");
                                 errorList.add(rowList);

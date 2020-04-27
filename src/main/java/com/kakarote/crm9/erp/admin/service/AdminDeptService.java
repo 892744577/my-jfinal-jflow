@@ -38,7 +38,7 @@ public class AdminDeptService {
 
     public List<Record> queryDeptTree(String type,Integer id) {
         List<Record> allDeptList = new ArrayList<>();
-        List<Record> adminDeptList = Db.find("select dept_id as id,name,pid from 72crm_admin_dept");
+        List<Record> adminDeptList = Db.find("select dept_id as id,name,pid from aptenon_admin_dept");
         List<Record> recordList = buildTreeBy2Loop(adminDeptList, 0, allDeptList);
         if (StrUtil.isNotBlank(type) && "tree".equals(type)) {
             return recordList;
@@ -55,7 +55,7 @@ public class AdminDeptService {
      * 查询可设置为上级的部门
      */
     private List<Record> queryTopDeptList(Integer deptId) {
-        List<Record> recordList = Db.find("select dept_id as id,name,pid from 72crm_admin_dept");
+        List<Record> recordList = Db.find("select dept_id as id,name,pid from aptenon_admin_dept");
         AdminUserService adminUserService = new AdminUserService();
         List<Integer> subDeptList = adminUserService.queryChileDeptIds(deptId,BaseConstant.AUTH_DATA_RECURSION_NUM);
         recordList.removeIf(record -> subDeptList.contains(record.getInt("id")));
@@ -78,9 +78,9 @@ public class AdminDeptService {
         }
         //拥有最高数据权限
         if(list.contains(5)){
-            return Db.find("select dept_id as id,name,pid from 72crm_admin_dept");
+            return Db.find("select dept_id as id,name,pid from aptenon_admin_dept");
         }else {
-            adminDepts.add(Db.findFirst("select dept_id as id,name,pid from 72crm_admin_dept where dept_id=?", BaseUtil.getUser().getDeptId()));
+            adminDepts.add(Db.findFirst("select dept_id as id,name,pid from aptenon_admin_dept where dept_id=?", BaseUtil.getUser().getDeptId()));
             if(list.contains(4)){
                 adminDepts.addAll(queryDeptByParentDept(BaseUtil.getUser().getDeptId(), BaseConstant.AUTH_DATA_RECURSION_NUM));
             }
@@ -96,7 +96,7 @@ public class AdminDeptService {
     public List<Record> queryDeptByParentDept(Integer deptId,Integer deepness){
         List<Record> recordList=new ArrayList<>();
         if(deepness>0){
-            List<Record> records=Db.find("select dept_id as id,name,pid from 72crm_admin_dept where pid=?",deptId);
+            List<Record> records=Db.find("select dept_id as id,name,pid from aptenon_admin_dept where pid=?",deptId);
             recordList.addAll(records);
             records.forEach(record -> {
                 recordList.addAll(queryDeptByParentDept(record.getInt("id"),deepness-1));
@@ -141,15 +141,15 @@ public class AdminDeptService {
     }
 
     public R deleteDept(String id) {
-        Integer userCount = Db.queryInt("select count(*) from 72crm_admin_user where dept_id = ?", id);
+        Integer userCount = Db.queryInt("select count(*) from aptenon_admin_user where dept_id = ?", id);
         if(userCount>0){
             return R.error("该部门下有员工，不能删除！");
         }
-        Integer childDeptCount = Db.queryInt("select count(*) from 72crm_admin_dept where pid = ?", id);
+        Integer childDeptCount = Db.queryInt("select count(*) from aptenon_admin_dept where pid = ?", id);
         if(childDeptCount>0){
             return R.error("该部门下有下级部门，不能删除！");
         }
-        int delete = Db.delete("delete from 72crm_admin_dept where dept_id = ?", id);
+        int delete = Db.delete("delete from aptenon_admin_dept where dept_id = ?", id);
         return delete > 0 ? R.ok() : R.error();
     }
 }

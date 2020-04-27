@@ -122,7 +122,7 @@ public class CrmCustomerService{
      */
     public Record queryById(Integer customerId){
         Record record = Db.findFirst(Db.getSql("crm.customer.queryById"), customerId);
-        List<Record> recordList = Db.find("select name,value from `72crm_admin_fieldv` where batch_id = ?", record.getStr("batch_id"));
+        List<Record> recordList = Db.find("select name,value from `aptenon_admin_fieldv` where batch_id = ?", record.getStr("batch_id"));
         recordList.forEach(field -> record.set(field.getStr("name"), field.getStr("value")));
         return record;
     }
@@ -260,7 +260,7 @@ public class CrmCustomerService{
         List<Record> batchIdList = Db.find(Db.getSqlPara("crm.customer.queryBatchIdByIds", Kv.by("ids", idsArr)));
         return Db.tx(() -> {
             Db.batch(Db.getSql("crm.customer.deleteByIds"), "customer_id", idsList, 100);
-            Db.batch("delete from 72crm_admin_fieldv where batch_id = ?", "batch_id", batchIdList, 100);
+            Db.batch("delete from aptenon_admin_fieldv where batch_id = ?", "batch_id", batchIdList, 100);
             return true;
         }) ? R.ok() : R.error();
     }
@@ -411,12 +411,12 @@ public class CrmCustomerService{
             if(1 == crmCustomer.getPower()){
                 stringBuffer.setLength(0);
                 String roUserId = stringBuffer.append(CrmCustomer.dao.findById(Integer.valueOf(id)).getRoUserId()).append(crmCustomer.getMemberIds()).append(",").toString();
-                Db.update("update 72crm_crm_customer set ro_user_id = ? where customer_id = ?", roUserId, Integer.valueOf(id));
+                Db.update("update aptenon_crm_customer set ro_user_id = ? where customer_id = ?", roUserId, Integer.valueOf(id));
             }
             if(2 == crmCustomer.getPower()){
                 stringBuffer.setLength(0);
                 String rwUserId = stringBuffer.append(CrmCustomer.dao.findById(Integer.valueOf(id)).getRwUserId()).append(crmCustomer.getMemberIds()).append(",").toString();
-                Db.update("update 72crm_crm_customer set rw_user_id = ? where customer_id = ?", rwUserId, Integer.valueOf(id));
+                Db.update("update aptenon_crm_customer set rw_user_id = ? where customer_id = ?", rwUserId, Integer.valueOf(id));
             }
         }
         return R.ok();
@@ -450,7 +450,7 @@ public class CrmCustomerService{
         String[] customerIdsArr = customerIds.split(",");
         StringBuffer stringBuffer = new StringBuffer();
         for(String id : customerIdsArr){
-            List<Record> recordList = Db.find("select contract_id from 72crm_crm_contract where customer_id = ?", id);
+            List<Record> recordList = Db.find("select contract_id from aptenon_crm_contract where customer_id = ?", id);
             if(recordList != null){
                 for(Record record : recordList){
                     stringBuffer.append(",").append(record.getStr("contract_id"));
@@ -471,7 +471,7 @@ public class CrmCustomerService{
         String[] customerIdsArr = customerIds.split(",");
         StringBuffer stringBuffer = new StringBuffer();
         for(String id : customerIdsArr){
-            List<Record> recordList = Db.find("select business_id from 72crm_crm_business where customer_id = ?", id);
+            List<Record> recordList = Db.find("select business_id from aptenon_crm_business where customer_id = ?", id);
             if(recordList != null){
                 for(Record record : recordList){
                     stringBuffer.append(",").append(record.getStr("business_id"));
@@ -617,13 +617,13 @@ public class CrmCustomerService{
      */
     @Before(Tx.class)
     public R updateRulesSetting(Integer dealDay, Integer followupDay, Integer type, Integer remindDay, Integer remindConfig){
-        Db.update("update 72crm_admin_config set value = ? where name = 'customerPoolSettingDealDays'", dealDay);
-        Db.update("update 72crm_admin_config set value = ? where name = 'customerPoolSettingFollowupDays'", followupDay);
-        Db.update("update 72crm_admin_config set status = ? where name = 'customerPoolSetting'", type);
+        Db.update("update aptenon_admin_config set value = ? where name = 'customerPoolSettingDealDays'", dealDay);
+        Db.update("update aptenon_admin_config set value = ? where name = 'customerPoolSettingFollowupDays'", followupDay);
+        Db.update("update aptenon_admin_config set status = ? where name = 'customerPoolSetting'", type);
         if(remindDay > 0){
-            Db.update("update 72crm_admin_config set status = ?,value = ? where name = 'putInPoolRemindDays'", remindConfig, remindDay);
+            Db.update("update aptenon_admin_config set status = ?,value = ? where name = 'putInPoolRemindDays'", remindConfig, remindDay);
         }else{
-            Db.update("update 72crm_admin_config set status = 0 where name = 'putInPoolRemindDays'");
+            Db.update("update aptenon_admin_config set status = 0 where name = 'putInPoolRemindDays'");
         }
         return R.ok();
     }
@@ -634,10 +634,10 @@ public class CrmCustomerService{
      */
     @Before(Tx.class)
     public R getRulesSetting(){
-        String dealDay = Db.queryStr("select value from 72crm_admin_config where name = 'customerPoolSettingDealDays'");
-        String followupDay = Db.queryStr("select value from 72crm_admin_config where name = 'customerPoolSettingFollowupDays'");
-        Integer type = Db.queryInt("select status from 72crm_admin_config where name = 'customerPoolSetting'");
-        AdminConfig remindConfig = AdminConfig.dao.findFirst("select * from 72crm_admin_config where name = 'putInPoolRemindDays'");
+        String dealDay = Db.queryStr("select value from aptenon_admin_config where name = 'customerPoolSettingDealDays'");
+        String followupDay = Db.queryStr("select value from aptenon_admin_config where name = 'customerPoolSettingFollowupDays'");
+        Integer type = Db.queryInt("select status from aptenon_admin_config where name = 'customerPoolSetting'");
+        AdminConfig remindConfig = AdminConfig.dao.findFirst("select * from aptenon_admin_config where name = 'putInPoolRemindDays'");
 
         if(dealDay == null){
             dealDay = "3";
@@ -667,7 +667,7 @@ public class CrmCustomerService{
             remindConfig.setName("putInPoolRemindDays");
             remindConfig.save();
         }
-        AdminConfig config = AdminConfig.dao.findFirst("select status,value from 72crm_admin_config where name = 'expiringContractDays' limit 1");
+        AdminConfig config = AdminConfig.dao.findFirst("select status,value from aptenon_admin_config where name = 'expiringContractDays' limit 1");
         if(config == null){
             config = new AdminConfig();
             config.setStatus(0);
@@ -692,13 +692,13 @@ public class CrmCustomerService{
      */
     @Before(Tx.class)
     public R updateCustomerByIds(String ids){
-        StringBuffer sq = new StringBuffer("select count(*) from 72crm_crm_customer where customer_id in ( ");
+        StringBuffer sq = new StringBuffer("select count(*) from aptenon_crm_customer where customer_id in ( ");
         sq.append(ids).append(") and is_lock = 1");
         Integer count = Db.queryInt(sq.toString());
         if(count > 0){
             return R.error("选中的客户有被锁定的，不能放入公海！");
         }
-        StringBuffer sql = new StringBuffer("UPDATE 72crm_crm_customer SET owner_user_id = null,ro_user_id = ',',rw_user_id = ',' where customer_id in (");
+        StringBuffer sql = new StringBuffer("UPDATE aptenon_crm_customer SET owner_user_id = null,ro_user_id = ',',rw_user_id = ',' where customer_id in (");
         sql.append(ids).append(") and is_lock = 0");
         String[] idsArr = ids.split(",");
         for(String id : idsArr){
@@ -712,7 +712,7 @@ public class CrmCustomerService{
             crmOwnerRecord.setPreOwnerUserId(crmCustomer.getOwnerUserId());
             crmOwnerRecord.setCreateTime(DateUtil.date());
             crmOwnerRecord.save();
-            Db.update("update 72crm_crm_contacts set owner_user_id = null where customer_id = ?", id);
+            Db.update("update aptenon_crm_contacts set owner_user_id = null where customer_id = ?", id);
         }
         crmRecordService.addPutIntoTheOpenSeaRecord(TagUtil.toSet(ids), CrmEnum.CRM_CUSTOMER.getType()+"");
         return Db.update(sql.toString()) > 0 ? R.ok() : R.error();
@@ -740,7 +740,7 @@ public class CrmCustomerService{
             crmOwnerRecord.setPostOwnerUserId(userId);
             crmOwnerRecord.setCreateTime(DateUtil.date());
             crmOwnerRecord.save();
-            Db.update("update 72crm_crm_contacts set owner_user_id = ? where customer_id = ?", userId, id);
+            Db.update("update aptenon_crm_contacts set owner_user_id = ? where customer_id = ?", userId, id);
         }
         SqlPara sqlPara = Db.getSqlPara("crm.customer.getCustomersByIds", Kv.by("userId", userId).set("createTime", DateUtil.date()).set("ids", idsArr));
         return Db.update(sqlPara) > 0 ? R.ok() : R.error();
@@ -763,7 +763,7 @@ public class CrmCustomerService{
     public R customerSetting(CrmCustomerSetting customerSetting){
         List<String> errorList = new ArrayList<>();
         Db.tx(() -> {
-            Db.delete("delete from `72crm_crm_customer_settinguser` where setting_id = ?", customerSetting.getSettingId());
+            Db.delete("delete from `aptenon_crm_customer_settinguser` where setting_id = ?", customerSetting.getSettingId());
             customerSetting.setCreateTime(DateUtil.date());
             if (customerSetting.getSettingId() != null) {
                 customerSetting.update();
@@ -824,8 +824,8 @@ public class CrmCustomerService{
 
     public R queryEditCustomerSetting(Integer settingId){
         CrmCustomerSetting crmCustomerSetting = CrmCustomerSetting.dao.findById(settingId);
-        crmCustomerSetting.put("userIds", Db.query("SELECT user_id FROM 72crm_crm_customer_settinguser WHERE type='1' and setting_id =?", settingId));
-        crmCustomerSetting.put("deptIds", Db.query("SELECT dept_id FROM 72crm_crm_customer_settinguser WHERE type='2' and setting_id =?", settingId));
+        crmCustomerSetting.put("userIds", Db.query("SELECT user_id FROM aptenon_crm_customer_settinguser WHERE type='1' and setting_id =?", settingId));
+        crmCustomerSetting.put("deptIds", Db.query("SELECT dept_id FROM aptenon_crm_customer_settinguser WHERE type='2' and setting_id =?", settingId));
         return R.ok().put("data", crmCustomerSetting);
     }
 
@@ -834,7 +834,7 @@ public class CrmCustomerService{
         CrmCustomerSetting crmCustomerSetting = CrmCustomerSetting.dao.findById(settingId);
         if(crmCustomerSetting != null){
             crmCustomerSetting.delete();
-            Db.delete("delete from `72crm_crm_customer_settinguser` where setting_id = ?", settingId);
+            Db.delete("delete from `aptenon_crm_customer_settinguser` where setting_id = ?", settingId);
         }
         return R.ok();
     }

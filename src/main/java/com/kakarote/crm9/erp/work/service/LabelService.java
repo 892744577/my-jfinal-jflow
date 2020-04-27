@@ -35,11 +35,11 @@ public class LabelService{
     }
 
     public R deleteLabel(String labelId){
-        Integer count = Db.queryInt("select count(*) from 72crm_task where label_id like concat('%,',?,',%');", labelId);
+        Integer count = Db.queryInt("select count(*) from aptenon_task where label_id like concat('%,',?,',%');", labelId);
         if(count>0){
             return R.error("使用中的标签不能删除");
         }
-        Db.delete("delete from 72crm_work_task_label where label_id = ?",labelId);
+        Db.delete("delete from aptenon_work_task_label where label_id = ?",labelId);
         return R.ok();
     }
 
@@ -73,7 +73,7 @@ public class LabelService{
         if(AuthUtil.isWorkAdmin()){
             resultList = new WorkTaskLabel().dao().findAll();
         }else {
-            resultList = new WorkTaskLabel().find("select * from `72crm_work_task_label` where label_id in (?)", String.join(",", collect));
+            resultList = new WorkTaskLabel().find("select * from `aptenon_work_task_label` where label_id in (?)", String.join(",", collect));
         }
         return R.ok().put("data",resultList);
     }

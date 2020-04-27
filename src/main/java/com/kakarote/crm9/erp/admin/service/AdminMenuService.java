@@ -57,34 +57,34 @@ public class AdminMenuService {
     public R getMenuListByType(Integer type) {
         Kv kv = new Kv();
         if (type == 1) {
-            AdminMenu system = AdminMenu.dao.findFirst("select * from 72crm_admin_menu where parent_id = 0 and realm = 'manage'");
+            AdminMenu system = AdminMenu.dao.findFirst("select * from aptenon_admin_menu where parent_id = 0 and realm = 'manage'");
             List<AdminMenu> adminMenuList = getMenuList(system.getMenuId(), BaseConstant.AUTH_DATA_RECURSION_NUM,new ArrayList<>());
             system.put("childMenu", adminMenuList);
             kv.set("data", system);
         } else if (type == 2) {
-            AdminMenu crm = AdminMenu.dao.findFirst("select * from 72crm_admin_menu where parent_id = 0 and realm = 'crm'");
+            AdminMenu crm = AdminMenu.dao.findFirst("select * from aptenon_admin_menu where parent_id = 0 and realm = 'crm'");
             List<AdminMenu> adminMenuList = getExceptWorkMenuList(crm.getMenuId(),BaseConstant.AUTH_DATA_RECURSION_NUM);
             crm.put("childMenu", adminMenuList);
             kv.set("data", crm);
-            AdminMenu bi = AdminMenu.dao.findFirst("select * from 72crm_admin_menu where parent_id = 0 and realm = 'bi'");
+            AdminMenu bi = AdminMenu.dao.findFirst("select * from aptenon_admin_menu where parent_id = 0 and realm = 'bi'");
             List<String> realmList = new ArrayList<>();
             realmList.add("oa");
             List<AdminMenu> biList = getMenuList(bi.getMenuId(),BaseConstant.AUTH_DATA_RECURSION_NUM, realmList);
             bi.put("childMenu", biList);
             kv.set("bi", bi);
         } else if (type == 7) {
-            AdminMenu oa = AdminMenu.dao.findFirst("select * from 72crm_admin_menu where parent_id = 0 and realm = 'oa'");
+            AdminMenu oa = AdminMenu.dao.findFirst("select * from aptenon_admin_menu where parent_id = 0 and realm = 'oa'");
             List<AdminMenu> adminMenuList = getExceptWorkMenuList(oa.getMenuId(),BaseConstant.AUTH_DATA_RECURSION_NUM);
             oa.put("childMenu", adminMenuList);
             kv.set("data", oa);
-            AdminMenu bi = AdminMenu.dao.findFirst("select * from 72crm_admin_menu where parent_id = 0 and realm = 'bi'");
+            AdminMenu bi = AdminMenu.dao.findFirst("select * from aptenon_admin_menu where parent_id = 0 and realm = 'bi'");
             String[] realmArr = new String[]{"achievement", "business", "customer", "contract", "product", "portrait", "ranking"};
             List<String> realmList = new ArrayList<>(Arrays.asList(realmArr));
             List<AdminMenu> biList = getMenuList(bi.getMenuId(),BaseConstant.AUTH_DATA_RECURSION_NUM, realmList);
             bi.put("childMenu", biList);
             kv.set("bi", bi);
         } else if (type == 8) {
-            AdminMenu project = AdminMenu.dao.findFirst("select * from 72crm_admin_menu where parent_id = 0 and realm = 'project'");
+            AdminMenu project = AdminMenu.dao.findFirst("select * from aptenon_admin_menu where parent_id = 0 and realm = 'project'");
             List<AdminMenu> adminMenuList = getExceptWorkMenuList(project.getMenuId(),BaseConstant.AUTH_DATA_RECURSION_NUM);
             project.put("childMenu", adminMenuList);
             kv.set("data", project);

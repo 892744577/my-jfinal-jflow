@@ -36,9 +36,9 @@ public class BiCustomerService {
         Integer beginTime = record.getInt("beginTime");
         StringBuffer sqlStringBuffer = new StringBuffer();
         for (int i=1; i <= cycleNum;i++){
-            sqlStringBuffer.append("select '").append(beginTime).append("' as type,IFNULL((select count(customer_id) from 72crm_crm_customer where DATE_FORMAT(create_time,'")
+            sqlStringBuffer.append("select '").append(beginTime).append("' as type,IFNULL((select count(customer_id) from aptenon_crm_customer where DATE_FORMAT(create_time,'")
                     .append(sqlDateFormat).append("') = '").append(beginTime).append("' and owner_user_id in (").append(userIds)
-                    .append(")),0) as customerNum,IFNULL(count(DISTINCT a.customer_id),0) as dealCustomerNum from 72crm_crm_customer as a left join 72crm_crm_contract as b on a.customer_id = b.customer_id where DATE_FORMAT(b.order_date,'")
+                    .append(")),0) as customerNum,IFNULL(count(DISTINCT a.customer_id),0) as dealCustomerNum from aptenon_crm_customer as a left join aptenon_crm_contract as b on a.customer_id = b.customer_id where DATE_FORMAT(b.order_date,'")
                     .append(sqlDateFormat).append("') = '").append(beginTime).append("' and a.owner_user_id in (").append(userIds).append(")");
             if (i != cycleNum){
                 sqlStringBuffer.append(" union all ");
@@ -67,17 +67,17 @@ public class BiCustomerService {
         String[] userIdsArr = userIds.split(",");
         StringBuffer sqlStringBuffer = new StringBuffer();
         for (int i=1; i <= userIdsArr.length;i++){
-            sqlStringBuffer.append("select (select realname from 72crm_admin_user where user_id = ").append(userIdsArr[i-1])
+            sqlStringBuffer.append("select (select realname from aptenon_admin_user where user_id = ").append(userIdsArr[i-1])
                     .append(") as realname,count(a.customer_id) as customerNum,IFNULL((select count(distinct b.customer_id) from " +
-                    "72crm_crm_customer as b left join 72crm_crm_contract as c on b.customer_id = c.customer_id where " +
+                    "aptenon_crm_customer as b left join aptenon_crm_contract as c on b.customer_id = c.customer_id where " +
                     "c.check_status = 1 and b.owner_user_id = ").append(userIdsArr[i-1]).append(" and DATE_FORMAT(c.order_date,'")
                     .append(sqlDateFormat).append("') between '").append(beginTime).append("' and '").append(finalTime).append("'),0) as dealCustomerNum,(select IFNULL(SUM(money),0) " +
-                    "from 72crm_crm_contract where DATE_FORMAT(order_date,'").append(sqlDateFormat).append("') between '")
+                    "from aptenon_crm_contract where DATE_FORMAT(order_date,'").append(sqlDateFormat).append("') between '")
                     .append(beginTime).append("' and '").append(finalTime).append("' and owner_user_id = ").append(userIdsArr[i-1])
-                    .append(" ) as contractMoney,(select IFNULL(SUM(d.money),0) from 72crm_crm_receivables as d left join 72crm_crm_contract" +
+                    .append(" ) as contractMoney,(select IFNULL(SUM(d.money),0) from aptenon_crm_receivables as d left join aptenon_crm_contract" +
                     " as e on d.contract_id = e.contract_id where DATE_FORMAT(e.order_date,'").append(sqlDateFormat).append("') between '")
                     .append(beginTime).append("' and '").append(finalTime).append("' and e.owner_user_id = ").append(userIdsArr[i-1])
-                    .append(" ) as receivablesMoney from 72crm_crm_customer as a where DATE_FORMAT(create_time,'").append(sqlDateFormat)
+                    .append(" ) as receivablesMoney from aptenon_crm_customer as a where DATE_FORMAT(create_time,'").append(sqlDateFormat)
                     .append("') between '").append(beginTime).append("' and '").append(finalTime).append("' and owner_user_id = ")
                     .append(userIdsArr[i-1]);
             if (i != userIdsArr.length){
@@ -110,9 +110,9 @@ public class BiCustomerService {
         Integer beginTime = record.getInt("beginTime");
         StringBuffer sqlStringBuffer = new StringBuffer();
         for (int i=1; i <= cycleNum;i++){
-            sqlStringBuffer.append("select '").append(beginTime).append("' as type,IFNULL((select count(record_id) from 72crm_admin_record where DATE_FORMAT(create_time,'")
+            sqlStringBuffer.append("select '").append(beginTime).append("' as type,IFNULL((select count(record_id) from aptenon_admin_record where DATE_FORMAT(create_time,'")
                     .append(sqlDateFormat).append("') = '").append(beginTime).append("' and types = 'crm_customer' and create_user_id in (").append(userIds)
-                    .append(")),0) as recordCount,IFNULL(count(DISTINCT types_id),0) as customerCount from 72crm_admin_record where DATE_FORMAT(create_time,'")
+                    .append(")),0) as recordCount,IFNULL(count(DISTINCT types_id),0) as customerCount from aptenon_admin_record where DATE_FORMAT(create_time,'")
                     .append(sqlDateFormat).append("') = '").append(beginTime).append("' and types = 'crm_customer' and create_user_id in (").append(userIds).append(")");
             if (i != cycleNum){
                 sqlStringBuffer.append(" union all ");
@@ -141,7 +141,7 @@ public class BiCustomerService {
         StringBuffer sqlStringBuffer = new StringBuffer();
         String[] userIdsArr = userIds.split(",");
         for (int i=1; i<=userIdsArr.length; i++){
-            sqlStringBuffer.append("select b.realname,IFNULL(count(a.record_id),0) as recordCount,IFNULL(count(DISTINCT a.types_id),0) as customerCount from 72crm_admin_record as a left join 72crm_admin_user as b on a.create_user_id = b.user_id where DATE_FORMAT(a.create_time,'")
+            sqlStringBuffer.append("select b.realname,IFNULL(count(a.record_id),0) as recordCount,IFNULL(count(DISTINCT a.types_id),0) as customerCount from aptenon_admin_record as a left join aptenon_admin_user as b on a.create_user_id = b.user_id where DATE_FORMAT(a.create_time,'")
                     .append(sqlDateFormat).append("') between '").append(beginTime).append("' and '").append(finalTime)
                     .append("' and a.types = 'crm_customer' and b.user_id = ").append(userIdsArr[i-1]);
             if (i != userIdsArr.length){
@@ -189,11 +189,11 @@ public class BiCustomerService {
         Integer beginTime = record.getInt("beginTime");
         StringBuffer sqlStringBuffer = new StringBuffer();
         for (int i=1; i <= cycleNum;i++){
-            sqlStringBuffer.append("select '").append(beginTime).append("' as type,IFNULL((select count(customer_id) from 72crm_crm_customer where DATE_FORMAT(create_time,'")
+            sqlStringBuffer.append("select '").append(beginTime).append("' as type,IFNULL((select count(customer_id) from aptenon_crm_customer where DATE_FORMAT(create_time,'")
                     .append(sqlDateFormat).append("') = '").append(beginTime).append("' and owner_user_id in (").append(userIds)
-                    .append(")),0) as customerNum,IFNULL(count(a.customer_id)*100/(select count(customer_id) from 72crm_crm_customer where DATE_FORMAT(create_time,'")
+                    .append(")),0) as customerNum,IFNULL(count(a.customer_id)*100/(select count(customer_id) from aptenon_crm_customer where DATE_FORMAT(create_time,'")
                     .append(sqlDateFormat).append("') = '").append(beginTime).append("' and owner_user_id in (").append(userIds)
-                    .append(")),0) as pro,IFNULL(count(a.customer_id),0) as dealCustomerNum from 72crm_crm_customer as a left join 72crm_crm_contract as b on a.customer_id = b.customer_id where DATE_FORMAT(a.create_time,'")
+                    .append(")),0) as pro,IFNULL(count(a.customer_id),0) as dealCustomerNum from aptenon_crm_customer as a left join aptenon_crm_contract as b on a.customer_id = b.customer_id where DATE_FORMAT(a.create_time,'")
                     .append(sqlDateFormat).append("') = '").append(beginTime).append("' and a.owner_user_id in (").append(userIds)
                     .append(") and b.check_status = 1");
             if (i != cycleNum){
@@ -243,9 +243,9 @@ public class BiCustomerService {
         StringBuffer sqlStringBuffer = new StringBuffer();
         for (int i=1; i <= cycleNum;i++){
             sqlStringBuffer.append("select '").append(beginTime).append("' as type,count(type_id) as putInNum,(select count(type_id)" +
-                    " from 72crm_crm_owner_record where DATE_FORMAT(create_time,'").append(sqlDateFormat).append("') = '")
+                    " from aptenon_crm_owner_record where DATE_FORMAT(create_time,'").append(sqlDateFormat).append("') = '")
                     .append(beginTime).append("' and type = 8 and post_owner_user_id in (").append(userIds).append(")) as receiveNum " +
-                    "from 72crm_crm_owner_record where DATE_FORMAT(create_time,'").append(sqlDateFormat).append("') = '")
+                    "from aptenon_crm_owner_record where DATE_FORMAT(create_time,'").append(sqlDateFormat).append("') = '")
                     .append(beginTime).append("' and type = 8 and pre_owner_user_id in (").append(userIds).append(")");
             if (i != cycleNum){
                 sqlStringBuffer.append(" union all ");
@@ -292,7 +292,7 @@ public class BiCustomerService {
         StringBuffer sqlStringBuffer = new StringBuffer();
         for (int i=1; i <= cycleNum;i++){
             sqlStringBuffer.append("select '").append(beginTime).append("' as type,IFNULL(TRUNCATE(AVG(TIMESTAMPDIFF(DAY,a.create_time,b.order_date)),1),0)" +
-                    " as cycle, count(a.customer_id) as customerNum from 72crm_crm_customer as a left join 72crm_crm_contract as b on " +
+                    " as cycle, count(a.customer_id) as customerNum from aptenon_crm_customer as a left join aptenon_crm_contract as b on " +
                     "a.customer_id = b.customer_id where DATE_FORMAT(a.create_time,'").append(sqlDateFormat).append("') = '").append(beginTime)
                     .append("' and b.check_status = 1 and a.owner_user_id in (").append(userIds).append(")");
             if (i != cycleNum){
@@ -323,8 +323,8 @@ public class BiCustomerService {
         String[] userIdsArr = userIds.split(",");
         for (int i=1; i<=userIdsArr.length;i++){
             sqlStringBuffer.append("select a.realname,IFNULL(TRUNCATE(AVG(TIMESTAMPDIFF(DAY,b.create_time,c.order_date)),1),0) as cycle, count(b.customer_id) " +
-                    "as customerNum from 72crm_admin_user as a left join 72crm_crm_customer as b on a.user_id = b.owner_user_id left join " +
-                    "72crm_crm_contract as c on b.customer_id = c.customer_id where DATE_FORMAT(b.create_time,'").append(sqlDateFormat)
+                    "as customerNum from aptenon_admin_user as a left join aptenon_crm_customer as b on a.user_id = b.owner_user_id left join " +
+                    "aptenon_crm_contract as c on b.customer_id = c.customer_id where DATE_FORMAT(b.create_time,'").append(sqlDateFormat)
                     .append("') between '").append(beginTime).append("' and '").append(finalTime).append("' and c.check_status = 1 and a.user_id = ")
                     .append(userIdsArr[i-1]);
             if (i != userIdsArr.length){
@@ -354,7 +354,7 @@ public class BiCustomerService {
         StringBuffer sqlStringBuffer = new StringBuffer();
         for (int i=1; i <= districtArr.length;i++){
             sqlStringBuffer.append("select '").append(districtArr[i-1]).append("' as type,IFNULL(TRUNCATE(AVG(TIMESTAMPDIFF(DAY,a.create_time,b.order_date)),1),0)" +
-                    " as cycle, count(a.customer_id) as customerNum from 72crm_crm_customer as a left join 72crm_crm_contract as b on " +
+                    " as cycle, count(a.customer_id) as customerNum from aptenon_crm_customer as a left join aptenon_crm_contract as b on " +
                     "a.customer_id = b.customer_id where DATE_FORMAT(a.create_time,'").append(sqlDateFormat).append("') between '").append(beginTime)
                     .append("' and '").append(finalTime).append("' and b.check_status = 1 and a.owner_user_id in (").append(userIds)
                     .append(") and a.address like '%").append(districtArr[i-1]).append("%'");
@@ -381,15 +381,15 @@ public class BiCustomerService {
         }
         Integer beginTime = record.getInt("beginTime");
         Integer finalTime = record.getInt("finalTime");
-        List<Record> productList = Db.find("select product_id,name from 72crm_crm_product");
+        List<Record> productList = Db.find("select product_id,name from aptenon_crm_product");
         if (CollectionUtil.isEmpty(productList)){
             return R.ok().put("data",new ArrayList<>());
         }
         StringBuffer sqlStringBuffer = new StringBuffer();
         for (int i=1; i <= productList.size();i++){
             sqlStringBuffer.append("select '").append(productList.get(i-1).getStr("name")).append("' as productName,IFNULL(TRUNCATE(AVG(TIMESTAMPDIFF(DAY,a.create_time,b.order_date)),1),0)" +
-                    " as cycle, count(a.customer_id) as customerNum from 72crm_crm_customer as a left join 72crm_crm_contract as b on " +
-                    "a.customer_id = b.customer_id left join 72crm_crm_contract_product as c on b.contract_id = c.contract_id where DATE_FORMAT(a.create_time,'")
+                    " as cycle, count(a.customer_id) as customerNum from aptenon_crm_customer as a left join aptenon_crm_contract as b on " +
+                    "a.customer_id = b.customer_id left join aptenon_crm_contract_product as c on b.contract_id = c.contract_id where DATE_FORMAT(a.create_time,'")
                     .append(sqlDateFormat).append("') between '").append(beginTime).append("' and '").append(finalTime)
                     .append("' and b.check_status = 1 and a.owner_user_id in (").append(userIds).append(") and c.product_id = ")
                     .append(productList.get(i-1).getInt("product_id"));

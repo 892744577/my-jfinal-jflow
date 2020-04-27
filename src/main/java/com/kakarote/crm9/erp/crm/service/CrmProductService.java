@@ -88,7 +88,7 @@ public class CrmProductService {
      */
     public Record queryById(Integer id) {
         Record crmProduct = Db.findFirst(Db.getSql("crm.product.queryById"),id);
-        List<Record> recordList = Db.find("select name,value from `72crm_admin_fieldv` where batch_id = ?", crmProduct.getStr("batch_id"));
+        List<Record> recordList = Db.find("select name,value from `aptenon_admin_fieldv` where batch_id = ?", crmProduct.getStr("batch_id"));
         recordList.forEach(field->crmProduct.set(field.getStr("name"),field.getStr("value")));
         return crmProduct;
     }
@@ -113,7 +113,7 @@ public class CrmProductService {
         for (String id : ids) {
             CrmProduct product = CrmProduct.dao.findById(id);
             if (product != null) {
-                Db.delete("delete FROM 72crm_admin_fieldv where batch_id = ?",product.getBatchId());
+                Db.delete("delete FROM aptenon_admin_fieldv where batch_id = ?",product.getBatchId());
                 product.setStatus(3);
                 product.update();
             }
@@ -125,7 +125,7 @@ public class CrmProductService {
      * 上架或者下架
      */
     public R updateStatus(String ids, Integer status) {
-        List<Record> recordList = Db.find("select batch_id from 72crm_crm_product where  product_id in (" + ids + ")");
+        List<Record> recordList = Db.find("select batch_id from aptenon_crm_product where  product_id in (" + ids + ")");
         StringBuilder batchIds = new StringBuilder();
         for (Record record : recordList) {
             if (batchIds.length() == 0) {
@@ -140,7 +140,7 @@ public class CrmProductService {
         } else {
             a = "上架";
         }
-        StringBuilder sqlfield = new StringBuilder("update 72crm_admin_fieldv set value = '" + a + "' where name = '是否上下架' and batch_id in ( ");
+        StringBuilder sqlfield = new StringBuilder("update aptenon_admin_fieldv set value = '" + a + "' where name = '是否上下架' and batch_id in ( ");
         sqlfield.append(batchIds.toString());
         sqlfield.append(" )");
         int f = Db.update(sqlfield.toString());

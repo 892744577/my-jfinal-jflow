@@ -62,11 +62,11 @@ public class AdminFieldService {
         List<Record> recordList = Db.find(Db.getSql("admin.field.queryAddField"),label);
         recordList.forEach(field ->{
             if (field.getInt("type") == FormTypeEnum.FILE.getType()){
-                field.set("value",Db.find("select file_id, name, size, create_user_id, create_time, file_path, file_type from 72crm_admin_file where batch_id = ?",StrUtil.isNotEmpty(record.get(field.getStr("field_name")))?record.get(field.getStr("field_name")):""));
+                field.set("value",Db.find("select file_id, name, size, create_user_id, create_time, file_path, file_type from aptenon_admin_file where batch_id = ?",StrUtil.isNotEmpty(record.get(field.getStr("field_name")))?record.get(field.getStr("field_name")):""));
             }else if (field.getInt("type") == FormTypeEnum.USER.getType()){
-                field.set("value",Db.find("select user_id,realname from 72crm_admin_user where find_in_set(user_id,ifnull(?,0))",record.getStr(field.getStr("field_name"))));
+                field.set("value",Db.find("select user_id,realname from aptenon_admin_user where find_in_set(user_id,ifnull(?,0))",record.getStr(field.getStr("field_name"))));
             }else if (field.getInt("type") == FormTypeEnum.STRUCTURE.getType()){
-                field.set("value",Db.find("select dept_id,name from 72crm_admin_dept where find_in_set(dept_id,ifnull(?,0))",record.getStr(field.getStr("field_name"))));
+                field.set("value",Db.find("select dept_id,name from aptenon_admin_dept where find_in_set(dept_id,ifnull(?,0))",record.getStr(field.getStr("field_name"))));
             }else {
                 field.set("value",record.get(field.getStr("field_name"))!=null ? record.get(field.getStr("field_name")):"");
             }
@@ -97,11 +97,11 @@ public class AdminFieldService {
             }else {
                 list.forEach(field->{
                     if (field.getInt("type") == FormTypeEnum.FILE.getType()){
-                        field.set("value",Db.find("select file_id, name, size, create_time, file_path, file_type, batch_id from 72crm_admin_file where batch_id = ?",StrUtil.isNotEmpty(record.get(field.getStr("field_name")))?record.get(field.getStr("field_name")):""));
+                        field.set("value",Db.find("select file_id, name, size, create_time, file_path, file_type, batch_id from aptenon_admin_file where batch_id = ?",StrUtil.isNotEmpty(record.get(field.getStr("field_name")))?record.get(field.getStr("field_name")):""));
                     }else if (field.getInt("type") == FormTypeEnum.USER.getType()){
-                        field.set("value",Db.find("select user_id,realname from 72crm_admin_user where find_in_set(user_id,ifnull(?,0))",record.getStr(field.getStr("field_name"))));
+                        field.set("value",Db.find("select user_id,realname from aptenon_admin_user where find_in_set(user_id,ifnull(?,0))",record.getStr(field.getStr("field_name"))));
                     }else if (field.getInt("type") == FormTypeEnum.STRUCTURE.getType()){
-                        field.set("value",Db.find("select dept_id,name from 72crm_admin_dept where find_in_set(dept_id,ifnull(?,0))",record.getStr(field.getStr("field_name"))));
+                        field.set("value",Db.find("select dept_id,name from aptenon_admin_dept where find_in_set(dept_id,ifnull(?,0))",record.getStr(field.getStr("field_name"))));
                     }else {
                         field.set("value",record.get(field.getStr("field_name"))!=null ? record.get(field.getStr("field_name")):"");
                     }
@@ -131,7 +131,7 @@ public class AdminFieldService {
         }
         Integer label = jsonObject.getInteger("label");
         Integer categoryId = jsonObject.getInteger("categoryId");
-        if (categoryId != null && Db.queryInt("select ifnull(is_sys,0) from 72crm_oa_examine_category where category_id = ?", categoryId) == 1) {
+        if (categoryId != null && Db.queryInt("select ifnull(is_sys,0) from aptenon_oa_examine_category where category_id = ?", categoryId) == 1) {
             return R.error("系统审批类型暂不支持编辑");
         }
         List<Integer> arr = new ArrayList<>();
@@ -141,7 +141,7 @@ public class AdminFieldService {
                 arr.add(field.getFieldId());
             }
         });
-        List<AdminField> fieldSorts = AdminField.dao.find("select name from 72crm_admin_field where label = ?", label);
+        List<AdminField> fieldSorts = AdminField.dao.find("select name from aptenon_admin_field where label = ?", label);
         List<String> nameList = fieldSorts.stream().map(AdminField::getName).collect(Collectors.toList());
         if (arr.size() > 0) {
             SqlPara sql = Db.getSqlPara("admin.field.deleteByChooseId", Kv.by("ids", arr).set("label", label).set("categoryId", categoryId));
@@ -171,7 +171,7 @@ public class AdminFieldService {
                 if (entity.getFieldType() == 0){
                     Db.update(Db.getSqlPara("admin.field.updateFieldSortName", entity));
                 }else if (entity.getFieldType() == 1){
-                    Db.update("update 72crm_admin_field_sort set name = ? where field_id = ?",entity.getName(),entity.getFieldId());
+                    Db.update("update aptenon_admin_field_sort set name = ? where field_id = ?",entity.getName(),entity.getFieldId());
                 }
             } else {
                 entity.save();
@@ -212,7 +212,7 @@ public class AdminFieldService {
         if (array == null || StrUtil.isEmpty(batchId)) {
             return false;
         }
-        Db.deleteById("72crm_admin_fieldv", "batch_id", batchId);
+        Db.deleteById("aptenon_admin_fieldv", "batch_id", batchId);
         List<AdminFieldv> adminFieldvs=new ArrayList<>();
         array.forEach(obj -> {
             AdminFieldv fieldv = TypeUtils.castToJavaBean(obj, AdminFieldv.class);
@@ -236,7 +236,7 @@ public class AdminFieldService {
         if (array == null || StrUtil.isEmpty(batchId)) {
             return false;
         }
-        Db.deleteById("72crm_admin_fieldv", "batch_id", batchId);
+        Db.deleteById("aptenon_admin_fieldv", "batch_id", batchId);
         array.forEach(fieldv -> {
             fieldv.setId(null);
             fieldv.setCreateTime(DateUtil.date());
@@ -261,7 +261,7 @@ public class AdminFieldService {
         recordList.forEach(record -> {
             if (record.getInt("type") == 10) {
                 if (StrUtil.isNotEmpty(record.getStr("value"))) {
-                    List<Record> userList = Db.find("select user_id,realname from 72crm_admin_user where user_id in (" + record.getStr("value") + ")");
+                    List<Record> userList = Db.find("select user_id,realname from aptenon_admin_user where user_id in (" + record.getStr("value") + ")");
                     record.set("value", userList);
                 } else {
                     record.set("value", new ArrayList<>());
@@ -269,7 +269,7 @@ public class AdminFieldService {
                 record.set("default_value", new ArrayList<>(0));
             } else if (record.getInt("type") == 12) {
                 if (StrUtil.isNotEmpty(record.getStr("value"))) {
-                    List<Record> deptList = Db.find("select dept_id,name from 72crm_admin_dept where dept_id in (" + record.getStr("value") + ")");
+                    List<Record> deptList = Db.find("select dept_id,name from aptenon_admin_dept where dept_id in (" + record.getStr("value") + ")");
                     record.set("value", deptList);
                 } else {
                     record.set("value", new ArrayList<>());
@@ -362,7 +362,7 @@ public class AdminFieldService {
 
     public List<AdminFieldStyle> queryFieldStyle(String type) {
         Long userId = BaseUtil.getUser().getUserId();
-        return AdminFieldStyle.dao.find("select * from 72crm_admin_field_style where type = ? and user_id = ?", type, userId);
+        return AdminFieldStyle.dao.find("select * from aptenon_admin_field_style where type = ? and user_id = ?", type, userId);
     }
 
     /**
@@ -373,7 +373,7 @@ public class AdminFieldService {
     public List<Record> queryListHead(AdminFieldSort adminFieldSort) {
         //查看userid是否存在于顺序表，没有则插入
         Long userId = BaseUtil.getUser().getUserId();
-        Integer number = Db.queryInt("select count(*) from 72crm_admin_field_sort where user_id = ? and label = ?", userId, adminFieldSort.getLabel());
+        Integer number = Db.queryInt("select count(*) from aptenon_admin_field_sort where user_id = ? and label = ?", userId, adminFieldSort.getLabel());
         if (0 == number) {
             List<Record> fieldList;
             if (adminFieldSort.getLabel() == CrmEnum.CRM_CUSTOMER_POOL.getType()){
@@ -448,7 +448,7 @@ public class AdminFieldService {
         List<Record> fieldList = customFieldList(adminFieldSort.getLabel());
         for (Record record : fieldList) {
             String fieldName = record.getStr("name");
-            Integer number = Db.queryInt("select count(*) as number from 72crm_admin_field_sort where user_id = ? and label = ? and field_name = ?", userId, adminFieldSort.getLabel(), fieldName);
+            Integer number = Db.queryInt("select count(*) as number from aptenon_admin_field_sort where user_id = ? and label = ? and field_name = ?", userId, adminFieldSort.getLabel(), fieldName);
             if (number.equals(0)) {
                 AdminFieldSort newField = new AdminFieldSort();
                 newField.setFieldName(fieldName).setName(fieldName).setLabel(adminFieldSort.getLabel()).setIsHide(1).setUserId(userId).setSort(1).setType(record.getInt("type"));
@@ -505,17 +505,17 @@ public class AdminFieldService {
             }else {
                 if(FormTypeEnum.USER.getType() == dataType){
                     if(StrUtil.isNotEmpty(record.getStr("value"))){
-                        record.set("value",Db.queryStr("select group_concat(realname) from `72crm_admin_user` where user_id in ("+record.getStr("value")+")"));
+                        record.set("value",Db.queryStr("select group_concat(realname) from `aptenon_admin_user` where user_id in ("+record.getStr("value")+")"));
                     }
                 }else if (FormTypeEnum.STRUCTURE.getType() == dataType) {
                     if(StrUtil.isNotEmpty(record.getStr("value"))){
-                        record.set("value",Db.queryStr("select group_concat(name) from `72crm_admin_dept` where dept_id in ("+record.getStr("value")+")"));
+                        record.set("value",Db.queryStr("select group_concat(name) from `aptenon_admin_dept` where dept_id in ("+record.getStr("value")+")"));
                     }
                 }
             }
             if(dataType == FormTypeEnum.FILE.getType()){
                 if(StrUtil.isNotEmpty(record.getStr("value"))){
-                    record.set("value",Db.find("select file_id, name, size, create_user_id, create_time, file_path, file_type from 72crm_admin_file where batch_id = ?",record.getStr("value")));
+                    record.set("value",Db.find("select file_id, name, size, create_user_id, create_time, file_path, file_type from aptenon_admin_file where batch_id = ?",record.getStr("value")));
                 }
             }
         });

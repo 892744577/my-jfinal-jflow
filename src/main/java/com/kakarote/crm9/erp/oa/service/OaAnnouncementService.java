@@ -57,8 +57,8 @@ public class OaAnnouncementService {
         String userIds;
         String deptIds;
         if(StrUtil.isEmpty(oaAnnouncement.getOwnerUserIds()) && StrUtil.isEmpty(oaAnnouncement.getDeptIds())){
-            userIds = Db.queryStr("select group_concat(user_id) from `72crm_admin_user`");
-            deptIds = Db.queryStr("select group_concat(dept_id) from `72crm_admin_dept`");
+            userIds = Db.queryStr("select group_concat(user_id) from `aptenon_admin_user`");
+            deptIds = Db.queryStr("select group_concat(dept_id) from `aptenon_admin_dept`");
         }else {
             userIds = oaActionRecordService.getJoinIds(user.getUserId(), oaAnnouncement.getOwnerUserIds());
             deptIds = oaActionRecordService.getJoinIds(Long.valueOf(user.getDeptId()), oaAnnouncement.getDeptIds());
