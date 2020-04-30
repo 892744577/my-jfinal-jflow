@@ -7989,10 +7989,16 @@ public class WorkNode {
 	private void InitStartWorkDataV2() throws Exception {
 		/* 如果是开始流程判断是不是被吊起的流程，如果是就要向父流程写日志。 */
 		if (SystemConfig.getIsBSsystem()) {
-			String fk_nodeFrom = BP.Sys.Glo.getRequest().getParameter("FromNode"); // BP.Sys.Glo.Request.QueryString["FromNode"];
+			String fk_nodeFrom = null;
+			if(BP.Sys.Glo.getRequest()!=null){
+				fk_nodeFrom = BP.Sys.Glo.getRequest().getParameter("FromNode"); // BP.Sys.Glo.Request.QueryString["FromNode"];
+			}
 			if (DataType.IsNullOrEmpty(fk_nodeFrom) == false) {
 				Node ndFrom = new Node(Integer.parseInt(fk_nodeFrom));
-				String PWorkID = BP.Sys.Glo.getRequest().getParameter("PWorkID");
+				String PWorkID = null;
+				if(BP.Sys.Glo.getRequest()!=null){
+					PWorkID = BP.Sys.Glo.getRequest().getParameter("PWorkID"); // BP.Sys.Glo.Request.QueryString["FromNode"];
+				}
 				if (DataType.IsNullOrEmpty(PWorkID)) {
 					PWorkID = BP.Sys.Glo.getRequest().getParameter("PWorkID"); // BP.Sys.Glo.Request.QueryString["PWorkID"];
 				}
