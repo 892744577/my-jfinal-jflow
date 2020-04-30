@@ -3670,6 +3670,21 @@ public class Dev2Interface
 		WebUser.SignInOfGener(emp);
 
 	}
+	/**
+	 非浏览器登录
+	@param userNo 人员编号
+	 @return
+			 * @throws Exception
+	*/
+	public static void Port_Login(String userNo,String auth) throws Exception
+	{
+		/* 仅仅传递了人员编号，就按照人员来取.*/
+		BP.Port.Emp emp = new BP.Port.Emp();
+		emp.setNo (userNo);
+		emp.RetrieveFromDBSources();
+		WebUser.SignInOfGener(emp,auth);
+
+	}
 	/** 
 	 注销当前登录
 	*/
