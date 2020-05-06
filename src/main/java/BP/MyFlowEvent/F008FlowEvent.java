@@ -10,7 +10,7 @@ public class F008FlowEvent extends FlowEventBase {
 
     public String FlowOverAfter() {
 
-        return "F00101FlowEvent请假流程结束";
+        return "F008FlowEvent请假流程结束";
     }
 
 }
