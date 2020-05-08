@@ -39,7 +39,7 @@ public class StaticHandler extends Handler {
 		 * 开发时遇到跨域问题
 		 */
 		response.setHeader("Access-Control-Allow-Credentials","true");
-		response.setHeader("Access-Control-Allow-Origin","http://localhost:8080");
+		//response.setHeader("Access-Control-Allow-Origin","http://localhost:8080");
 		response.setHeader("Access-Control-Allow-Methods","POST,OPTIONS,GET");
 		next.handle(target, request, response, isHandled);
 	}
