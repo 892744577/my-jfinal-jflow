@@ -706,7 +706,7 @@ function UploadChange() {
     else {
         var currentPath = window.document.location.href;
         var path = currentPath.substring(0, currentPath.indexOf('/WF') + 1);
-        Url = path + "WF/Ath/AttachmentUploadS.do/?FK_FrmAttachment=" + AttachPK + "&PKVal=" + workid + "&AttachPK=" + AttachPK + "&parasData=" + parasData;
+        Url = path + "WF/Ath/AttachmentUploadS/?FK_FrmAttachment=" + AttachPK + "&PKVal=" + workid + "&AttachPK=" + AttachPK + "&parasData=" + parasData;
     }
 
     Url += "&FID=" + GetQueryString("FID");

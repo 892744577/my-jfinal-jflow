@@ -148,7 +148,7 @@ function uploadFile(fileObj, FK_FrmAttachment) {
     } else {
         var currentPath = window.document.location.href;
         var path = currentPath.substring(0, currentPath.indexOf('/CCMobile') + 1);
-        var Url = path + "WF/Ath/AttachmentUploadS.do?FK_FrmAttachment=" + FK_FrmAttachment + "&PKVal=" + pkval;
+        var Url = path + "WF/Ath/AttachmentUploadS?FK_FrmAttachment=" + FK_FrmAttachment + "&PKVal=" + pkval;
     }
     
    
