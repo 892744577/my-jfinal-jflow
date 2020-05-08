@@ -2,10 +2,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.kakarote</groupId>
-    <artifactId>crm9</artifactId>
+    <artifactId>crm</artifactId>
     <packaging>jar</packaging>
     <version>1.4.0</version>
-    <name>crm9-master</name>
+    <name>crm-master</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -67,21 +67,16 @@
     <dependencies>
         <dependency>
             <groupId>com.jfinal</groupId>
-            <artifactId>jfinal-undertow</artifactId>
-            <version>1.9</version>
-        </dependency>
-        <!--<dependency>-->
-        <!--<groupId>javax.servlet</groupId>-->
-        <!--<artifactId>javax.servlet-api</artifactId>-->
-        <!--<version>4.0.1</version>-->
-        <!--<scope>provided</scope>-->
-        <!--</dependency>-->
-        <dependency>
-            <groupId>com.jfinal</groupId>
             <artifactId>jfinal</artifactId>
             <version>4.5</version>
         </dependency>
-
+        <!--undertow部署时需要该jar,包含javax.servlet4.0.1,不需要再单独引入，非undertow部署时需要该jar时不需要-->
+        <dependency>
+            <groupId>com.jfinal</groupId>
+            <artifactId>jfinal-undertow</artifactId>
+            <version>2.0</version>
+        </dependency>
+        <!--jfnial 文件上传-->
         <dependency>
             <groupId>com.jfinal</groupId>
             <artifactId>cos</artifactId>
@@ -166,16 +161,6 @@
             <groupId>com.alibaba</groupId>
             <artifactId>druid</artifactId>
             <version>1.0.15</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.alibaba</groupId>
-                    <artifactId>jconsole</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.alibaba</groupId>
-                    <artifactId>tools</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <!---###################jflow-web   :    core#######################################################-->
         <dependency>
@@ -271,12 +256,19 @@
         </dependency>
 
         <!-- Servlet -->
-        <dependency>
+        <!-- tomcat 部署可能需要该jar-->
+        <!-- <dependency>
             <groupId>javax.servlet</groupId>
-            <artifactId>servlet-api</artifactId>
-            <version>2.5</version>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>4.0.1</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+             <groupId>javax.servlet</groupId>
+             <artifactId>servlet-api</artifactId>
+             <version>2.5</version>
+             <scope>provided</scope>
+         </dependency>-->
         <dependency>
             <groupId>javax.servlet.jsp</groupId>
             <artifactId>jsp-api</artifactId>
@@ -300,11 +292,12 @@
             <artifactId>aspectjweaver</artifactId>
             <version>${aspectj.version}</version>
         </dependency>
-        <dependency>
+        <!--部署时jar冲突-->
+        <!--<dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
             <version>${cglib.version}</version>
-        </dependency>
+        </dependency>-->
         <!-- AOP end -->
 
         <!-- JSON begin -->
@@ -360,11 +353,12 @@
             <artifactId>cxf-rt-transports-http</artifactId>
             <version>${cxf.version}</version>
         </dependency>
-        <dependency>
+        <!--jetty部署，若不使用，则不需要该jar-->
+        <!--<dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-transports-http-jetty</artifactId>
             <version>${cxf.version}</version>
-        </dependency>
+        </dependency>-->
         <dependency>
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-transports-jms</artifactId>
@@ -529,8 +523,21 @@
     </dependencies>
 
     <build>
-        <finalName>ROOT</finalName>
+        <finalName>root</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>2.6</version>
+                <configuration>
+                    <excludes>
+                        <exclude>*.txt</exclude>
+                        <exclude>*.json</exclude>
+                        <exclude>*.xml</exclude>
+                        <exclude>*.properties</exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
