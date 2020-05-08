@@ -1,6 +1,6 @@
-undertow.devMode=true
+undertow.devMode=false
 # 端口
-undertow.port=8080
+undertow.port=8220
 # host
 undertow.host=0.0.0.0
 #项目路径
