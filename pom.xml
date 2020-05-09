@@ -514,6 +514,15 @@
         </dependency>
         <!-- WebService axis -->
 
+        <!-- 注解生成代码 start-->
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.12</version>
+        </dependency>
+
+        <!-- 注解生成代码 end-->
 
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
@@ -531,9 +540,7 @@
                 <version>2.6</version>
                 <configuration>
                     <excludes>
-                        <exclude>*.txt</exclude>
-                        <exclude>*.json</exclude>
-                        <exclude>*.xml</exclude>
+                        <exclude>config/*</exclude>
                         <exclude>*.properties</exclude>
                     </excludes>
                 </configuration>
