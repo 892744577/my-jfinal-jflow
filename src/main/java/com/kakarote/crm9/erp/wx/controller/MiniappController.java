@@ -12,15 +12,15 @@ import org.apache.commons.lang3.StringUtils;
 
 public class MiniappController extends Controller {
 
+    private String appid = SystemConfig.getCS_AppSettings().get("MA.APPID").toString();
+
     public void jscode2session(@Para("code") String code){
 
         if (StringUtils.isBlank(code)) {
             renderJson(R.error("code不能为空!").put("code","000006"));
             return;
         }
-
-        String appid = SystemConfig.getCS_AppSettings().get("MA.APPID").toString();
-        final WxMaService wxService = WxMaConfiguration.getMaService(appid);
+        final WxMaService wxService = WxMaConfiguration.getMaService(this.appid);
 
         try {
             WxMaJscode2SessionResult session = wxService.getUserService().getSessionInfo(code);
