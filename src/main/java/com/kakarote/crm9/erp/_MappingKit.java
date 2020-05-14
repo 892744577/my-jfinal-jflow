@@ -70,6 +70,10 @@ public class _MappingKit {
 		arp.addMapping("aptenon_work_task_log", "log_id", WorkTaskLog.class);
 		arp.addMapping("aptenon_work_user", "id", WorkUser.class);
 		arp.addMapping("aptenon_crm_business_change", "change_id", CrmBusinessChange.class);
+		//add by wangkaida
+		arp.addMapping("sys_regist", "MyPK", Regist.class);
+		arp.addMapping("port_emp", "No", PortEmp.class);
+		arp.addMapping("hr_register", "OID", HrRegister.class);
 	}
 }
 

@@ -88,11 +88,13 @@ public class JfinalConfig extends JFinalConfig {
      */
     @Override
     public void configRoute(Routes me) {
+        //悟空
         me.add(new AdminRouter());
         me.add(new BiRouter());
         me.add(new CrmRouter());
         me.add(new OaRouter());
         me.add(new WorkRouter());
+        //流程
         me.add(new JflowRouter());
     }
 
