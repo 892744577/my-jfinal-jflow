@@ -37,6 +37,8 @@ import com.jfinal.plugin.druid.DruidStatViewHandler;
 import com.jfinal.render.RenderManager;
 import com.jfinal.template.Engine;
 import com.kakarote.crm9.erp.work.service.WorkService;
+import com.kakarote.crm9.erp.wx.common.WxRouter;
+import com.kakarote.crm9.erp.yzj.common.YzjRouter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -88,14 +90,14 @@ public class JfinalConfig extends JFinalConfig {
      */
     @Override
     public void configRoute(Routes me) {
-        //悟空
         me.add(new AdminRouter());
         me.add(new BiRouter());
         me.add(new CrmRouter());
         me.add(new OaRouter());
         me.add(new WorkRouter());
-        //流程
-        me.add(new JflowRouter());
+        me.add(new JflowRouter());//流程
+        me.add(new WxRouter()); //微信集成
+        me.add(new YzjRouter()); //云之家集成
     }
 
     @Override
@@ -170,11 +172,11 @@ public class JfinalConfig extends JFinalConfig {
     @Override
     public void configInterceptor(Interceptors me) {
         //添加全局拦截器
-        //me.addGlobalActionInterceptor(new ErpInterceptor());
+        //me.addGlobalActionInterceptor(new ErpInterceptor()); //基于crm的拦截器
         //me.add(new AuthInterceptor());
 
         //流程的拦截器 add by tangmanrong 20200408
-        me.addGlobalActionInterceptor(new RequestInterceptor());
+        me.addGlobalActionInterceptor(new RequestInterceptor()); //将request、response放入工具类
     }
 
     /**
