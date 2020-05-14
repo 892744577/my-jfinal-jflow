@@ -194,14 +194,15 @@ public class PortEmpController extends Controller {
             }
 
         }else {
-            Regist registDb = Regist.dao.findFirst("SELECT * FROM sys_regist WHERE phone = ? LIMIT 0,1", portEmp.getTel());
-            if(registDb != null){
+
+            PortEmp portEmpTel = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? and accountType = '1' LIMIT 0,1", portEmp.getTel());
+            if(portEmpTel != null){
                 renderJson(R.error("该手机号已经被注册!"));
                 return;
             }
 
-            Regist registNameDb = Regist.dao.findFirst("SELECT * FROM sys_regist WHERE name = ? LIMIT 0,1", portEmp.getName());
-            if(registNameDb != null){
+            PortEmp portEmpName = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Name = ? and accountType = '1' LIMIT 0,1", portEmp.getName());
+            if(portEmpName != null){
                 renderJson(R.error("该姓名已经被注册!"));
                 return;
             }
