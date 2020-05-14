@@ -7,6 +7,6 @@ public class YzjRouter extends Routes {
     @Override
     public void config() {
         addInterceptor(new YzjInterceptor());
-        add("/Yzj", YzjController.class);
+        add("/yzj", YzjController.class);
     }
 }

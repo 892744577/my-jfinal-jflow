@@ -38,6 +38,7 @@ import com.jfinal.render.RenderManager;
 import com.jfinal.template.Engine;
 import com.kakarote.crm9.erp.work.service.WorkService;
 import com.kakarote.crm9.erp.wx.common.WxRouter;
+import com.kakarote.crm9.erp.wx.config.WxMaConfiguration;
 import com.kakarote.crm9.erp.yzj.common.YzjRouter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -209,6 +210,10 @@ public class JfinalConfig extends JFinalConfig {
     public void onStart() {
         WorkService workService= Aop.get(WorkService.class);
         workService.initialization();
+
+        //初始化小程序的配置
+        WxMaConfiguration wxMaConfiguration= new WxMaConfiguration();
+        wxMaConfiguration.init();
     }
 
     @Override

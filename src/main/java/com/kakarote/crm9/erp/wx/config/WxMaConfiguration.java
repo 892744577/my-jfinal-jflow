@@ -13,10 +13,10 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import me.chanjar.weixin.common.bean.result.WxMediaUploadResult;
 import me.chanjar.weixin.common.error.WxErrorException;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -25,15 +25,9 @@ import java.util.stream.Collectors;
  * @author <a href="https://github.com/binarywang">Binary Wang</a>
  */
 public class WxMaConfiguration {
-    private WxMaProperties properties;
 
     private static Map<String, WxMaMessageRouter> routers = Maps.newHashMap();
     private static Map<String, WxMaService> maServices = Maps.newHashMap();
-
-    @Autowired
-    public WxMaConfiguration(WxMaProperties properties) {
-        this.properties = properties;
-    }
 
     public static WxMaService getMaService(String appid) {
         WxMaService wxService = maServices.get(appid);
@@ -48,12 +42,11 @@ public class WxMaConfiguration {
         return routers.get(appid);
     }
 
-    @PostConstruct
     public void init() {
         WxMaProperties.Config config1 = new WxMaProperties.Config();
         config1.setAppid(SystemConfig.getCS_AppSettings().get("MA.APPID").toString());
         config1.setSecret(SystemConfig.getCS_AppSettings().get("MA.APPSECRET").toString());
-        List<WxMaProperties.Config> configs = this.properties.getConfigs();
+        List<WxMaProperties.Config> configs = new ArrayList<WxMaProperties.Config>();
         configs.add(config1);
         if (configs == null) {
             throw new RuntimeException("大哥，拜托先看下项目首页的说明（readme文件），添加下相关配置，注意别配错了！");

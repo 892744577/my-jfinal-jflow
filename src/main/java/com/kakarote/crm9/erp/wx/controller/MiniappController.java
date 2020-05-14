@@ -20,7 +20,6 @@ public class MiniappController extends Controller {
         }
 
         String appid = SystemConfig.getCS_AppSettings().get("MA.APPID").toString();
-
         final WxMaService wxService = WxMaConfiguration.getMaService(appid);
 
         try {
