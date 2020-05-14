@@ -1,8 +1,10 @@
 package com.kakarote.crm9.erp.yzj.service;
 
 
+import BP.Difference.SystemConfig;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.jfinal.aop.Inject;
 import com.kakarote.crm9.erp.yzj.dao.TokenDao;
 import com.kakarote.crm9.erp.yzj.util.HttpHelper;
 import com.kakarote.crm9.erp.yzj.vo.TokenBean;
@@ -24,35 +26,23 @@ import java.util.Map;
  * @author
  */
 @Slf4j
-@Service
 public class TokenService {
 
     private static final String APPLICATION_JSON = "application/json";
     private static final String APPLICATION_X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
     private static final int timeoutMillis = 3000;
     @Getter
-    @Value("${APP.EID}")
-    private String eid;
+    private String eid = SystemConfig.getCS_AppSettings().get("APP.EID").toString();
     @Getter
-    @Value("${APP.APPID}")
-    private String appid;
+    private String appid = SystemConfig.getCS_AppSettings().get("APP.APPID").toString();
     @Getter
-    @Value("${APP.SECRET}")
-    private String appSecret;
+    private String appSecret = SystemConfig.getCS_AppSettings().get("APP.SECRET").toString();
     @Getter
-    @Value("${APP.ERPSECRET}")
-    private String erpSecret;
+    private String erpSecret = SystemConfig.getCS_AppSettings().get("APP.ERPSECRET").toString();
     @Getter
-    @Value("${YUNZHIJIA.GATEWAY.HOST}")
-    private String gatewayHost;
-    @Getter
-    @Value("${FRONT.HOST}")
-    private String frontHost;
-    @Getter
-    @Value("${BACKEND.HOST}")
-    private String backendHost;
+    private String gatewayHost = SystemConfig.getCS_AppSettings().get("YUNZHIJIA.GATEWAY.HOST").toString();
 
-    @Autowired
+    @Inject
     private TokenDao tokenDao;
 
 
