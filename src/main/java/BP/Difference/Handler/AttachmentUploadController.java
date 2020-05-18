@@ -146,8 +146,8 @@ public class AttachmentUploadController extends BaseController {
 		String msg = null;
 		uploadFile(item, athDesc, en, msg, mapData, this.getFK_FrmAttachment(), getParasData());
 		
-//		return;
-		renderJson(); 
+		return;
+//		renderJson();
 	}
 
 	public void downLoad() {
@@ -400,7 +400,7 @@ public class AttachmentUploadController extends BaseController {
 					throw new Exception("@路径配置错误,变量没有被正确的替换下来." + savePath);
 				return;
 			} else {
-				savePath = athDesc.getSaveTo() + "\\" + getPKVal();
+				savePath = athDesc.getSaveTo() + SystemConfig.getSeparator() + getPKVal();
 			}
 
 			// 替换关键的字串.
@@ -424,7 +424,7 @@ public class AttachmentUploadController extends BaseController {
 			String guid = BP.DA.DBAccess.GenerGUID();
 			fileName = fileName.substring(0, fileName.lastIndexOf('.'));
 			String ext = FileAccess.getExtensionName(item.getOriginalFileName());
-			String realSaveTo = savePath + "\\" + guid + "." + fileName + "." + ext;
+			String realSaveTo = savePath + SystemConfig.getSeparator() + guid + "." + fileName + "." + ext;
 
 			realSaveTo = realSaveTo.replace("~", "-");
 			realSaveTo = realSaveTo.replace("'", "-");

@@ -14,6 +14,7 @@ import BP.Sys.Glo;
 import BP.Sys.OSDBSrc;
 import BP.Sys.OSModel;
 import BP.Tools.StringHelper;
+import org.springframework.core.io.ClassPathResource;
 
 /**
  * 系统配置
@@ -305,6 +306,15 @@ public class SystemConfig {
 	 * 
 	 * @return
 	 */
+	public static String getSeparator(){
+		String os = System.getProperty("os.name");
+		if(os.toLowerCase().indexOf("windows")>=0){
+			return "\\";
+		}else{
+			return "/";
+		}
+	}
+
 	public static String getPathOfData() {
 
 		BP.DA.Log.DebugWriteInfo(getPathOfWebApp() + SystemConfig.getAppSettings().get("DataDirPath").toString()
