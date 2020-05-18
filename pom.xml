@@ -538,6 +538,14 @@
 
         <!--微信集成 end-->
 
+        <!--互亿无线的短信认证 start-->
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+            <version>3.0-rc4</version>
+        </dependency>
+        <!--互亿无线的短信认证 end-->
+
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
