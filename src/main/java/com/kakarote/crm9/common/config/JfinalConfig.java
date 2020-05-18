@@ -10,6 +10,8 @@ import com.jfinal.aop.Aop;
 import com.jfinal.ext.proxy.CglibProxyFactory;
 import com.jfinal.plugin.activerecord.dialect.*;
 import com.jfinal.plugin.druid.IDruidStatViewAuth;
+import com.jfinal.plugin.redis.Cache;
+import com.jfinal.plugin.redis.Redis;
 import com.kakarote.crm9.common.config.cache.CaffeineCache;
 import com.kakarote.crm9.common.config.druid.DruidConfig;
 import com.kakarote.crm9.common.config.json.ErpJsonFactory;
@@ -24,6 +26,7 @@ import com.kakarote.crm9.erp.admin.common.AdminRouter;
 import com.kakarote.crm9.erp.bi.common.BiRouter;
 import com.kakarote.crm9.erp.crm.common.CrmRouter;
 import com.kakarote.crm9.erp.oa.common.OaRouter;
+import com.kakarote.crm9.erp.sms.common.SmsRouter;
 import com.kakarote.crm9.erp.work.common.WorkRouter;
 import com.jfinal.config.*;
 import com.jfinal.core.paragetter.ParaProcessorBuilder;
@@ -99,6 +102,7 @@ public class JfinalConfig extends JFinalConfig {
         me.add(new JflowRouter());//流程
         me.add(new WxRouter()); //微信集成
         me.add(new YzjRouter()); //云之家集成
+        me.add(new SmsRouter());//短信集成
     }
 
     @Override
@@ -186,7 +190,7 @@ public class JfinalConfig extends JFinalConfig {
     @Override
     public void configHandler(Handlers me) {
         //配置数据库监控
-        me.add(new DruidStatViewHandler("/druid", new DruidConfig()));
+        //me.add(new DruidStatViewHandler("/druid", new DruidConfig()));
         //自定义渲染工厂
         RenderManager.me().setRenderFactory(new ErpRenderFactory());
 
@@ -196,20 +200,20 @@ public class JfinalConfig extends JFinalConfig {
 
         //druid监控页面 add by tangmanrong 20200415
         //配置druid 的状态页面访问URI,//设置访问路径
-        DruidStatViewHandler dsvh = new DruidStatViewHandler("/druid",
+        /*DruidStatViewHandler dsvh = new DruidStatViewHandler("/druid",
         new IDruidStatViewAuth(){
             public boolean isPermitted(HttpServletRequest request) {
                 //通过权限判断工具类判断此用户是否有PermissionKey.DRUID_MONITOR这个权限
                 return true;
             }
         });
-        me.add(dsvh);
+        me.add(dsvh);*/
     }
 
     @Override
     public void onStart() {
-        WorkService workService= Aop.get(WorkService.class);
-        workService.initialization();
+        //WorkService workService= Aop.get(WorkService.class);
+        //workService.initialization();
 
         //初始化小程序的配置
         WxMaConfiguration wxMaConfiguration= new WxMaConfiguration();

@@ -64,7 +64,7 @@ public class RedisManager {
             if(StrUtil.isNotEmpty(password)){
                 jedisPool=new JedisPool(jedisPoolConfig,host,port,2000,password,jsonObject.getInt("database",0));
             }else {
-                jedisPool=new JedisPool(jedisPoolConfig,host,port,2000);
+                jedisPool=new JedisPool(jedisPoolConfig,host,port,2000,(String)null,jsonObject.getInt("database",0));
             }
             redis=new JedisImpl(jedisPool,FstSerializer.me, IKeyNamingPolicy.defaultKeyNamingPolicy);
         }
