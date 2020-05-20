@@ -546,6 +546,14 @@
         </dependency>
         <!--互亿无线的短信认证 end-->
 
+        <!-- 图片合并 start-->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.3.3</version>
+        </dependency>
+        <!-- 图片合并 end -->
+
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
