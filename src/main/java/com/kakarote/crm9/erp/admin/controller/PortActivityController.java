@@ -172,7 +172,7 @@ public class PortActivityController extends Controller {
         byte[] wxCode = null;
         try {
             String scene = "pid="+pbId;
-            String page = "/activityPages/agentActivity/agentActivityDetail";
+            String page = "activityPages/agentActivity/agentActivityDetail";
             wxCode = wxService.getQrcodeService().createWxaCodeUnlimitBytes(scene, page, 280, true, null, false);
         } catch (WxErrorException e) {
             e.printStackTrace();
