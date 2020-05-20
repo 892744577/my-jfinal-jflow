@@ -42,6 +42,10 @@ public class SmsController extends Controller {
         renderJson(R.ok().put("验证码",smsService.getSmsByMobile(loginRequestDto)).put("code","000000"));
     }
 
+    /**
+     * 合成海报
+     * @param pictureRequestDto
+     */
     public void createPlayBill(@Para("") PictureRequestDto pictureRequestDto){
         try {
             BufferedImage code = PictureUtil.createImage(pictureRequestDto.getContent(), null, false);
