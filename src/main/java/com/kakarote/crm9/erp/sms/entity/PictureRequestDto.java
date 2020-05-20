@@ -4,6 +4,10 @@ import lombok.Data;
 
 @Data
 public class PictureRequestDto {
+    /**
+     * 二维码二进制数据
+     */
+    private byte [] bt;
 
     /**
      * 二维码内容

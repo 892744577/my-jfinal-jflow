@@ -12,6 +12,7 @@ import com.kakarote.crm9.utils.R;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 
@@ -48,13 +49,17 @@ public class SmsController extends Controller {
      */
     public void createPlayBill(@Para("") PictureRequestDto pictureRequestDto){
         try {
-            BufferedImage code = PictureUtil.createImage(pictureRequestDto.getContent(), null, false);
+            //根据内容生成二维码的
+            //BufferedImage code = PictureUtil.createImage(pictureRequestDto.getContent(), null, false);
+
+            //将b作为输入流，将in作为输入流，读取图片存入image中，而这里in可以为ByteArrayInputStream();
+            ByteArrayInputStream in = new ByteArrayInputStream(pictureRequestDto.getBt());
+            BufferedImage code = ImageIO.read(in);
+
             BufferedImage big = PictureUtil.combineCodeAndPicToFile(pictureRequestDto.getBackPicPath(), code);
             String suffix = pictureRequestDto.getBackPicPath().substring(pictureRequestDto.getBackPicPath().lastIndexOf(".") + 1);
             ImageIO.write(big,suffix , new File(pictureRequestDto.getOutPicPath()));
         } catch (IOException e) {
-            e.printStackTrace();
-        } catch (WriterException e) {
             e.printStackTrace();
         }
 
