@@ -31,4 +31,30 @@ public class MiniappController extends Controller {
 
     }
 
+    /*
+     * @Description //根据代理商小程序openId生成小程序码接口
+     * @Author wangkaida
+     * @Date 15:24 2020/5/18
+     * @Param [wxAppOpenId]
+     * @return void
+     **/
+    public void createWxaCodeUnlimitBytes(@Para("wxAppOpenId") String wxAppOpenId){
+
+        if (StringUtils.isBlank(wxAppOpenId)) {
+            renderJson(R.error("小程序openId不能为空!").put("code","000010"));
+            return;
+        }
+        final WxMaService wxService = WxMaConfiguration.getMaService(this.appid);
+
+        try {
+            String scene = "t=as&id="+wxAppOpenId;
+            String page = "pages/login/reg";
+            final byte[] wxCode = wxService.getQrcodeService().createWxaCodeUnlimitBytes(scene, page, 280, true, null, false);
+            renderJson(R.ok().put("wxCode",wxCode).put("code","000000"));
+        } catch (WxErrorException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 }

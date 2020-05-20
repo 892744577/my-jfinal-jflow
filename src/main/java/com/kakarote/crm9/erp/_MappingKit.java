@@ -73,7 +73,11 @@ public class _MappingKit {
 		//add by wangkaida
 		arp.addMapping("sys_regist", "MyPK", Regist.class);
 		arp.addMapping("port_emp", "No", PortEmp.class);
+		arp.addMapping("port_emp_relation", "OID", PortEmpRelation.class);
 		arp.addMapping("hr_register", "OID", HrRegister.class);
+		arp.addMapping("port_activity", "id", PortActivity.class);
+		arp.addMapping("port_activity_playbill", "id", PortActivityPlaybill.class);
+		arp.addMapping("port_activity_share", "id", PortActivityShare.class);
 	}
 }
 
