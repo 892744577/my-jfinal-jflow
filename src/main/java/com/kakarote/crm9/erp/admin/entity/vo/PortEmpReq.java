@@ -16,5 +16,6 @@ public class PortEmpReq {
 	private String agentId; //代理商微信openId
 	private Integer pageSize; //页面大小
 	private Integer pageIndex; //页码
+	private String valiCode; //手机验证码
 
 }

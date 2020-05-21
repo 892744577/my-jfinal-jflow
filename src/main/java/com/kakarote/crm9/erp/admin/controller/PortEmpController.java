@@ -20,6 +20,8 @@ import com.kakarote.crm9.erp.admin.entity.PortEmpRelation;
 import com.kakarote.crm9.erp.admin.entity.Regist;
 import com.kakarote.crm9.erp.admin.entity.vo.PortEmpReq;
 import com.kakarote.crm9.erp.admin.service.PortEmpService;
+import com.kakarote.crm9.erp.sms.entity.LoginRequestDto;
+import com.kakarote.crm9.erp.sms.service.SmsService;
 import com.kakarote.crm9.utils.R;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -40,6 +42,9 @@ public class PortEmpController extends Controller {
 
     @Inject
     private PortEmpService portEmpService;
+
+    @Inject
+    private SmsService smsService;
 
     public void queryAllUserList(){
         renderJson(portEmpService.queryAllUserList());
@@ -154,6 +159,16 @@ public class PortEmpController extends Controller {
             return;
         }
 
+        //判断手机验证码是否正确
+        LoginRequestDto loginRequestDto = new LoginRequestDto();
+        loginRequestDto.setMobile(portEmp.getTel());
+        String result = smsService.getSmsByMobile(loginRequestDto);
+
+        if (!portEmp.getValiCode().equals(result)) {
+            renderJson(R.error("请输入正确的验证码!").put("code","000024"));
+            return;
+        }
+
         PortEmp portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? and accountType = '1' LIMIT 0,1", portEmp.getTel());
 
         if (portEmpDb != null) {
@@ -188,6 +203,16 @@ public class PortEmpController extends Controller {
 
         if(StrUtil.isEmpty(portEmp.getTel())){
             renderJson(R.error("请输入手机号!").put("code","000003"));
+            return;
+        }
+
+        //判断手机验证码是否正确
+        LoginRequestDto loginRequestDto = new LoginRequestDto();
+        loginRequestDto.setMobile(portEmp.getTel());
+        String result = smsService.getSmsByMobile(loginRequestDto);
+
+        if (!portEmp.getValiCode().equals(result)) {
+            renderJson(R.error("请输入正确的验证码!").put("code","000024"));
             return;
         }
 
