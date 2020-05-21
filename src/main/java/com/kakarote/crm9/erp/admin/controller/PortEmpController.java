@@ -11,6 +11,7 @@ import cn.hutool.core.util.StrUtil;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.plugin.activerecord.Db;
 import com.kakarote.crm9.erp.admin.entity.HrRegister;
 import com.kakarote.crm9.erp.admin.entity.PortEmp;
 import com.kakarote.crm9.erp.admin.entity.PortEmpRelation;
@@ -21,6 +22,7 @@ import com.kakarote.crm9.utils.R;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.UUID;
 
 
@@ -427,6 +429,7 @@ public class PortEmpController extends Controller {
                 myht.put("ShouJiHaoMa", portEmp.getTel());
                 myht.put("appOpenId", portEmp.getWxAppOpenId());
                 myht.put("XingMing", portEmp.getName());
+                myht.put("ParentNo", portEmpParent.getNo());
                 myht.put("LeiBie", "2");
                 myht.put("TB_RDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
                 myht.put("TB_Title", URLEncoder.encode("亚太天能-admin,admin在"+ DataType.getCurrentDateTime()+"发起.", "UTF-8"));
@@ -444,6 +447,7 @@ public class PortEmpController extends Controller {
                 myhtSend.put("ShouJiHaoMa", portEmp.getTel());
                 myhtSend.put("appOpenId", portEmp.getWxAppOpenId());
                 myhtSend.put("XingMing", portEmp.getName());
+                myhtSend.put("ParentNo", portEmpParent.getNo());
                 myhtSend.put("LeiBie", "2");
                 myhtSend.put("TB_OID", workID);
                 myhtSend.put("TB_RDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
@@ -524,6 +528,65 @@ public class PortEmpController extends Controller {
             renderJson(R.ok().put("parentNo",portEmpRelationDb.getParentNo()).put("code","000000"));
         }else {
             renderJson(R.error("上下级关系表查无记录!").put("parentNo",no).put("code","000017"));
+            return;
+        }
+
+    }
+    
+    /*
+     * @Description //获取代理商员工列表接口
+     * @Author wangkaida
+     * @Date 9:56 2020/5/21
+     * @Param [no]
+     * @return void
+     **/
+    public void getStaffEmpList(@Para("parentNo") String parentNo){
+
+        if(StrUtil.isEmpty(parentNo)){
+            renderJson(R.error("代理商账号不能为空!").put("code","000012"));
+            return;
+        }
+
+        List<PortEmp> portEmpList = PortEmp.dao.find("select a.* from port_emp a left join port_emp_relation b on a.No = b.FK_No where b.ParentNo = ?", parentNo);
+
+        if (portEmpList.size() > 0) {
+            renderJson(R.ok().put("data",portEmpList).put("code","000000"));
+        }else {
+            renderJson(R.error("上下级关系表查无记录!").put("parentNo",parentNo).put("code","000017"));
+            return;
+        }
+
+    }
+
+    /*
+     * @Description //解绑上下级关系接口
+     * @Author wangkaida
+     * @Date 10:29 2020/5/21
+     * @Param [portEmp]
+     * @return void
+     **/
+    public void unBindRelation(@Para("") PortEmpReq portEmp){
+
+        if(StrUtil.isEmpty(portEmp.getNo())){
+            renderJson(R.error("员工账号不能为空!").put("code","000012"));
+            return;
+        }
+
+        if(StrUtil.isEmpty(portEmp.getParentNo())){
+            renderJson(R.error("父级账号不能为空!").put("code","000013"));
+            return;
+        }
+
+        //判断是否存在上下级关系
+        PortEmpRelation portEmpRelationDb = PortEmpRelation.dao.findFirst("SELECT * FROM port_emp_relation WHERE FK_No = ? and ParentNo = ? LIMIT 0,1", portEmp.getNo(),portEmp.getParentNo());
+
+        if (portEmpRelationDb != null) {
+
+            Db.delete("delete from port_emp_relation WHERE FK_No = ? and ParentNo = ?", portEmp.getNo(),portEmp.getParentNo());
+            renderJson(R.ok().put("msg","解绑成功!").put("code","000000"));
+
+        }else {
+            renderJson(R.error("上下级关系表查无记录!").put("code","000017"));
             return;
         }
 

@@ -9,19 +9,19 @@ import com.jfinal.plugin.activerecord.IBean;
 @SuppressWarnings("serial")
 public abstract class BaseRegist<M extends BaseRegist<M>> extends Model<M> implements IBean {
 
-	public void setMyPK(String MyPK) {
+	public void setMyPK(java.lang.String MyPK) {
 		set("MyPK", MyPK);
 	}
-	
-	public String getMyPK() {
+
+	public java.lang.String getMyPK() {
 		return getStr("MyPK");
 	}
 
-	public void setPhone(String phone) {
+	public void setPhone(java.lang.String phone) {
 		set("phone", phone);
 	}
-	
-	public String getPhone() {
+
+	public java.lang.String getPhone() {
 		return getStr("phone");
 	}
 
@@ -33,12 +33,20 @@ public abstract class BaseRegist<M extends BaseRegist<M>> extends Model<M> imple
 		return getStr("appOpenId");
 	}
 
-	public void setName(String name) {
+	public void setName(java.lang.String name) {
 		set("name", name);
 	}
 
-	public String getName() {
+	public java.lang.String getName() {
 		return getStr("name");
+	}
+
+	public void setParentNo(java.lang.String parentNo) {
+		set("parentNo", parentNo);
+	}
+
+	public java.lang.String getParentNo() {
+		return getStr("parentNo");
 	}
 
 }

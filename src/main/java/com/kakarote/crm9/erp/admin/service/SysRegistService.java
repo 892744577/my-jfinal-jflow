@@ -78,7 +78,9 @@ public class SysRegistService {
             String pinyin2 = DataType.ParseStringToPinyinJianXie(regist.getName());
             String pinyin = "," + pinyin1 + "," + pinyin2 + ",";
 
-            portEmp.setNo(CCFormAPI.ParseStringToPinyinField(regist.getName(), true, true, 100).toLowerCase());
+            String no = CCFormAPI.ParseStringToPinyinField(regist.getName(), true, true, 100).toLowerCase();
+
+            portEmp.setNo(no);
 //            portEmp.setNo(UUID.randomUUID().toString().replace("-", ""));
             portEmp.setName(regist.getName());
             portEmp.setWxAppOpenId(regist.getAppOpenId());
@@ -90,6 +92,12 @@ public class SysRegistService {
             portEmp.setAccountType("2");
 
             Boolean flag = portEmp.save();
+
+            //保存上下级关系
+            PortEmpRelation portEmpRelation = new PortEmpRelation();
+            portEmpRelation.setFkNo(no);
+            portEmpRelation.setParentNo(regist.getParentNo());
+            portEmpRelation.save();
 
             return flag ? R.ok().put("msg","保存成功!").put("code","000000") : R.error("保存失败!").put("code","000001");
         }

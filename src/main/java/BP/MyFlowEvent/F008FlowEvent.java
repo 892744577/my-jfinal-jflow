@@ -29,6 +29,7 @@ public class F008FlowEvent extends FlowEventBase {
             regist.setPhone((String) this.getSysPara().get("ShouJiHaoMa"));
             regist.setAppOpenId((String) this.getSysPara().get("appOpenId"));
             regist.setName((String) this.getSysPara().get("XingMing"));
+            regist.setParentNo((String) this.getSysPara().get("ParentNo"));
             Aop.get(SysRegistService.class).savePortEmpStaff(regist);
 
         }

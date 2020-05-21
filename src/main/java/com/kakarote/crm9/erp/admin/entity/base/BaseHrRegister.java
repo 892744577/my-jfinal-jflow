@@ -9,260 +9,276 @@ import com.jfinal.plugin.activerecord.IBean;
 @SuppressWarnings("serial")
 public abstract class BaseHrRegister<M extends BaseHrRegister<M>> extends Model<M> implements IBean {
 
-	public void setOID(Integer OID) {
+	public void setOID(java.lang.Integer OID) {
 		set("OID", OID);
 	}
-	
-	public Integer getOID() {
+
+	public java.lang.Integer getOID() {
 		return getInt("OID");
 	}
 
-	public void setRDT(String RDT) {
+	public void setRDT(java.lang.String RDT) {
 		set("RDT", RDT);
 	}
-	
-	public String getRDT() {
+
+	public java.lang.String getRDT() {
 		return getStr("RDT");
 	}
 
-	public void setTitle(String Title) {
+	public void setTitle(java.lang.String Title) {
 		set("Title", Title);
 	}
-	
-	public String getTitle() {
+
+	public java.lang.String getTitle() {
 		return getStr("Title");
 	}
 
-	public void setFID(Integer FID) {
+	public void setFID(java.lang.Integer FID) {
 		set("FID", FID);
 	}
-	
-	public Integer getFID() {
+
+	public java.lang.Integer getFID() {
 		return getInt("FID");
 	}
 
-	public void setCDT(String CDT) {
+	public void setCDT(java.lang.String CDT) {
 		set("CDT", CDT);
 	}
-	
-	public String getCDT() {
+
+	public java.lang.String getCDT() {
 		return getStr("CDT");
 	}
 
-	public void setRec(String Rec) {
+	public void setRec(java.lang.String Rec) {
 		set("Rec", Rec);
 	}
-	
-	public String getRec() {
+
+	public java.lang.String getRec() {
 		return getStr("Rec");
 	}
 
-	public void setEmps(String Emps) {
+	public void setEmps(java.lang.String Emps) {
 		set("Emps", Emps);
 	}
-	
-	public String getEmps() {
+
+	public java.lang.String getEmps() {
 		return getStr("Emps");
 	}
 
-	public void setFkDept(String fkDept) {
+	public void setFkDept(java.lang.String fkDept) {
 		set("FK_Dept", fkDept);
 	}
-	
-	public String getFkDept() {
+
+	public java.lang.String getFkDept() {
 		return getStr("FK_Dept");
 	}
 
-	public void setFkNy(String fkNy) {
+	public void setFkNy(java.lang.String fkNy) {
 		set("FK_NY", fkNy);
 	}
-	
-	public String getFkNy() {
+
+	public java.lang.String getFkNy() {
 		return getStr("FK_NY");
 	}
 
-	public void setMyNum(Integer MyNum) {
+	public void setMyNum(java.lang.Integer MyNum) {
 		set("MyNum", MyNum);
 	}
-	
-	public Integer getMyNum() {
+
+	public java.lang.Integer getMyNum() {
 		return getInt("MyNum");
 	}
 
-	public void setPNodeID(Integer PNodeID) {
+	public void setPNodeID(java.lang.Integer PNodeID) {
 		set("PNodeID", PNodeID);
 	}
-	
-	public Integer getPNodeID() {
+
+	public java.lang.Integer getPNodeID() {
 		return getInt("PNodeID");
 	}
 
-	public void setGUID(String GUID) {
+	public void setGUID(java.lang.String GUID) {
 		set("GUID", GUID);
 	}
-	
-	public String getGUID() {
+
+	public java.lang.String getGUID() {
 		return getStr("GUID");
 	}
 
-	public void setPEmp(String PEmp) {
+	public void setPEmp(java.lang.String PEmp) {
 		set("PEmp", PEmp);
 	}
-	
-	public String getPEmp() {
+
+	public java.lang.String getPEmp() {
 		return getStr("PEmp");
 	}
 
-	public void setPrjNo(String PrjNo) {
+	public void setPrjNo(java.lang.String PrjNo) {
 		set("PrjNo", PrjNo);
 	}
-	
-	public String getPrjNo() {
+
+	public java.lang.String getPrjNo() {
 		return getStr("PrjNo");
 	}
 
-	public void setAtPara(String AtPara) {
+	public void setAtPara(java.lang.String AtPara) {
 		set("AtPara", AtPara);
 	}
-	
-	public String getAtPara() {
+
+	public java.lang.String getAtPara() {
 		return getStr("AtPara");
 	}
 
-	public void setBillNo(String BillNo) {
+	public void setBillNo(java.lang.String BillNo) {
 		set("BillNo", BillNo);
 	}
-	
-	public String getBillNo() {
+
+	public java.lang.String getBillNo() {
 		return getStr("BillNo");
 	}
 
-	public void setPrjName(String PrjName) {
+	public void setPrjName(java.lang.String PrjName) {
 		set("PrjName", PrjName);
 	}
-	
-	public String getPrjName() {
+
+	public java.lang.String getPrjName() {
 		return getStr("PrjName");
 	}
 
-	public void setFlowNote(String FlowNote) {
+	public void setFlowNote(java.lang.String FlowNote) {
 		set("FlowNote", FlowNote);
 	}
-	
-	public String getFlowNote() {
+
+	public java.lang.String getFlowNote() {
 		return getStr("FlowNote");
 	}
 
-	public void setWFSta(Integer WFSta) {
+	public void setWFSta(java.lang.Integer WFSta) {
 		set("WFSta", WFSta);
 	}
-	
-	public Integer getWFSta() {
+
+	public java.lang.Integer getWFSta() {
 		return getInt("WFSta");
 	}
 
-	public void setPWorkID(Integer PWorkID) {
+	public void setPWorkID(java.lang.Integer PWorkID) {
 		set("PWorkID", PWorkID);
 	}
-	
-	public Integer getPWorkID() {
+
+	public java.lang.Integer getPWorkID() {
 		return getInt("PWorkID");
 	}
 
 	public void setFlowDaySpan(java.math.BigDecimal FlowDaySpan) {
 		set("FlowDaySpan", FlowDaySpan);
 	}
-	
+
 	public java.math.BigDecimal getFlowDaySpan() {
 		return get("FlowDaySpan");
 	}
 
-	public void setFlowEndNode(Integer FlowEndNode) {
+	public void setFlowEndNode(java.lang.Integer FlowEndNode) {
 		set("FlowEndNode", FlowEndNode);
 	}
-	
-	public Integer getFlowEndNode() {
+
+	public java.lang.Integer getFlowEndNode() {
 		return getInt("FlowEndNode");
 	}
 
-	public void setFlowEnderRDT(String FlowEnderRDT) {
+	public void setFlowEnderRDT(java.lang.String FlowEnderRDT) {
 		set("FlowEnderRDT", FlowEnderRDT);
 	}
-	
-	public String getFlowEnderRDT() {
+
+	public java.lang.String getFlowEnderRDT() {
 		return getStr("FlowEnderRDT");
 	}
 
-	public void setFlowStartRDT(String FlowStartRDT) {
+	public void setFlowStartRDT(java.lang.String FlowStartRDT) {
 		set("FlowStartRDT", FlowStartRDT);
 	}
-	
-	public String getFlowStartRDT() {
+
+	public java.lang.String getFlowStartRDT() {
 		return getStr("FlowStartRDT");
 	}
 
-	public void setPFlowNo(String PFlowNo) {
+	public void setPFlowNo(java.lang.String PFlowNo) {
 		set("PFlowNo", PFlowNo);
 	}
-	
-	public String getPFlowNo() {
+
+	public java.lang.String getPFlowNo() {
 		return getStr("PFlowNo");
 	}
 
-	public void setFlowEmps(String FlowEmps) {
+	public void setFlowEmps(java.lang.String FlowEmps) {
 		set("FlowEmps", FlowEmps);
 	}
-	
-	public String getFlowEmps() {
+
+	public java.lang.String getFlowEmps() {
 		return getStr("FlowEmps");
 	}
 
-	public void setWFState(Integer WFState) {
+	public void setWFState(java.lang.Integer WFState) {
 		set("WFState", WFState);
 	}
-	
-	public Integer getWFState() {
+
+	public java.lang.Integer getWFState() {
 		return getInt("WFState");
 	}
 
-	public void setFlowEnder(String FlowEnder) {
+	public void setFlowEnder(java.lang.String FlowEnder) {
 		set("FlowEnder", FlowEnder);
 	}
-	
-	public String getFlowEnder() {
+
+	public java.lang.String getFlowEnder() {
 		return getStr("FlowEnder");
 	}
 
-	public void setFlowStarter(String FlowStarter) {
+	public void setFlowStarter(java.lang.String FlowStarter) {
 		set("FlowStarter", FlowStarter);
 	}
-	
-	public String getFlowStarter() {
+
+	public java.lang.String getFlowStarter() {
 		return getStr("FlowStarter");
 	}
 
-	public void setShouJiHaoMa(String ShouJiHaoMa) {
+	public void setShouJiHaoMa(java.lang.String ShouJiHaoMa) {
 		set("ShouJiHaoMa", ShouJiHaoMa);
 	}
-	
-	public String getShouJiHaoMa() {
+
+	public java.lang.String getShouJiHaoMa() {
 		return getStr("ShouJiHaoMa");
 	}
 
-	public void setXingMing(String XingMing) {
+	public void setXingMing(java.lang.String XingMing) {
 		set("XingMing", XingMing);
 	}
-	
-	public String getXingMing() {
+
+	public java.lang.String getXingMing() {
 		return getStr("XingMing");
 	}
 
-	public void setAppOpenId(String appOpenId) {
+	public void setAppOpenId(java.lang.String appOpenId) {
 		set("appOpenId", appOpenId);
 	}
-	
-	public String getAppOpenId() {
+
+	public java.lang.String getAppOpenId() {
 		return getStr("appOpenId");
+	}
+
+	public void setLeiBie(java.lang.String LeiBie) {
+		set("LeiBie", LeiBie);
+	}
+
+	public java.lang.String getLeiBie() {
+		return getStr("LeiBie");
+	}
+
+	public void setParentNo(java.lang.String ParentNo) {
+		set("ParentNo", ParentNo);
+	}
+
+	public java.lang.String getParentNo() {
+		return getStr("ParentNo");
 	}
 
 }
