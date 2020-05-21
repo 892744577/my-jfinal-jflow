@@ -5,9 +5,11 @@ import BP.DA.DataType;
 import BP.DA.Paras;
 import BP.Difference.SystemConfig;
 import BP.Port.Emp;
+import BP.Tools.HttpClientUtil;
 import BP.WF.SendReturnObjs;
 import BP.Web.WebUser;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
 import com.jfinal.core.paragetter.Para;
@@ -21,6 +23,7 @@ import com.kakarote.crm9.erp.admin.service.PortEmpService;
 import com.kakarote.crm9.utils.R;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.UUID;
@@ -589,6 +592,31 @@ public class PortEmpController extends Controller {
             renderJson(R.error("上下级关系表查无记录!").put("code","000017"));
             return;
         }
+
+    }
+
+    /*
+     * @Description //根据代理商openId查询粉丝信息接口
+     * @Author wangkaida
+     * @Date 17:13 2020/5/21
+     * @Param [agentId]
+     * @return void
+     **/
+    public void queryFansByAgentId(@Para("agentId") String agentId){
+
+        if(StrUtil.isEmpty(agentId)){
+            renderJson(R.error("代理商微信openId不能为空!").put("code","000023"));
+            return;
+        }
+
+        String httpUrl = "http://14.23.82.211:7097/agentfans/queryFansByAgentId";
+        HashMap<String,String> map = new HashMap<String,String>();
+        map.put("agentId",agentId);
+
+        String result = HttpClientUtil.doPost(httpUrl, map,null,null);
+        JSONObject jsonObjResult = JSONObject.parseObject(result);
+
+        renderJson(R.ok().put("data",jsonObjResult).put("code","000000"));
 
     }
 
