@@ -602,16 +602,18 @@ public class PortEmpController extends Controller {
      * @Param [agentId]
      * @return void
      **/
-    public void queryFansByAgentId(@Para("agentId") String agentId){
+    public void queryFansByAgentId(@Para("") PortEmpReq portEmp){
 
-        if(StrUtil.isEmpty(agentId)){
+        if(StrUtil.isEmpty(portEmp.getAgentId())){
             renderJson(R.error("代理商微信openId不能为空!").put("code","000023"));
             return;
         }
 
         String httpUrl = "http://14.23.82.211:7097/agentfans/queryFansByAgentId";
         HashMap<String,String> map = new HashMap<String,String>();
-        map.put("agentId",agentId);
+        map.put("agentId",portEmp.getAgentId());
+        map.put("pageSize",String.valueOf(portEmp.getPageSize()));
+        map.put("page",String.valueOf(portEmp.getPageIndex()));
 
         String result = HttpClientUtil.doPost(httpUrl, map,null,null);
         JSONObject jsonObjResult = JSONObject.parseObject(result);

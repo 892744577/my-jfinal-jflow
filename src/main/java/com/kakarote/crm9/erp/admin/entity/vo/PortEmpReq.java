@@ -13,5 +13,8 @@ public class PortEmpReq {
 	private String name; //名称
 	private String no; //员工账号
 	private String parentNo; //父级账号
+	private String agentId; //代理商微信openId
+	private Integer pageSize; //页面大小
+	private Integer pageIndex; //页码
 
 }
