@@ -114,8 +114,12 @@ public class PortActivityController extends Controller {
 //                String sqlHb = "UPDATE port_activity_playbill SET pb_playbill="+SystemConfig.getAppCenterDBVarStr()+"pb_playbill WHERE id=" + SystemConfig.getAppCenterDBVarStr()
 //                        + "id";
 //                int numHb = DBAccess.RunSQL(sqlHb, psHb);
+
+                //将二维码以图片形式保存
+                String qrName = syntheticPlayBillQrcode(pbWxCode,pbId);
+
                 PortActivityPlaybill portActivityPlaybill = new PortActivityPlaybill();
-                portActivityPlaybill.setPbQrcode(pbWxCode);
+                portActivityPlaybill.setPbQrcode(qrName);
                 portActivityPlaybill.setPbPlaybill(pbName);
                 portActivityPlaybill.setId(pbId);
                 portActivityPlaybill.update();
@@ -149,9 +153,11 @@ public class PortActivityController extends Controller {
 //            String sqlHb = "UPDATE port_activity_playbill SET pb_playbill="+SystemConfig.getAppCenterDBVarStr()+"pb_playbill WHERE id=" + SystemConfig.getAppCenterDBVarStr()
 //                    + "id";
 //            int numHb = DBAccess.RunSQL(sqlHb, psHb);
+            //将二维码以图片形式保存
+            String qrName = syntheticPlayBillQrcode(pbWxCode,pbId);
 
             PortActivityPlaybill portActivityPlaybillUpdate = new PortActivityPlaybill();
-            portActivityPlaybillUpdate.setPbQrcode(pbWxCode);
+            portActivityPlaybillUpdate.setPbQrcode(qrName);
             portActivityPlaybillUpdate.setPbPlaybill(pbName);
             portActivityPlaybillUpdate.setId(pbId);
             portActivityPlaybillUpdate.update();
@@ -159,6 +165,34 @@ public class PortActivityController extends Controller {
             renderJson(R.ok().put("msg","保存成功!").put("id",pbId).put("pbPath","http://app.aptenon.com/crm/PlayBill/"+pbName).put("code","000000"));
         }
 
+    }
+
+    /*
+     * @Description //生成二维码图片
+     * @Author wangkaida
+     * @Date 15:37 2020/5/20
+     * @Param [pbWxCode]
+     * @return java.lang.String
+     **/
+    private String syntheticPlayBillQrcode(byte[] pbWxCode, Long pbId) {
+
+        String outPicName = "";
+        try {
+            PictureRequestDto pictureRequestDto = new PictureRequestDto();
+            pictureRequestDto.setBt(pbWxCode);
+//            String picPath = SystemConfig.getCS_AppSettings().get("PIC.PATH").toString();
+            String picPath = BaseConstant.UPLOAD_PATH + "/PlayBill/";
+            outPicName = "HB_QR"+pbId+".jpg";
+            pictureRequestDto.setOutPicPath(picPath+outPicName);
+
+            //将b作为输入流，将in作为输入流，读取图片存入image中，而这里in可以为ByteArrayInputStream();
+            ByteArrayInputStream in = new ByteArrayInputStream(pictureRequestDto.getBt());
+            BufferedImage code = ImageIO.read(in);
+            ImageIO.write(code ,"png", new File(pictureRequestDto.getOutPicPath()));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return outPicName;
     }
 
     /*
