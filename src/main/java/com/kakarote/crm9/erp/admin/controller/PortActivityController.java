@@ -353,14 +353,25 @@ public class PortActivityController extends Controller {
             return;
         }
 
-        Record record = Db.findFirst("SELECT a.*,b.id pbId FROM port_activity a left join port_activity_playbill b on a.id = b.pb_ac_id where b.pb_source_openid = ? and b.pb_ac_id = ? LIMIT 0,1",portActivityReq.getSourceOpenId(),portActivityReq.getAcId());
+        PortActivityPlaybill portActivityPlaybillDb = PortActivityPlaybill.dao.findFirst("SELECT * FROM port_activity_playbill WHERE pb_source_openid = ? and pb_ac_id = ? LIMIT 0,1",portActivityReq.getSourceOpenId(),portActivityReq.getAcId());
 
-        if (record != null) {
-            renderJson(R.ok().put("data", record).put("code","000000"));
+        if (portActivityPlaybillDb == null) {
+            //海报为空就返回活动信息
+            PortActivity portActivityDb = PortActivity.dao.findFirst("SELECT * FROM port_activity WHERE id = ? LIMIT 0,1",portActivityReq.getAcId());
+            renderJson(R.ok().put("portActivity", portActivityDb).put("code","000000"));
 
         }else {
-            renderJson(R.error("获取到的活动信息为空!").put("code","000021"));
-            return;
+
+            Record record = Db.findFirst("SELECT a.*,b.id pbId FROM port_activity a left join port_activity_playbill b on a.id = b.pb_ac_id where b.pb_source_openid = ? and b.pb_ac_id = ? LIMIT 0,1",portActivityReq.getSourceOpenId(),portActivityReq.getAcId());
+
+            if (record != null) {
+                renderJson(R.ok().put("data", record).put("code","000000"));
+
+            }else {
+                renderJson(R.error("获取到的活动信息为空!").put("code","000021"));
+                return;
+            }
+
         }
 
     }
