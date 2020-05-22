@@ -521,6 +521,20 @@ public class PortEmpController extends Controller {
             return;
         }
 
+        //判断上级是否为代理商
+        PortEmp portEmpParent = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE No = ? and accountType = '1' LIMIT 0,1", portEmp.getParentNo());
+        if (portEmpParent == null) {
+            renderJson(R.error("上级手机号为非代理商,不支持绑定!").put("code","000008"));
+            return;
+        }
+
+        //注册手机号必须为非代理商手机号
+        PortEmp portEmpTel = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE No = ? and accountType = '1' LIMIT 0,1", portEmp.getNo());
+        if (portEmpTel != null) {
+            renderJson(R.error("注册手机号为代理商,不支持绑定!").put("code","000009"));
+            return;
+        }
+
         //判断是否已经存在上下级关系
         PortEmpRelation portEmpRelationDb = PortEmpRelation.dao.findFirst("SELECT * FROM port_emp_relation WHERE FK_No = ? and ParentNo = ? LIMIT 0,1", portEmp.getNo(),portEmp.getParentNo());
         if (portEmpRelationDb != null) {

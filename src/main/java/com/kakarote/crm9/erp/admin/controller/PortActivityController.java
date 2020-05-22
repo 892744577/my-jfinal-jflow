@@ -14,6 +14,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
+import com.kakarote.crm9.common.constant.BaseConstant;
 import com.kakarote.crm9.erp.admin.entity.*;
 import com.kakarote.crm9.erp.admin.entity.vo.PortActivityReq;
 import com.kakarote.crm9.erp.admin.entity.vo.PortEmpReq;
@@ -87,8 +88,34 @@ public class PortActivityController extends Controller {
         PortActivityPlaybill portActivityPlaybillDb = PortActivityPlaybill.dao.findFirst("SELECT * FROM port_activity_playbill WHERE pb_source_openid = ? and pb_ac_id = ? LIMIT 0,1",portActivityReq.getSourceOpenId(),portActivityReq.getAcId());
 
         if (portActivityPlaybillDb != null) {
-            renderJson(R.error("发起人已经生成该活动海报，请勿重复生成!").put("id",portActivityPlaybillDb.getId()).put("code","000015"));
-            return;
+            if (StrUtil.isNotEmpty(portActivityPlaybillDb.getPbPlaybill())) {
+                //已经生成海报
+                renderJson(R.error("发起人已经生成该活动海报，请勿重复生成!").put("id",portActivityPlaybillDb.getId()).put("pbPath","http://app.aptenon.com/crm/PlayBill/"+portActivityPlaybillDb.getPbPlaybill()).put("code","000015"));
+                return;
+            }else {
+                //未生成海报,重新生成海报
+                //根据海报id生成小程序码
+                Integer pbId = portActivityPlaybillDb.getId().intValue();
+                byte[] pbWxCode = playBillQrCodeCreate(pbId);
+                //更新小程序码到活动海报表
+                Paras ps = new Paras();
+                ps.Add("pb_qrcode", pbWxCode);
+                ps.Add("id", pbId);
+                String sql = "UPDATE port_activity_playbill SET pb_qrcode="+SystemConfig.getAppCenterDBVarStr()+"pb_qrcode WHERE id=" + SystemConfig.getAppCenterDBVarStr()
+                        + "id";
+                int num = DBAccess.RunSQL(sql, ps);
+
+                //合成海报
+                String pbName = syntheticPlayBill(pbWxCode,pbId,portActivityReq.getAcId());
+                //更新海报名称到活动海报表
+                Paras psHb = new Paras();
+                psHb.Add("pb_playbill", pbName);
+                psHb.Add("id", pbId);
+                String sqlHb = "UPDATE port_activity_playbill SET pb_playbill="+SystemConfig.getAppCenterDBVarStr()+"pb_playbill WHERE id=" + SystemConfig.getAppCenterDBVarStr()
+                        + "id";
+                int numHb = DBAccess.RunSQL(sqlHb, psHb);
+
+            }
 
         }else {
             PortActivityPlaybill portActivityPlaybill = new PortActivityPlaybill();
@@ -118,7 +145,7 @@ public class PortActivityController extends Controller {
                     + "id";
             int numHb = DBAccess.RunSQL(sqlHb, psHb);
 
-            renderJson(R.ok().put("msg","保存成功!").put("id",pbId).put("code","000000"));
+            renderJson(R.ok().put("msg","保存成功!").put("id",pbId).put("pbPath","http://app.aptenon.com/crm/PlayBill/"+pbName).put("code","000000"));
         }
 
     }
@@ -139,7 +166,8 @@ public class PortActivityController extends Controller {
 
             PictureRequestDto pictureRequestDto = new PictureRequestDto();
             pictureRequestDto.setBt(pbWxCode);
-            String picPath = SystemConfig.getCS_AppSettings().get("PIC.PATH").toString();
+//            String picPath = SystemConfig.getCS_AppSettings().get("PIC.PATH").toString();
+            String picPath = BaseConstant.UPLOAD_PATH + "/PlayBill/";
             pictureRequestDto.setBackPicPath(picPath + portActivityDb.getAcPlaybillImg());
             outPicName = "HB_"+pbId+".jpg";
             pictureRequestDto.setOutPicPath(picPath+outPicName);
