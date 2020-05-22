@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta http-equiv="X-UA-Compatible" content="ie=edge">
+		<title>代理商绑定手机号</title>
+		<link href="https://cdn.bootcdn.net/ajax/libs/weui/2.3.0/style/weui.css" rel="stylesheet">
+		<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+		<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+		<style>
+			body {
+			background-color: #f3f3f3;
+		}
+
+		.container {
+			padding: 12px;
+		}
+
+		.vertifyCodeInput {
+			flex: 1;
+		}
+
+		.vertifyCodeBtn {
+			width: 90px;
+			font-size: 14px;
+			line-height: initial;
+			padding: 8px 4px;
+			margin: 0 4px;
+		}
+
+		.submitBtnContainer {
+			text-align: center;
+			display: flex;
+			justify-content: center;
+		}
+
+		.submitBtn {
+			background-color: #f18c17;
+			margin: 12px 0;
+
+		}
+	</style>
+	</head>
+
+	<body>
+		<div class="container">
+			<div class="weui-cells">
+				<div class="weui-cell">
+					<div class="weui-cell__hd"><label for="phone">手机号：</label></div>
+					<div class="weui-cell__hd" style="border-bottom: 1px solid grey;"><input class="weui-input" type="text" name="phone"></div>
+				</div>
+				<div class="weui-cell">
+					<div class="weui-cell__hd"><label for="vertifyCode">验证码：</label></div>
+					<div class="weui-cell__hd vertifyCodeInput" style="border-bottom: 1px solid grey;"><input class="weui-input" type="text"
+						 name="vertifyCode">
+					</div>
+					<button class="weui-btn weui-btn_primary vertifyCodeBtn">获取验证码</button>
+				</div>
+				<div class="submitBtnContainer">
+					<div class="weui-btn weui-btn_primary submitBtn">提交</div>
+				</div>
+			</div>
+		</div>
+		<div id="dialogs">
+			<div class="js_dialog" id="iosDialog1" style="display: none;">
+				<div class="weui-mask"></div>
+				<div class="weui-dialog">
+					<div class="weui-dialog__hd"><strong class="weui-dialog__title dialogTitle"></strong></div>
+					<div class="weui-dialog__bd dialogContent"></div>
+					<div class="weui-dialog__ft">
+						<a href="javascript:" class="weui-dialog__btn weui-dialog__btn_default dialogOpe"></a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+		<script src="https://cdn.bootcdn.net/ajax/libs/eruda/2.3.3/eruda.js"></script>
+		<script>
+			eruda.init();
+		</script>
+		<script>
+			// var baseUrl = 'http://localhost:8888/kidda'
+			var baseUrl = 'http://app.aptenon.com/crm'
+			var regUrl = '/port/emp/wechatBind' // url参数regType没有则为代理商绑定，为agentStaff为员工绑定
+			var getVertifyCodeUrl = '/sms/sendCode'
+			var curUrl = location.href
+			var urlParams = curUrl.split( '?' )[ 1 ]
+			var code = ''
+			// var WxOpenId = "test523"
+			var WxOpenId = ''
+			var urlParamsObj = {}
+
+			if ( urlParams ) {
+				var urlParamsArr = urlParams.split( '&' )
+				for ( var i = 0; i < urlParamsArr.length; i++ ) {
+					var str = urlParamsArr[ i ].split( '=' )
+					urlParamsObj[ str[ 0 ] ] = str[ 1 ]
+				}
+			}
+
+			if ( urlParamsObj.regType ) {
+				sessionStorage.setItem( 'regType', urlParamsObj.regType )
+			}
+
+			if ( urlParamsObj.code ) {
+				code = urlParamsObj.code
+			} else {
+				location.href = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxdac90ea64e64dcfc&redirect_uri=" +
+					curUrl.split( '?' )[ 0 ] + "&response_type=code&scope=snsapi_userinfo&state=1#wechat_redirect"
+			}
+
+			$( document ).ready( function() {
+				console.log( 'code', code )
+				var regType = sessionStorage.getItem( 'regType' )
+				if ( regType && regType == 'agentStaff' ) {
+					regUrl = '/port/emp/staffWechatBind'
+				}
+				if ( code ) {
+					$.ajax( {
+						type: "get",
+						url: baseUrl + "/mp/oauth2getAccessToken?code=" + code,
+						data: "",
+						dataType: "json",
+						success: function( res ) {
+							console.log( 'jscode2session', res )
+							if ( res.code == '000000' ) {
+								WxOpenId = res.openId
+							} else {
+								openDialog( '出错了', '获取openId失败' )
+							}
+						}
+					} );
+				}
+
+
+
+				$( '.vertifyCodeBtn' ).click( function() {
+					var tel = $( 'input[name=phone]' ).val();
+					if ( !/^1[3456789]\d{9}$/.test( tel ) ) {
+						openDialog( '提示', '手机号格式不正确' )
+						return
+					}
+					var count = 60;
+					const countDown = setInterval( function() {
+						if ( count === 0 ) {
+							$( '.vertifyCodeBtn' ).text( '重新发送' ).removeAttr( 'disabled' );
+							$( '.vertifyCodeBtn' ).css( {
+								background: '#ff9400',
+								color: '#fff',
+							} );
+							clearInterval( countDown );
+						} else {
+							$( '.vertifyCodeBtn' ).attr( 'disabled', true );
+							$( '.vertifyCodeBtn' ).css( {
+								background: '#d8d8d8',
+								color: '#707070',
+							} );
+							$( '.vertifyCodeBtn' ).text( count + '秒' );
+						}
+						count--;
+					}, 1000 );
+					$.ajax( {
+						type: "get",
+						url: baseUrl + getVertifyCodeUrl + "?mobile=" + tel,
+						data: "",
+						dataType: "json",
+						success: function( res ) {
+
+						},
+						error: function( err ) {
+							console.log( err )
+							openDialog( '失败', '网络错误' )
+						}
+					} );
+				} );
+
+				$( '.submitBtn' ).click( function( e ) {
+					e.preventDefault();
+					var tel = $( 'input[name=phone]' ).val();
+					var vertifyCode = $( 'input[name=vertifyCode]' ).val();
+					if ( !/^1[3456789]\d{9}$/.test( tel ) ) {
+						openDialog( '提示', '手机号格式不正确' )
+						return
+					}
+					if (!vertifyCode) {
+						openDialog('提示', '请输入验证码')
+						return
+					}
+					$.ajax( {
+						type: "post",
+						url: baseUrl + regUrl,
+						data: {
+							tel: tel,
+							wxOpenId: WxOpenId,
+							valiCode: vertifyCode
+						},
+						dataType: "json",
+						headers: {
+							'Content-Type': 'application/x-www-form-urlencoded'
+						},
+						success: function( res ) {
+							console.log( res )
+							if ( res.code == '000000' ) {
+								openDialog( '结果', '绑定成功' )
+							} else {
+								openDialog( '失败', '绑定失败:' + res.msg )
+							}
+						},
+						error: function( err ) {
+							console.log( err )
+							openDialog( '失败', '绑定失败：网络错误' )
+						}
+					} );
+				} );
+
+				$( '.dialogOpe' ).click( function( e ) {
+					e.preventDefault();
+					$( '#iosDialog1' ).hide()
+				} );
+
+				function openDialog( title, content, ope ) {
+					title = title || ''
+					content = content || ''
+					ope = ope || '确定'
+					$( '.dialogTitle' ).html( title );
+					$( '.dialogContent' ).html( content );
+					$( '.dialogOpe' ).html( ope );
+					$( '#iosDialog1' ).show();
+				}
+			} );
+		</script>
+	</body>
+
+</html>
