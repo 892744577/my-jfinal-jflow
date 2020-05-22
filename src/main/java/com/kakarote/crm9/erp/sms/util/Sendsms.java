@@ -89,7 +89,7 @@ public class Sendsms {
 
             if("2".equals(code)){
                 //成功后加入redis缓存
-                redisUtils.getAndSet(entity.getMobile(),"123434"); //Integer.toString(entity.getMobile_code()));
+                redisUtils.getAndSet(entity.getMobile(),Integer.toString(entity.getMobile_code()));
                 //redisUtils.increment(entity.getMobile()+"-count");
                 redisUtils.expireKey(entity.getMobile(),600); //10分钟内有效
                 //redisUtils.expireKey(entity.getMobile()+"-count",1, TimeUnit.HOURS); //10分钟内有效
