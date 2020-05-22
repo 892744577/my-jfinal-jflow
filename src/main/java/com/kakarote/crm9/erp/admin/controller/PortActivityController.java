@@ -334,4 +334,35 @@ public class PortActivityController extends Controller {
 
     }
 
+    /*
+     * @Description //根据发起人openId,活动Id获取活动信息接口
+     * @Author wangkaida
+     * @Date 16:23 2020/5/22
+     * @Param [portActivityReq]
+     * @return void
+     **/
+    public void queryPortActivity(@Para("") PortActivityReq portActivityReq){
+
+        if(portActivityReq.getAcId() == null){
+            renderJson(R.error("请输入活动Id!").put("code","000026"));
+            return;
+        }
+
+        if(StrUtil.isEmpty(portActivityReq.getSourceOpenId())){
+            renderJson(R.error("请输入海报发起人小程序openId!").put("code","000027"));
+            return;
+        }
+
+        Record record = Db.findFirst("SELECT a.*,b.id pbId FROM port_activity a left join port_activity_playbill b on a.id = b.pb_ac_id where b.pb_source_openid = ? and b.pb_ac_id = ? LIMIT 0,1",portActivityReq.getSourceOpenId(),portActivityReq.getAcId());
+
+        if (record != null) {
+            renderJson(R.ok().put("data", record).put("code","000000"));
+
+        }else {
+            renderJson(R.error("获取到的活动信息为空!").put("code","000021"));
+            return;
+        }
+
+    }
+
 }
