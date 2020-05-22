@@ -95,25 +95,30 @@ public class PortActivityController extends Controller {
             }else {
                 //未生成海报,重新生成海报
                 //根据海报id生成小程序码
-                Integer pbId = portActivityPlaybillDb.getId().intValue();
+                Long pbId = portActivityPlaybillDb.getId();
                 byte[] pbWxCode = playBillQrCodeCreate(pbId);
                 //更新小程序码到活动海报表
-                Paras ps = new Paras();
-                ps.Add("pb_qrcode", pbWxCode);
-                ps.Add("id", pbId);
-                String sql = "UPDATE port_activity_playbill SET pb_qrcode="+SystemConfig.getAppCenterDBVarStr()+"pb_qrcode WHERE id=" + SystemConfig.getAppCenterDBVarStr()
-                        + "id";
-                int num = DBAccess.RunSQL(sql, ps);
+//                Paras ps = new Paras();
+//                ps.Add("pb_qrcode", pbWxCode);
+//                ps.Add("id", pbId);
+//                String sql = "UPDATE port_activity_playbill SET pb_qrcode="+SystemConfig.getAppCenterDBVarStr()+"pb_qrcode WHERE id=" + SystemConfig.getAppCenterDBVarStr()
+//                        + "id";
+//                int num = DBAccess.RunSQL(sql, ps);
 
                 //合成海报
                 String pbName = syntheticPlayBill(pbWxCode,pbId,portActivityReq.getAcId());
                 //更新海报名称到活动海报表
-                Paras psHb = new Paras();
-                psHb.Add("pb_playbill", pbName);
-                psHb.Add("id", pbId);
-                String sqlHb = "UPDATE port_activity_playbill SET pb_playbill="+SystemConfig.getAppCenterDBVarStr()+"pb_playbill WHERE id=" + SystemConfig.getAppCenterDBVarStr()
-                        + "id";
-                int numHb = DBAccess.RunSQL(sqlHb, psHb);
+//                Paras psHb = new Paras();
+//                psHb.Add("pb_playbill", pbName);
+//                psHb.Add("id", pbId);
+//                String sqlHb = "UPDATE port_activity_playbill SET pb_playbill="+SystemConfig.getAppCenterDBVarStr()+"pb_playbill WHERE id=" + SystemConfig.getAppCenterDBVarStr()
+//                        + "id";
+//                int numHb = DBAccess.RunSQL(sqlHb, psHb);
+                PortActivityPlaybill portActivityPlaybill = new PortActivityPlaybill();
+                portActivityPlaybill.setPbQrcode(pbWxCode);
+                portActivityPlaybill.setPbPlaybill(pbName);
+                portActivityPlaybill.setId(pbId);
+                portActivityPlaybill.update();
 
             }
 
@@ -125,25 +130,31 @@ public class PortActivityController extends Controller {
             Boolean flag = portActivityPlaybill.save();
 
             //根据海报id生成小程序码
-            Integer pbId = portActivityPlaybill.getInt("id");
+            Long pbId = portActivityPlaybill.getLong("id");
             byte[] pbWxCode = playBillQrCodeCreate(pbId);
             //更新小程序码到活动海报表
-            Paras ps = new Paras();
-            ps.Add("pb_qrcode", pbWxCode);
-            ps.Add("id", pbId);
-            String sql = "UPDATE port_activity_playbill SET pb_qrcode="+SystemConfig.getAppCenterDBVarStr()+"pb_qrcode WHERE id=" + SystemConfig.getAppCenterDBVarStr()
-                    + "id";
-            int num = DBAccess.RunSQL(sql, ps);
+//            Paras ps = new Paras();
+//            ps.Add("pb_qrcode", pbWxCode);
+//            ps.Add("id", pbId);
+//            String sql = "UPDATE port_activity_playbill SET pb_qrcode="+SystemConfig.getAppCenterDBVarStr()+"pb_qrcode WHERE id=" + SystemConfig.getAppCenterDBVarStr()
+//                    + "id";
+//            int num = DBAccess.RunSQL(sql, ps);
 
             //合成海报
             String pbName = syntheticPlayBill(pbWxCode,pbId,portActivityReq.getAcId());
             //更新海报名称到活动海报表
-            Paras psHb = new Paras();
-            psHb.Add("pb_playbill", pbName);
-            psHb.Add("id", pbId);
-            String sqlHb = "UPDATE port_activity_playbill SET pb_playbill="+SystemConfig.getAppCenterDBVarStr()+"pb_playbill WHERE id=" + SystemConfig.getAppCenterDBVarStr()
-                    + "id";
-            int numHb = DBAccess.RunSQL(sqlHb, psHb);
+//            Paras psHb = new Paras();
+//            psHb.Add("pb_playbill", pbName);
+//            psHb.Add("id", pbId);
+//            String sqlHb = "UPDATE port_activity_playbill SET pb_playbill="+SystemConfig.getAppCenterDBVarStr()+"pb_playbill WHERE id=" + SystemConfig.getAppCenterDBVarStr()
+//                    + "id";
+//            int numHb = DBAccess.RunSQL(sqlHb, psHb);
+
+            PortActivityPlaybill portActivityPlaybillUpdate = new PortActivityPlaybill();
+            portActivityPlaybillUpdate.setPbQrcode(pbWxCode);
+            portActivityPlaybillUpdate.setPbPlaybill(pbName);
+            portActivityPlaybillUpdate.setId(pbId);
+            portActivityPlaybillUpdate.update();
 
             renderJson(R.ok().put("msg","保存成功!").put("id",pbId).put("pbPath","http://app.aptenon.com/crm/PlayBill/"+pbName).put("code","000000"));
         }
@@ -157,7 +168,7 @@ public class PortActivityController extends Controller {
      * @Param [pbWxCode]
      * @return java.lang.String
      **/
-    private String syntheticPlayBill(byte[] pbWxCode, Integer pbId, Integer acId) {
+    private String syntheticPlayBill(byte[] pbWxCode, Long pbId, Integer acId) {
 
         String outPicName = "";
         try {
@@ -192,7 +203,7 @@ public class PortActivityController extends Controller {
      * @Param [pbId]
      * @return byte[]
      **/
-    private byte[] playBillQrCodeCreate(Integer pbId) {
+    private byte[] playBillQrCodeCreate(Long pbId) {
 
         String appid = SystemConfig.getCS_AppSettings().get("MA.APPID").toString();
         final WxMaService wxService = WxMaConfiguration.getMaService(appid);
