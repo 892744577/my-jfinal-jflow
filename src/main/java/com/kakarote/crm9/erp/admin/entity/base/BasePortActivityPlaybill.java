@@ -17,11 +17,11 @@ public abstract class BasePortActivityPlaybill<M extends BasePortActivityPlaybil
 		return getLong("id");
 	}
 
-	public void setPbQrcode(byte[] pbQrcode) {
+	public void setPbQrcode(String pbQrcode) {
 		set("pb_qrcode", pbQrcode);
 	}
 
-	public byte[] getPbQrcode() {
+	public String getPbQrcode() {
 		return get("pb_qrcode");
 	}
 
