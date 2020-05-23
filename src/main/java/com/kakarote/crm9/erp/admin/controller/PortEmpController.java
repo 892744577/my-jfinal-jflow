@@ -661,4 +661,109 @@ public class PortEmpController extends Controller {
 
     }
 
+    /*
+     * @Description //登录接口
+     * @Author wangkaida
+     * @Date 11:24 2020/5/23
+     * @Param [portEmp]
+     * @return void
+     **/
+    public void login(@Para("") PortEmpReq portEmp){
+
+        if(StrUtil.isEmpty(portEmp.getNo())){
+            renderJson(R.error("员工账号不能为空!").put("code","000031"));
+            return;
+        }
+
+        try {
+            WebUser.SignInOfGenerAuth(new Emp(portEmp.getNo()), "admin");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        renderJson(R.ok().put("msg","登录成功!").put("code","000000"));
+
+    }
+
+    /*
+     * @Description //待办通过接口
+     * @Author wangkaida
+     * @Date 12:02 2020/5/23
+     * @Param [portEmp]
+     * @return void
+     **/
+    public void todoPass(@Para("") PortEmpReq portEmp){
+
+        if(StrUtil.isEmpty(portEmp.getFkFlow())){
+            renderJson(R.error("FkFlow不能为空!").put("code","000032"));
+            return;
+        }
+
+        if(portEmp.getWorkID() == null){
+            renderJson(R.error("WorkID不能为空!").put("code","000033"));
+            return;
+        }
+
+        Hashtable myhtSend = new Hashtable();
+
+        //发送流程
+//        myhtSend.put("ShouJiHaoMa", portEmp.getTel());
+//        myhtSend.put("appOpenId", portEmp.getWxAppOpenId());
+//        myhtSend.put("XingMing", portEmp.getName());
+//        myhtSend.put("LeiBie", "1");
+
+        try {
+            myhtSend.put("TB_OID", portEmp.getWorkID());
+            myhtSend.put("TB_RDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
+            myhtSend.put("TB_Title", URLEncoder.encode("亚太天能-admin,admin在"+DataType.getCurrentDateTime()+"发起.", "UTF-8"));
+            myhtSend.put("TB_FID", 0);
+            myhtSend.put("TB_CDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
+            myhtSend.put("TB_Rec", "admin");
+            myhtSend.put("TB_Emps", "admin");
+            myhtSend.put("TB_FK_Dept", 100);
+            myhtSend.put("TB_FK_NY", DataType.getCurrentYearMonth());
+            myhtSend.put("TB_MyNum", 1);
+            SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(portEmp.getFkFlow(),portEmp.getWorkID(),myhtSend,null,0,null);
+            String sendSuccess = "父流程自动运行到下一个节点，发送过程如下：\n @接收人" + returnObjs.getVarAcceptersName() + "\n @下一步[" + returnObjs.getVarCurrNodeName() + "]启动";
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        renderJson(R.ok().put("msg","执行成功!").put("code","000000"));
+
+    }
+
+    /*
+     * @Description //待办拒绝接口
+     * @Author wangkaida
+     * @Date 12:14 2020/5/23
+     * @Param [portEmp]
+     * @return void
+     **/
+    public void todoRefuse(@Para("") PortEmpReq portEmp){
+
+        if(StrUtil.isEmpty(portEmp.getFkFlow())){
+            renderJson(R.error("FkFlow不能为空!").put("code","000032"));
+            return;
+        }
+
+        if(portEmp.getWorkID() == null){
+            renderJson(R.error("WorkID不能为空!").put("code","000033"));
+            return;
+        }
+
+        String result = "";
+
+        try {
+            result = BP.WF.Dev2Interface.Flow_DoFlowOver(portEmp.getFkFlow(),portEmp.getWorkID(),null);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        renderJson(R.ok().put("msg","执行成功!").put("result",result).put("code","000000"));
+
+    }
+
 }

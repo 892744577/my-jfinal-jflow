@@ -17,5 +17,7 @@ public class PortEmpReq {
 	private Integer pageSize; //页面大小
 	private Integer pageIndex; //页码
 	private String valiCode; //手机验证码
+	private String fkFlow;
+	private Long workID;
 
 }

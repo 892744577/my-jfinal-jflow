@@ -14,5 +14,7 @@ public class PortActivityReq {
 	private Integer shareId; //分享id
 	private String shareOpenId; //分享人小程序openid
 	private String toShareOpenId; //被分享人小程序openid
+	private String helperAppOpenId; //助力人小程序openid，针对本次活动，只能助力一次
+	private String helperOpenId; //助力人公众号openid，针对本次活动，只能助力一次
 
 }
