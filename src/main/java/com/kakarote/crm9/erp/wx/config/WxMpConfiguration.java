@@ -42,7 +42,7 @@ public class WxMpConfiguration {
     private  SubscribeHandler subscribeHandler;
     private  ScanHandler scanHandler;
 
-    public WxMpService wxMpService() {
+    public static WxMpService wxMpService() {
 
         WxMpProperties.MpConfig config1 = new WxMpProperties.MpConfig();
         config1.setAppId(SystemConfig.getCS_AppSettings().get("MP.APPID").toString());

@@ -12,6 +12,10 @@ import com.kakarote.crm9.erp.admin.service.PortActivityService;
 import com.kakarote.crm9.utils.QrCodeUtil;
 import com.kakarote.crm9.utils.R;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+
 
 /*
  * @Description //活动分享管理控制类
@@ -71,7 +75,10 @@ public class PortActivityController extends Controller {
                 //未生成海报,重新生成海报
                 //根据海报id生成小程序码
                 Long pbId = portActivityPlaybillDb.getId();
-                byte[] pbWxCode = QrCodeUtil.playBillQrCodeCreate(pbId);
+//                byte[] pbWxCode = QrCodeUtil.playBillQrCodeCreate(pbId);
+                BufferedImage pbWxCodeBI = QrCodeUtil.playBillWxQrCodeCreate(pbId);
+                byte[] pbWxCode = QrCodeUtil.imageToBytes(pbWxCodeBI,"png");
+
                 //更新小程序码到活动海报表
                 //合成海报
                 String pbName = QrCodeUtil.syntheticPlayBill(pbWxCode,pbId,portActivityReq.getAcId());
@@ -96,7 +103,9 @@ public class PortActivityController extends Controller {
 
             //根据海报id生成小程序码
             Long pbId = portActivityPlaybill.getLong("id");
-            byte[] pbWxCode = QrCodeUtil.playBillQrCodeCreate(pbId);
+//            byte[] pbWxCode = QrCodeUtil.playBillQrCodeCreate(pbId);
+            BufferedImage pbWxCodeBI = QrCodeUtil.playBillWxQrCodeCreate(pbId);
+            byte[] pbWxCode = QrCodeUtil.imageToBytes(pbWxCodeBI,"png");
             //更新小程序码到活动海报表
             //合成海报
             String pbName = QrCodeUtil.syntheticPlayBill(pbWxCode,pbId,portActivityReq.getAcId());

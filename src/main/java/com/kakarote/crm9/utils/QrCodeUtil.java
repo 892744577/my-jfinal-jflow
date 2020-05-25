@@ -12,7 +12,9 @@ import com.kakarote.crm9.common.constant.BaseConstant;
 import com.kakarote.crm9.erp.admin.entity.PortActivity;
 import com.kakarote.crm9.erp.sms.entity.PictureRequestDto;
 import com.kakarote.crm9.erp.wx.config.WxMaConfiguration;
+import com.kakarote.crm9.erp.wx.config.WxMpConfiguration;
 import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.mp.api.WxMpService;
 
 import javax.imageio.ImageIO;
 import javax.imageio.stream.ImageOutputStream;
@@ -86,6 +88,35 @@ public class QrCodeUtil {
     }
 
     /*
+     * @Description //根据海报id生成微信二维码
+     * @Author wangkaida
+     * @Date 14:55 2020/5/25
+     * @Param [pbId]
+     * @return byte[]
+     **/
+    public static BufferedImage playBillWxQrCodeCreate(Long pbId) {
+
+        String appid = SystemConfig.getCS_AppSettings().get("MP.APPID").toString();
+
+        BufferedImage wxCode = null;
+        WxMpService wxMpService = WxMpConfiguration.wxMpService();
+        wxMpService.switchover(appid);
+
+        try {
+
+            String params = "pid="+pbId;
+            String content = "http://app.aptenon.com/crm/xxxxxxxxxxs?params="+params;
+
+            //生成二维码
+            wxCode = PictureUtil.createImage(content, null, false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return wxCode;
+    }
+
+    /*
      * @Description //合成海报
      * @Author wangkaida
      * @Date 15:37 2020/5/20
@@ -120,5 +151,22 @@ public class QrCodeUtil {
         return outPicName;
     }
 
+    /**
+     * 转换BufferedImage 数据为byte数组
+     * @param bImage
+     * Image对象
+     * @param format
+     * image格式字符串.如"gif","png"
+     * @return byte数组
+     */
+    public static byte[] imageToBytes(BufferedImage bImage, String format) {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(bImage, format, out);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return out.toByteArray();
+    }
 
 }
