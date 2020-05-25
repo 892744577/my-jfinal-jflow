@@ -706,13 +706,13 @@ public class PortEmpController extends Controller {
 
         Hashtable myhtSend = new Hashtable();
 
-        //发送流程
-//        myhtSend.put("ShouJiHaoMa", portEmp.getTel());
-//        myhtSend.put("appOpenId", portEmp.getWxAppOpenId());
-//        myhtSend.put("XingMing", portEmp.getName());
-//        myhtSend.put("LeiBie", "1");
-
         try {
+            //发送流程
+            myhtSend.put("ShouJiHaoMa", portEmp.getTel());
+            myhtSend.put("appOpenId", portEmp.getWxAppOpenId());
+            myhtSend.put("XingMing", portEmp.getName());
+            myhtSend.put("ParentNo", portEmp.getParentNo());
+            myhtSend.put("LeiBie", "2");
             myhtSend.put("TB_OID", portEmp.getWorkID());
             myhtSend.put("TB_RDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
             myhtSend.put("TB_Title", URLEncoder.encode("亚太天能-admin,admin在"+DataType.getCurrentDateTime()+"发起.", "UTF-8"));
@@ -725,6 +725,7 @@ public class PortEmpController extends Controller {
             myhtSend.put("TB_MyNum", 1);
             SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(portEmp.getFkFlow(),portEmp.getWorkID(),myhtSend,null,0,null);
             String sendSuccess = "父流程自动运行到下一个节点，发送过程如下：\n @接收人" + returnObjs.getVarAcceptersName() + "\n @下一步[" + returnObjs.getVarCurrNodeName() + "]启动";
+
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (Exception e) {
