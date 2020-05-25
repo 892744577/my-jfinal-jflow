@@ -94,12 +94,12 @@ public class QrCodeUtil {
      * @Param [pbId]
      * @return byte[]
      **/
-    public static BufferedImage playBillWxQrCodeCreate(Long pbId) {
+    public static BufferedImage playBillWxQrCodeCreate(Long pbId,WxMpConfiguration wxMpConfiguration) {
 
         String appid = SystemConfig.getCS_AppSettings().get("MP.APPID").toString();
 
         BufferedImage wxCode = null;
-        WxMpService wxMpService = WxMpConfiguration.wxMpService();
+        WxMpService wxMpService = wxMpConfiguration.wxMpService();
         wxMpService.switchover(appid);
 
         try {
