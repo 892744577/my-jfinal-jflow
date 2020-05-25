@@ -9,11 +9,7 @@ import cn.hutool.core.util.ClassLoaderUtil;
 import com.jfinal.aop.Aop;
 import com.jfinal.ext.proxy.CglibProxyFactory;
 import com.jfinal.plugin.activerecord.dialect.*;
-import com.jfinal.plugin.druid.IDruidStatViewAuth;
-import com.jfinal.plugin.redis.Cache;
-import com.jfinal.plugin.redis.Redis;
 import com.kakarote.crm9.common.config.cache.CaffeineCache;
-import com.kakarote.crm9.common.config.druid.DruidConfig;
 import com.kakarote.crm9.common.config.json.ErpJsonFactory;
 import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
 import com.kakarote.crm9.common.config.paragetter.MapParaGetter;
@@ -21,6 +17,7 @@ import com.kakarote.crm9.common.config.paragetter.PageParaGetter;
 import com.kakarote.crm9.common.config.redis.RedisPlugin;
 import com.kakarote.crm9.common.config.render.ErpRenderFactory;
 import com.kakarote.crm9.common.constant.BaseConstant;
+import com.kakarote.crm9.common.service.JflowRefreshService;
 import com.kakarote.crm9.erp._MappingKit;
 import com.kakarote.crm9.erp.admin.common.AdminRouter;
 import com.kakarote.crm9.erp.bi.common.BiRouter;
@@ -36,16 +33,12 @@ import com.jfinal.kit.PropKit;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.jfinal.plugin.cron4j.Cron4jPlugin;
 import com.jfinal.plugin.druid.DruidPlugin;
-import com.jfinal.plugin.druid.DruidStatViewHandler;
 import com.jfinal.render.RenderManager;
 import com.jfinal.template.Engine;
-import com.kakarote.crm9.erp.work.service.WorkService;
 import com.kakarote.crm9.erp.wx.common.WxRouter;
 import com.kakarote.crm9.erp.wx.config.WxMaConfiguration;
 import com.kakarote.crm9.erp.yzj.common.YzjRouter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.sql.Connection;
 import java.util.Map;
@@ -218,6 +211,10 @@ public class JfinalConfig extends JFinalConfig {
         //初始化小程序的配置
         WxMaConfiguration wxMaConfiguration= new WxMaConfiguration();
         wxMaConfiguration.init();
+
+        //刷新流程事件实体 add by tangamnrong
+        JflowRefreshService jflowRefreshService = Aop.get(JflowRefreshService.class);
+        jflowRefreshService.initFlow();
     }
 
     @Override
