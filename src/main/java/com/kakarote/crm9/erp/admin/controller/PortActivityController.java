@@ -1,41 +1,16 @@
 package com.kakarote.crm9.erp.admin.controller;
 
-import BP.DA.DBAccess;
-import BP.DA.DataType;
-import BP.DA.Paras;
-import BP.Difference.SystemConfig;
-import BP.Port.Emp;
-import BP.WF.SendReturnObjs;
-import BP.Web.WebUser;
-import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.hutool.core.util.StrUtil;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
-import com.kakarote.crm9.common.constant.BaseConstant;
 import com.kakarote.crm9.erp.admin.entity.*;
 import com.kakarote.crm9.erp.admin.entity.vo.PortActivityReq;
-import com.kakarote.crm9.erp.admin.entity.vo.PortEmpReq;
 import com.kakarote.crm9.erp.admin.service.PortActivityService;
-import com.kakarote.crm9.erp.admin.service.PortEmpService;
-import com.kakarote.crm9.erp.sms.entity.PictureRequestDto;
-import com.kakarote.crm9.erp.wx.config.WxMaConfiguration;
-import com.kakarote.crm9.utils.PictureUtil;
+import com.kakarote.crm9.utils.QrCodeUtil;
 import com.kakarote.crm9.utils.R;
-import me.chanjar.weixin.common.error.WxErrorException;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.UUID;
 
 
 /*
@@ -96,27 +71,13 @@ public class PortActivityController extends Controller {
                 //未生成海报,重新生成海报
                 //根据海报id生成小程序码
                 Long pbId = portActivityPlaybillDb.getId();
-                byte[] pbWxCode = playBillQrCodeCreate(pbId);
+                byte[] pbWxCode = QrCodeUtil.playBillQrCodeCreate(pbId);
                 //更新小程序码到活动海报表
-//                Paras ps = new Paras();
-//                ps.Add("pb_qrcode", pbWxCode);
-//                ps.Add("id", pbId);
-//                String sql = "UPDATE port_activity_playbill SET pb_qrcode="+SystemConfig.getAppCenterDBVarStr()+"pb_qrcode WHERE id=" + SystemConfig.getAppCenterDBVarStr()
-//                        + "id";
-//                int num = DBAccess.RunSQL(sql, ps);
-
                 //合成海报
-                String pbName = syntheticPlayBill(pbWxCode,pbId,portActivityReq.getAcId());
+                String pbName = QrCodeUtil.syntheticPlayBill(pbWxCode,pbId,portActivityReq.getAcId());
                 //更新海报名称到活动海报表
-//                Paras psHb = new Paras();
-//                psHb.Add("pb_playbill", pbName);
-//                psHb.Add("id", pbId);
-//                String sqlHb = "UPDATE port_activity_playbill SET pb_playbill="+SystemConfig.getAppCenterDBVarStr()+"pb_playbill WHERE id=" + SystemConfig.getAppCenterDBVarStr()
-//                        + "id";
-//                int numHb = DBAccess.RunSQL(sqlHb, psHb);
-
                 //将二维码以图片形式保存
-                String qrName = syntheticPlayBillQrcode(pbWxCode,pbId);
+                String qrName = QrCodeUtil.syntheticPlayBillQrcode(pbWxCode,pbId);
 
                 PortActivityPlaybill portActivityPlaybill = new PortActivityPlaybill();
                 portActivityPlaybill.setPbQrcode(qrName);
@@ -135,26 +96,13 @@ public class PortActivityController extends Controller {
 
             //根据海报id生成小程序码
             Long pbId = portActivityPlaybill.getLong("id");
-            byte[] pbWxCode = playBillQrCodeCreate(pbId);
+            byte[] pbWxCode = QrCodeUtil.playBillQrCodeCreate(pbId);
             //更新小程序码到活动海报表
-//            Paras ps = new Paras();
-//            ps.Add("pb_qrcode", pbWxCode);
-//            ps.Add("id", pbId);
-//            String sql = "UPDATE port_activity_playbill SET pb_qrcode="+SystemConfig.getAppCenterDBVarStr()+"pb_qrcode WHERE id=" + SystemConfig.getAppCenterDBVarStr()
-//                    + "id";
-//            int num = DBAccess.RunSQL(sql, ps);
-
             //合成海报
-            String pbName = syntheticPlayBill(pbWxCode,pbId,portActivityReq.getAcId());
+            String pbName = QrCodeUtil.syntheticPlayBill(pbWxCode,pbId,portActivityReq.getAcId());
             //更新海报名称到活动海报表
-//            Paras psHb = new Paras();
-//            psHb.Add("pb_playbill", pbName);
-//            psHb.Add("id", pbId);
-//            String sqlHb = "UPDATE port_activity_playbill SET pb_playbill="+SystemConfig.getAppCenterDBVarStr()+"pb_playbill WHERE id=" + SystemConfig.getAppCenterDBVarStr()
-//                    + "id";
-//            int numHb = DBAccess.RunSQL(sqlHb, psHb);
             //将二维码以图片形式保存
-            String qrName = syntheticPlayBillQrcode(pbWxCode,pbId);
+            String qrName = QrCodeUtil.syntheticPlayBillQrcode(pbWxCode,pbId);
 
             PortActivityPlaybill portActivityPlaybillUpdate = new PortActivityPlaybill();
             portActivityPlaybillUpdate.setPbQrcode(qrName);
@@ -174,26 +122,25 @@ public class PortActivityController extends Controller {
      * @Param [pbWxCode]
      * @return java.lang.String
      **/
-    private String syntheticPlayBillQrcode(byte[] pbWxCode, Long pbId) {
-
-        String outPicName = "";
-        try {
-            PictureRequestDto pictureRequestDto = new PictureRequestDto();
-            pictureRequestDto.setBt(pbWxCode);
-//            String picPath = SystemConfig.getCS_AppSettings().get("PIC.PATH").toString();
-            String picPath = BaseConstant.UPLOAD_PATH + "/PlayBill/";
-            outPicName = "HB_QR"+pbId+".jpg";
-            pictureRequestDto.setOutPicPath(picPath+outPicName);
-
-            //将b作为输入流，将in作为输入流，读取图片存入image中，而这里in可以为ByteArrayInputStream();
-            ByteArrayInputStream in = new ByteArrayInputStream(pictureRequestDto.getBt());
-            BufferedImage code = ImageIO.read(in);
-            ImageIO.write(code ,"png", new File(pictureRequestDto.getOutPicPath()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return outPicName;
-    }
+//    private String syntheticPlayBillQrcode(byte[] pbWxCode, Long pbId) {
+//
+//        String outPicName = "";
+//        try {
+//            PictureRequestDto pictureRequestDto = new PictureRequestDto();
+//            pictureRequestDto.setBt(pbWxCode);
+//            String picPath = BaseConstant.UPLOAD_PATH + "/PlayBill/";
+//            outPicName = "HB_QR"+pbId+".jpg";
+//            pictureRequestDto.setOutPicPath(picPath+outPicName);
+//
+//            //将b作为输入流，将in作为输入流，读取图片存入image中，而这里in可以为ByteArrayInputStream();
+//            ByteArrayInputStream in = new ByteArrayInputStream(pictureRequestDto.getBt());
+//            BufferedImage code = ImageIO.read(in);
+//            ImageIO.write(code ,"png", new File(pictureRequestDto.getOutPicPath()));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return outPicName;
+//    }
 
     /*
      * @Description //合成海报
@@ -202,33 +149,33 @@ public class PortActivityController extends Controller {
      * @Param [pbWxCode]
      * @return java.lang.String
      **/
-    private String syntheticPlayBill(byte[] pbWxCode, Long pbId, Integer acId) {
-
-        String outPicName = "";
-        try {
-            //获取背景图片名称
-            PortActivity portActivityDb = PortActivity.dao.findFirst("SELECT * FROM port_activity WHERE id = ? LIMIT 0,1",acId);
-
-            PictureRequestDto pictureRequestDto = new PictureRequestDto();
-            pictureRequestDto.setBt(pbWxCode);
-//            String picPath = SystemConfig.getCS_AppSettings().get("PIC.PATH").toString();
-            String picPath = BaseConstant.UPLOAD_PATH + "/PlayBill/";
-            pictureRequestDto.setBackPicPath(picPath + portActivityDb.getAcPlaybillImg());
-            outPicName = "HB_"+pbId+".jpg";
-            pictureRequestDto.setOutPicPath(picPath+outPicName);
-
-            //将b作为输入流，将in作为输入流，读取图片存入image中，而这里in可以为ByteArrayInputStream();
-            ByteArrayInputStream in = new ByteArrayInputStream(pictureRequestDto.getBt());
-            BufferedImage code = ImageIO.read(in);
-
-            BufferedImage big = PictureUtil.combineCodeAndPicToFile(pictureRequestDto.getBackPicPath(), code);
-            String suffix = pictureRequestDto.getBackPicPath().substring(pictureRequestDto.getBackPicPath().lastIndexOf(".") + 1);
-            ImageIO.write(big,suffix , new File(pictureRequestDto.getOutPicPath()));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return outPicName;
-    }
+//    private String syntheticPlayBill(byte[] pbWxCode, Long pbId, Integer acId) {
+//
+//        String outPicName = "";
+//        try {
+//            //获取背景图片名称
+//            PortActivity portActivityDb = PortActivity.dao.findFirst("SELECT * FROM port_activity WHERE id = ? LIMIT 0,1",acId);
+//
+//            PictureRequestDto pictureRequestDto = new PictureRequestDto();
+//            pictureRequestDto.setBt(pbWxCode);
+//
+//            String picPath = BaseConstant.UPLOAD_PATH + "/PlayBill/";
+//            pictureRequestDto.setBackPicPath(picPath + portActivityDb.getAcPlaybillImg());
+//            outPicName = "HB_"+pbId+".jpg";
+//            pictureRequestDto.setOutPicPath(picPath+outPicName);
+//
+//            //将b作为输入流，将in作为输入流，读取图片存入image中，而这里in可以为ByteArrayInputStream();
+//            ByteArrayInputStream in = new ByteArrayInputStream(pictureRequestDto.getBt());
+//            BufferedImage code = ImageIO.read(in);
+//
+//            BufferedImage big = PictureUtil.combineCodeAndPicToFile(pictureRequestDto.getBackPicPath(), code);
+//            String suffix = pictureRequestDto.getBackPicPath().substring(pictureRequestDto.getBackPicPath().lastIndexOf(".") + 1);
+//            ImageIO.write(big,suffix , new File(pictureRequestDto.getOutPicPath()));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        return outPicName;
+//    }
 
     /*
      * @Description //根据海报id生成小程序码
@@ -237,22 +184,22 @@ public class PortActivityController extends Controller {
      * @Param [pbId]
      * @return byte[]
      **/
-    private byte[] playBillQrCodeCreate(Long pbId) {
-
-        String appid = SystemConfig.getCS_AppSettings().get("MA.APPID").toString();
-        final WxMaService wxService = WxMaConfiguration.getMaService(appid);
-
-        byte[] wxCode = null;
-        try {
-            String scene = "pid="+pbId;
-            String page = "activityPages/agentActivity/agentActivityDetail";
-            wxCode = wxService.getQrcodeService().createWxaCodeUnlimitBytes(scene, page, 280, true, null, false);
-        } catch (WxErrorException e) {
-            e.printStackTrace();
-        }
-
-        return wxCode;
-    }
+//    private byte[] playBillQrCodeCreate(Long pbId) {
+//
+//        String appid = SystemConfig.getCS_AppSettings().get("MA.APPID").toString();
+//        final WxMaService wxService = WxMaConfiguration.getMaService(appid);
+//
+//        byte[] wxCode = null;
+//        try {
+//            String scene = "pid="+pbId;
+//            String page = "activityPages/agentActivity/agentActivityDetail";
+//            wxCode = wxService.getQrcodeService().createWxaCodeUnlimitBytes(scene, page, 280, true, null, false);
+//        } catch (WxErrorException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return wxCode;
+//    }
 
     /*
      * @Description //活动分享接口
