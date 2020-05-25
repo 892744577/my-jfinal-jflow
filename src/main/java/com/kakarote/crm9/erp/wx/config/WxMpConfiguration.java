@@ -3,6 +3,7 @@ package com.kakarote.crm9.erp.wx.config;
 
 import BP.Difference.SystemConfig;
 import com.kakarote.crm9.erp.wx.handler.*;
+import com.kakarote.crm9.erp.wx.util.MpUtil;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
@@ -60,7 +61,7 @@ public class WxMpConfiguration {
                 WxMpDefaultConfigImpl configStorage = new WxMpDefaultConfigImpl();
                 configStorage.setAppId(a.getAppId());
                 configStorage.setSecret(a.getSecret());
-                configStorage.setToken(a.getToken());
+                configStorage.setToken(MpUtil.getAccessTokenByInterface().getAccessToken());
                 configStorage.setAesKey(a.getAesKey());
                 return configStorage;
             }).collect(Collectors.toMap(WxMpDefaultConfigImpl::getAppId, a -> a, (o, n) -> o)));
