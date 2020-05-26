@@ -252,7 +252,7 @@ public class PortActivityController extends Controller {
     public void getActByPbId(@Para("") PortActivityReq portActivityReq){
 
         if(portActivityReq.getPbId() == null){
-            renderJson(R.error("请输入海报Id!").put("code","000020"));
+            renderJson(R.error("请输入海报Id!").put("data",null).put("code","000020"));
             return;
         }
 
@@ -262,7 +262,7 @@ public class PortActivityController extends Controller {
             renderJson(R.ok().put("data", record).put("code","000000"));
 
         }else {
-            renderJson(R.error("获取到的活动信息为空!").put("code","000021"));
+            renderJson(R.error("获取到的活动信息为空!").put("data",null).put("code","000021"));
             return;
         }
 
