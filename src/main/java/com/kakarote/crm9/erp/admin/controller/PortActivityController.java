@@ -224,12 +224,12 @@ public class PortActivityController extends Controller {
     public void activityShare(@Para("") PortActivityReq portActivityReq){
 
         if(StrUtil.isEmpty(portActivityReq.getShareOpenId())){
-            renderJson(R.error("请输入分享人小程序openId!").put("code","000018"));
+            renderJson(R.error("请输入分享人公众号openId!").put("data",null).put("code","000018"));
             return;
         }
 
         if(portActivityReq.getPbId() == null){
-            renderJson(R.error("请输入海报Id!").put("code","000020"));
+            renderJson(R.error("请输入海报Id!").put("data",null).put("code","000020"));
             return;
         }
 
@@ -238,7 +238,7 @@ public class PortActivityController extends Controller {
         portActivityShare.setSrToShareOpenid(portActivityReq.getToShareOpenId());
         portActivityShare.setSrPbId(portActivityReq.getPbId());
         Boolean flag = portActivityShare.save();
-        renderJson(R.ok().put("msg","保存成功!").put("id",portActivityShare.getInt("id")).put("code","000000"));
+        renderJson(R.ok().put("msg","保存成功!").put("data",portActivityShare).put("code","000000"));
 
     }
 
@@ -278,7 +278,7 @@ public class PortActivityController extends Controller {
     public void getActByShareId(@Para("") PortActivityReq portActivityReq){
 
         if(portActivityReq.getShareId() == null){
-            renderJson(R.error("请输入分享Id!").put("code","000022"));
+            renderJson(R.error("请输入分享Id!").put("data",null).put("code","000022"));
             return;
         }
 
@@ -288,7 +288,7 @@ public class PortActivityController extends Controller {
             renderJson(R.ok().put("data", record).put("code","000000"));
 
         }else {
-            renderJson(R.error("获取到的活动信息为空!").put("code","000021"));
+            renderJson(R.error("获取到的活动信息为空!").put("data",null).put("code","000021"));
             return;
         }
 
@@ -346,24 +346,24 @@ public class PortActivityController extends Controller {
     public void savePortActivityHelper(@Para("") PortActivityReq portActivityReq){
 
         if(StrUtil.isEmpty(portActivityReq.getHelperAppOpenId())){
-            renderJson(R.error("请输入助力人小程序openId!").put("code","000028"));
+            renderJson(R.error("请输入助力人小程序openId!").put("data",null).put("code","000028"));
             return;
         }
 
         if(StrUtil.isEmpty(portActivityReq.getHelperOpenId())){
-            renderJson(R.error("请输入助力人公众号openId!").put("code","000029"));
+            renderJson(R.error("请输入助力人公众号openId!").put("data",null).put("code","000029"));
             return;
         }
 
         if(portActivityReq.getShareId() == null){
-            renderJson(R.error("请输入分享Id!").put("code","000027"));
+            renderJson(R.error("请输入分享Id!").put("data",null).put("code","000027"));
             return;
         }
 
         PortActivityHelper portActivityHelperDb = PortActivityHelper.dao.findFirst("SELECT * FROM port_activity_helper WHERE shareId = ? and helperAppOpenId = ? and helperOpenId = ? LIMIT 0,1",portActivityReq.getShareId(),portActivityReq.getHelperAppOpenId(),portActivityReq.getHelperOpenId());
 
         if (portActivityHelperDb != null) {
-            renderJson(R.error("已经集赞,请勿重复提交!").put("code","000030"));
+            renderJson(R.error("已经集赞,请勿重复提交!").put("data",null).put("code","000030"));
             return;
         }
         
