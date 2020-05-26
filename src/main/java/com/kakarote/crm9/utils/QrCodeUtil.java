@@ -103,9 +103,9 @@ public class QrCodeUtil {
         wxMpService.switchover(appid);
 
         try {
-
+            String proPath = SystemConfig.getCS_AppSettings().get("PRO.PATH").toString();
             String params = "pid="+pbId;
-            String content = "http://app.aptenon.com/crm/xxxxxxxxxxs?params="+params;
+            String content = proPath+"dist/index.html?"+params;
 
             //生成二维码
             wxCode = PictureUtil.createImage(content, null, false);
