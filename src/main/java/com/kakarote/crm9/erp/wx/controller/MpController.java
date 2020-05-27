@@ -48,7 +48,29 @@ public class MpController extends Controller {
         } catch (WxErrorException e) {
             e.printStackTrace();
         }
-        renderJson(R.ok().put("openId",wxMpUser.getOpenId()).put("code","000000"));
+        renderJson(R.ok().put("data",wxMpUser).put("code","000000"));
     }
+
+
+    /*
+     * @Description //通过code获取微信公众号openId
+     * @Author wangkaida
+     * @Date 16:30 2020/5/14
+     * @Param [code]
+     * @return void
+     **/
+    public void getJsapiConfig(@Para("url") String url){
+        WxMpService wxMpService = wxMpConfiguration.wxMpService();
+        try {
+            renderJson(R.ok().put("data",
+                    wxMpService.createJsapiSignature(url))
+                    .put("jsapi_ticket",wxMpService.getJsapiTicket()).
+                            put("code","000000"));
+        } catch (WxErrorException e) {
+            e.printStackTrace();
+        }
+
+    }
+
 
 }

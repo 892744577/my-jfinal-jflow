@@ -17,6 +17,7 @@ import com.kakarote.crm9.common.config.paragetter.PageParaGetter;
 import com.kakarote.crm9.common.config.redis.RedisPlugin;
 import com.kakarote.crm9.common.config.render.ErpRenderFactory;
 import com.kakarote.crm9.common.constant.BaseConstant;
+import com.kakarote.crm9.common.handler.ProxyHandler;
 import com.kakarote.crm9.common.service.JflowRefreshService;
 import com.kakarote.crm9.erp._MappingKit;
 import com.kakarote.crm9.erp.admin.common.AdminRouter;
@@ -189,6 +190,7 @@ public class JfinalConfig extends JFinalConfig {
 
         //流程的handler add by tangmanrong 20200408
         me.add(new StaticHandler());
+        me.add(new ProxyHandler());
         //me.add(new FakeStaticHandler(".do"));
 
         //druid监控页面 add by tangmanrong 20200415
