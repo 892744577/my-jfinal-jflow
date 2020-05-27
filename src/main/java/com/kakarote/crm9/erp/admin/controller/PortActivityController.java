@@ -325,7 +325,7 @@ public class PortActivityController extends Controller {
         if (portActivityPlaybillDb == null) {
             //海报为空就返回活动信息
             PortActivity portActivityDb = PortActivity.dao.findFirst("SELECT * FROM port_activity WHERE id = ? LIMIT 0,1",portActivityReq.getAcId());
-            renderJson(R.ok().put("portActivity", portActivityDb).put("code","000000"));
+            renderJson(R.ok().put("data", portActivityDb).put("code","000000"));
 
         }else {
 
@@ -379,7 +379,7 @@ public class PortActivityController extends Controller {
         portActivityHelper.setHelperAppOpenId(portActivityReq.getHelperAppOpenId());
         portActivityHelper.setHelperOpenId(portActivityReq.getHelperOpenId());
         Boolean flag = portActivityHelper.save();
-        renderJson(R.ok().put("msg","保存成功!").put("id",portActivityHelper.getInt("id")).put("code","000000"));
+        renderJson(R.ok().put("msg","保存成功!").put("data",portActivityHelper).put("code","000000"));
 
     }
 
