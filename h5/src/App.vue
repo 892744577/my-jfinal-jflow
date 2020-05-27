@@ -65,56 +65,76 @@
                 }
             },
             doBusiness: async function (resQuery,jsApiTicket){
-
-                if(typeof(resQuery.pid)!='undefined' && resQuery.pid !=null){
-                    let hb = await post("/port/activity/getActByPbId",{pbId :resQuery.pid});
-                    if(hb.pbSourceOpenid !=  this.userId){
-                        //非海报所有者打开了活动连接
-                        let share = await post("/port/activity/activityShare",{
-                            shareOpenId:hb.pbSourceOpenid,
-                            toShareOpenId:this.userId,
-                            pbId:hb.id
+                let shareNew = null;
+                let params={};
+                if(typeof(resQuery.pid)!='undefined' && resQuery.pid !=null) {
+                    let hb = await post("/port/activity/getActByPbId", {pbId: resQuery.pid});
+                    if (hb.pbSourceOpenid != this.userId) {
+                        //非海报所有者打开了活动连接,通过海报生成本次分享
+                        shareNew = await post("/port/activity/activityShare", {
+                            shareOpenId: hb.pbSourceOpenid,
+                            toShareOpenId: this.userId,
+                            pbId: resQuery.pid
                         })
-                        //生成下次分享的shareId
-
-                        //分享
-                        wx.config({
-                            debug: false,
-                            beta: true,
-                            appId: jsApiTicket.appId,
-                            timestamp: jsApiTicket.timestamp,
-                            nonceStr: jsApiTicket.nonceStr,
-                            signature: jsApiTicket.signature,
-                            jsApiList: [
-                                'checkJsApi',
-                                'updateAppMessageShareData',
-                                'onMenuShareAppMessage'
-                            ]
-                        })
-                        wx.ready(function () {   //需在用户可能点击分享按钮前就先调用
-                            wx.updateAppMessageShareData({
-                                title: '活动1', // 分享标题
-                                desc: '活动1', // 分享描述
-                                link: window.location.href.split("?")[0]+ "?" + qs.stringify({shareId :share.id}), // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-                                imgUrl: '', // 分享图标
-                                success: function () {
-                                    // 设置成功
-                                }
-                            })
-                            wx.onMenuShareAppMessage({
-                                title: '活动2', // 分享标题
-                                desc: '活动2', // 分享描述
-                                link: window.location.href.split("?")[0] + "?" + qs.stringify({shareId :share.id}), // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
-                                imgUrl: '', // 分享图标
-                                type: '', // 分享类型,music、video或link，不填默认为link
-                                dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
-                                success: function () {
-                                    // 用户点击了分享后执行的回调函数
-                                }
-                            })
-                        });
+                        Object.assign(params,{shareId :shareNew.id})
+                    }else{
+                        Object.assign(params,{pbId: resQuery.pid})
                     }
+                }else if(typeof(resQuery.shareId)!='undefined' && resQuery.shareId !=null) {
+                    let share = await post("/port/activity/getActByShareId", {shareId: resQuery.shareId});
+                    if (share.srToShareOpenid != this.userId) {
+                        //非分享人打开了活动连接,通过海报生成本次分享
+                        shareNew = await post("/port/activity/activityShare", {
+                            shareOpenId: share.srToShareOpenid ,
+                            toShareOpenId: this.userId,
+                            pbId: share.pbId
+                        })
+                        Object.assign(params,{shareId :shareNew.id})
+                    }else{
+                        Object.assign(params,{shareId: resQuery.shareId})
+                    }
+                }else{
+                    console.info("缺少参数海报id或分享id")
+                   return
                 }
+                //分享
+                wx.config({
+                    debug: false,
+                    beta: true,
+                    appId: jsApiTicket.appId,
+                    timestamp: jsApiTicket.timestamp,
+                    nonceStr: jsApiTicket.nonceStr,
+                    signature: jsApiTicket.signature,
+                    jsApiList: [
+                        'checkJsApi',
+                        'updateAppMessageShareData',
+                        'onMenuShareAppMessage'
+                    ]
+                })
+                wx.ready(function () {   //需在用户可能点击分享按钮前就先调用
+                    console.info(params)
+                    wx.updateAppMessageShareData({
+                        title: '活动1', // 分享标题
+                        desc: '活动1', // 分享描述
+                        link: window.location.href.split("?")[0]+ "?" + qs.stringify(params), // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                        imgUrl: '', // 分享图标
+                        success: function () {
+                            // 设置成功
+                        }
+                    })
+                    wx.onMenuShareAppMessage({
+                        title: '活动2', // 分享标题
+                        desc: '活动2', // 分享描述
+                        link: window.location.href.split("?")[0] + "?" + qs.stringify(params), // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                        imgUrl: '', // 分享图标
+                        type: '', // 分享类型,music、video或link，不填默认为link
+                        dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+                        success: function () {
+                            // 用户点击了分享后执行的回调函数
+                        }
+                    })
+                });
+
             }
         }
     }
