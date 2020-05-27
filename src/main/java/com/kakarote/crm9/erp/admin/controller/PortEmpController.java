@@ -74,12 +74,12 @@ public class PortEmpController extends Controller {
                 //代理商已经创建账号直接登录
                 renderJson(R.ok().put("msg","登录成功!").put("code","000000"));
             }else {
-                renderJson(R.error("请到微信公众平台注册手机号绑定!").put("code","000002"));
+                renderJson(R.error("请到微信公众平台注册手机号绑定!").put("data",null).put("code","000002"));
                 return;
             }
 
         }else {
-            renderJson(R.error("查无此人,请先进行手机号绑定!").put("code","000001"));
+            renderJson(R.error("查无此人,请先进行手机号绑定!").put("data",null).put("code","000001"));
             return;
         }
     }
@@ -106,12 +106,12 @@ public class PortEmpController extends Controller {
                 //代理商已经创建账号直接登录
                 renderJson(R.ok().put("msg","登录成功!").put("code","000000"));
             }else {
-                renderJson(R.error("请到微信公众平台注册手机号绑定!").put("code","000002"));
+                renderJson(R.error("请到微信公众平台注册手机号绑定!").put("data",null).put("code","000002"));
                 return;
             }
 
         }else {
-            renderJson(R.error("查无此人,请先进行手机号绑定!").put("code","000001"));
+            renderJson(R.error("查无此人,请先进行手机号绑定!").put("data",null).put("code","000001"));
             return;
         }
     }
@@ -139,7 +139,7 @@ public class PortEmpController extends Controller {
             renderJson(R.ok().put("data",portEmpDb).put("code","000000"));
 
         }else {
-            renderJson(R.error("查无此人,请先进行手机号绑定!").put("code","000001"));
+            renderJson(R.error("查无此人,请先进行手机号绑定!").put("data",null).put("code","000001"));
             return;
         }
     }
@@ -155,7 +155,7 @@ public class PortEmpController extends Controller {
 //        PortEmp portEmp = getModel(PortEmp.class,"");
 
         if(StrUtil.isEmpty(portEmp.getTel())){
-            renderJson(R.error("请输入手机号!").put("code","000003"));
+            renderJson(R.error("请输入手机号!").put("data",null).put("code","000003"));
             return;
         }
 
@@ -165,7 +165,7 @@ public class PortEmpController extends Controller {
         String result = smsService.getSmsByMobile(loginRequestDto);
 
         if (!portEmp.getValiCode().equals(result)) {
-            renderJson(R.error("请输入正确的验证码!").put("code","000024"));
+            renderJson(R.error("请输入正确的验证码!").put("data",null).put("code","000024"));
             return;
         }
 
@@ -181,12 +181,12 @@ public class PortEmpController extends Controller {
                 int num = DBAccess.RunSQL(sql, ps);
                 renderJson(R.ok().put("msg","更新成功!").put("code","000000"));
             }else {
-                renderJson(R.error("该手机号已经绑定，请勿重复绑定!").put("code","000004"));
+                renderJson(R.error("该手机号已经绑定，请勿重复绑定!").put("data",null).put("code","000004"));
                 return;
             }
 
         }else {
-            renderJson(R.error("查无此人,请先进行手机号绑定!").put("code","000001"));
+            renderJson(R.error("查无此人,请先进行手机号绑定!").put("data",null).put("code","000001"));
             return;
         }
 
@@ -202,7 +202,7 @@ public class PortEmpController extends Controller {
     public void staffWechatBind(@Para("") PortEmpReq portEmp){
 
         if(StrUtil.isEmpty(portEmp.getTel())){
-            renderJson(R.error("请输入手机号!").put("code","000003"));
+            renderJson(R.error("请输入手机号!").put("data",null).put("code","000003"));
             return;
         }
 
@@ -212,7 +212,7 @@ public class PortEmpController extends Controller {
         String result = smsService.getSmsByMobile(loginRequestDto);
 
         if (!portEmp.getValiCode().equals(result)) {
-            renderJson(R.error("请输入正确的验证码!").put("code","000024"));
+            renderJson(R.error("请输入正确的验证码!").put("data",null).put("code","000024"));
             return;
         }
 
@@ -228,12 +228,12 @@ public class PortEmpController extends Controller {
                 int num = DBAccess.RunSQL(sql, ps);
                 renderJson(R.ok().put("msg","更新成功!").put("code","000000"));
             }else {
-                renderJson(R.error("该手机号已经绑定，请勿重复绑定!").put("code","000004"));
+                renderJson(R.error("该手机号已经绑定，请勿重复绑定!").put("data",null).put("code","000004"));
                 return;
             }
 
         }else {
-            renderJson(R.error("查无此人,请先进行手机号绑定!").put("code","000001"));
+            renderJson(R.error("查无此人,请先进行手机号绑定!").put("data",null).put("code","000001"));
             return;
         }
 
@@ -250,7 +250,7 @@ public class PortEmpController extends Controller {
 //        PortEmp portEmp = getModel(PortEmp.class,"");
 
         if(StrUtil.isEmpty(portEmp.getTel())){
-            renderJson(R.error("请输入手机号!").put("code","000003"));
+            renderJson(R.error("请输入手机号!").put("data",null).put("code","000003"));
             return;
         }
 
@@ -260,7 +260,7 @@ public class PortEmpController extends Controller {
         if (hrRegister != null) {
             int wfState = hrRegister.getWFState();
             if (wfState == 2) { //流程进行中
-                renderJson(R.error("微信小程序绑定手机号流程已经发起,请勿重复提交!").put("code","000005"));
+                renderJson(R.error("微信小程序绑定手机号流程已经发起,请勿重复提交!").put("data",null).put("code","000005"));
                 return;
             }
         }
@@ -318,13 +318,13 @@ public class PortEmpController extends Controller {
 
             PortEmp portEmpTel = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? and accountType = '1' LIMIT 0,1", portEmp.getTel());
             if(portEmpTel != null){
-                renderJson(R.error("该手机号已经被注册!"));
+                renderJson(R.error("该手机号已经被注册!").put("data",null).put("code","000036"));
                 return;
             }
 
             PortEmp portEmpName = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Name = ? and accountType = '1' LIMIT 0,1", portEmp.getName());
             if(portEmpName != null){
-                renderJson(R.error("该姓名已经被注册!"));
+                renderJson(R.error("该姓名已经被注册!").put("data",null).put("code","000037"));
                 return;
             }
 
@@ -398,26 +398,26 @@ public class PortEmpController extends Controller {
 //        PortEmp portEmp = getModel(PortEmp.class,"");
 
         if(StrUtil.isEmpty(portEmp.getParentTel())){
-            renderJson(R.error("请输入上级手机号!").put("code","000007"));
+            renderJson(R.error("请输入上级手机号!").put("data",null).put("code","000007"));
             return;
         }
 
         if(StrUtil.isEmpty(portEmp.getTel())){
-            renderJson(R.error("请输入手机号!").put("code","000003"));
+            renderJson(R.error("请输入手机号!").put("data",null).put("code","000003"));
             return;
         }
 
         //判断上级是否为代理商
         PortEmp portEmpParent = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? and accountType = '1' LIMIT 0,1", portEmp.getParentTel());
         if (portEmpParent == null) {
-            renderJson(R.error("上级手机号为非代理商,不支持绑定!").put("code","000008"));
+            renderJson(R.error("上级手机号为非代理商,不支持绑定!").put("data",null).put("code","000008"));
             return;
         }
 
         //注册手机号必须为非代理商手机号
         PortEmp portEmpTel = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? and accountType = '1' LIMIT 0,1", portEmp.getTel());
         if (portEmpTel != null) {
-            renderJson(R.error("注册手机号为代理商,不支持绑定!").put("code","000009"));
+            renderJson(R.error("注册手机号为代理商,不支持绑定!").put("data",null).put("code","000009"));
             return;
         }
 
@@ -427,7 +427,7 @@ public class PortEmpController extends Controller {
         if (hrRegister != null) {
             int wfState = hrRegister.getWFState();
             if (wfState == 2) { //流程进行中
-                renderJson(R.error("微信小程序绑定手机号流程已经发起,请勿重复提交!").put("code","000005"));
+                renderJson(R.error("微信小程序绑定手机号流程已经发起,请勿重复提交!").put("data",null).put("code","000005"));
                 return;
             }
         }
@@ -439,7 +439,7 @@ public class PortEmpController extends Controller {
             //判断是否已经存在上下级关系
             PortEmpRelation portEmpRelationDb = PortEmpRelation.dao.findFirst("SELECT * FROM port_emp_relation WHERE FK_No = ? and ParentNo = ? LIMIT 0,1", portEmpDb.getNo(),portEmpParent.getNo());
             if (portEmpRelationDb != null) {
-                renderJson(R.error("上下级关系已经存在,请勿重复提交!").put("code","000011"));
+                renderJson(R.error("上下级关系已经存在,请勿重复提交!").put("data",null).put("code","000011"));
                 return;
             }
 
@@ -512,33 +512,33 @@ public class PortEmpController extends Controller {
     public void registScanQrCode(@Para("") PortEmpReq portEmp){
 
         if(StrUtil.isEmpty(portEmp.getNo())){
-            renderJson(R.error("员工账号不能为空!").put("code","000012"));
+            renderJson(R.error("员工账号不能为空!").put("data",null).put("code","000012"));
             return;
         }
 
         if(StrUtil.isEmpty(portEmp.getParentNo())){
-            renderJson(R.error("父级账号不能为空!").put("code","000013"));
+            renderJson(R.error("父级账号不能为空!").put("data",null).put("code","000013"));
             return;
         }
 
         //判断上级是否为代理商
         PortEmp portEmpParent = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE No = ? and accountType = '1' LIMIT 0,1", portEmp.getParentNo());
         if (portEmpParent == null) {
-            renderJson(R.error("上级手机号为非代理商,不支持绑定!").put("code","000008"));
+            renderJson(R.error("上级手机号为非代理商,不支持绑定!").put("data",null).put("code","000008"));
             return;
         }
 
         //注册手机号必须为非代理商手机号
         PortEmp portEmpTel = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE No = ? and accountType = '1' LIMIT 0,1", portEmp.getNo());
         if (portEmpTel != null) {
-            renderJson(R.error("注册手机号为代理商,不支持绑定!").put("code","000009"));
+            renderJson(R.error("注册手机号为代理商,不支持绑定!").put("data",null).put("code","000009"));
             return;
         }
 
         //判断是否已经存在上下级关系
         PortEmpRelation portEmpRelationDb = PortEmpRelation.dao.findFirst("SELECT * FROM port_emp_relation WHERE FK_No = ? and ParentNo = ? LIMIT 0,1", portEmp.getNo(),portEmp.getParentNo());
         if (portEmpRelationDb != null) {
-            renderJson(R.error("上下级关系已经存在,请勿重复提交!").put("code","000014"));
+            renderJson(R.error("上下级关系已经存在,请勿重复提交!").put("data",null).put("code","000014"));
             return;
         }
 
@@ -561,7 +561,7 @@ public class PortEmpController extends Controller {
     public void getParentEmp(@Para("no") String no){
 
         if(StrUtil.isEmpty(no)){
-            renderJson(R.error("员工账号不能为空!").put("code","000012"));
+            renderJson(R.error("员工账号不能为空!").put("data",null).put("code","000012"));
             return;
         }
 
@@ -569,7 +569,7 @@ public class PortEmpController extends Controller {
         if (portEmpRelationDb != null) {
             renderJson(R.ok().put("parentNo",portEmpRelationDb.getParentNo()).put("code","000000"));
         }else {
-            renderJson(R.error("上下级关系表查无记录!").put("parentNo",no).put("code","000017"));
+            renderJson(R.error("上下级关系表查无记录!").put("parentNo",no).put("data",null).put("code","000017"));
             return;
         }
 
@@ -585,7 +585,7 @@ public class PortEmpController extends Controller {
     public void getStaffEmpList(@Para("parentNo") String parentNo){
 
         if(StrUtil.isEmpty(parentNo)){
-            renderJson(R.error("代理商账号不能为空!").put("code","000012"));
+            renderJson(R.error("代理商账号不能为空!").put("data",null).put("code","000012"));
             return;
         }
 
@@ -594,7 +594,7 @@ public class PortEmpController extends Controller {
         if (portEmpList.size() > 0) {
             renderJson(R.ok().put("data",portEmpList).put("code","000000"));
         }else {
-            renderJson(R.error("上下级关系表查无记录!").put("parentNo",parentNo).put("code","000017"));
+            renderJson(R.error("上下级关系表查无记录!").put("parentNo",parentNo).put("data",null).put("code","000017"));
             return;
         }
 
@@ -610,12 +610,12 @@ public class PortEmpController extends Controller {
     public void unBindRelation(@Para("") PortEmpReq portEmp){
 
         if(StrUtil.isEmpty(portEmp.getNo())){
-            renderJson(R.error("员工账号不能为空!").put("code","000012"));
+            renderJson(R.error("员工账号不能为空!").put("data",null).put("code","000012"));
             return;
         }
 
         if(StrUtil.isEmpty(portEmp.getParentNo())){
-            renderJson(R.error("父级账号不能为空!").put("code","000013"));
+            renderJson(R.error("父级账号不能为空!").put("data",null).put("code","000013"));
             return;
         }
 
@@ -628,7 +628,7 @@ public class PortEmpController extends Controller {
             renderJson(R.ok().put("msg","解绑成功!").put("code","000000"));
 
         }else {
-            renderJson(R.error("上下级关系表查无记录!").put("code","000017"));
+            renderJson(R.error("上下级关系表查无记录!").put("data",null).put("code","000017"));
             return;
         }
 
@@ -644,7 +644,7 @@ public class PortEmpController extends Controller {
     public void queryFansByAgentId(@Para("") PortEmpReq portEmp){
 
         if(StrUtil.isEmpty(portEmp.getAgentId())){
-            renderJson(R.error("代理商微信openId不能为空!").put("code","000023"));
+            renderJson(R.error("代理商微信openId不能为空!").put("data",null).put("code","000023"));
             return;
         }
 
@@ -671,7 +671,7 @@ public class PortEmpController extends Controller {
     public void login(@Para("") PortEmpReq portEmp){
 
         if(StrUtil.isEmpty(portEmp.getNo())){
-            renderJson(R.error("员工账号不能为空!").put("code","000031"));
+            renderJson(R.error("员工账号不能为空!").put("data",null).put("code","000031"));
             return;
         }
 
@@ -695,12 +695,12 @@ public class PortEmpController extends Controller {
     public void todoPass(@Para("") PortEmpReq portEmp){
 
         if(StrUtil.isEmpty(portEmp.getFkFlow())){
-            renderJson(R.error("FkFlow不能为空!").put("code","000032"));
+            renderJson(R.error("FkFlow不能为空!").put("data",null).put("code","000032"));
             return;
         }
 
         if(portEmp.getWorkID() == null){
-            renderJson(R.error("WorkID不能为空!").put("code","000033"));
+            renderJson(R.error("WorkID不能为空!").put("data",null).put("code","000033"));
             return;
         }
 
@@ -745,12 +745,12 @@ public class PortEmpController extends Controller {
     public void todoRefuse(@Para("") PortEmpReq portEmp){
 
         if(StrUtil.isEmpty(portEmp.getFkFlow())){
-            renderJson(R.error("FkFlow不能为空!").put("code","000032"));
+            renderJson(R.error("FkFlow不能为空!").put("data",null).put("code","000032"));
             return;
         }
 
         if(portEmp.getWorkID() == null){
-            renderJson(R.error("WorkID不能为空!").put("code","000033"));
+            renderJson(R.error("WorkID不能为空!").put("data",null).put("code","000033"));
             return;
         }
 

@@ -54,17 +54,17 @@ public class PortActivityController extends Controller {
     public void playBillCreate(@Para("") PortActivityReq portActivityReq){
 
         if(StrUtil.isEmpty(portActivityReq.getSourceOpenId())){
-            renderJson(R.error("请输入海报发起人小程序openId!").put("code","000013"));
+            renderJson(R.error("请输入海报发起人小程序openId!").put("data",null).put("code","000013"));
             return;
         }
 
         if(StrUtil.isEmpty(portActivityReq.getLeadingOpenId())){
-            renderJson(R.error("请输入负责人小程序openId!").put("code","000014"));
+            renderJson(R.error("请输入负责人小程序openId!").put("data",null).put("code","000014"));
             return;
         }
 
         if(portActivityReq.getAcId() == null){
-            renderJson(R.error("请输入海报活动Id!").put("code","000015"));
+            renderJson(R.error("请输入海报活动Id!").put("data",null).put("code","000015"));
             return;
         }
 
@@ -73,7 +73,7 @@ public class PortActivityController extends Controller {
         if (portActivityPlaybillDb != null) {
             if (StrUtil.isNotEmpty(portActivityPlaybillDb.getPbPlaybill())) {
                 //已经生成海报
-                renderJson(R.error("发起人已经生成该活动海报，请勿重复生成!").put("id",portActivityPlaybillDb.getId()).put("pbPath","http://app.aptenon.com/crm/PlayBill/"+portActivityPlaybillDb.getPbPlaybill()).put("code","000015"));
+                renderJson(R.error("发起人已经生成该活动海报，请勿重复生成!").put("data",null).put("id",portActivityPlaybillDb.getId()).put("pbPath","http://app.aptenon.com/crm/PlayBill/"+portActivityPlaybillDb.getPbPlaybill()).put("code","000015"));
                 return;
             }else {
                 //未生成海报,重新生成海报
@@ -233,6 +233,13 @@ public class PortActivityController extends Controller {
             return;
         }
 
+        PortActivityShare portActivityShareDb = PortActivityShare.dao.findFirst("SELECT * FROM port_activity_share WHERE sr_pb_id = ? and sr_share_openid = ? and sr_to_share_openid = ? LIMIT 0,1",portActivityReq.getPbId(),portActivityReq.getShareOpenId(),portActivityReq.getToShareOpenId());
+
+        if (portActivityShareDb != null) {
+            renderJson(R.error("该活动已经分享,请勿重复分享!").put("data",null).put("code","000035"));
+            return;
+        }
+
         PortActivityShare portActivityShare = new PortActivityShare();
         portActivityShare.setSrShareOpenid(portActivityReq.getShareOpenId());
         portActivityShare.setSrToShareOpenid(portActivityReq.getToShareOpenId());
@@ -304,12 +311,12 @@ public class PortActivityController extends Controller {
     public void queryPortActivity(@Para("") PortActivityReq portActivityReq){
 
         if(portActivityReq.getAcId() == null){
-            renderJson(R.error("请输入活动Id!").put("code","000026"));
+            renderJson(R.error("请输入活动Id!").put("data",null).put("code","000026"));
             return;
         }
 
         if(StrUtil.isEmpty(portActivityReq.getSourceOpenId())){
-            renderJson(R.error("请输入海报发起人小程序openId!").put("code","000027"));
+            renderJson(R.error("请输入海报发起人小程序openId!").put("data",null).put("code","000027"));
             return;
         }
 
@@ -328,7 +335,7 @@ public class PortActivityController extends Controller {
                 renderJson(R.ok().put("data", record).put("code","000000"));
 
             }else {
-                renderJson(R.error("获取到的活动信息为空!").put("code","000021"));
+                renderJson(R.error("获取到的活动信息为空!").put("data",null).put("code","000021"));
                 return;
             }
 
