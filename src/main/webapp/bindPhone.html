@@ -127,7 +127,7 @@
 						success: function( res ) {
 							console.log( 'jscode2session', res )
 							if ( res.code == '000000' ) {
-								WxOpenId = res.openId
+								WxOpenId = res.data.openId
 							} else {
 								openDialog( '出错了', '获取openId失败' )
 							}
