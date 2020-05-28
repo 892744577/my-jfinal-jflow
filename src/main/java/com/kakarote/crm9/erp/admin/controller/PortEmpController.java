@@ -169,7 +169,7 @@ public class PortEmpController extends Controller {
             return;
         }
 
-        PortEmp portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? and accountType = '1' LIMIT 0,1", portEmp.getTel());
+        PortEmp portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? LIMIT 0,1", portEmp.getTel());
 
         if (portEmpDb != null) {
             if (StrUtil.isEmpty(portEmpDb.getWxOpenId())) {
@@ -177,7 +177,7 @@ public class PortEmpController extends Controller {
                 ps.Add("WxOpenId", portEmp.getWxOpenId());
                 ps.Add("Tel", portEmp.getTel());
                 String sql = "UPDATE port_emp SET WxOpenId="+SystemConfig.getAppCenterDBVarStr()+"WxOpenId WHERE Tel=" + SystemConfig.getAppCenterDBVarStr()
-                        + "Tel and accountType = '1'";
+                        + "Tel";
                 int num = DBAccess.RunSQL(sql, ps);
                 renderJson(R.ok().put("msg","更新成功!").put("code","000000"));
             }else {
