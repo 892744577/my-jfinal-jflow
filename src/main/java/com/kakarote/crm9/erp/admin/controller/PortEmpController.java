@@ -447,6 +447,7 @@ public class PortEmpController extends Controller {
             portEmpRelation.setFkNo(portEmpDb.getNo());
             portEmpRelation.setParentNo(portEmpParent.getNo());
             Boolean flag = portEmpRelation.save();
+            renderJson(R.ok("绑定成功,可直接登陆!").put("data","0").put("code","000000"));
 
         }else {
             //非代理商账号不存在，发流程给代理商
@@ -490,15 +491,13 @@ public class PortEmpController extends Controller {
                 SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork("008",workID,myhtSend,null,0,portEmpParent.getNo());
                 String sendSuccess = "父流程自动运行到下一个节点，发送过程如下：\n @接收人" + returnObjs.getVarAcceptersName() + "\n @下一步[" + returnObjs.getVarCurrNodeName() + "]启动";
 
+                renderJson(R.ok().put("msg","绑定流程已发起,请等待负责人审核通过!").put("data","1").put("code","000000"));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
-
-        renderJson(R.ok().put("msg","更新成功!").put("code","000000"));
 
     }
 
