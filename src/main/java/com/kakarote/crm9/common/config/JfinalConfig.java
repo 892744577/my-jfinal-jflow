@@ -49,21 +49,12 @@ import java.util.Map;
  */
 public class JfinalConfig extends JFinalConfig {
 
-    public static Prop prop;
-    /**
-     * 加载配置文件
-     */
-    private static void loadConfig() {
-        if(prop == null) {
-            prop = PropKit.use("jflow.properties");
-        }
-    }
+    public static Prop prop = JFinalUtils.loadConfig();
     /**
      * 配置常量
      */
     @Override
     public void configConstant(Constants me) {
-        loadConfig();
         me.setDevMode(prop.getBoolean("jfinal.devMode", true));
         me.setInjectDependency(true);
         //设置上传文件到哪个目录

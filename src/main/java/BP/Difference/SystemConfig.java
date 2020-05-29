@@ -242,7 +242,7 @@ public class SystemConfig {
 			try {
 				_CS_AppSettings = new java.util.Hashtable<String, Object>();
 				
-				Properties props = BP.Difference.Helper.loadResource();
+				Properties props = BP.Difference.JFinalUtils.loadResource();
 				_CS_AppSettings = (Hashtable) props;
 			} catch (Exception e) {
 				throw new RuntimeException("读取配置文件失败", e);
