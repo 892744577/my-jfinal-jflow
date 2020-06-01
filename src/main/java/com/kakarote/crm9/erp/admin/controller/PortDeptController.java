@@ -36,7 +36,7 @@ public class PortDeptController extends Controller {
 
         if (optType == 1) {
 
-            PortDept portDeptDb = PortDept.dao.findFirst("SELECT * FROM port_dept WHERE t100_code = ? LIMIT 0,1", portEmpReq.getT100Code());
+            PortDept portDeptDb = PortDept.dao.findFirst("SELECT * FROM port_dept WHERE No = ? LIMIT 0,1", portEmpReq.getT100Code());
 
             if (portDeptDb != null) {
                 renderJson(R.error("客户编号已经存在!").put("data",null).put("code","000039"));
@@ -44,26 +44,30 @@ public class PortDeptController extends Controller {
             }
 
             PortDept portDept = new PortDept();
-            portDept.setNo(UUID.randomUUID().toString().replace("-", ""));
+            portDept.setNo(portEmpReq.getT100Code());
             portDept.setName(portEmpReq.getName());
             portDept.setParentNo("121");
             portDept.setIdx(0);
-            portDept.setT100Code(portEmpReq.getT100Code());
             portDept.save();
 
             renderJson(R.ok().put("msg","保存成功!").put("data",portDept).put("code","000000"));
 
         }else if (optType == 2) {
 
-            PortDept portDeptDb = PortDept.dao.findFirst("SELECT * FROM port_dept WHERE t100_code = ? LIMIT 0,1", portEmpReq.getT100Code());
+            PortDept portDeptDb = PortDept.dao.findFirst("SELECT * FROM port_dept WHERE No = ? LIMIT 0,1", portEmpReq.getT100Code());
 
             if (portDeptDb != null) {
-                Paras ps = new Paras();
-                ps.Add("Name", portEmpReq.getName());
-                ps.Add("t100_code", portEmpReq.getT100Code());
-                String sql = "UPDATE port_dept SET Name="+ SystemConfig.getAppCenterDBVarStr()+"Name WHERE t100_code=" + SystemConfig.getAppCenterDBVarStr()
-                        + "t100_code";
-                int num = DBAccess.RunSQL(sql, ps);
+//                Paras ps = new Paras();
+//                ps.Add("Name", portEmpReq.getName());
+//                ps.Add("No", portEmpReq.getT100Code());
+//                String sql = "UPDATE port_dept SET Name="+ SystemConfig.getAppCenterDBVarStr()+"Name WHERE No=" + SystemConfig.getAppCenterDBVarStr()
+//                        + "No";
+//                int num = DBAccess.RunSQL(sql, ps);
+
+                PortDept portDept = new PortDept();
+                portDept.setName(portEmpReq.getName());
+                portDept.setNo(portEmpReq.getT100Code());
+                portDept.update();
                 renderJson(R.ok().put("msg","更新成功!").put("data",portDeptDb).put("code","000000"));
 
             }else {

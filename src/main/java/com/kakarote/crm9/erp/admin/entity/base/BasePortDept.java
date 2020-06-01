@@ -57,12 +57,4 @@ public abstract class BasePortDept<M extends BasePortDept<M>> extends Model<M> i
 		return getStr("OrgNo");
 	}
 
-	public void setT100Code(java.lang.String t100Code) {
-		set("t100_code", t100Code);
-	}
-
-	public java.lang.String getT100Code() {
-		return getStr("t100_code");
-	}
-
 }
