@@ -22,6 +22,7 @@ public class AdminRouter extends Routes {
         add("/examine", AdminExamineController.class);
         add("/examineRecord", AdminExamineRecordController.class);
         //add by wangkaida
+        add("/port/dept", PortDeptController.class);
         add("/port/emp", PortEmpController.class);
         add("/port/activity", PortActivityController.class);
     }
