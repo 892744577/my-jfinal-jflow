@@ -779,12 +779,12 @@ public class PortEmpController extends Controller {
             return;
         }
 
-        if (optType == 1) {
+        if(StrUtil.isEmpty(portEmpReq.getName())){
+            renderJson(R.error("客户名称不能为空!").put("data",null).put("code","000037"));
+            return;
+        }
 
-            if(StrUtil.isEmpty(portEmpReq.getName())){
-                renderJson(R.error("客户名称不能为空!").put("data",null).put("code","000037"));
-                return;
-            }
+        if (optType == 1) {
 
             PortDept portDeptDb = PortDept.dao.findFirst("SELECT * FROM port_dept WHERE t100_code = ? LIMIT 0,1", portEmpReq.getT100Code());
 
@@ -804,11 +804,6 @@ public class PortEmpController extends Controller {
             renderJson(R.ok().put("msg","保存成功!").put("data",portDept).put("code","000000"));
 
         }else if (optType == 2) {
-
-            if(StrUtil.isEmpty(portEmpReq.getName())){
-                renderJson(R.error("客户名称不能为空!").put("data",null).put("code","000037"));
-                return;
-            }
 
             PortDept portDeptDb = PortDept.dao.findFirst("SELECT * FROM port_dept WHERE t100_code = ? LIMIT 0,1", portEmpReq.getT100Code());
 
