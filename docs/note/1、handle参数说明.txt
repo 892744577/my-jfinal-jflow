@@ -1,0 +1,12 @@
+Handler 中的几个参数以及 next 属性，这些事情就全明白了：
+0：handle 是一个单链表结构，前方是使用 me.add(...) 方式添加的 handle，单链表未尾是 ActionHandler 对象，是 jfinal 处理动态请求的核心 Handler
+
+1：target 参数是本次请求的资源，是 url 去除了 http://域名 以及 queryString 剩下的部分
+
+2：req、res 这两个参数不再多说
+
+3：isHandled 这个参数是告诉 tomcat、jetty 要不要处理本次请求，当 isHandled[0] = true 时，则 tomcat、jetty 不会处理该请求，通常你自己处理了请求，例如做了 redirect 等操作，就不需要 tomcat jetty 再处理了，就必须设置 isHandled[0] = true，否则会报一个 IllegalStateException 异常
+
+4：next 这个是父类中的属性，可以使用 next.handle(...) 将本次请求传递给下一个 handler，所以，当你自己处理了请求，不希望传递的时候，就不要调用 next.handle(...)，尤其注意在分支语句中要使用 return，才能避免在分支的下方再次执行 next.handle(...)，很多菜鸟都会犯这种错误
+
+5：HandlerKit 中有一些封装好的方法便于做重定向等操作
