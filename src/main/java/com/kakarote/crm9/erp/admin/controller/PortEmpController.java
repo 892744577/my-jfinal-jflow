@@ -325,12 +325,12 @@ public class PortEmpController extends Controller {
                 return;
             }
 
-            Regist regist = getModel(Regist.class);
-            regist.setMyPK(UUID.randomUUID().toString().replace("-", ""));
-            regist.setPhone(portEmp.getTel());
-            regist.setAppOpenId(portEmp.getWxAppOpenId());
-            regist.setName(portEmp.getName());
-            regist.save();
+//            Regist regist = getModel(Regist.class);
+//            regist.setMyPK(UUID.randomUUID().toString().replace("-", ""));
+//            regist.setPhone(portEmp.getTel());
+//            regist.setAppOpenId(portEmp.getWxAppOpenId());
+//            regist.setName(portEmp.getName());
+//            regist.save();
 
             //开始调用注册审批流程
             Hashtable myht = new Hashtable();
