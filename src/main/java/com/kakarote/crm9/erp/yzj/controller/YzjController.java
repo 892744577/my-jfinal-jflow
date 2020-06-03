@@ -1,6 +1,9 @@
 package com.kakarote.crm9.erp.yzj.controller;
 
+import BP.DA.DBAccess;
 import BP.DA.DataType;
+import BP.DA.Paras;
+import BP.Difference.SystemConfig;
 import BP.Tools.StringUtils;
 import com.kakarote.crm9.erp.admin.entity.PortEmp;
 import com.kakarote.crm9.erp.admin.entity.PortDept;
@@ -25,10 +28,19 @@ public class YzjController extends Controller {
     private TokenService tokenService;
 
     /**
+     * 清除组织架构
+     */
+    public void deleteOldDept(){
+        String sql = "delete from port_dept where LENGTH(No)=36";
+        int num = DBAccess.RunSQL(sql);
+    }
+
+    /**
      * @author wyq
      * oa同步组织机构
      */
-    public void queryAllDept(@Para("") OaEvent oaEvent) throws Exception {
+    public void queryAllDept() throws Exception {
+        deleteOldDept();
         String deptInfoUrl = tokenService.getGatewayHost().concat("/openimport/open/dept/getall?accessToken=").concat(tokenService.getAccessToken(null, tokenService.getErpSecret(), tokenService.getEid(), "resGroupSecret"));
         Map currentDeptInfoPrama = new HashMap();
         Map currentDeptInfoJson= new HashMap();
@@ -69,6 +81,7 @@ public class YzjController extends Controller {
      * oa同步人员
      */
     public void queryAllEmp() throws Exception {
+        queryAllDept();
         String userInfoUrl = tokenService.getGatewayHost().concat("/openimport/open/person/getall?accessToken=").concat(tokenService.getAccessToken(null, tokenService.getErpSecret(), tokenService.getEid(), "resGroupSecret"));
         Map currentUserInfoPrama = new HashMap();
         Map currentUserInfoJson= new HashMap();
