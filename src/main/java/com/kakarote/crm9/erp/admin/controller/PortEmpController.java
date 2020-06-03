@@ -429,8 +429,8 @@ public class PortEmpController extends Controller {
             }
         }
 
-        //判断账号是否已经存在
-        PortEmp portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? and accountType = '2' LIMIT 0,1", portEmp.getTel());
+        //判断账号是否已经存在,
+        PortEmp portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? LIMIT 0,1", portEmp.getTel());
         if (portEmpDb != null) {
             //非代理商账号已经存在，直接保存上下级关系
             //判断是否已经存在上下级关系
@@ -761,6 +761,21 @@ public class PortEmpController extends Controller {
         }
         renderJson(R.ok().put("msg","执行成功!").put("result",result).put("code","000000"));
 
+    }
+
+    /**
+     * 判断账号类型
+     */
+    public void accountType(@Para("") PortEmpReq portEmpReq){
+        PortEmp portEmp = new PortEmp();
+        List<PortEmp> portEmpList1 = PortEmp.dao.find("SELECT b.No,b.tel FROM port_emp_relation a LEFT JOIN port_emp b ON a.FK_No = b.No where tel=?", portEmpReq.getTel());
+        List<PortEmp> portEmpList2 = PortEmp.dao.find("SELECT a.No,a.accountType FROM port_emp a where a.tel=? and a.accountType=1", portEmpReq.getTel());
+        if(portEmpList1.size()>0){
+            portEmp.setAccountType("2");
+        }else if(portEmpList2.size()>0){
+            portEmp.setAccountType("1");
+        }
+        renderJson(R.ok().put("msg","执行成功!").put("data",portEmp).put("code","000000"));
     }
 
 }
