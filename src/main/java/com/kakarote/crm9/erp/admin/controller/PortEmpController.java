@@ -25,7 +25,6 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.UUID;
 
 
 /*
@@ -54,29 +53,33 @@ public class PortEmpController extends Controller {
      * @Param [portEmp]
      * @return void
      **/
-    public void agentLogin(@Para("") PortEmpReq portEmp){
+    public void agentLogin(@Para("") PortEmpReq portEmpReq){
 
-//        PortEmp portEmp = getModel(PortEmp.class,"");
-
-        PortEmp portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE WxAppOpenId = ? and accountType = '1' LIMIT 0,1", portEmp.getWxAppOpenId());
+        //第三方登陆判断--小程序
+        PortEmp portEmp = new PortEmp();
+        portEmp.setWxAppOpenId(portEmpReq.getWxAppOpenId());
+        PortEmp portEmpDb = portEmpService.getPortEmpByWxAppOpenId(portEmp);
 
         if (portEmpDb != null) {
-            if (StrUtil.isNotEmpty(portEmpDb.getWxOpenId())) {
-
-                try {
-                    BP.WF.Dev2Interface.Port_Login(portEmpDb.getNo());
-                } catch (Exception e) {
-                    e.printStackTrace();
+            if("1".equals(portEmpDb.getAccountType())){
+                if (StrUtil.isNotEmpty(portEmpDb.getWxOpenId())) {
+                    try {
+                        BP.WF.Dev2Interface.Port_Login(portEmpDb.getNo());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    //代理商已经创建账号直接登录
+                    renderJson(R.ok().put("msg","登录成功!").put("code","000000"));
+                }else {
+                    renderJson(R.error("公众号没有绑定手机号，请到亚太天能公众号进行手机号绑定!").put("data",null).put("code","000002"));
+                    return;
                 }
-                //代理商已经创建账号直接登录
-                renderJson(R.ok().put("msg","登录成功!").put("code","000000"));
             }else {
-                renderJson(R.error("请到微信公众平台注册手机号绑定!").put("data",null).put("code","000002"));
+                renderJson(R.error("小程序没有绑定手机号,请先进行手机号绑定!").put("data",null).put("code","000001"));
                 return;
             }
-
         }else {
-            renderJson(R.error("查无此人,请先进行手机号绑定!").put("data",null).put("code","000001"));
+            renderJson(R.error("小程序没有绑定手机号,请先进行手机号绑定!").put("data",null).put("code","000001"));
             return;
         }
     }
@@ -88,25 +91,31 @@ public class PortEmpController extends Controller {
      * @Param [portEmp]
      * @return void
      **/
-    public void staffLogin(@Para("") PortEmpReq portEmp){
+    public void staffLogin(@Para("") PortEmpReq portEmpReq){
 
-        PortEmp portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE WxAppOpenId = ? and accountType = '2' LIMIT 0,1", portEmp.getWxAppOpenId());
+        //第三方登陆判断--小程序
+        PortEmp portEmp = new PortEmp();
+        portEmp.setWxAppOpenId(portEmpReq.getWxAppOpenId());
+        PortEmp portEmpDb = portEmpService.getPortEmpByWxAppOpenId(portEmp);
 
         if (portEmpDb != null) {
-            if (StrUtil.isNotEmpty(portEmpDb.getWxOpenId())) {
-
-                try {
-                    BP.WF.Dev2Interface.Port_Login(portEmpDb.getNo());
-                } catch (Exception e) {
-                    e.printStackTrace();
+            if("2".equals(portEmpDb.getAccountType())){
+                if (StrUtil.isNotEmpty(portEmpDb.getWxOpenId())) {
+                    try {
+                        BP.WF.Dev2Interface.Port_Login(portEmpDb.getNo());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    //代理商已经创建账号直接登录
+                    renderJson(R.ok().put("msg","登录成功!").put("code","000000"));
+                }else {
+                    renderJson(R.error("公众号没有绑定手机号，请到亚太天能公众号-产品服务-售后安装-微信绑定手机号进行手机号绑定!").put("data",null).put("code","000002"));
+                    return;
                 }
-                //代理商已经创建账号直接登录
-                renderJson(R.ok().put("msg","登录成功!").put("code","000000"));
-            }else {
-                renderJson(R.error("请到微信公众平台注册手机号绑定!").put("data",null).put("code","000002"));
+            }else{
+                renderJson(R.error("查无此人,请先进行手机号绑定!").put("data",null).put("code","000001"));
                 return;
             }
-
         }else {
             renderJson(R.error("查无此人,请先进行手机号绑定!").put("data",null).put("code","000001"));
             return;
@@ -120,14 +129,17 @@ public class PortEmpController extends Controller {
      * @Param [portEmp]
      * @return void
      **/
-    public void portEmpInfo(@Para("") PortEmpReq portEmp){
+    public void portEmpInfo(@Para("") PortEmpReq portEmpReq){
 
         PortEmp portEmpDb = null;
 
-        if (StrUtil.isNotEmpty(portEmp.getName())) {
-            portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE No = ? LIMIT 0,1", portEmp.getName());
-        }else if (StrUtil.isNotEmpty(portEmp.getWxAppOpenId())){
-            portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE WxAppOpenId = ? LIMIT 0,1", portEmp.getWxAppOpenId());
+        if (StrUtil.isNotEmpty(portEmpReq.getName())) {
+            portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE No = ? LIMIT 0,1", portEmpReq.getName());
+        }else if (StrUtil.isNotEmpty(portEmpReq.getWxAppOpenId())){
+            //第三方id查询用户信息
+            PortEmp portEmp = new PortEmp();
+            portEmp.setWxAppOpenId(portEmpReq.getWxAppOpenId());
+            portEmpDb = portEmpService.getPortEmpByWxAppOpenId(portEmp);
         }
 
 
@@ -148,31 +160,34 @@ public class PortEmpController extends Controller {
      * @Param [portEmp]
      * @return void
      **/
-    public void wechatBind(@Para("") PortEmpReq portEmp){
+    public void wechatBind(@Para("") PortEmpReq portEmpReq){
 //        PortEmp portEmp = getModel(PortEmp.class,"");
 
-        if(StrUtil.isEmpty(portEmp.getTel())){
+        if(StrUtil.isEmpty(portEmpReq.getTel())){
             renderJson(R.error("请输入手机号!").put("data",null).put("code","000003"));
             return;
         }
 
         //判断手机验证码是否正确
         LoginRequestDto loginRequestDto = new LoginRequestDto();
-        loginRequestDto.setMobile(portEmp.getTel());
+        loginRequestDto.setMobile(portEmpReq.getTel());
         String result = smsService.getSmsByMobile(loginRequestDto);
 
-        if (!portEmp.getValiCode().equals(result)) {
+        if (!portEmpReq.getValiCode().equals(result)) {
             renderJson(R.error("请输入正确的验证码!").put("data",null).put("code","000024"));
             return;
         }
 
-        PortEmp portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? LIMIT 0,1", portEmp.getTel());
+        //手机号获取数据信息
+        PortEmp portEmp = new PortEmp();
+        portEmp.setTel(portEmpReq.getTel());
+        PortEmp portEmpDb = portEmpService.getPortEmp(portEmp);
 
         if (portEmpDb != null) {
             if (StrUtil.isEmpty(portEmpDb.getWxOpenId())) {
                 Paras ps = new Paras();
-                ps.Add("WxOpenId", portEmp.getWxOpenId());
-                ps.Add("Tel", portEmp.getTel());
+                ps.Add("WxOpenId", portEmpReq.getWxOpenId());
+                ps.Add("Tel", portEmpReq.getTel());
                 String sql = "UPDATE port_emp SET WxOpenId="+SystemConfig.getAppCenterDBVarStr()+"WxOpenId WHERE Tel=" + SystemConfig.getAppCenterDBVarStr()
                         + "Tel";
                 int num = DBAccess.RunSQL(sql, ps);
@@ -196,36 +211,44 @@ public class PortEmpController extends Controller {
      * @Param [portEmp]
      * @return void
      **/
-    public void staffWechatBind(@Para("") PortEmpReq portEmp){
+    public void staffWechatBind(@Para("") PortEmpReq portEmpReq){
 
-        if(StrUtil.isEmpty(portEmp.getTel())){
+        if(StrUtil.isEmpty(portEmpReq.getTel())){
             renderJson(R.error("请输入手机号!").put("data",null).put("code","000003"));
             return;
         }
 
         //判断手机验证码是否正确
         LoginRequestDto loginRequestDto = new LoginRequestDto();
-        loginRequestDto.setMobile(portEmp.getTel());
+        loginRequestDto.setMobile(portEmpReq.getTel());
         String result = smsService.getSmsByMobile(loginRequestDto);
 
-        if (!portEmp.getValiCode().equals(result)) {
+        if (!portEmpReq.getValiCode().equals(result)) {
             renderJson(R.error("请输入正确的验证码!").put("data",null).put("code","000024"));
             return;
         }
 
-        PortEmp portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? and accountType = '2' LIMIT 0,1", portEmp.getTel());
+        //手机号获取用户数据信息
+        PortEmp portEmp = new PortEmp();
+        portEmp.setTel(portEmpReq.getTel());
+        PortEmp portEmpDb = portEmpService.getPortEmp(portEmp);
 
         if (portEmpDb != null) {
-            if (StrUtil.isEmpty(portEmpDb.getWxOpenId())) {
-                Paras ps = new Paras();
-                ps.Add("WxOpenId", portEmp.getWxOpenId());
-                ps.Add("Tel", portEmp.getTel());
-                String sql = "UPDATE port_emp SET WxOpenId="+SystemConfig.getAppCenterDBVarStr()+"WxOpenId WHERE Tel=" + SystemConfig.getAppCenterDBVarStr()
-                        + "Tel and accountType = '2'";
-                int num = DBAccess.RunSQL(sql, ps);
-                renderJson(R.ok().put("msg","更新成功!").put("code","000000"));
+            portEmpDb = portEmpService.getPortEmp(portEmpDb);
+            if("2".equals(portEmpDb.getAccountType())) {
+                if (StrUtil.isEmpty(portEmpDb.getWxOpenId())) {
+                    Paras ps = new Paras();
+                    ps.Add("WxOpenId", portEmp.getWxOpenId());
+                    ps.Add("Tel", portEmp.getTel());
+                    String sql = "UPDATE port_emp SET WxOpenId=" + SystemConfig.getAppCenterDBVarStr() + "WxOpenId WHERE Tel=" + SystemConfig.getAppCenterDBVarStr() + "Tel";
+                    int num = DBAccess.RunSQL(sql, ps);
+                    renderJson(R.ok().put("msg", "更新成功!").put("code", "000000"));
+                } else {
+                    renderJson(R.error("该手机号已经绑定，请勿重复绑定!").put("data", null).put("code", "000004"));
+                    return;
+                }
             }else {
-                renderJson(R.error("该手机号已经绑定，请勿重复绑定!").put("data",null).put("code","000004"));
+                renderJson(R.error("查无此人,请先进行手机号绑定!").put("data",null).put("code","000001"));
                 return;
             }
 
@@ -243,16 +266,16 @@ public class PortEmpController extends Controller {
      * @Param [portEmp]
      * @return void
      **/
-    public void appBind(@Para("") PortEmpReq portEmp){
+    public void appBind(@Para("") PortEmpReq portEmpReq){
 //        PortEmp portEmp = getModel(PortEmp.class,"");
 
-        if(StrUtil.isEmpty(portEmp.getTel())){
+        if(StrUtil.isEmpty(portEmpReq.getTel())){
             renderJson(R.error("请输入手机号!").put("data",null).put("code","000003"));
             return;
         }
 
         //判断流程是否在进行中
-        HrRegister hrRegister = HrRegister.dao.findFirst("SELECT * FROM hr_register WHERE ShouJiHaoMa = ? and appOpenId = ? and LeiBie = '1' LIMIT 0,1", portEmp.getTel(),portEmp.getWxAppOpenId());
+        HrRegister hrRegister = HrRegister.dao.findFirst("SELECT * FROM hr_register WHERE ShouJiHaoMa = ? and appOpenId = ? and LeiBie = '1' AND WFState!='3' order by rdt desc  LIMIT 0,1", portEmpReq.getTel(),portEmpReq.getWxAppOpenId());
 
         if (hrRegister != null) {
             int wfState = hrRegister.getWFState();
@@ -262,16 +285,19 @@ public class PortEmpController extends Controller {
             }
         }
 
-        PortEmp portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? and accountType = '1' LIMIT 0,1", portEmp.getTel());
+        //手机号获取用户数据信息
+        PortEmp portEmp = new PortEmp();
+        portEmp.setTel(portEmpReq.getTel());
+        PortEmp portEmpDb = portEmpService.getPortEmp(portEmp);
 
         if (portEmpDb != null) {
             //开始调用注册审批流程
             Hashtable myht = new Hashtable();
             Hashtable myhtSend = new Hashtable();
             try {
-                myht.put("ShouJiHaoMa", portEmp.getTel());
-                myht.put("appOpenId", portEmp.getWxAppOpenId());
-                myht.put("XingMing", portEmp.getName());
+                myht.put("ShouJiHaoMa", portEmpReq.getTel());
+                myht.put("appOpenId", portEmpReq.getWxAppOpenId());
+                myht.put("XingMing", portEmpReq.getName());
                 myht.put("LeiBie", "1");
                 myht.put("TB_RDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
                 myht.put("TB_Title", URLEncoder.encode("亚太天能-admin,admin在"+ DataType.getCurrentDateTime()+"发起.", "UTF-8"));
@@ -288,9 +314,9 @@ public class PortEmpController extends Controller {
                 WebUser.SignInOfGenerAuth(new Emp("admin"), "admin");
                 long workID = BP.WF.Dev2Interface.Node_CreateBlankWork("008",myht,null,"admin",null,0,0,null,0,null,0,null,null,null);
                 //发送流程
-                myhtSend.put("ShouJiHaoMa", portEmp.getTel());
-                myhtSend.put("appOpenId", portEmp.getWxAppOpenId());
-                myhtSend.put("XingMing", portEmp.getName());
+                myhtSend.put("ShouJiHaoMa", portEmpReq.getTel());
+                myhtSend.put("appOpenId", portEmpReq.getWxAppOpenId());
+                myhtSend.put("XingMing", portEmpReq.getName());
                 myhtSend.put("LeiBie", "1");
                 myhtSend.put("TB_OID", workID);
                 myhtSend.put("TB_RDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
@@ -305,6 +331,7 @@ public class PortEmpController extends Controller {
                 SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork("008",workID,myhtSend,null,0,null);
                 String sendSuccess = "父流程自动运行到下一个节点，发送过程如下：\n @接收人" + returnObjs.getVarAcceptersName() + "\n @下一步[" + returnObjs.getVarCurrNodeName() + "]启动";
 
+                renderJson(R.ok().put("msg","注册成功，请等待审核!").put("code","000000"));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             } catch (Exception e) {
@@ -313,13 +340,13 @@ public class PortEmpController extends Controller {
 
         }else {
 
-            PortEmp portEmpTel = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? and accountType = '1' LIMIT 0,1", portEmp.getTel());
+            PortEmp portEmpTel = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? and accountType = '1' LIMIT 0,1", portEmpReq.getTel());
             if(portEmpTel != null){
                 renderJson(R.error("该手机号已经被注册!").put("data",null).put("code","000036"));
                 return;
             }
 
-            PortEmp portEmpName = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Name = ? and accountType = '1' LIMIT 0,1", portEmp.getName());
+            PortEmp portEmpName = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Name = ? LIMIT 0,1", portEmpReq.getName());
             if(portEmpName != null){
                 renderJson(R.error("该姓名已经被注册!").put("data",null).put("code","000037"));
                 return;
@@ -336,9 +363,9 @@ public class PortEmpController extends Controller {
             Hashtable myht = new Hashtable();
             Hashtable myhtSend = new Hashtable();
             try {
-                myht.put("ShouJiHaoMa", portEmp.getTel());
-                myht.put("appOpenId", portEmp.getWxAppOpenId());
-                myht.put("XingMing", portEmp.getName());
+                myht.put("ShouJiHaoMa", portEmpReq.getTel());
+                myht.put("appOpenId", portEmpReq.getWxAppOpenId());
+                myht.put("XingMing", portEmpReq.getName());
                 myht.put("LeiBie", "1");
                 myht.put("TB_RDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
                 myht.put("TB_Title", URLEncoder.encode("亚太天能-admin,admin在"+ DataType.getCurrentDateTime()+"发起.", "UTF-8"));
@@ -355,9 +382,9 @@ public class PortEmpController extends Controller {
                 WebUser.SignInOfGenerAuth(new Emp("admin"), "admin");
                 long workID = BP.WF.Dev2Interface.Node_CreateBlankWork("008",myht,null,"admin",null,0,0,null,0,null,0,null,null,null);
                 //发送流程
-                myhtSend.put("ShouJiHaoMa", portEmp.getTel());
-                myhtSend.put("appOpenId", portEmp.getWxAppOpenId());
-                myhtSend.put("XingMing", portEmp.getName());
+                myhtSend.put("ShouJiHaoMa", portEmpReq.getTel());
+                myhtSend.put("appOpenId", portEmpReq.getWxAppOpenId());
+                myhtSend.put("XingMing", portEmpReq.getName());
                 myhtSend.put("LeiBie", "1");
                 myhtSend.put("TB_OID", workID);
                 myhtSend.put("TB_RDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
@@ -371,17 +398,14 @@ public class PortEmpController extends Controller {
                 myhtSend.put("TB_MyNum", 1);
                 SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork("008",workID,myhtSend,null,0,null);
                 String sendSuccess = "父流程自动运行到下一个节点，发送过程如下：\n @接收人" + returnObjs.getVarAcceptersName() + "\n @下一步[" + returnObjs.getVarCurrNodeName() + "]启动";
-
+                renderJson(R.ok().put("msg","更新成功!").put("code","000000"));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
-
-        renderJson(R.ok().put("msg","更新成功!").put("code","000000"));
-
+        renderJson(R.ok().put("msg","发起成功，请等待审核!").put("code","000000"));
     }
 
     /*
@@ -419,7 +443,7 @@ public class PortEmpController extends Controller {
         }
 
         //判断流程是否在进行中
-        HrRegister hrRegister = HrRegister.dao.findFirst("SELECT * FROM hr_register WHERE ShouJiHaoMa = ? and appOpenId = ? and LeiBie = '2' LIMIT 0,1", portEmp.getTel(),portEmp.getWxAppOpenId());
+        HrRegister hrRegister = HrRegister.dao.findFirst("SELECT * FROM hr_register WHERE ShouJiHaoMa = ? and appOpenId = ? and LeiBie = '2' AND WFState!='3' order by rdt desc LIMIT 0,1", portEmp.getTel(),portEmp.getWxAppOpenId());
 
         if (hrRegister != null) {
             int wfState = hrRegister.getWFState();
@@ -432,8 +456,11 @@ public class PortEmpController extends Controller {
         //判断账号是否已经存在,
         PortEmp portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? LIMIT 0,1", portEmp.getTel());
         if (portEmpDb != null) {
-            //非代理商账号已经存在，直接保存上下级关系
-            //判断是否已经存在上下级关系
+            //1、更新小程序openid
+            portEmpDb.setWxAppOpenId(portEmp.getWxAppOpenId());
+            portEmpDb.update();
+
+            //2、判断是否已经存在上下级关系,若已经存在返回，若不存在关系直接保存上下级关系
             PortEmpRelation portEmpRelationDb = PortEmpRelation.dao.findFirst("SELECT * FROM port_emp_relation WHERE FK_No = ? and ParentNo = ? LIMIT 0,1", portEmpDb.getNo(),portEmpParent.getNo());
             if (portEmpRelationDb != null) {
                 renderJson(R.error("上下级关系已经存在,请勿重复提交!").put("data",null).put("code","000011"));
@@ -445,6 +472,8 @@ public class PortEmpController extends Controller {
             portEmpRelation.setParentNo(portEmpParent.getNo());
             Boolean flag = portEmpRelation.save();
             renderJson(R.ok("绑定成功,可直接登陆!").put("data","0").put("code","000000"));
+
+
 
         }else {
             //非代理商账号不存在，发流程给代理商
@@ -766,16 +795,9 @@ public class PortEmpController extends Controller {
     /**
      * 判断账号类型
      */
-    public void accountType(@Para("") PortEmpReq portEmpReq){
+    public void accountTypeback(@Para("") PortEmpReq portEmpReq){
         PortEmp portEmp = new PortEmp();
-        List<PortEmp> portEmpList1 = PortEmp.dao.find("SELECT b.No,b.tel FROM port_emp_relation a LEFT JOIN port_emp b ON a.FK_No = b.No where tel=?", portEmpReq.getTel());
-        List<PortEmp> portEmpList2 = PortEmp.dao.find("SELECT a.No,a.accountType FROM port_emp a where a.tel=? and a.accountType=1", portEmpReq.getTel());
-        if(portEmpList1.size()>0){
-            portEmp.setAccountType("2");
-        }else if(portEmpList2.size()>0){
-            portEmp.setAccountType("1");
-        }
-        renderJson(R.ok().put("msg","执行成功!").put("data",portEmp).put("code","000000"));
+        portEmp.setTel(portEmpReq.getTel());
+        renderJson(R.ok().put("msg","执行成功!").put("data",portEmpService.getPortEmp(portEmp)).put("code","000000"));
     }
-
 }
