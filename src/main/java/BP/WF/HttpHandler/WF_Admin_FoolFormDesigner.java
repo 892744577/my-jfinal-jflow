@@ -716,7 +716,21 @@ public class WF_Admin_FoolFormDesigner extends WebContralBase
 					tb.setNo(ma.getUIBindKey());
 					if (tb.IsExit(EntityNoNameAttr.No, ma.getUIBindKey())) {	// ?
 						ma.setMyDataType(BP.DA.DataType.AppString);
-						ma.setLGType(BP.En.FieldTypeS.FK);
+						// 外键字段表.
+						SFTable sf = new SFTable(ma.getUIBindKey());
+						//ma.setLGType(BP.En.FieldTypeS.FK);
+						// 根据外键表的类型不同，设置它的LGType.
+						switch (sf.getSrcType()) {
+							case CreateTable:
+							case TableOrView:
+							case BPClass:
+								ma.setLGType(FieldTypeS.FK);
+								break;
+							case SQL: // 是sql模式.
+							default:
+								ma.setLGType(FieldTypeS.Normal);
+								break;
+						}
 						ma.setUIContralType(BP.En.UIContralType.DDL);
 					}
 				}
