@@ -2378,7 +2378,7 @@ public class Flow extends BP.En.EntityNoName {
 	/// #region 产生数据模板。
 	private static String PathFlowDesc;
 	static {
-		PathFlowDesc = SystemConfig.getPathOfDataUser() + "FlowDesc\\";
+		PathFlowDesc = SystemConfig.getPathOfDataUser() + "FlowDesc"+SystemConfig.getSeparator();
 	}
 
 	/**
@@ -2392,7 +2392,7 @@ public class Flow extends BP.En.EntityNoName {
 		name = BP.Tools.StringExpressionCalculate.ReplaceBadCharOfFileName(name);
 
 		String path = this.getNo() + "." + name;
-		path = PathFlowDesc + path + "\\";
+		path = PathFlowDesc + path + SystemConfig.getSeparator();
 
 		this.DoExpFlowXmlTemplete(path);
 
@@ -2435,7 +2435,7 @@ public class Flow extends BP.En.EntityNoName {
 		try {
 			String name = this.getNo() + "." + this.getName();
 			name = BP.Tools.StringExpressionCalculate.ReplaceBadCharOfFileName(name);
-			String path = PathFlowDesc + name + "\\";
+			String path = PathFlowDesc + name + SystemConfig.getSeparator();
 			DataSet ds = GetFlow(path);
 			if (ds == null) {
 				return;
@@ -2443,7 +2443,7 @@ public class Flow extends BP.En.EntityNoName {
 
 			String directory = this.getNo() + "." + this.getName();
 			directory = BP.Tools.StringExpressionCalculate.ReplaceBadCharOfFileName(directory);
-			path = PathFlowDesc + directory + "\\";
+			path = PathFlowDesc + directory + SystemConfig.getSeparator();
 			String xmlName = path + "Flow" + ".xml";
 			File file = new File(path);
 			File filexmlName = new File(xmlName);
@@ -2514,8 +2514,8 @@ public class Flow extends BP.En.EntityNoName {
 			try {
 				if (path != null) {
 					Files.copy(
-							Paths.get(SystemConfig.getPathOfDataUser() + "\\CyclostyleFile\\" + tmp.getNo() + ".rtf"),
-							Paths.get(path + "\\" + tmp.getNo() + ".rtf"), StandardCopyOption.COPY_ATTRIBUTES,
+							Paths.get(SystemConfig.getPathOfDataUser() + SystemConfig.getSeparator()+"CyclostyleFile" + SystemConfig.getSeparator()+ tmp.getNo() + ".rtf"),
+							Paths.get(path + SystemConfig.getSeparator() + tmp.getNo() + ".rtf"), StandardCopyOption.COPY_ATTRIBUTES,
 							StandardCopyOption.REPLACE_EXISTING);
 				}
 			} catch (java.lang.Exception e) {
@@ -2730,8 +2730,8 @@ public class Flow extends BP.En.EntityNoName {
 			try {
 				if (path != null) {
 					Files.copy(
-							Paths.get(SystemConfig.getPathOfDataUser() + "\\CyclostyleFile\\" + tmp.getNo() + ".rtf"),
-							Paths.get(path + "\\" + tmp.getNo() + ".rtf"), StandardCopyOption.COPY_ATTRIBUTES,
+							Paths.get(SystemConfig.getPathOfDataUser() + SystemConfig.getSeparator()+ "CyclostyleFile" + SystemConfig.getSeparator() + tmp.getNo() + ".rtf"),
+							Paths.get(path + SystemConfig.getSeparator() + tmp.getNo() + ".rtf"), StandardCopyOption.COPY_ATTRIBUTES,
 							StandardCopyOption.REPLACE_EXISTING);
 				}
 			} catch (java.lang.Exception e) {
@@ -5855,7 +5855,7 @@ public class Flow extends BP.En.EntityNoName {
 		nd.setFormType(NodeFormType.FoolForm); // 设置为傻瓜表单.
 
 		// 为创建节点设置默认值 @于庆海.
-		String file = SystemConfig.getPathOfDataUser() + "\\XML\\DefaultNewNodeAttr.xml";
+		String file = SystemConfig.getPathOfDataUser() + SystemConfig.getSeparator() + "XML"+SystemConfig.getSeparator()+"DefaultNewNodeAttr.xml";
 		if ((new File(file)).isFile() == true) {
 			DataSet ds = new DataSet();
 			ds.readXml(file);
@@ -6022,7 +6022,7 @@ public class Flow extends BP.En.EntityNoName {
 			nd.setFormType(NodeFormType.FoolForm); // 设置为傻瓜表单.
 
 			// 为创建节点设置默认值 @于庆海.
-			String fileNewNode = SystemConfig.getPathOfDataUser() + "\\XML\\DefaultNewNodeAttr.xml";
+			String fileNewNode = SystemConfig.getPathOfDataUser() + SystemConfig.getSeparator()+ "XML"+SystemConfig.getSeparator()+"DefaultNewNodeAttr.xml";
 			if ((new File(fileNewNode)).isFile() == true) {
 				DataSet ds_NodeDef = new DataSet();
 				ds_NodeDef.readXml(fileNewNode);
@@ -6049,7 +6049,7 @@ public class Flow extends BP.En.EntityNoName {
 			md.Save();
 
 			// 装载模版.
-			String file = SystemConfig.getPathOfDataUser() + "XML\\TempleteSheetOfStartNode.xml";
+			String file = SystemConfig.getPathOfDataUser() + "XML"+SystemConfig.getSeparator()+"TempleteSheetOfStartNode.xml";
 			if ((new File(file)).isFile() == false) {
 				throw new RuntimeException("@开始节点表单模版丢失" + file);
 			}
