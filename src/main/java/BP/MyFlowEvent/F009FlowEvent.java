@@ -11,6 +11,7 @@ import com.kakarote.crm9.erp.yzj.service.YeyxService;
 import java.text.DecimalFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class F009FlowEvent extends FlowEventBase {
@@ -84,17 +85,20 @@ public class F009FlowEvent extends FlowEventBase {
                 currentPrama.put("remark", remark);
                 currentPrama.put("thirdOrderId", serviceNo);
 
+                YeyxService yeyxService = Aop.get(YeyxService.class);
+
                 long timestamp = System.currentTimeMillis()/1000;
-//                //java对象变成json对象
-//                net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(currentPrama);
-//                //json对象转换成json字符串
-//                String jsonStr = jsonObject.toString();
                 String jsonStr = JSONObject.toJSONString(currentPrama);
-                String md5Str = YeyxService.getMd5("10083","c5f79d384b8024d5adddb872f9651f38",jsonStr,timestamp);
+                String md5Str = yeyxService.getMd5(jsonStr,timestamp);
 
                 //调用新增订单接口
-//                String result = Aop.get(TokenService.class).gatewayRequest(url, currentPrama);
-                String result = Aop.get(TokenService.class).gatewayRequestJson(url, md5Str);
+                Map param = new LinkedHashMap();
+                param.put("appId",yeyxService.getAppId());
+                param.put("sign",md5Str);
+                param.put("version",1);
+                param.put("timestamp",timestamp);
+                param.put("jsonData",jsonStr);
+                String result = yeyxService.gatewayRequest(url, param);
                 JSONObject objectResult = JSONObject.parseObject(result);
 
                 if(objectResult.getInteger("status") == 200 && objectResult.getJSONObject("data") !=null){
