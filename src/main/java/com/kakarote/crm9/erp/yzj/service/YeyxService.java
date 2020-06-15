@@ -28,16 +28,16 @@ public class YeyxService {
     @Getter
     private String secret = SystemConfig.getCS_AppSettings().get("GD.secret").toString();
 
-    public String getMd5(String jsonStr,long timestamp) {
+    public String getMd5(String jsonStr,long timestamp,String version) {
 
-        return getMd5(this.appId,this.secret,jsonStr,timestamp );
+        return getMd5(this.appId,this.secret,jsonStr,timestamp,version );
     }
 
-    public String getMd5(String appId,String secret,String jsonData,long timestamp){
+    public String getMd5(String appId,String secret,String jsonData,long timestamp,String version){
         byte[] secretBytes = null;
         try {
             secretBytes = MessageDigest.getInstance("md5").digest(
-                    ("appId"+appId + "jsonData" + jsonData + "timestamp" + timestamp+ "version1" + secret).getBytes());
+                    ("appId"+appId + "jsonData" + jsonData + "timestamp" + timestamp+ "version" + version + secret).getBytes());
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException("没有这个md5算法！");
         }
