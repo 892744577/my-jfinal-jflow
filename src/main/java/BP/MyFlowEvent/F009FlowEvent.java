@@ -1,15 +1,13 @@
 package BP.MyFlowEvent;
 
 import BP.WF.FlowEventBase;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Aop;
-import com.jfinal.plugin.activerecord.Db;
-import com.kakarote.crm9.erp.wx.util.DateUtil;
+import com.kakarote.crm9.erp.admin.entity.PortDept;
+import com.kakarote.crm9.erp.admin.service.SysRegistService;
 import com.kakarote.crm9.erp.yzj.service.TokenService;
-import com.kakarote.crm9.utils.GdUtil;
 
-import java.text.DecimalFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,35 +27,24 @@ public class F009FlowEvent extends FlowEventBase {
                 String url = "http://test-api-oms.xiujiadian.com/v1/createOrder";
 
                 //调用新增订单接口
-                String serviceType = this.getSysPara().get("serviceType") == null ? "": this.getSysPara().get("serviceType").toString(); //服务单类型
-                String reworkId = this.getSysPara().get("reworkId") == null ? "": this.getSysPara().get("reworkId").toString(); //返修源单号
-                int factory = this.getSysPara().get("factory") == null ? 0: (int) this.getSysPara().get("factory"); //厂商单标志：厂商单传固定值 2
-                int facInWarranty = this.getSysPara().get("facInWarranty") == null ? 0: (int) this.getSysPara().get("facInWarranty"); //标识产品是否在保
-                int smcCityId = this.getSysPara().get("smcCityId") == null ? 0: (int) this.getSysPara().get("smcCityId"); //城市id
-                String telephone = this.getSysPara().get("telephone") == null ? "": this.getSysPara().get("telephone").toString(); //用户手机号码
-                String contactName = this.getSysPara().get("contactName") == null ? "": this.getSysPara().get("contactName").toString(); //联系人姓名
-                String gender = this.getSysPara().get("gender") == null ? "": this.getSysPara().get("gender").toString(); //性别
-                String address = this.getSysPara().get("address") == null ? "": this.getSysPara().get("address").toString(); //详细地址
-                String dutyTime = this.getSysPara().get("dutyTime") == null ? "": this.getSysPara().get("dutyTime").toString(); //预约时间
-                int productId = this.getSysPara().get("productId") == null ? 0: (int) this.getSysPara().get("productId"); //言而有信产品ID
-                String facProductId = this.getSysPara().get("facProductId") == null ? "": this.getSysPara().get("facProductId").toString(); //厂商产品ID
-                int productCount = this.getSysPara().get("productCount") == null ? 0: (int) this.getSysPara().get("productCount"); //产品数量
-                int orderDiscountAmount = this.getSysPara().get("orderDiscountAmount") == null ? 0: (int) this.getSysPara().get("orderDiscountAmount"); //优惠金额，单位分
-                String orderDiscountSourceData = this.getSysPara().get("orderDiscountSourceData") == null ? "": this.getSysPara().get("orderDiscountSourceData").toString(); //订单优惠快照
-                String orderDiscountRemark = this.getSysPara().get("orderDiscountRemark") == null ? "": this.getSysPara().get("orderDiscountRemark").toString(); //优惠备注
-                String remark = this.getSysPara().get("remark") == null ? "": this.getSysPara().get("remark").toString(); //服务单备注
-
-                String serviceSystem = this.getSysPara().get("serviceSystem") == null ? "": this.getSysPara().get("serviceSystem").toString(); //服务单第三方系统
-                String serviceSegmentation = this.getSysPara().get("serviceSegmentation") == null ? "": this.getSysPara().get("serviceSegmentation").toString(); //安装细分L--晾衣机，S-锁 ，D--门
-                String dateTime = DateUtil.changeDateTOStr2(new Date());
-
-                //计算hr_gongdan表数据条数
-                int totalNum = Db.queryInt("select count(*) from hr_gongdan") + 1;
-                String STR_FORMAT = "0000";
-                DecimalFormat df = new DecimalFormat(STR_FORMAT);
-                String serialNum = df.format(totalNum); //流水号
-
-                String serviceNo = serviceSystem+serviceSegmentation+serviceType+dateTime+serialNum; //服务单编号
+                String serviceType = (String) this.getSysPara().get("serviceType"); //服务单类型
+                String reworkId = (String) this.getSysPara().get("reworkId"); //返修源单号
+                int factory = (int) this.getSysPara().get("factory"); //厂商单标志：厂商单传固定值 2
+                int facInWarranty = (int) this.getSysPara().get("facInWarranty"); //标识产品是否在保
+                int smcCityId = (int) this.getSysPara().get("smcCityId"); //城市id
+                String telephone = (String) this.getSysPara().get("telephone"); //用户手机号码
+                String contactName = (String) this.getSysPara().get("contactName"); //联系人姓名
+                String gender = (String) this.getSysPara().get("gender"); //性别
+                String address = (String) this.getSysPara().get("address"); //详细地址
+                String dutyTime = (String) this.getSysPara().get("dutyTime"); //预约时间
+                int productId = (int) this.getSysPara().get("productId"); //言而有信产品ID
+                String facProductId = (String) this.getSysPara().get("facProductId"); //厂商产品ID
+                int productCount = (int) this.getSysPara().get("productCount"); //产品数量
+                int orderDiscountAmount = (int) this.getSysPara().get("orderDiscountAmount"); //优惠金额，单位分
+                String orderDiscountSourceData = (String) this.getSysPara().get("orderDiscountSourceData"); //订单优惠快照
+                String orderDiscountRemark = (String) this.getSysPara().get("orderDiscountRemark"); //优惠备注
+                String remark = (String) this.getSysPara().get("remark"); //服务单备注
+                String serviceNo = (String) this.getSysPara().get("serviceNo"); //服务单编号
 
                 Map currentPrama = new HashMap();
                 Map currentJson= new HashMap();
@@ -83,18 +70,8 @@ public class F009FlowEvent extends FlowEventBase {
                 currentPrama.put("productCount", productCount);
                 currentPrama.put("remark", remark);
                 currentPrama.put("thirdOrderId", serviceNo);
-
-                long timestamp = System.currentTimeMillis()/1000;
-//                //java对象变成json对象
-//                net.sf.json.JSONObject jsonObject = net.sf.json.JSONObject.fromObject(currentPrama);
-//                //json对象转换成json字符串
-//                String jsonStr = jsonObject.toString();
-                String jsonStr = JSONObject.toJSONString(currentPrama);
-                String md5Str = GdUtil.getMd5("10083","c5f79d384b8024d5adddb872f9651f38",jsonStr,timestamp);
-
                 //调用新增订单接口
-//                String result = Aop.get(TokenService.class).gatewayRequest(url, currentPrama);
-                String result = Aop.get(TokenService.class).gatewayRequestJson(url, md5Str);
+                String result = Aop.get(TokenService.class).gatewayRequest(url, currentPrama);
                 JSONObject objectResult = JSONObject.parseObject(result);
 
                 if(objectResult.getInteger("status") == 200 && objectResult.getJSONObject("data") !=null){
