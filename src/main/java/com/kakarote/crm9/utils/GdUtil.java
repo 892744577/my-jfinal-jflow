@@ -20,9 +20,9 @@ public class GdUtil {
 
     private static String secret = SystemConfig.getCS_AppSettings().get("GD.secret").toString();
 
-    private static String getMd5(String jsonStr) {
+    private static String getMd5(String jsonStr,long timestamp) {
 
-        return getMd5(appId,secret,jsonStr,System.currentTimeMillis()/1000 );
+        return getMd5(appId,secret,jsonStr,timestamp );
     }
 
     public static String getMd5(String appId,String secret,String jsonData,long timestamp){
