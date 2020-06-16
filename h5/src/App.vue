@@ -1,6 +1,7 @@
 <template>
     <div id="app">
         <router-view/>
+        <!-- <help-icon /> -->
     </div>
 </template>
 
@@ -12,11 +13,13 @@
     import qs from 'qs';
     import { post } from "./js/utils";
     import { Dialog } from 'vant';
+    import HelpIcon from '@/components/HelpIcon'
 
     export default {
         name: 'App',
         components: {
-            Dialog
+            Dialog,
+            HelpIcon
         },
         async created() {
             //外部浏览器跳过

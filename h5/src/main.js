@@ -4,6 +4,17 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import VueCookies from 'vue-cookies'
+import '@/common/main.scss'
+import './iconFont.css'
+
+import { Lazyload } from 'vant';
+
+Vue.use(Lazyload);
+
+// 注册时可以配置额外的选项
+Vue.use(Lazyload, {
+  lazyComponent: true,
+});
 
 Vue.use(VueCookies);
 
