@@ -181,7 +181,7 @@ public class JfinalConfig extends JFinalConfig {
 
         //流程的handler add by tangmanrong 20200408
         me.add(new StaticHandler());
-        me.add(new ProxyHandler());
+        //me.add(new ProxyHandler());
         //me.add(new FakeStaticHandler(".do"));
 
         //druid监控页面 add by tangmanrong 20200415
