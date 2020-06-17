@@ -78,6 +78,8 @@ public class _MappingKit {
 		arp.addMapping("port_activity_playbill", "id", PortActivityPlaybill.class);
 		arp.addMapping("port_activity_share", "id", PortActivityShare.class);
 		arp.addMapping("port_dept", "No", PortDept.class);
+		arp.addMapping("port_activity_helper", "id", PortActivityHelper.class);
+		arp.addMapping("port_activity_assist", "id", PortActivityAssist.class);
 	}
 }
 

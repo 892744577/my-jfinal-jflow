@@ -9,35 +9,35 @@ import com.jfinal.plugin.activerecord.IBean;
 @SuppressWarnings("serial")
 public abstract class BasePortActivityHelper<M extends BasePortActivityHelper<M>> extends Model<M> implements IBean {
 
-	public void setId(Long id) {
+	public void setId(java.lang.Long id) {
 		set("id", id);
 	}
-	
-	public Long getId() {
+
+	public java.lang.Long getId() {
 		return getLong("id");
 	}
 
-	public void setShareId(Integer shareId) {
-		set("shareId", shareId);
-	}
-	
-	public Integer getShareId() {
-		return getInt("shareId");
+	public void setAssistId(java.lang.Integer assistId) {
+		set("assistId", assistId);
 	}
 
-	public void setHelperAppOpenId(String helperAppOpenId) {
+	public java.lang.Integer getAssistId() {
+		return getInt("assistId");
+	}
+
+	public void setHelperAppOpenId(java.lang.String helperAppOpenId) {
 		set("helperAppOpenId", helperAppOpenId);
 	}
-	
-	public String getHelperAppOpenId() {
+
+	public java.lang.String getHelperAppOpenId() {
 		return getStr("helperAppOpenId");
 	}
 
-	public void setHelperOpenId(String helperOpenId) {
+	public void setHelperOpenId(java.lang.String helperOpenId) {
 		set("helperOpenId", helperOpenId);
 	}
-	
-	public String getHelperOpenId() {
+
+	public java.lang.String getHelperOpenId() {
 		return getStr("helperOpenId");
 	}
 

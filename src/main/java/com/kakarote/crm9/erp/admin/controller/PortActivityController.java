@@ -362,12 +362,12 @@ public class PortActivityController extends Controller {
             return;
         }
 
-        if(portActivityReq.getShareId() == null){
-            renderJson(R.error("请输入分享Id!").put("data",null).put("code","000027"));
+        if(portActivityReq.getAssistId() == null){
+            renderJson(R.error("请输入需被助力记录Id!").put("data",null).put("code","000027"));
             return;
         }
 
-        PortActivityHelper portActivityHelperDb = PortActivityHelper.dao.findFirst("SELECT * FROM port_activity_helper WHERE shareId = ? and helperAppOpenId = ? and helperOpenId = ? LIMIT 0,1",portActivityReq.getShareId(),portActivityReq.getHelperAppOpenId(),portActivityReq.getHelperOpenId());
+        PortActivityHelper portActivityHelperDb = PortActivityHelper.dao.findFirst("SELECT * FROM port_activity_helper WHERE assistId = ? and helperAppOpenId = ? and helperOpenId = ? LIMIT 0,1",portActivityReq.getAssistId(),portActivityReq.getHelperAppOpenId(),portActivityReq.getHelperOpenId());
 
         if (portActivityHelperDb != null) {
             renderJson(R.error("已经集赞,请勿重复提交!").put("data",null).put("code","000030"));
@@ -375,11 +375,48 @@ public class PortActivityController extends Controller {
         }
         
         PortActivityHelper portActivityHelper = new PortActivityHelper();
-        portActivityHelper.setShareId(portActivityReq.getShareId());
+        portActivityHelper.setAssistId(portActivityReq.getAssistId());
         portActivityHelper.setHelperAppOpenId(portActivityReq.getHelperAppOpenId());
         portActivityHelper.setHelperOpenId(portActivityReq.getHelperOpenId());
         Boolean flag = portActivityHelper.save();
         renderJson(R.ok().put("msg","保存成功!").put("data",portActivityHelper).put("code","000000"));
+
+    }
+
+    /*
+     * @Description //保存助力接口
+     * @Author wangkaida
+     * @Date 14:06 2020/6/17
+     * @Param [portActivityReq]
+     * @return void
+     **/
+    public void savePortActivityAssist(@Para("") PortActivityReq portActivityReq){
+
+        if(StrUtil.isEmpty(portActivityReq.getAsOpenId())){
+            renderJson(R.error("请输入发起助力者微信openId!").put("data",null).put("code","000035"));
+            return;
+        }
+
+        if(portActivityReq.getAcId() == null){
+            renderJson(R.error("请输入活动Id!").put("data",null).put("code","000036"));
+            return;
+        }
+
+        PortActivityAssist portActivityAssistDb = PortActivityAssist.dao.findFirst("SELECT * FROM port_activity_assist WHERE as_ac_id = ? and as_openid = ? LIMIT 0,1",portActivityReq.getAcId(),portActivityReq.getAsOpenId());
+
+        if (portActivityAssistDb != null) {
+            renderJson(R.error("已经助力,请勿重复提交!").put("data",null).put("code","000037"));
+            return;
+        }
+
+        PortActivityAssist portActivityAssist = new PortActivityAssist();
+        portActivityAssist.setAsAcId(portActivityReq.getAcId());
+        portActivityAssist.setAsOpenid(portActivityReq.getAsOpenId());
+        portActivityAssist.setAsMobile(portActivityReq.getAsMobile());
+        portActivityAssist.setAsName(portActivityReq.getAsName());
+        portActivityAssist.setAsAddress(portActivityReq.getAsAddress());
+        Boolean flag = portActivityAssist.save();
+        renderJson(R.ok().put("msg","保存成功!").put("data",portActivityAssist).put("code","000000"));
 
     }
 
