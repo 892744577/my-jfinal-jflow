@@ -233,6 +233,11 @@ public class PortActivityController extends Controller {
             return;
         }
 
+        if(portActivityReq.getAssistId() == null){
+            renderJson(R.error("请输入需被助力记录Id!").put("data",null).put("code","000027"));
+            return;
+        }
+
         PortActivityShare portActivityShareDb = PortActivityShare.dao.findFirst("SELECT * FROM port_activity_share WHERE sr_pb_id = ? and sr_share_openid = ? and sr_to_share_openid = ? LIMIT 0,1",portActivityReq.getPbId(),portActivityReq.getShareOpenId(),portActivityReq.getToShareOpenId());
 
         if (portActivityShareDb != null) {
@@ -244,6 +249,7 @@ public class PortActivityController extends Controller {
         portActivityShare.setSrShareOpenid(portActivityReq.getShareOpenId());
         portActivityShare.setSrToShareOpenid(portActivityReq.getToShareOpenId());
         portActivityShare.setSrPbId(portActivityReq.getPbId());
+        portActivityShare.setSrAsId(portActivityReq.getAssistId());
         Boolean flag = portActivityShare.save();
         renderJson(R.ok().put("msg","保存成功!").put("data",portActivityShare).put("code","000000"));
 
@@ -289,7 +295,7 @@ public class PortActivityController extends Controller {
             return;
         }
 
-        Record record = Db.findFirst("SELECT a.*,b.id pbId,c.sr_share_openid,c.sr_to_share_openid FROM port_activity a left join port_activity_playbill b on a.id = b.pb_ac_id left join port_activity_share c on b.id = c.sr_pb_id where c.id = ? LIMIT 0,1",portActivityReq.getShareId());
+        Record record = Db.findFirst("SELECT a.*,b.id pbId,c.sr_share_openid,c.sr_to_share_openid,c.sr_as_id FROM port_activity a left join port_activity_playbill b on a.id = b.pb_ac_id left join port_activity_share c on b.id = c.sr_pb_id where c.id = ? LIMIT 0,1",portActivityReq.getShareId());
 
         if (record != null) {
             renderJson(R.ok().put("data", record).put("code","000000"));
