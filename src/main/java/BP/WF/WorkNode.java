@@ -6505,7 +6505,11 @@ public class WorkNode {
 
 		/// #endregion 第一步: 检查当前操作员是否可以发送
 
-		// 查询出来当前节点的工作报表.
+		/**
+		 * 查询出来当前节点的工作报表.
+		 * note by tangmanrong
+		 * 报表数据初始化实体属性与字段、ui、表、视图、方法等的映射关系，getEnMap方法
+		 */
 		this.rptGe = this.getHisFlow().getHisGERpt();
 		this.rptGe.SetValByKey("OID", this.getWorkID());
 		this.rptGe.RetrieveFromDBSources();
