@@ -381,7 +381,7 @@ public abstract class Work extends Entity {
 	public void BeforeSave() throws Exception {
 
 		// 执行保存前的事件。
-		this.getHisNode().getHisFlow().DoFlowEventEntity(EventListOfNode.SaveBefore, this.getHisNode(),
+		this.getHisNode().getHisFlow().DoFlowEventEntity(EventListOfNode.SaveBefore,this, this.getHisNode(),
 				this.getHisNode().getHisWork(), "@WorkID=" + this.getOID() + "@FID=" + this.getFID());
 	}
 

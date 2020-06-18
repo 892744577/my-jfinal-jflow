@@ -3765,13 +3765,15 @@ public class Flow extends BP.En.EntityNoName {
 	/// #region 执行流程事件.
 	/**
 	 * 执行运动事件
-	 * 
+	 *
 	 * @param doType
 	 *            事件类型
+	 * @param work
+	 *            流程对象，触发事件的当前流程对象，目前只针对saveBefore，已经过前面业务方法的处理，addby tangmanrong
 	 * @param currNode
 	 *            当前节点
 	 * @param en
-	 *            实体
+	 *            实体，该实体的键值对是包括 数据库查询 + objs的键值对 + 请求键值对，最原始数据的键值对，相见FlowEventBase的DoIt方法
 	 * @param atPara
 	 *            参数
 	 * @param objs
@@ -3779,18 +3781,30 @@ public class Flow extends BP.En.EntityNoName {
 	 * @return 执行结果
 	 * @throws Exception
 	 */
+	public final String DoFlowEventEntity(String doType,Work work, Node currNode, Entity en, String atPara) throws Exception {
+		return this.DoFlowEventEntity(doType, work,currNode, en, atPara, null);
+	}
+	public final String DoFlowEventEntity(String doType, Work work,Node currNode, Entity en, String atPara, SendReturnObjs objs) throws Exception {
+		return DoFlowEventEntity(doType, work,currNode, en, atPara, objs, 0, null);
+	}
 
+	public final String DoFlowEventEntity(String doType, Node currNode, Entity en, String atPara) throws Exception {
+		return this.DoFlowEventEntity(doType, currNode, en, atPara, null);
+	}
 	public final String DoFlowEventEntity(String doType, Node currNode, Entity en, String atPara, SendReturnObjs objs,
 			int toNodeID) throws Exception {
-		return DoFlowEventEntity(doType, currNode, en, atPara, objs, toNodeID, null);
+		return DoFlowEventEntity(doType,null,currNode, en, atPara, objs, toNodeID, null);
 	}
-
 	public final String DoFlowEventEntity(String doType, Node currNode, Entity en, String atPara, SendReturnObjs objs)
 			throws Exception {
-		return DoFlowEventEntity(doType, currNode, en, atPara, objs, 0, null);
+		return DoFlowEventEntity(doType, null,currNode, en, atPara, objs, 0, null);
+	}
+	public final String DoFlowEventEntity(String doType,Node currNode, Entity en, String atPara, SendReturnObjs objs,
+										  int toNodeID, String toEmps) throws Exception {
+		return DoFlowEventEntity(doType, null,currNode, en, atPara, objs, toNodeID, toEmps);
 	}
 
-	public final String DoFlowEventEntity(String doType, Node currNode, Entity en, String atPara, SendReturnObjs objs,
+	public final String DoFlowEventEntity(String doType,Work work,Node currNode, Entity en, String atPara, SendReturnObjs objs,
 			int toNodeID, String toEmps) throws Exception {
 		if (currNode == null) {
 			return null;
@@ -3800,7 +3814,7 @@ public class Flow extends BP.En.EntityNoName {
 
 		if (this.getFEventEntity() != null) {
 			this.getFEventEntity().SendReturnObjs = objs;
-			str = this.getFEventEntity().DoIt(doType, currNode, en, atPara, toNodeID, toEmps);
+			str = this.getFEventEntity().DoIt(doType,work, currNode, en, atPara, toNodeID, toEmps);
 		}
 
 		FrmEvents fes = currNode.getFrmEvents();
@@ -3873,10 +3887,7 @@ public class Flow extends BP.En.EntityNoName {
 
 	}
 
-	public final String DoFlowEventEntity(String doType, Node currNode, Entity en, String atPara) throws Exception {
-		String str = this.DoFlowEventEntity(doType, currNode, en, atPara, null);
-		return str;
-	}
+
 
 	private BP.WF.FlowEventBase _FDEventEntity = null;
 
