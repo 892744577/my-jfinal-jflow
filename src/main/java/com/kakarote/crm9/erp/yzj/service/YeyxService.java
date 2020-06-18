@@ -86,6 +86,8 @@ public class YeyxService {
 
         //json对象转换成json字符串
         String jsonStr=jsonObject.toString();
-        System.out.println(getMd5("10083","c5f79d384b8024d5adddb872f9651f38",jsonStr,timestamp ));
+        jsonStr="{\"factory\":2,\"reworkId\":\"\",\"address\":\"1231\",\"facInWarranty\":0,\"gender\":\"\",\"productId\":10254,\"contactName\":\"33132\",\"telephone\":\"13580573264\",\"remark\":\"23123\",\"cityId\":0,\"type\":\"1\",\"productCount\":0,\"dutyTime\":\"2020-06-17 13:39:00.0\",\"facProductId\":\"12046\",\"street\":\"1231\",\"orderDiscount\":{\"amount\":0,\"remark\":\"\",\"sourceData\":\"\"},\"thirdOrderId\":\"YXSA202006170013\"}";
+        YeyxService yeyxService = new YeyxService();
+        System.out.println(yeyxService.getMd5("34077","0e39fd66fa4b4b239a1c240815103dbf",jsonStr,timestamp,"1" ));
     }*/
 }
