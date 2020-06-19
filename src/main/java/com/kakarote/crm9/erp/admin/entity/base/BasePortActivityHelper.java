@@ -41,4 +41,12 @@ public abstract class BasePortActivityHelper<M extends BasePortActivityHelper<M>
 		return getStr("helperOpenId");
 	}
 
+	public void setHelperInfo(java.lang.String helperInfo) {
+		set("helperInfo", helperInfo);
+	}
+
+	public java.lang.String getHelperInfo() {
+		return getStr("helperInfo");
+	}
+
 }

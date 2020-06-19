@@ -21,5 +21,7 @@ public class PortActivityReq {
 	private String asMobile; //手机号
 	private String asName; //姓名
 	private String asAddress; //地址
+	private String asProductId; //商品Id
+	private String helperInfo; //助力人的信息（头像、昵称）
 
 }

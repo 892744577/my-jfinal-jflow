@@ -9,52 +9,60 @@ import com.jfinal.plugin.activerecord.IBean;
 @SuppressWarnings("serial")
 public abstract class BasePortActivityAssist<M extends BasePortActivityAssist<M>> extends Model<M> implements IBean {
 
-	public void setId(Integer id) {
+	public void setId(java.lang.Integer id) {
 		set("id", id);
 	}
-	
-	public Integer getId() {
+
+	public java.lang.Integer getId() {
 		return getInt("id");
 	}
 
-	public void setAsAcId(Integer asAcId) {
+	public void setAsAcId(java.lang.Integer asAcId) {
 		set("as_ac_id", asAcId);
 	}
-	
-	public Integer getAsAcId() {
+
+	public java.lang.Integer getAsAcId() {
 		return getInt("as_ac_id");
 	}
 
-	public void setAsOpenid(String asOpenid) {
+	public void setAsOpenid(java.lang.String asOpenid) {
 		set("as_openid", asOpenid);
 	}
-	
-	public String getAsOpenid() {
+
+	public java.lang.String getAsOpenid() {
 		return getStr("as_openid");
 	}
 
-	public void setAsMobile(String asMobile) {
+	public void setAsMobile(java.lang.String asMobile) {
 		set("as_mobile", asMobile);
 	}
-	
-	public String getAsMobile() {
+
+	public java.lang.String getAsMobile() {
 		return getStr("as_mobile");
 	}
 
-	public void setAsName(String asName) {
+	public void setAsName(java.lang.String asName) {
 		set("as_name", asName);
 	}
-	
-	public String getAsName() {
+
+	public java.lang.String getAsName() {
 		return getStr("as_name");
 	}
 
-	public void setAsAddress(String asAddress) {
+	public void setAsAddress(java.lang.String asAddress) {
 		set("as_address", asAddress);
 	}
-	
-	public String getAsAddress() {
+
+	public java.lang.String getAsAddress() {
 		return getStr("as_address");
+	}
+
+	public void setAsProductid(java.lang.String asProductid) {
+		set("as_productid", asProductid);
+	}
+
+	public java.lang.String getAsProductid() {
+		return getStr("as_productid");
 	}
 
 }

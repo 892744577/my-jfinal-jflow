@@ -154,7 +154,7 @@ public class PortEmpController extends Controller {
     }
 
     /*
-     * @Description //代理商微信openId绑定手机号
+     * @Description //微信openId绑定手机号
      * @Author wangkaida
      * @Date 16:32 2020/5/12
      * @Param [portEmp]
@@ -799,5 +799,54 @@ public class PortEmpController extends Controller {
         PortEmp portEmp = new PortEmp();
         portEmp.setTel(portEmpReq.getTel());
         renderJson(R.ok().put("msg","执行成功!").put("data",portEmpService.getPortEmp(portEmp)).put("code","000000"));
+    }
+
+    /*
+     * @Description //微信openId绑定手机号临时接口
+     * @Author wangkaida
+     * @Date 10:16 2020/6/19
+     * @Param [portEmpReq]
+     * @return void
+     **/
+    public void wechatBindTmp(@Para("") PortEmpReq portEmpReq){
+//        PortEmp portEmp = getModel(PortEmp.class,"");
+
+        if(StrUtil.isEmpty(portEmpReq.getTel())){
+            renderJson(R.error("请输入手机号!").put("data",null).put("code","000003"));
+            return;
+        }
+
+        //判断手机验证码是否正确
+        LoginRequestDto loginRequestDto = new LoginRequestDto();
+        loginRequestDto.setMobile(portEmpReq.getTel());
+        String result = smsService.getSmsByMobile(loginRequestDto);
+
+        if (!portEmpReq.getValiCode().equals(result)) {
+            renderJson(R.error("请输入正确的验证码!").put("data",null).put("code","000024"));
+            return;
+        }
+
+        //手机号获取数据信息
+        PortActivityEmp portEmpDb = PortActivityEmp.dao.findFirst("SELECT * FROM port_activity_emp WHERE Tel = ? LIMIT 0,1", portEmpReq.getTel());;
+
+        if (portEmpDb != null) {
+            if (StrUtil.isEmpty(portEmpDb.getWxOpenId())) {
+                Paras ps = new Paras();
+                ps.Add("WxOpenId", portEmpReq.getWxOpenId());
+                ps.Add("Tel", portEmpReq.getTel());
+                String sql = "UPDATE port_activity_emp SET WxOpenId="+SystemConfig.getAppCenterDBVarStr()+"WxOpenId WHERE Tel=" + SystemConfig.getAppCenterDBVarStr()
+                        + "Tel";
+                int num = DBAccess.RunSQL(sql, ps);
+                renderJson(R.ok().put("msg","更新成功!").put("code","000000"));
+            }else {
+                renderJson(R.error("该手机号已经绑定，请勿重复绑定!").put("data",null).put("code","000004"));
+                return;
+            }
+
+        }else {
+            renderJson(R.error("查无此人,请先进行手机号绑定!").put("data",null).put("code","000001"));
+            return;
+        }
+
     }
 }
