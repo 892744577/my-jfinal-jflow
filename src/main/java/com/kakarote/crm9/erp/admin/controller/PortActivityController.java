@@ -364,10 +364,10 @@ public class PortActivityController extends Controller {
      **/
     public void savePortActivityHelper(@Para("") PortActivityReq portActivityReq){
 
-        if(StrUtil.isEmpty(portActivityReq.getHelperAppOpenId())){
-            renderJson(R.error("请输入助力人小程序openId!").put("data",null).put("code","000028"));
-            return;
-        }
+//        if(StrUtil.isEmpty(portActivityReq.getHelperAppOpenId())){
+//            renderJson(R.error("请输入助力人小程序openId!").put("data",null).put("code","000028"));
+//            return;
+//        }
 
         if(StrUtil.isEmpty(portActivityReq.getHelperOpenId())){
             renderJson(R.error("请输入助力人公众号openId!").put("data",null).put("code","000029"));
@@ -547,6 +547,30 @@ public class PortActivityController extends Controller {
         portActivityShare.update();
 
         renderJson(R.ok().put("msg","更新成功!").put("data",portActivityShare).put("code","000000"));
+    }
+
+    /*
+     * @Description //根据微信公众号openId获取助力信息接口
+     * @Author wangkaida
+     * @Date 17:03 2020/6/19
+     * @Param [portEmpReq]
+     * @return void
+     **/
+    public void getAssistByWxOpenId(@Para("") PortEmpReq portEmpReq){
+        if(StrUtil.isEmpty(portEmpReq.getWxOpenId())){
+            renderJson(R.error("请输入微信公众号openId!").put("data",null).put("code","000038"));
+            return;
+        }
+
+        PortActivityAssist portActivityAssistDb = PortActivityAssist.dao.findFirst("SELECT * FROM port_activity_assist WHERE as_openid = ? LIMIT 0,1",portEmpReq.getWxOpenId());
+
+        if (portActivityAssistDb != null) {
+            renderJson(R.ok().put("data", portActivityAssistDb).put("code","000000"));
+        }else {
+            renderJson(R.error("查询到的发起助力的人员信息为空!").put("data",null).put("code","000042"));
+            return;
+        }
+
     }
 
 }
