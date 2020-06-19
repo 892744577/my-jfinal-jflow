@@ -484,7 +484,7 @@ public class PortActivityController extends Controller {
                 portActivityPlaybillUpdate.setId(pbId);
                 portActivityPlaybillUpdate.update();
 
-                renderJson(R.ok().put("msg","保存成功!").put("id",pbId).put("pbPath","http://app.aptenon.com/crm/PlayBill/"+pbName).put("code","000000"));
+                renderJson(R.ok().put("data",portActivityPlaybill).put("code","000000"));
             }
 
         }else {
