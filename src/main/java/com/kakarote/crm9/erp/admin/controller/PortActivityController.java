@@ -21,6 +21,7 @@ import com.kakarote.crm9.utils.R;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -571,6 +572,22 @@ public class PortActivityController extends Controller {
             return;
         }
 
+    }
+
+    /*
+     * @Description //获取助力人数接口
+     * @Author wangkaida
+     * @Date 19:46 2020/6/19
+     * @Param []
+     * @return void
+     **/
+    public void getAssistCount(){
+        HashMap<String,Integer> map = new HashMap<String,Integer>();
+        map.put("involvedCount",100000); //已参与人数
+        map.put("assistCount",30000); //已助力人数
+        map.put("browseCount",50000); //已浏览人数
+        map.put("successCount",60000); //助力成功人数
+        renderJson(R.ok().put("data", map).put("code","000000"));
     }
 
 }
