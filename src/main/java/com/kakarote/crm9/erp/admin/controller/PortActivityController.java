@@ -239,10 +239,10 @@ public class PortActivityController extends Controller {
             return;
         }
 
-        if(portActivityReq.getAssistId() == null){
-            renderJson(R.error("请输入需被助力记录Id!").put("data",null).put("code","000027"));
-            return;
-        }
+//        if(portActivityReq.getAssistId() == null){
+//            renderJson(R.error("请输入需被助力记录Id!").put("data",null).put("code","000027"));
+//            return;
+//        }
 
         PortActivityShare portActivityShareDb = PortActivityShare.dao.findFirst("SELECT * FROM port_activity_share WHERE sr_pb_id = ? and sr_share_openid = ? and sr_to_share_openid = ? LIMIT 0,1",portActivityReq.getPbId(),portActivityReq.getShareOpenId(),portActivityReq.getToShareOpenId());
 
@@ -520,6 +520,33 @@ public class PortActivityController extends Controller {
             renderJson(R.error("发起助力的人员信息为空!").put("data",null).put("code","000040"));
             return;
         }
+    }
+
+    /*
+     * @Description //更新分享Id与需被助力记录Id关系接口
+     * @Author wangkaida
+     * @Date 16:02 2020/6/19
+     * @Param [portActivityReq]
+     * @return void
+     **/
+    public void updatePortActivityShare(@Para("") PortActivityReq portActivityReq){
+
+        if(portActivityReq.getShareId() == null){
+            renderJson(R.error("请输入分享Id!").put("data",null).put("code","000041"));
+            return;
+        }
+
+        if(portActivityReq.getAssistId() == null){
+            renderJson(R.error("请输入需被助力记录Id!").put("data",null).put("code","000039"));
+            return;
+        }
+
+        PortActivityShare portActivityShare = new PortActivityShare();
+        portActivityShare.setSrAsId(portActivityReq.getAssistId());
+        portActivityShare.setId(portActivityReq.getShareId().longValue());
+        portActivityShare.update();
+
+        renderJson(R.ok().put("msg","更新成功!").put("data",portActivityShare).put("code","000000"));
     }
 
 }
