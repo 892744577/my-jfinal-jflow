@@ -15,8 +15,6 @@ import javax.servlet.http.HttpServletResponse;
 
 @Slf4j
 public class ProxyHandler extends Handler {
-
-    private String basePrefix = SystemConfig.getCS_AppSettings().get("proxy.basePrefix").toString();
     /**
      * 若是前端页面的路径，动态代理页面的内容回来
      *
@@ -24,8 +22,8 @@ public class ProxyHandler extends Handler {
     @Override
     public void handle(String target, HttpServletRequest request, HttpServletResponse response, boolean[] isHandled) {
 
-        if( (basePrefix + "/dist").equals(request.getRequestURI())
-                || (basePrefix + "/dist/index.html").equals(request.getRequestURI())){
+        if( (request.getContextPath() + "/dist").equals(request.getRequestURI())
+                || (request.getContextPath() + "/dist/index.html").equals(request.getRequestURI())){
             /**
              *  若是这些请求则不再走jfinal的默认接管（路径匹配模式），需要自己处理这些url，否则会报一个 IllegalStateException 异常
              */
@@ -48,7 +46,7 @@ public class ProxyHandler extends Handler {
                 }
                 Cookie c = new Cookie("jsapiTicket", JSON.toJSONString(wxJsapiSignature));
                 c.setMaxAge(24*60*60);
-                c.setPath(basePrefix);//同一服务器内所有应用都可访问到该Cookie
+                c.setPath(request.getContextPath());//同一服务器内所有应用都可访问到该Cookie
                 response.addCookie(c);
             } catch (Exception e) {
                 e.printStackTrace();
