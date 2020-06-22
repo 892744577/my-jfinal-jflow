@@ -583,10 +583,15 @@ public class PortActivityController extends Controller {
      **/
     public void getAssistCount(){
         HashMap<String,Integer> map = new HashMap<String,Integer>();
-        map.put("involvedCount",100000); //已参与人数
-        map.put("assistCount",30000); //已助力人数
-        map.put("browseCount",50000); //已浏览人数
-        map.put("successCount",60000); //助力成功人数
+        int n = 5000;
+        int num=(int) (Math.random() * n+1);
+        map.put("involvedCount",100000+num); //已参与人数
+        map.put("assistCount",30000+num); //已助力人数
+        map.put("browseCount",50000+num); //已浏览人数
+        map.put("successCount",60000+num); //助力成功人数
+        map.put("goods1Num",6000+num); //商品1参与人数
+        map.put("goods2Num",7000+num); //商品2参与人数
+        map.put("goods3Num",8000+num); //商品3参与人数
         renderJson(R.ok().put("data", map).put("code","000000"));
     }
 
