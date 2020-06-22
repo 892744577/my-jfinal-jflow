@@ -380,7 +380,7 @@ public class PortActivityController extends Controller {
             return;
         }
 
-        PortActivityHelper portActivityHelperDb = PortActivityHelper.dao.findFirst("SELECT * FROM port_activity_helper WHERE assistId = ? and helperAppOpenId = ? and helperOpenId = ? LIMIT 0,1",portActivityReq.getAssistId(),portActivityReq.getHelperAppOpenId(),portActivityReq.getHelperOpenId());
+        PortActivityHelper portActivityHelperDb = PortActivityHelper.dao.findFirst("SELECT * FROM port_activity_helper WHERE assistId = ? and helperOpenId = ? LIMIT 0,1",portActivityReq.getAssistId(),portActivityReq.getHelperOpenId());
 
         if (portActivityHelperDb != null) {
             renderJson(R.error("已经集赞,请勿重复提交!").put("data",null).put("code","000030"));
