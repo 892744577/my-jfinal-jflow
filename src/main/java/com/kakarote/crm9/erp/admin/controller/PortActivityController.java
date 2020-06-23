@@ -515,7 +515,7 @@ public class PortActivityController extends Controller {
 
             List<PortActivityHelper> portActivityHelperList = PortActivityHelper.dao.find("select * from port_activity_helper where assistId = ?", portActivityAssistDb.getId());
 
-            renderJson(R.ok().put("asOpenId", portActivityAssistDb.getAsOpenid()).put("data", portActivityHelperList).put("code","000000"));
+            renderJson(R.ok().put("portActivityAssist", portActivityAssistDb).put("data", portActivityHelperList).put("code","000000"));
 
         }else {
             renderJson(R.error("发起助力的人员信息为空!").put("data",null).put("code","000040"));
