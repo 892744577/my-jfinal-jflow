@@ -21,18 +21,21 @@ public class SysRegistService {
      **/
     public R savePortEmp(Regist regist) {
 
-        PortEmp portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? and accountType = '1' LIMIT 0,1", regist.getPhone());
+        PortEmp portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? LIMIT 0,1", regist.getPhone());
 
         if (portEmpDb != null) {
+
+            //更新账号信息，主要是账号的小程序id，针对导进去的账号信息
             Paras ps = new Paras();
             ps.Add("WxAppOpenId", regist.getAppOpenId());
             ps.Add("Tel", regist.getPhone());
-            String sql = "UPDATE port_emp SET WxAppOpenId="+ SystemConfig.getAppCenterDBVarStr()+"WxAppOpenId WHERE Tel=" + SystemConfig.getAppCenterDBVarStr()
-                    + "Tel and accountType = '1'";
+            String sql = "UPDATE port_emp SET WxAppOpenId="+ SystemConfig.getAppCenterDBVarStr()+"WxAppOpenId,accountType = '1' WHERE Tel=" + SystemConfig.getAppCenterDBVarStr()
+                    + "Tel";
             int num = DBAccess.RunSQL(sql, ps);
             return R.ok().put("msg","更新成功!").put("code","000000");
 
         }else {
+            //1、新增代理商账号
             PortEmp portEmp = new PortEmp();
 
             String pinyin1 = DataType.ParseStringToPinyin(regist.getName());
@@ -48,6 +51,8 @@ public class SysRegistService {
             portEmp.setFkDept("100");
             portEmp.setSignType(0);
             portEmp.setIdx(0);
+
+            //1、代理商标志
             portEmp.setAccountType("1");
 
             Boolean flag = portEmp.save();
@@ -65,13 +70,20 @@ public class SysRegistService {
      * @return com.kakarote.crm9.utils.R
      **/
     public R savePortEmpStaff(Regist regist) {
-        PortEmp portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? and accountType = '2' LIMIT 0,1", regist.getPhone());
+        PortEmp portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? LIMIT 0,1", regist.getPhone());
 
         if (portEmpDb != null) {
-
-            return R.error("该账号已经存在,请勿重复提交!").put("code","000009");
-
+            //更新账号信息，主要是账号的小程序id，针对导进去的账号信息
+            Paras ps = new Paras();
+            ps.Add("WxAppOpenId", regist.getAppOpenId());
+            ps.Add("Tel", regist.getPhone());
+            String sql = "UPDATE port_emp SET WxAppOpenId="+ SystemConfig.getAppCenterDBVarStr()+"WxAppOpenId WHERE Tel=" + SystemConfig.getAppCenterDBVarStr()
+                    + "Tel";
+            int num = DBAccess.RunSQL(sql, ps);
+            return R.ok().put("msg","更新成功!").put("code","000000");
         }else {
+
+            //1、新增账号
             PortEmp portEmp = new PortEmp();
 
             String pinyin1 = DataType.ParseStringToPinyin(regist.getName());
@@ -93,7 +105,7 @@ public class SysRegistService {
 
             Boolean flag = portEmp.save();
 
-            //保存上下级关系
+            //2、保存上下级关系
             PortEmpRelation portEmpRelation = new PortEmpRelation();
             portEmpRelation.setFkNo(no);
             portEmpRelation.setParentNo(regist.getParentNo());

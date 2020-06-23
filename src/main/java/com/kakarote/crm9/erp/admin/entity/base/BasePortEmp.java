@@ -129,4 +129,28 @@ public abstract class BasePortEmp<M extends BasePortEmp<M>> extends Model<M> imp
 		return getStr("accountType");
 	}
 
+	public void setYzjOpenId(java.lang.String yzjOpenId) {
+		set("yzjOpenId", yzjOpenId);
+	}
+
+	public java.lang.String getYzjOpenId() {
+		return getStr("yzjOpenId");
+	}
+
+	public void setYzjJobNo(java.lang.String yzjJobNo) {
+		set("yzjJobNo", yzjJobNo);
+	}
+
+	public java.lang.String getYzjJobNo() {
+		return getStr("yzjJobNo");
+	}
+
+	public void setZt(java.lang.String zt) {
+		set("zt", zt);
+	}
+
+	public java.lang.String getZt() {
+		return getStr("zt");
+	}
+
 }

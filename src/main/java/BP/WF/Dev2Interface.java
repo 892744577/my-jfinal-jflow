@@ -10842,7 +10842,7 @@ public class Dev2Interface
 				SimpleDateFormat sdf = new SimpleDateFormat("yyyy_MM");
 				String ny = sdf.format(new Date());
 
-				String workDir = ny + "\\" + athDesc.getFK_MapData() + "\\";
+				String workDir = ny + SystemConfig.getSeparator() + athDesc.getFK_MapData() + SystemConfig.getSeparator();
 
 				// 特殊处理文件路径.
 				if (SystemConfig.getCustomerNo().equals("BWDA")) {

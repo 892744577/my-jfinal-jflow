@@ -705,6 +705,8 @@ public class WF_Admin_FoolFormDesigner extends WebContralBase
 				ma.setGroupID(iGroupID);
 				//
 				if (!"".equals(ma.getUIBindKey())) {
+
+				    //2、当是枚举数据时
 					SysEnums se = new SysEnums();
 					se.Retrieve(SysEnumAttr.EnumKey, ma.getUIBindKey());
 					if (se.GetCountByKey(SysEnumAttr.EnumKey, ma.getUIBindKey()) > 0) {	// ?
@@ -712,11 +714,31 @@ public class WF_Admin_FoolFormDesigner extends WebContralBase
 						ma.setLGType(BP.En.FieldTypeS.Enum);
 						ma.setUIContralType(BP.En.UIContralType.DDL);
 					}
+
+					//3、当是外键数据时
 					SFTable tb = new SFTable();
 					tb.setNo(ma.getUIBindKey());
 					if (tb.IsExit(EntityNoNameAttr.No, ma.getUIBindKey())) {	// ?
 						ma.setMyDataType(BP.DA.DataType.AppString);
-						ma.setLGType(BP.En.FieldTypeS.FK);
+
+                        //ma.setLGType(BP.En.FieldTypeS.FK);
+                        /**
+                         * modify bu tangmanrong 20200611
+                         */
+						// 外键字段表.
+						SFTable sf = new SFTable(ma.getUIBindKey());
+						// 根据外键表的类型不同，设置它的LGType.
+						switch (sf.getSrcType()) {
+							case CreateTable:
+							case TableOrView:
+							case BPClass:
+								ma.setLGType(FieldTypeS.FK);
+								break;
+							case SQL: // 是sql模式.
+							default:
+								ma.setLGType(FieldTypeS.Normal);
+								break;
+						}
 						ma.setUIContralType(BP.En.UIContralType.DDL);
 					}
 				}

@@ -37,6 +37,10 @@ public abstract class FlowEventBase {
 	 */
 	public Node HisNode = null;
 	/**
+	 * 当前流程，即工作实体
+	 */
+	public Work work = null;
+	/**
 	 * 参数对象.
 	 */
 	private Row _SysPara = null;
@@ -450,18 +454,23 @@ public abstract class FlowEventBase {
 	 *            实体参数
 	 * @throws Exception
 	 */
+	public final String DoIt(String eventType,Work wk, Node currNode, Entity en, String atPara, int jumpToNodeID)
+			throws Exception {
+		return DoIt(eventType,wk, currNode, en, atPara, jumpToNodeID, null);
+	}
 
 	public final String DoIt(String eventType, Node currNode, Entity en, String atPara, int jumpToNodeID)
 			throws Exception {
-		return DoIt(eventType, currNode, en, atPara, jumpToNodeID, null);
+		return DoIt(eventType,null, currNode, en, atPara, jumpToNodeID, null);
 	}
 
 	public final String DoIt(String eventType, Node currNode, Entity en, String atPara) throws Exception {
-		return DoIt(eventType, currNode, en, atPara, 0, null);
+		return DoIt(eventType,null, currNode, en, atPara, 0, null);
 	}
 
-	public final String DoIt(String eventType, Node currNode, Entity en, String atPara, int jumpToNodeID, String toEmps)
+	public final String DoIt(String eventType,Work wk, Node currNode, Entity en, String atPara, int jumpToNodeID, String toEmps)
 			throws Exception {
+		this.work = wk;
 		this.HisEn = en;
 		this.HisNode = currNode;
 		this.setJumpToEmps(toEmps);

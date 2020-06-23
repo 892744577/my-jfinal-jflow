@@ -3606,7 +3606,7 @@ public abstract class Entity implements Serializable {
 	}
 
 	/**
-	 * 子类需要继承
+	 * 子类需要继承,有可能从Cash获取、也有可能自定义Attrs的Map集合
 	 * @throws Exception 
 	 */
 	public abstract Map getEnMap() throws Exception;

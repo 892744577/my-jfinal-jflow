@@ -5,7 +5,7 @@
 		<meta charset="UTF-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta http-equiv="X-UA-Compatible" content="ie=edge">
-		<title>代理商绑定手机号</title>
+		<title>公众号绑定手机号</title>
 		<link href="https://cdn.bootcdn.net/ajax/libs/weui/2.3.0/style/weui.css" rel="stylesheet">
 		<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
 		<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
@@ -127,7 +127,7 @@
 						success: function( res ) {
 							console.log( 'jscode2session', res )
 							if ( res.code == '000000' ) {
-								WxOpenId = res.openId
+								WxOpenId = res.data.openId
 							} else {
 								openDialog( '出错了', '获取openId失败' )
 							}

@@ -2378,7 +2378,7 @@ public class Flow extends BP.En.EntityNoName {
 	/// #region 产生数据模板。
 	private static String PathFlowDesc;
 	static {
-		PathFlowDesc = SystemConfig.getPathOfDataUser() + "FlowDesc\\";
+		PathFlowDesc = SystemConfig.getPathOfDataUser() + "FlowDesc"+SystemConfig.getSeparator();
 	}
 
 	/**
@@ -2392,7 +2392,7 @@ public class Flow extends BP.En.EntityNoName {
 		name = BP.Tools.StringExpressionCalculate.ReplaceBadCharOfFileName(name);
 
 		String path = this.getNo() + "." + name;
-		path = PathFlowDesc + path + "\\";
+		path = PathFlowDesc + path + SystemConfig.getSeparator();
 
 		this.DoExpFlowXmlTemplete(path);
 
@@ -2435,7 +2435,7 @@ public class Flow extends BP.En.EntityNoName {
 		try {
 			String name = this.getNo() + "." + this.getName();
 			name = BP.Tools.StringExpressionCalculate.ReplaceBadCharOfFileName(name);
-			String path = PathFlowDesc + name + "\\";
+			String path = PathFlowDesc + name + SystemConfig.getSeparator();
 			DataSet ds = GetFlow(path);
 			if (ds == null) {
 				return;
@@ -2443,7 +2443,7 @@ public class Flow extends BP.En.EntityNoName {
 
 			String directory = this.getNo() + "." + this.getName();
 			directory = BP.Tools.StringExpressionCalculate.ReplaceBadCharOfFileName(directory);
-			path = PathFlowDesc + directory + "\\";
+			path = PathFlowDesc + directory + SystemConfig.getSeparator();
 			String xmlName = path + "Flow" + ".xml";
 			File file = new File(path);
 			File filexmlName = new File(xmlName);
@@ -2514,8 +2514,8 @@ public class Flow extends BP.En.EntityNoName {
 			try {
 				if (path != null) {
 					Files.copy(
-							Paths.get(SystemConfig.getPathOfDataUser() + "\\CyclostyleFile\\" + tmp.getNo() + ".rtf"),
-							Paths.get(path + "\\" + tmp.getNo() + ".rtf"), StandardCopyOption.COPY_ATTRIBUTES,
+							Paths.get(SystemConfig.getPathOfDataUser() + SystemConfig.getSeparator()+"CyclostyleFile" + SystemConfig.getSeparator()+ tmp.getNo() + ".rtf"),
+							Paths.get(path + SystemConfig.getSeparator() + tmp.getNo() + ".rtf"), StandardCopyOption.COPY_ATTRIBUTES,
 							StandardCopyOption.REPLACE_EXISTING);
 				}
 			} catch (java.lang.Exception e) {
@@ -2730,8 +2730,8 @@ public class Flow extends BP.En.EntityNoName {
 			try {
 				if (path != null) {
 					Files.copy(
-							Paths.get(SystemConfig.getPathOfDataUser() + "\\CyclostyleFile\\" + tmp.getNo() + ".rtf"),
-							Paths.get(path + "\\" + tmp.getNo() + ".rtf"), StandardCopyOption.COPY_ATTRIBUTES,
+							Paths.get(SystemConfig.getPathOfDataUser() + SystemConfig.getSeparator()+ "CyclostyleFile" + SystemConfig.getSeparator() + tmp.getNo() + ".rtf"),
+							Paths.get(path + SystemConfig.getSeparator() + tmp.getNo() + ".rtf"), StandardCopyOption.COPY_ATTRIBUTES,
 							StandardCopyOption.REPLACE_EXISTING);
 				}
 			} catch (java.lang.Exception e) {
@@ -3765,13 +3765,15 @@ public class Flow extends BP.En.EntityNoName {
 	/// #region 执行流程事件.
 	/**
 	 * 执行运动事件
-	 * 
+	 *
 	 * @param doType
 	 *            事件类型
+	 * @param work
+	 *            流程对象，触发事件的当前流程对象，目前只针对saveBefore，已经过前面业务方法的处理，addby tangmanrong
 	 * @param currNode
 	 *            当前节点
 	 * @param en
-	 *            实体
+	 *            实体，该实体的键值对是包括 数据库查询 + objs的键值对 + 请求键值对，最原始数据的键值对，相见FlowEventBase的DoIt方法
 	 * @param atPara
 	 *            参数
 	 * @param objs
@@ -3779,18 +3781,30 @@ public class Flow extends BP.En.EntityNoName {
 	 * @return 执行结果
 	 * @throws Exception
 	 */
+	public final String DoFlowEventEntity(String doType,Work work, Node currNode, Entity en, String atPara) throws Exception {
+		return this.DoFlowEventEntity(doType, work,currNode, en, atPara, null);
+	}
+	public final String DoFlowEventEntity(String doType, Work work,Node currNode, Entity en, String atPara, SendReturnObjs objs) throws Exception {
+		return DoFlowEventEntity(doType, work,currNode, en, atPara, objs, 0, null);
+	}
 
+	public final String DoFlowEventEntity(String doType, Node currNode, Entity en, String atPara) throws Exception {
+		return this.DoFlowEventEntity(doType, currNode, en, atPara, null);
+	}
 	public final String DoFlowEventEntity(String doType, Node currNode, Entity en, String atPara, SendReturnObjs objs,
 			int toNodeID) throws Exception {
-		return DoFlowEventEntity(doType, currNode, en, atPara, objs, toNodeID, null);
+		return DoFlowEventEntity(doType,null,currNode, en, atPara, objs, toNodeID, null);
 	}
-
 	public final String DoFlowEventEntity(String doType, Node currNode, Entity en, String atPara, SendReturnObjs objs)
 			throws Exception {
-		return DoFlowEventEntity(doType, currNode, en, atPara, objs, 0, null);
+		return DoFlowEventEntity(doType, null,currNode, en, atPara, objs, 0, null);
+	}
+	public final String DoFlowEventEntity(String doType,Node currNode, Entity en, String atPara, SendReturnObjs objs,
+										  int toNodeID, String toEmps) throws Exception {
+		return DoFlowEventEntity(doType, null,currNode, en, atPara, objs, toNodeID, toEmps);
 	}
 
-	public final String DoFlowEventEntity(String doType, Node currNode, Entity en, String atPara, SendReturnObjs objs,
+	public final String DoFlowEventEntity(String doType,Work work,Node currNode, Entity en, String atPara, SendReturnObjs objs,
 			int toNodeID, String toEmps) throws Exception {
 		if (currNode == null) {
 			return null;
@@ -3800,7 +3814,7 @@ public class Flow extends BP.En.EntityNoName {
 
 		if (this.getFEventEntity() != null) {
 			this.getFEventEntity().SendReturnObjs = objs;
-			str = this.getFEventEntity().DoIt(doType, currNode, en, atPara, toNodeID, toEmps);
+			str = this.getFEventEntity().DoIt(doType,work, currNode, en, atPara, toNodeID, toEmps);
 		}
 
 		FrmEvents fes = currNode.getFrmEvents();
@@ -3873,10 +3887,7 @@ public class Flow extends BP.En.EntityNoName {
 
 	}
 
-	public final String DoFlowEventEntity(String doType, Node currNode, Entity en, String atPara) throws Exception {
-		String str = this.DoFlowEventEntity(doType, currNode, en, atPara, null);
-		return str;
-	}
+
 
 	private BP.WF.FlowEventBase _FDEventEntity = null;
 
@@ -5855,7 +5866,7 @@ public class Flow extends BP.En.EntityNoName {
 		nd.setFormType(NodeFormType.FoolForm); // 设置为傻瓜表单.
 
 		// 为创建节点设置默认值 @于庆海.
-		String file = SystemConfig.getPathOfDataUser() + "\\XML\\DefaultNewNodeAttr.xml";
+		String file = SystemConfig.getPathOfDataUser() + SystemConfig.getSeparator() + "XML"+SystemConfig.getSeparator()+"DefaultNewNodeAttr.xml";
 		if ((new File(file)).isFile() == true) {
 			DataSet ds = new DataSet();
 			ds.readXml(file);
@@ -6022,7 +6033,7 @@ public class Flow extends BP.En.EntityNoName {
 			nd.setFormType(NodeFormType.FoolForm); // 设置为傻瓜表单.
 
 			// 为创建节点设置默认值 @于庆海.
-			String fileNewNode = SystemConfig.getPathOfDataUser() + "\\XML\\DefaultNewNodeAttr.xml";
+			String fileNewNode = SystemConfig.getPathOfDataUser() + SystemConfig.getSeparator()+ "XML"+SystemConfig.getSeparator()+"DefaultNewNodeAttr.xml";
 			if ((new File(fileNewNode)).isFile() == true) {
 				DataSet ds_NodeDef = new DataSet();
 				ds_NodeDef.readXml(fileNewNode);
@@ -6049,7 +6060,7 @@ public class Flow extends BP.En.EntityNoName {
 			md.Save();
 
 			// 装载模版.
-			String file = SystemConfig.getPathOfDataUser() + "XML\\TempleteSheetOfStartNode.xml";
+			String file = SystemConfig.getPathOfDataUser() + "XML"+SystemConfig.getSeparator()+"TempleteSheetOfStartNode.xml";
 			if ((new File(file)).isFile() == false) {
 				throw new RuntimeException("@开始节点表单模版丢失" + file);
 			}

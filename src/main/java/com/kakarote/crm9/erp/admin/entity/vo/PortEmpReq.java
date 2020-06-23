@@ -19,5 +19,7 @@ public class PortEmpReq {
 	private String valiCode; //手机验证码
 	private String fkFlow;
 	private Long workID;
+	private String t100Code; //客户编号
+	private Integer optType; //操作类型: 1.新增 2.修改
 
 }
