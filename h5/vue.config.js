@@ -5,7 +5,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 // var LodashModuleReplacementPlugin = require("lodash-webpack-plugin");
 const { BundleAnalyzerPlugin } = require("webpack-bundle-analyzer");
 const port = process.env.port || process.env.npm_config_port || 8081;
-const cdnDomian = "/"; // cdn域名，如果有cdn修改成对应的cdn
+const cdnDomian = "http://app.aptenon.com/crm/dist/"; // cdn域名，如果有cdn修改成对应的cdn
 const name = "亚太天能"; // page title
 const IS_PRODUCTION = process.env.NODE_ENV === "production";
 const cdn = {
@@ -33,6 +33,7 @@ function resolve(dir) {
 
 module.exports = {
     publicPath: IS_PRODUCTION ? cdnDomian : "./",
+    indexPath: "activity.html",
     outputDir: "dist",
     assetsDir: ".",
     lintOnSave: false,
@@ -49,12 +50,12 @@ module.exports = {
             // change xxx-api/login => mock/login
             // detail: https://cli.vuejs.org/config/#devserver-proxy
 
-            "/tmr/WF": {
-                target: "http://192.168.110.43:8220",
-                // target: "http://app.aptenon.com",
-                // pathRewrite: {
-                //   "/tmr/WF": "/crm/WF"
-                // },
+            "/crm": {
+                // target: "http://192.168.110.43:8220",
+                target: "http://app.aptenon.com",
+                pathRewrite: {
+                    "/crm": "/crm"
+                },
                 ws: true,
                 changeOrigin: true,
                 cookieDomainRewrite: { "*": "localhost" },
@@ -119,16 +120,16 @@ module.exports = {
             );
 
         config.when(process.env.NODE_ENV !== "development", config => {
-            config
-                .plugin("ScriptExtHtmlWebpackPlugin")
-                .after("html")
-                .use("script-ext-html-webpack-plugin", [
-                    {
-                        // `runtime` must same as runtimeChunk name. default is `runtime`
-                        inline: /runtime\..*\.js$/
-                    }
-                ])
-                .end();
+            // config
+            //     .plugin("ScriptExtHtmlWebpackPlugin")
+            //     .after("html")
+            //     .use("script-ext-html-webpack-plugin", [
+            //         {
+            //             // `runtime` must same as runtimeChunk name. default is `runtime`
+            //             inline: /runtime\..*\.js$/
+            //         }
+            //     ])
+            //     .end();
             config.optimization.splitChunks({
                 chunks: "all",
                 cacheGroups: {
@@ -172,30 +173,6 @@ module.exports = {
                         deleteOriginalAssets: false // 是否删除源文件
                     }
                 ]);
-            config.optimization.minimizer([
-                // new UglifyjsWebpackPlugin({
-                //   // 生产环境推荐关闭 sourcemap 防止源码泄漏
-                //   // 服务端通过前端发送的行列，根据 sourcemap 转为源文件位置
-                //   // sourceMap: true,
-                //   uglifyOptions: {
-                //     warnings: false,
-                //     compress: {
-                //       drop_console: true,
-                //       drop_debugger: true
-                //     }
-                //   }
-                // })
-                new TerserPlugin({
-                    terserOptions: {
-                        ecma: 5,
-                        compress: {
-                            // compress options
-                            drop_console: false,
-                            drop_debugger: false
-                        }
-                    }
-                })
-            ]);
         }
     },
     css: {

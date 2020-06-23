@@ -12,7 +12,7 @@
         <span class="seckillPrice">{{msg.seckillPrice}}</span>
       </template>
       <template slot="footer">
-        <van-button size="small" round type="danger">立即秒杀</van-button>
+        <van-button size="small" round type="danger" @click="btnClick">立即秒杀</van-button>
       </template>
     </card>
   </div>
@@ -31,6 +31,11 @@ export default {
       default: () => {
         return {};
       }
+    }
+  },
+  methods: {
+    btnClick() {
+      this.$emit('seck-btn-click',this.msg)
     }
   }
 };
