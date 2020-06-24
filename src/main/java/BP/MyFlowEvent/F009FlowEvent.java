@@ -8,7 +8,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Aop;
 import com.jfinal.plugin.activerecord.Db;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
-import com.kakarote.crm9.erp.yzj.service.YeyxService;
+import com.kakarote.crm9.erp.yeyx.service.YeyxService;
 
 import java.text.DecimalFormat;
 import java.util.Date;
