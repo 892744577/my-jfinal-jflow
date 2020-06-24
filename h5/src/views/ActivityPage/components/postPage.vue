@@ -1,7 +1,13 @@
 <template>
   <div class="_postPage">
-    <img class="bgImg" ref="bgImg" :src="bgImg" />
-    <div ref="code" class="codeContainer"></div>
+    <div style="display:none">
+      <img class="bgImg" ref="bgImg" :src="bgImg" />
+    </div>
+    <div style="display:none">
+      <div ref="code" class="codeContainer"></div>
+    </div>
+    <canvas ref="canvas" class="canvas" width="1080" height="1920"></canvas>
+    <img class="bgImg" :src="postImg" v-show="postImg" />
   </div>
 </template>
 
@@ -12,7 +18,10 @@ import qs from "qs";
 export default {
   data() {
     return {
-      bgImg
+      bgImg,
+      codeReady: false,
+      bgReady: false,
+      postImg: null
     };
   },
   computed: {
@@ -24,12 +33,40 @@ export default {
     },
     activityMsg() {
       return this.$store.state.activityMsg;
+    },
+    device() {
+      return this.$store.state.device;
+    },
+    isReady() {
+      return this.codeReady && this.bgReady;
+    }
+  },
+  watch: {
+    isReady: {
+      immediate: true,
+      handler(val) {
+        if (val) {
+          let deviceWidth = this.$store.state.device.clientWidth;
+          let deviceHeight = this.$store.state.device.clientHeight;
+          let codeHeight = deviceWidth / (1080 / 233);
+          let codeWidth = deviceWidth / (1080 / 233);
+          let canvas = this.$refs.canvas;
+          let ctx = canvas.getContext("2d");
+          let bgImgDom = this.$refs.bgImg;
+          let codeDom = this.$refs.code.getElementsByTagName("img")[0];
+          ctx.drawImage(bgImgDom, 0, 0, 1080, 1920, 0, 0, 1080, 1920);
+          ctx.drawImage(codeDom, 0, 0, 233, 233, 270, 894, 233, 233);
+          this.postImg = canvas.toDataURL("image/png");
+        }
+      }
     }
   },
   mounted() {
-    let height = this.$store.state.device.clientWidth / (1080 / 233);
-    let width = this.$store.state.device.clientWidth / (1080 / 233);
-    console.log(height, width);
+    let deviceWidth = this.$store.state.device.clientWidth;
+    let deviceHeight = this.$store.state.device.clientHeight;
+    let codeHeight = deviceWidth / (1080 / 233);
+    let codeWidth = deviceWidth / (1080 / 233);
+    console.log(codeHeight, codeWidth);
     let obj = {
       aid: 1
     };
@@ -55,8 +92,22 @@ export default {
     console.log(link);
     var qrcode = new QRCode(this.$refs.code, {
       text: link,
-      width,
-      height
+      width: 233,
+      height: 233
+    });
+
+    let bgImgDom = this.$refs.bgImg;
+    this.$nextTick(() => {
+      let codeDom = this.$refs.code.getElementsByTagName("img")[0];
+      console.log(codeDom);
+      codeDom.onload = () => {
+        this.codeReady = true;
+      };
+      bgImgDom.onload = () => {
+        bgImgDom.width = 1080;
+        bgImgDom.height = 1920;
+        this.bgReady = true;
+      };
     });
   }
 };
@@ -74,6 +125,10 @@ export default {
     position: absolute;
     left: 270px;
     top: 894px;
+  }
+  .canvas {
+    width: 100vw;
+    display: none;
   }
 }
 </style>
