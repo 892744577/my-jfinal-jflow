@@ -52,7 +52,7 @@ var QRCode;
         return (
             /android/i.test(b) &&
                 ((a = !0),
-                (aMat = b.toString().match(/android ([0-9]\.[0-9])/i)),
+                (aMat = b.toString().match(/android (([0-9]).?[0-9]?)/i)),
                 aMat && aMat[1] && (a = parseFloat(aMat[1]))),
             a
         );
