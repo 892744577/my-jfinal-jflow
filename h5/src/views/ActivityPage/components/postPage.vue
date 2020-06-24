@@ -34,7 +34,7 @@ export default {
       aid: 1
     };
     let link = "";
-    if (this.shareParams.pId) obj.pid = this.shareParams.pId;
+    // if (this.shareParams.pId) obj.pid = this.shareParams.pId;
     if (this.shareParams.shareId) obj.shareId = this.shareParams.shareId;
     if (this.supInfoMy.id) {
       //当前人有发起过助力
@@ -44,7 +44,7 @@ export default {
       let par1 = window.location.href.split("#")[0];
       let par2 = par1.split("?")[1];
       let param = qs.parse(par2);
-      if (param.pid) obj.pid = param.pid;
+      // if (param.pid) obj.pid = param.pid;
       if (param.shareId) obj.shareId = param.shareId;
       link = createShareUrl(obj, this.$route.path, shareRouter.supRouter);
     } else {

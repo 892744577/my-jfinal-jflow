@@ -11,8 +11,13 @@
 
 <script>
 import wx from "weixin-js-sdk";
-import { basePrefix, getCookie, getStorageObj } from "./js/utils";
-import { mapMutations, mapState } from "vuex";
+import {
+  basePrefix,
+  getCookie,
+  getStorageObj,
+  formatAvatarList
+} from "./js/utils";
+import { mapMutations, mapState, mapActions } from "vuex";
 import { TenonWebsocket } from "./js/websocket";
 import qs from "qs";
 import { post } from "./js/utils";
@@ -37,25 +42,27 @@ export default {
       });
 
       //1、判断是否没有授权，没授权则重定向授权
-      this.redirectOrNot(jsApiTicket);
+      let redirect = this.redirectOrNot(jsApiTicket);
       //2、若是通过用户，则获取用户信息
-      const resQuery = qs.parse(
-        window.location.href.split("?")[1].split("#")[0]
-      );
-      let user = await post("/mp/oauth2getAccessToken", {
-        code: resQuery.code
-      });
-      console.log("user", user);
-      if (user) {
-        this.loadUser(user);
-      } else {
-        // this.setUserId(this.$store.state.userInfo.openId);
-        this.redirectAuth(jsApiTicket);
+      if (redirect) {
+        const resQuery = qs.parse(
+          window.location.href.split("?")[1].split("#")[0]
+        );
+        let user = await post("/mp/oauth2getAccessToken", {
+          code: resQuery.code
+        });
+        console.log("user", user);
+        if (user) {
+          this.loadUser(user);
+        } else {
+          // this.setUserId(this.$store.state.userInfo.openId);
+          this.redirectAuth(jsApiTicket);
+        }
+        //3、url添加调试代码
+        this.debug();
+        //4、添加业务
+        await this.doBusiness(resQuery, jsApiTicket);
       }
-      //3、url添加调试代码
-      this.debug();
-      //4、添加业务
-      await this.doBusiness(resQuery, jsApiTicket);
     }
   },
   computed: {
@@ -108,14 +115,21 @@ export default {
     );
   },
   methods: {
-    ...mapMutations([
-      "setJsapiTicket",
-      "setUserId",
-      "setSubscribe",
-      "setShareParams",
-      "setActivityMsg",
-      "setUserInfo"
-    ]),
+    ...mapMutations({
+      setJsapiTicket: "setJsapiTicket",
+      setUserId: "setUserId",
+      setSubscribe: "setSubscribe",
+      setShareParams: "setShareParams",
+      setActivityMsg: "setActivityMsg",
+      setUserInfo: "setUserInfo",
+      setSupInfoMy: "activity/setSupInfoMy",
+      setAvListMy: "activity/setAvListMy",
+      pageReady: "activity/pageReady"
+    }),
+    ...mapActions({
+      getSupInfo: "activity/getSupInfo",
+      getUserSupId: "activity/getUserSupId"
+    }),
     redirectOrNot(jsApiTicket) {
       const baseUrl = window.location.href;
       const resQuery = qs.parse(
@@ -131,7 +145,9 @@ export default {
         const redirectUrl = encodeURIComponent(baseUrl);
         const dst = `https://open.weixin.qq.com/connect/oauth2/authorize?appid=${jsApiTicket.appId}&redirect_uri=${redirectUrl}&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect`;
         window.location.href = dst;
+        return false;
       }
+      return true;
     },
     redirectAuth(jsApiTicket) {
       const baseUrl = window.location.href;
@@ -164,29 +180,42 @@ export default {
       let shareNew = {};
       let params = {};
       let self = this;
-      if (typeof resQuery.pid != "undefined" && resQuery.pid != null) {
-        let hb = await post("/port/activity/getActByPbId", {
-          pbId: resQuery.pid
+      let mySupAvatarRes = null;
+      let isAssist = await this.getUserSupId({
+        wxOpenId: this.userId
+      });
+      let curAsId = 0; //当前登录人助力id
+      if (isAssist.code == "000000") {
+        this.setSupInfoMy(isAssist.data);
+        curAsId = isAssist.data.id;
+        mySupAvatarRes = await this.getSupInfo({
+          assistId: isAssist.data.id
         });
-        if (hb) {
-          this.setActivityMsg(hb);
-          if (hb.pbSourceOpenid != this.userId) {
-            //非海报所有者打开了活动连接,通过海报生成本次分享
-            shareNew = await post("/port/activity/activityShare", {
-              shareOpenId: hb.pbSourceOpenid,
-              toShareOpenId: this.userId,
-              pbId: resQuery.pid,
-              assistId: ""
-            });
-            Object.assign(params, { shareId: shareNew.id });
-          } else {
-            Object.assign(params, { pId: resQuery.pid });
-          }
+        if (mySupAvatarRes.code == "000000") {
+          let list = formatAvatarList(mySupAvatarRes.data);
+          this.setAvListMy(list);
         }
-      } else if (
-        typeof resQuery.shareId != "undefined" &&
-        resQuery.shareId != null
-      ) {
+      }
+      // if (typeof resQuery.pid != "undefined" && resQuery.pid != null) {
+      //   let hb = await post("/port/activity/getActByPbId", {
+      //     pbId: resQuery.pid
+      //   });
+      //   if (hb) {
+      //     this.setActivityMsg(hb);
+      //     if (hb.pbSourceOpenid != this.userId) {
+      //       //非海报所有者打开了活动连接,通过海报生成本次分享
+      //       shareNew = await post("/port/activity/activityShare", {
+      //         shareOpenId: hb.pbSourceOpenid,
+      //         toShareOpenId: this.userId,
+      //         pbId: resQuery.pid
+      //       });
+      //       Object.assign(params, { shareId: shareNew.id });
+      //     } else {
+      //       Object.assign(params, { pId: resQuery.pid });
+      //     }
+      //   }
+      // } else
+      if (typeof resQuery.shareId != "undefined" && resQuery.shareId != null) {
         let share = await post("/port/activity/getActByShareId", {
           shareId: resQuery.shareId
         });
@@ -198,7 +227,7 @@ export default {
               shareOpenId: share.srToShareOpenid,
               toShareOpenId: this.userId,
               pbId: share.pbId,
-              assistId: share.srAsId || ""
+              assistId: curAsId ? curAsId : share.srAsId ? share.srAsId : ""
             });
             Object.assign(params, { shareId: shareNew.id });
           } else {
@@ -211,14 +240,28 @@ export default {
           wxOpenId: this.userId
         });
         console.log("postMsg", postMsg);
-        if (postMsg.id) {
+        if (postMsg && postMsg.id) {
           params.pId = postMsg.id;
+          shareNew = await post("/port/activity/activityShare", {
+            shareOpenId: this.userId,
+            toShareOpenId: this.userId,
+            pbId: postMsg.id,
+            assistId: curAsId || ""
+          });
+          Object.assign(params, { shareId: shareNew.id });
         } else {
-          console.log("获取海报id失败");
-          Toast("获取页面信息失败，请联系客服人员");
+          shareNew = await post("/port/activity/activityShare", {
+            shareOpenId: this.userId,
+            toShareOpenId: this.userId,
+            pbId: 1,
+            assistId: curAsId || ""
+          });
+          Object.assign(params, { shareId: shareNew.id });
+          // Toast("获取页面信息失败，请联系客服人员");
         }
         this.setActivityMsg({ id: 0 });
       }
+      this.pageReady();
 
       //分享
       wx.config({

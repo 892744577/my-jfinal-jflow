@@ -70,7 +70,7 @@ export default {
       handler(val, oldVal) {
         console.log("activityMsgChange", val, oldVal);
         if (val) {
-          this.isHasCurSup();
+          // this.isHasCurSup();
         }
       }
     },
@@ -85,7 +85,7 @@ export default {
             };
             let link = "";
             let sConfig = shareConfig2;
-            if (this.shareParams.pId) obj.pid = this.shareParams.pId;
+            // if (this.shareParams.pId) obj.pid = this.shareParams.pId;
             if (this.shareParams.shareId)
               obj.shareId = this.shareParams.shareId;
             if (this.$store.state.activity.supInfoMy.id) {
@@ -101,7 +101,7 @@ export default {
               let par1 = window.location.href.split("#")[0];
               let par2 = par1.split("?")[1];
               let param = qs.parse(par2);
-              if (param.pid) obj.pid = param.pid;
+              // if (param.pid) obj.pid = param.pid;
               if (param.shareId) obj.shareId = param.shareId;
               sConfig = shareConfig;
               link = createShareUrl(

@@ -91,25 +91,23 @@ export default {
   },
   methods: {
     seckClick(item) {
-      if (this.isReady) {
-        if (this.$store.state.activity.supInfoMy.asProductid) {
-          //当前人有发起过助力
-          this.$router.push({
-            name: "mySup",
-            query: {
-              ...this.$route.query,
-              gid: this.$store.state.activity.supInfoMy.asProductid
-            }
-          });
-        } else {
-          this.$router.push({
-            name: "startSup",
-            query: {
-              ...this.$route.query,
-              gid: item
-            }
-          });
-        }
+      if (this.$store.state.activity.supInfoMy.asProductid) {
+        //当前人有发起过助力
+        this.$router.push({
+          name: "mySup",
+          query: {
+            ...this.$route.query,
+            gid: this.$store.state.activity.supInfoMy.asProductid
+          }
+        });
+      } else {
+        this.$router.push({
+          name: "startSup",
+          query: {
+            ...this.$route.query,
+            gid: item
+          }
+        });
       }
     }
   }

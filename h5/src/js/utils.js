@@ -43,7 +43,8 @@ export async function post(path, urlParams = {}) {
         //     message: ret.msg,
         //     duration: 1.5 * 1000
         // });
-        throw Error("请求失败：" + ret.desc);
+        // throw Error("请求失败：" + ret.desc);
+        return null;
     }
     return ret.data;
 }

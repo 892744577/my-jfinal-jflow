@@ -29,8 +29,8 @@ router.beforeEach((to, form, next) => {
     next();
 });
 
-// import eruda from "eruda";
-// eruda.init();
+import eruda from "eruda";
+eruda.init();
 
 /* eslint-disable no-new */
 new Vue({

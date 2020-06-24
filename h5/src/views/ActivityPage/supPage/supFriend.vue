@@ -41,6 +41,9 @@ export default {
       }
     }
   },
+  mounted() {
+    Toast.loading({ forbidClick: true });
+  },
   methods: {
     ...mapActions({
       getUserSupId: "activity/getUserSupId",
@@ -53,23 +56,31 @@ export default {
       })
         .then(res => {
           if (res && res.code == "000000") {
-            if (res.portActivityAssist.asProductid) {
-              let p = res.portActivityAssist.asProductid
-              switch (p) {
-                case "1": {
-                  this.bgImg = bgImg1;
-                  break;
+            if (this.$store.state.userId == res.portActivityAssist.asOpenid) {
+              //当前人打开自己的助力
+              Toast.clear();
+              this.$router.replace({
+                name: "mySup"
+              });
+            } else {
+              if (res.portActivityAssist.asProductid) {
+                let p = res.portActivityAssist.asProductid;
+                switch (p) {
+                  case "1": {
+                    this.bgImg = bgImg1;
+                    break;
+                  }
+                  case "2": {
+                    this.bgImg = bgImg2;
+                    break;
+                  }
+                  case "3": {
+                    this.bgImg = bgImg3;
+                    break;
+                  }
                 }
-                case "2": {
-                  this.bgImg = bgImg2;
-                  break;
-                }
-                case "3": {
-                  this.bgImg = bgImg3;
-                  break;
-                }
+                this.canClick = true;
               }
-              this.canClick = true;
             }
           } else {
             Toast("获取助力信息失败");

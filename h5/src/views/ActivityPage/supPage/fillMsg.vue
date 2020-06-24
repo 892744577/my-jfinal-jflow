@@ -170,7 +170,7 @@ export default {
       let obj = {
         aid: 1
       };
-      if (this.shareParams.pId) obj.pid = this.shareParams.pId;
+      // if (this.shareParams.pId) obj.pid = this.shareParams.pId;
       if (this.shareParams.shareId) obj.shareId = this.shareParams.shareId;
 
       let link = createShareUrl(obj, this.$route.path, shareRouter.supRouter);

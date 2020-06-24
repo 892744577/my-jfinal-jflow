@@ -15,13 +15,13 @@ service.interceptors.request.use(
     // do something before request is sent
 
     console.log(config.data);
-    Toast.loading({forbidClick: true,})
+    // Toast.loading({forbidClick: true,})
     return config;
   },
   error => {
     // do something with request error
     console.log(error, "err"); // for debug
-    Toast.clear()
+    // Toast.clear()
     return Promise.reject(error);
   }
 );
@@ -40,7 +40,7 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data;
-    Toast.clear()
+    // Toast.clear()
     // if the custom code is not 20000, it is judged as an error.
     if (response.status != 200) {
       return Promise.reject(
