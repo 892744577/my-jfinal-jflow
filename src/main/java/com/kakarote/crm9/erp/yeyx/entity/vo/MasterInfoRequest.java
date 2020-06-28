@@ -1,4 +1,4 @@
-package com.kakarote.crm9.erp.yeyx.po;
+package com.kakarote.crm9.erp.yeyx.entity.vo;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
