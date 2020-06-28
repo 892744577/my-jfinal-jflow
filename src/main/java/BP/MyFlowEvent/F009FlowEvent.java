@@ -96,7 +96,7 @@ public class F009FlowEvent extends FlowEventBase {
                     if(!StringUtils.isEmpty(this.getSysPara().get("remark")))
                         currentPrama.put("remark", this.getSysPara().get("remark").toString()); //服务单备注
                     currentPrama.put("orderDiscount", currentJson);
-                    currentPrama.put("thirdOrderId", serviceNo);
+                    currentPrama.put("thirdOrderId", this.getSysPara().get("FK_Flow") + "-" + this.getSysPara().get("OID")+"-" + serviceNo);
 
                     YeyxService yeyxService = Aop.get(YeyxService.class);
 
