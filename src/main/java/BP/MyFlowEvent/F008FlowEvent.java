@@ -3,7 +3,7 @@ package BP.MyFlowEvent;
 import BP.WF.FlowEventBase;
 import com.jfinal.aop.Aop;
 import com.kakarote.crm9.erp.admin.entity.Regist;
-import com.kakarote.crm9.erp.admin.service.SysRegistService;
+import com.kakarote.crm9.erp.admin.service.PortEmpService;
 
 public class F008FlowEvent extends FlowEventBase {
     @Override
@@ -21,7 +21,7 @@ public class F008FlowEvent extends FlowEventBase {
             regist.setPhone((String) this.getSysPara().get("ShouJiHaoMa"));
             regist.setAppOpenId((String) this.getSysPara().get("appOpenId"));
             regist.setName((String) this.getSysPara().get("XingMing"));
-            Aop.get(SysRegistService.class).savePortEmp(regist);
+            Aop.get(PortEmpService.class).savePortEmp(regist);
 
         }else if ("2".equals(type)) {
 
@@ -30,7 +30,7 @@ public class F008FlowEvent extends FlowEventBase {
             regist.setAppOpenId((String) this.getSysPara().get("appOpenId"));
             regist.setName((String) this.getSysPara().get("XingMing"));
             regist.setParentNo((String) this.getSysPara().get("ParentNo"));
-            Aop.get(SysRegistService.class).savePortEmpStaff(regist);
+            Aop.get(PortEmpService.class).savePortEmpStaff(regist);
 
         }
 
