@@ -2,7 +2,11 @@
   <div class="_startSup">
     <img class="bgImg" :src="bgImg" alt />
     <div class="startBtn" @click="startClick"></div>
+    <div class="shopImg" @click="shopImgClick"></div>
     <div class="count">已有{{supCount.successCount}}人助力成功</div>
+    <van-popup v-model="popupVisible">
+      商品简介
+    </van-popup>
   </div>
 </template>
 
@@ -11,11 +15,16 @@ import { mapActions, mapMutations } from "vuex";
 import bgImg1 from "../../../assets/发起助力（成人）.jpg";
 import bgImg2 from "../../../assets/发起助力（儿童）.jpg";
 import bgImg3 from "../../../assets/发起助力（毛毯）.jpg";
+import { Popup } from "vant";
 export default {
+  components: {
+    [Popup.name]: Popup
+  },
   data() {
     return {
       bgImg: bgImg1,
-      gid: 1
+      gid: 1,
+      popupVisible: false
     };
   },
   computed: {
@@ -51,6 +60,9 @@ export default {
           ...this.$route.query
         }
       });
+    },
+    shopImgClick() {
+      this.popupVisible = true
     }
   }
 };
@@ -74,6 +86,13 @@ export default {
     top: 1360px;
     text-align: center;
     width: 100vw;
+  }
+  .shopImg {
+    position: absolute;
+    width: 705px;
+    height: 417px;
+    top: 820px;
+    left: 205px;
   }
 }
 </style>

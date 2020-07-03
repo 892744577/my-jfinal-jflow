@@ -82,9 +82,6 @@ export default {
       swipeImg: [
         {
           img: swipeImg1
-        },
-        {
-          img: swipeImg2
         }
       ]
     };
@@ -148,11 +145,11 @@ export default {
 }
 .activityIndex {
   .van-swipe-item {
-    height: 38.88888888888vw;
+    height: 100vw;
   }
   .swipeImg {
     width: 100vw;
-    height: 38.88888888888vw;
+    height: 100vw;
   }
   .swipeContainer {
     text-align: center;
