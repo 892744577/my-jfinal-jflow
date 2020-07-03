@@ -92,7 +92,7 @@ export default {
     width: 100%;
     height: 124px;
     .tabbarContainer {
-      padding: 0.08rem 0.08rem;
+      height: 100%;
     }
   }
 }

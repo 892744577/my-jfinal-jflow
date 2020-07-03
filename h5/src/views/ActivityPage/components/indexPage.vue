@@ -57,6 +57,7 @@ import LayoutContent from "./layoutContent";
 import { Swipe, SwipeItem, Tab, Tabs, Button } from "vant";
 import swipeImg1 from "assets/轮播图1.jpg";
 import swipeImg2 from "assets/轮播图2.jpg";
+import swipeImg3 from 'assets/mmexport1593745482035.jpeg'
 // import indexImg from "assets/活动主页.jpg";
 export default {
   components: {
@@ -81,10 +82,7 @@ export default {
     return {
       swipeImg: [
         {
-          img: swipeImg1
-        },
-        {
-          img: swipeImg2
+          img: swipeImg3
         }
       ]
     };
@@ -148,11 +146,11 @@ export default {
 }
 .activityIndex {
   .van-swipe-item {
-    height: 38.88888888888vw;
+    height: 100vw;
   }
   .swipeImg {
     width: 100vw;
-    height: 38.88888888888vw;
+    height: 100vw;
   }
   .swipeContainer {
     text-align: center;

@@ -37,6 +37,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-around;
+  height: 100%;
   .tabbarItem {
     background-color: #5b9bd5;
     padding: 0.04rem 0.22rem;
