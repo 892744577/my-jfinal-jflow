@@ -8,7 +8,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Aop;
 import com.jfinal.plugin.activerecord.Db;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
-import com.kakarote.crm9.erp.yzj.service.YeyxService;
+import com.kakarote.crm9.erp.yeyx.service.YeyxService;
 
 import java.text.DecimalFormat;
 import java.util.Date;
@@ -96,7 +96,7 @@ public class F009FlowEvent extends FlowEventBase {
                     if(!StringUtils.isEmpty(this.getSysPara().get("remark")))
                         currentPrama.put("remark", this.getSysPara().get("remark").toString()); //服务单备注
                     currentPrama.put("orderDiscount", currentJson);
-                    currentPrama.put("thirdOrderId", serviceNo);
+                    currentPrama.put("thirdOrderId", this.getSysPara().get("FK_Flow") + "-" + this.getSysPara().get("OID")+"-" + serviceNo);
 
                     YeyxService yeyxService = Aop.get(YeyxService.class);
 

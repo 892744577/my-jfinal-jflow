@@ -3892,7 +3892,7 @@ public class Flow extends BP.En.EntityNoName {
 	private BP.WF.FlowEventBase _FDEventEntity = null;
 
 	/**
-	 * 节点实体类，没有就返回为空.
+	 * 节点实体类，没有就返回为空.存在缺陷，事件实体可能被内存回收，该功能可能存在隐患
 	 * 
 	 * @throws Exception
 	 */

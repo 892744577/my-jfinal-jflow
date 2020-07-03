@@ -38,6 +38,7 @@ import com.jfinal.render.RenderManager;
 import com.jfinal.template.Engine;
 import com.kakarote.crm9.erp.wx.common.WxRouter;
 import com.kakarote.crm9.erp.wx.config.WxMaConfiguration;
+import com.kakarote.crm9.erp.yeyx.common.YeyxRouter;
 import com.kakarote.crm9.erp.yzj.common.YzjRouter;
 
 import java.io.File;
@@ -88,6 +89,7 @@ public class JfinalConfig extends JFinalConfig {
         me.add(new WxRouter()); //微信集成
         me.add(new YzjRouter()); //云之家集成
         me.add(new SmsRouter());//短信集成
+        me.add(new YeyxRouter()); //言而有信集成
     }
 
     @Override

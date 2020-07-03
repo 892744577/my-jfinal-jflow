@@ -6720,6 +6720,7 @@ public class Dev2Interface
 			gwl.setIsPassInt(0);
 			gwl.setIsRead(false);
 			gwl.setWhoExeIt(0);
+			gwl.setFK_NodeText(nd.getName());
 			try
 			{
 				gwl.Insert();
