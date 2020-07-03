@@ -132,6 +132,11 @@ public class DateUtil {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         return getDateToStr(date, sdf);
     }
+    // 将date类型转换为yyyyMM
+    public static String changeDateTOStr6(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMM");
+        return getDateToStr(date, sdf);
+    }
     
     // 得到前一天的日期
     public static String getFormerDate() {

@@ -23,7 +23,7 @@ public class F009FlowEvent extends FlowEventBase {
     }
 
     @Override
-    public String SendWhen(){
+    public String SendSuccess(){
 
         try {
             //1判断是否开始节点
@@ -53,8 +53,6 @@ public class F009FlowEvent extends FlowEventBase {
                 //1.2若系统是YX
                 String serviceSystem = this.getSysPara().get("serviceSystem") == null ? "": this.getSysPara().get("serviceSystem").toString(); //服务单第三方系统
                 if("YX".equals(serviceSystem)){
-                    String url = "http://test-api-oms.xiujiadian.com/v1/createOrder";
-
                     Map currentPrama = new HashMap();
                     Map currentJson= new HashMap();
 
@@ -66,7 +64,7 @@ public class F009FlowEvent extends FlowEventBase {
                     if(!StringUtils.isEmpty(this.getSysPara().get("factory")))
                         currentPrama.put("factory", Integer.parseInt(this.getSysPara().get("factory").toString())); //厂商单标志：厂商单传固定值 2
                     if(!StringUtils.isEmpty(this.getSysPara().get("facInWarranty")))
-                        currentPrama.put("facInWarranty", Integer.parseInt(this.getSysPara().get("facInWarranty").toString())); //标识产品是否在保
+                        currentPrama.put("facInWarranty", Integer.parseInt(this.getSysPara().get("facInWarranty").toString())+1); //标识产品是否在保
                     if(!StringUtils.isEmpty(this.getSysPara().get("smcCityId")))
                         currentPrama.put("cityId", Integer.parseInt(this.getSysPara().get("smcCityId").toString())); //城市id
                     if(!StringUtils.isEmpty(this.getSysPara().get("telephone")))
@@ -112,7 +110,7 @@ public class F009FlowEvent extends FlowEventBase {
                     param.put("timestamp",String.valueOf(timestamp));
                     param.put("jsonData",jsonStr);
                     Log.DebugWriteInfo("==============>调用新增订单接口发送参数:" + JSONObject.toJSONString(param));
-                    String result = yeyxService.gatewayRequest(url, param);
+                    String result = yeyxService.gatewayRequest(yeyxService.getPath() + "/createOrder", param);
                     JSONObject objectResult = JSONObject.parseObject(result);
 
                     if(objectResult.getInteger("status") == 200 && objectResult.getJSONObject("data") !=null){
@@ -125,16 +123,15 @@ public class F009FlowEvent extends FlowEventBase {
                         this.HisEn.Update();
                     }else {
                         Log.DebugWriteInfo("==============>调用新增订单接口失败:"+result);
-                        this.IsStopFlow = true;
+                        //this.IsStopFlow = true;
                         return result;
                     }
                 }
             }
         } catch (Exception e) {
-            this.IsStopFlow = true;
+            //this.IsStopFlow = true;
             e.printStackTrace();
         }
-
         return "F009FlowEvent工单申请流程";
     }
 

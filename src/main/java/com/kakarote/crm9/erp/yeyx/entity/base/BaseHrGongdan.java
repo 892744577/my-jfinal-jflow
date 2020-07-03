@@ -449,4 +449,36 @@ public abstract class BaseHrGongdan<M extends BaseHrGongdan<M>> extends Model<M>
 		return getStr("orderId");
 	}
 
+	public void setMasterName(String masterName) {
+		set("masterName", masterName);
+	}
+	
+	public String getMasterName() {
+		return getStr("masterName");
+	}
+
+	public void setMasterPhone(String masterPhone) {
+		set("masterPhone", masterPhone);
+	}
+	
+	public String getMasterPhone() {
+		return getStr("masterPhone");
+	}
+
+	public void setProductPictureUrls(String productPictureUrls) {
+		set("productPictureUrls", productPictureUrls);
+	}
+	
+	public String getProductPictureUrls() {
+		return getStr("productPictureUrls");
+	}
+
+	public void setServiceSp(String serviceSp) {
+		set("serviceSp", serviceSp);
+	}
+	
+	public String getServiceSp() {
+		return getStr("serviceSp");
+	}
+
 }

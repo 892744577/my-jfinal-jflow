@@ -20,12 +20,14 @@ import java.util.Map;
 public class YeyxService {
     private static final String APPLICATION_JSON = "application/json";
     private static final String APPLICATION_X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
-    private static final int timeoutMillis = 3000;
+    private static final int timeoutMillis = 30000;
 
     @Getter
     private String appId = SystemConfig.getCS_AppSettings().get("GD.appId").toString();
     @Getter
     private String secret = SystemConfig.getCS_AppSettings().get("GD.secret").toString();
+    @Getter
+    private String path = SystemConfig.getCS_AppSettings().get("GD.path").toString();
 
     public String getMd5(String jsonStr,long timestamp,String version) {
 
