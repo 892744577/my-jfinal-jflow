@@ -298,7 +298,7 @@ public class WF_WorkOpt_OneWork extends WebContralBase
 		String psql = "SELECT A.PowerFlag,A.EmpNo,A.EmpName FROM WF_PowerModel A WHERE PowerCtrlType =1"
 		 + " UNION "
 		 + "SELECT A.PowerFlag,B.No,B.Name FROM WF_PowerModel A, Port_Emp B, Port_Deptempstation C WHERE A.PowerCtrlType = 0 AND B.No = C.FK_Emp AND A.StaNo = C.FK_Station";
-		psql = "SELECT PowerFlag From(" + psql + ")D WHERE  D.EmpNo='" + WebUser.getNo() + "'";
+		psql = "SELECT GROUP_CONCAT(PowerFlag SEPARATOR ',') From(" + psql + ")D WHERE  D.EmpNo='" + WebUser.getNo() + "'";
 
 	   String powers = DBAccess.RunSQLReturnStringIsNull(psql,"");
 
