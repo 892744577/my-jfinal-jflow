@@ -435,6 +435,7 @@ public class PortActivityController extends Controller {
         portActivityAssist.setAsName(portActivityReq.getAsName());
         portActivityAssist.setAsAddress(portActivityReq.getAsAddress());
         portActivityAssist.setAsProductid(portActivityReq.getAsProductId());
+        portActivityAssist.setHelperInfo(portActivityReq.getHelperInfo());
         Boolean flag = portActivityAssist.save();
         renderJson(R.ok().put("msg","保存成功!").put("data",portActivityAssist).put("code","000000"));
 
