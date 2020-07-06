@@ -123,13 +123,11 @@ public class F009FlowEvent extends FlowEventBase {
                         this.HisEn.Update();
                     }else {
                         Log.DebugWriteInfo("==============>调用新增订单接口失败:"+result);
-                        //this.IsStopFlow = true;
                         return result;
                     }
                 }
             }
         } catch (Exception e) {
-            //this.IsStopFlow = true;
             e.printStackTrace();
         }
         return "F009FlowEvent工单申请流程";

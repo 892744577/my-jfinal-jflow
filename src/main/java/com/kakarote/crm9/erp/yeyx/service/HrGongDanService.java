@@ -9,6 +9,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdan;
+import com.kakarote.crm9.erp.yeyx.entity.vo.FactoryRemarkRequest;
 import com.kakarote.crm9.erp.yeyx.entity.vo.HrGongdanRequest;
 
 import java.util.Date;
@@ -69,6 +70,15 @@ public class HrGongDanService {
         hrGongdan.setOID(hrGongdanRequest.getOid());
         hrGongdan.setServiceSp(hrGongdanRequest.getServiceSp());
         return hrGongdan.update();
+    }
+
+    /**
+     * 根据orderId获取记录
+     * @param factoryRemarkRequest
+     * @return
+     */
+    public HrGongdan getHrGongdanByOrderId(FactoryRemarkRequest factoryRemarkRequest) {
+        return HrGongdan.dao.findFirst(Db.getSqlPara("admin.hrGongDan.getHrGongDanPageList",Kv.by("orderId",factoryRemarkRequest.getOrderId())));
     }
 }
 
