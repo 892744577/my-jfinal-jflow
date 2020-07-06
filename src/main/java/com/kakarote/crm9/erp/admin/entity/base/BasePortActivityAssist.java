@@ -65,4 +65,12 @@ public abstract class BasePortActivityAssist<M extends BasePortActivityAssist<M>
 		return getStr("as_productid");
 	}
 
+	public void setHelperInfo(java.lang.String helperInfo) {
+		set("helperInfo", helperInfo);
+	}
+
+	public java.lang.String getHelperInfo() {
+		return getStr("helperInfo");
+	}
+
 }
