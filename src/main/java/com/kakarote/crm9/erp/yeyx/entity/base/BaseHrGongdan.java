@@ -353,6 +353,14 @@ public abstract class BaseHrGongdan<M extends BaseHrGongdan<M>> extends Model<M>
 		return getStr("address");
 	}
 
+	public void setShippingOrderNo(String shippingOrderNo) {
+		set("shippingOrderNo", shippingOrderNo);
+	}
+	
+	public String getShippingOrderNo() {
+		return getStr("shippingOrderNo");
+	}
+
 	public void setDutyTime(java.util.Date dutyTime) {
 		set("dutyTime", dutyTime);
 	}
@@ -479,6 +487,14 @@ public abstract class BaseHrGongdan<M extends BaseHrGongdan<M>> extends Model<M>
 	
 	public String getServiceSp() {
 		return getStr("serviceSp");
+	}
+
+	public void setOtherRemark(String otherRemark) {
+		set("otherRemark", otherRemark);
+	}
+	
+	public String getOtherRemark() {
+		return getStr("otherRemark");
 	}
 
 }

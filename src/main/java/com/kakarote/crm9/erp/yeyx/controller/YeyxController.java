@@ -12,6 +12,7 @@ import com.jfinal.core.NotAction;
 import com.jfinal.core.paragetter.Para;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdan;
 import com.kakarote.crm9.erp.yeyx.entity.vo.*;
+import com.kakarote.crm9.erp.yeyx.service.HrGongDanService;
 import com.kakarote.crm9.erp.yeyx.service.YeyxService;
 import com.kakarote.crm9.utils.R;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,9 @@ import java.util.*;
  */
 @Slf4j
 public class YeyxController extends Controller {
+
+    @Inject
+    private HrGongDanService hrGongDanService;
 
     @Inject
     private YeyxService yeyxService;
@@ -263,8 +267,8 @@ public class YeyxController extends Controller {
      */
     @NotAction
     public void factory_remark(FactoryRemarkRequest factoryRemarkRequest){
-        HrGongdan hrGongdan = new HrGongdan();
-        hrGongdan.setRemark(factoryRemarkRequest.getRemark());
+        HrGongdan hrGongdan = hrGongDanService.getHrGongdanByOrderId(factoryRemarkRequest);
+        hrGongdan.setOtherRemark(factoryRemarkRequest.getRemark());
         hrGongdan.update();
     }
 
