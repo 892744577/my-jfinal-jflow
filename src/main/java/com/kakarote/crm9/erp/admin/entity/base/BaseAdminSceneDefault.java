@@ -27,13 +27,13 @@ public abstract class BaseAdminSceneDefault<M extends BaseAdminSceneDefault<M>> 
 		return getInt("type");
 	}
 
-	public BaseAdminSceneDefault setUserId(java.lang.Long userId) {
+	public BaseAdminSceneDefault setUserId(java.lang.String userId) {
 		set("user_id", userId);
 		return this;
 	}
 	
-	public java.lang.Long getUserId() {
-		return getLong("user_id");
+	public java.lang.String getUserId() {
+		return getStr("user_id");
 	}
 
 	public BaseAdminSceneDefault setSceneId(java.lang.Integer sceneId) {

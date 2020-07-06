@@ -23,7 +23,7 @@ public class CrmBackLogController extends Controller {
     /**
      *今日需联系客户
      */
-    public void todayCustomer(BasePageRequest basePageRequest){
+    public void todayCustomer(BasePageRequest basePageRequest) throws Exception {
         renderJson(crmBackLogService.todayCustomer(basePageRequest));
     }
 
@@ -37,7 +37,7 @@ public class CrmBackLogController extends Controller {
     /**
      *分配给我的线索
      */
-    public void followLeads(BasePageRequest basePageRequest){
+    public void followLeads(BasePageRequest basePageRequest) throws Exception {
         renderJson(crmBackLogService.followLeads(basePageRequest));
     }
 
@@ -51,35 +51,35 @@ public class CrmBackLogController extends Controller {
     /**
      *分配给我的客户
      */
-    public void followCustomer(BasePageRequest basePageRequest){
+    public void followCustomer(BasePageRequest basePageRequest) throws Exception {
         renderJson(crmBackLogService.followCustomer(basePageRequest));
     }
 
     /**
      *待审核合同
      */
-    public void checkContract(BasePageRequest basePageRequest){
+    public void checkContract(BasePageRequest basePageRequest) throws Exception {
         renderJson(crmBackLogService.checkContract(basePageRequest));
     }
 
     /**
      *待审核回款
      */
-    public void checkReceivables(BasePageRequest basePageRequest){
+    public void checkReceivables(BasePageRequest basePageRequest) throws Exception {
         renderJson(crmBackLogService.checkReceivables(basePageRequest));
     }
 
     /**
      *待回款提醒
      */
-    public void remindReceivables(BasePageRequest basePageRequest){
+    public void remindReceivables(BasePageRequest basePageRequest) throws Exception {
         renderJson(crmBackLogService.remindReceivables(basePageRequest));
     }
 
     /**
      *即将到期的合同
      */
-    public void endContract(BasePageRequest basePageRequest){
+    public void endContract(BasePageRequest basePageRequest) throws Exception {
         renderJson(crmBackLogService.endContract(basePageRequest));
     }
 
@@ -87,7 +87,7 @@ public class CrmBackLogController extends Controller {
      * @author wyq
      * 待进入客户池提醒
      */
-    public void putInPoolRemind(BasePageRequest basePageRequest){
+    public void putInPoolRemind(BasePageRequest basePageRequest) throws Exception {
         renderJson(crmBackLogService.putInPoolRemind(basePageRequest));
     }
 }

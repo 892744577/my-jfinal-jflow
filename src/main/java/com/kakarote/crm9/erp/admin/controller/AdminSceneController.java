@@ -34,7 +34,7 @@ public class AdminSceneController extends Controller {
     @NotNullValidate(value = "type",message = "type不能为空")
     @NotNullValidate(value = "name",message = "场景名称不能为空")
     @NotNullValidate(value = "data",message = "data不能为空")
-    public void addScene(@Para("") AdminScene adminScene){
+    public void addScene(@Para("") AdminScene adminScene) throws Exception {
         renderJson(adminSceneService.addScene(adminScene));
     }
 
@@ -43,7 +43,7 @@ public class AdminSceneController extends Controller {
      * 更新场景
      */
     @NotNullValidate(value = "sceneId",message = "场景id不能为空")
-    public void updateScene(@Para("")AdminScene adminScene){
+    public void updateScene(@Para("")AdminScene adminScene) throws Exception {
         renderJson(adminSceneService.updateScene(adminScene));
     }
 
@@ -53,7 +53,7 @@ public class AdminSceneController extends Controller {
      * 设置默认场景
      */
     @NotNullValidate(value = "sceneId",message = "场景id不能为空")
-    public void setDefaultScene(@Para("sceneId")Integer sceneId){
+    public void setDefaultScene(@Para("sceneId")Integer sceneId) throws Exception {
         renderJson(adminSceneService.setDefaultScene(sceneId));
     }
 
@@ -71,7 +71,7 @@ public class AdminSceneController extends Controller {
      * 查询场景
      */
     @NotNullValidate(value = "type",message = "type不能为空")
-    public void queryScene(@Para("type") Integer type){
+    public void queryScene(@Para("type") Integer type) throws Exception {
         renderJson(adminSceneService.queryScene(type));
     }
 
@@ -100,5 +100,17 @@ public class AdminSceneController extends Controller {
      */
     public void queryPageList(BasePageRequest basePageRequest){
         renderJson(adminSceneService.filterConditionAndGetPageList(basePageRequest));
+    }
+
+    /*
+     * @Description //查询工单场景
+     * @Author wangkaida
+     * @Date 15:22 2020/6/30
+     * @Param [type]
+     * @return void
+     **/
+    @NotNullValidate(value = "type",message = "type不能为空")
+    public void queryWorkOrderScene(@Para("type") Integer type) throws Exception {
+        renderJson(adminSceneService.queryWorkOrderScene(type));
     }
 }

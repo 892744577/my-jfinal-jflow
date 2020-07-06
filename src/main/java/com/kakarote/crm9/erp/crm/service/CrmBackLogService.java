@@ -1,5 +1,6 @@
 package com.kakarote.crm9.erp.crm.service;
 
+import BP.Web.WebUser;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.collection.CollectionUtil;
 import cn.hutool.core.util.ObjectUtil;
@@ -85,7 +86,7 @@ public class CrmBackLogService {
      * 已逾期是过了下次联系时间那天的且未跟进的客户
      * 已联系是下次联系时间是今天且已经跟进的客户
      */
-    public R todayCustomer(BasePageRequest basePageRequest){
+    public R todayCustomer(BasePageRequest basePageRequest) throws Exception {
         JSONObject jsonObject = basePageRequest.getJsonObject();
         Integer type = jsonObject.getInteger("type");
         Integer isSub = jsonObject.getInteger("isSub");
@@ -102,7 +103,9 @@ public class CrmBackLogService {
         if (isSub == 1){
             stringBuffer.append(" and a.owner_user_id = ").append(BaseUtil.getUserId());
         }else if (isSub == 2){
-            String ids = adminSceneService.getSubUserId(BaseUtil.getUserId(), BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
+            String userId = WebUser.getNo();
+            String ids = adminSceneService.getSubUserId(userId, BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
+//            String ids = adminSceneService.getSubUserId(BaseUtil.getUserId(), BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
             stringBuffer.append(" and a.owner_user_id in (").append(ids).append(")");
         }else {
             return R.error("isSub参数不正确");
@@ -132,7 +135,7 @@ public class CrmBackLogService {
     /**
      * 分配给我的线索
      */
-    public R followLeads(BasePageRequest basePageRequest){
+    public R followLeads(BasePageRequest basePageRequest) throws Exception {
         JSONObject jsonObject = basePageRequest.getJsonObject();
         Integer type = jsonObject.getInteger("type");
         Integer isSub = jsonObject.getInteger("isSub");
@@ -147,7 +150,9 @@ public class CrmBackLogService {
         if (isSub == 1){
             stringBuffer.append(" and a.owner_user_id = ").append(BaseUtil.getUserId());
         }else if (isSub == 2){
-            String ids = adminSceneService.getSubUserId(BaseUtil.getUserId(), BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
+            String userId = WebUser.getNo();
+            String ids = adminSceneService.getSubUserId(userId, BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
+//            String ids = adminSceneService.getSubUserId(BaseUtil.getUserId(), BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
             stringBuffer.append(" and a.owner_user_id in (").append(ids).append(")");
         }else {
             return R.error("isSub参数不正确");
@@ -180,7 +185,7 @@ public class CrmBackLogService {
     /**
      *分配给我的客户
      */
-    public R followCustomer(BasePageRequest basePageRequest){
+    public R followCustomer(BasePageRequest basePageRequest) throws Exception {
         JSONObject jsonObject = basePageRequest.getJsonObject();
         Integer type = jsonObject.getInteger("type");
         Integer isSub = jsonObject.getInteger("isSub");
@@ -195,7 +200,9 @@ public class CrmBackLogService {
         if (isSub == 1){
             stringBuffer.append(" and a.owner_user_id = ").append(BaseUtil.getUserId());
         }else if (isSub == 2){
-            String ids = adminSceneService.getSubUserId(BaseUtil.getUserId(), BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
+            String userId = WebUser.getNo();
+//            String ids = adminSceneService.getSubUserId(BaseUtil.getUserId(), BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
+            String ids = adminSceneService.getSubUserId(userId, BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
             stringBuffer.append(" and a.owner_user_id in (").append(ids).append(")");
         }else {
             return R.error("isSub参数不正确");
@@ -217,7 +224,7 @@ public class CrmBackLogService {
     /**
      *待审核合同
      */
-    public R checkContract(BasePageRequest basePageRequest){
+    public R checkContract(BasePageRequest basePageRequest) throws Exception {
         JSONObject jsonObject = basePageRequest.getJsonObject();
         Integer type = jsonObject.getInteger("type");
         Integer isSub = jsonObject.getInteger("isSub");
@@ -232,7 +239,9 @@ public class CrmBackLogService {
         if (isSub == 1){
             stringBuffer.append(" and c.examine_user = ").append(BaseUtil.getUserId());
         }else if (isSub == 2){
-            String ids = adminSceneService.getSubUserId(BaseUtil.getUserId(), BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
+            String userId = WebUser.getNo();
+//            String ids = adminSceneService.getSubUserId(BaseUtil.getUserId(), BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
+            String ids = adminSceneService.getSubUserId(userId, BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
             stringBuffer.append(" and c.examine_user in (").append(ids).append(")");
         }else {
             return R.error("isSub参数不正确");
@@ -254,7 +263,7 @@ public class CrmBackLogService {
     /**
      *待审核回款
      */
-    public R checkReceivables(BasePageRequest basePageRequest){
+    public R checkReceivables(BasePageRequest basePageRequest) throws Exception {
         JSONObject jsonObject = basePageRequest.getJsonObject();
         Integer type = jsonObject.getInteger("type");
         Integer isSub = jsonObject.getInteger("isSub");
@@ -269,7 +278,9 @@ public class CrmBackLogService {
         if (isSub == 1){
             stringBuffer.append(" and c.examine_user = ").append(BaseUtil.getUserId());
         }else if (isSub == 2){
-            String ids = adminSceneService.getSubUserId(BaseUtil.getUserId(), BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
+            String userId = WebUser.getNo();
+//            String ids = adminSceneService.getSubUserId(BaseUtil.getUserId(), BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
+            String ids = adminSceneService.getSubUserId(userId, BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
             stringBuffer.append(" and c.examine_user in (").append(ids).append(")");
         }else {
             return R.error("isSub参数不正确");
@@ -291,7 +302,7 @@ public class CrmBackLogService {
     /**
      *待回款提醒
      */
-    public R remindReceivables(BasePageRequest basePageRequest){
+    public R remindReceivables(BasePageRequest basePageRequest) throws Exception {
         JSONObject jsonObject = basePageRequest.getJsonObject();
         Integer type = jsonObject.getInteger("type");
         Integer isSub = jsonObject.getInteger("isSub");
@@ -308,7 +319,9 @@ public class CrmBackLogService {
         if (isSub == 1){
             stringBuffer.append(" and c.owner_user_id = ").append(BaseUtil.getUserId());
         }else if (isSub == 2){
-            String ids = adminSceneService.getSubUserId(BaseUtil.getUserId(), BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
+            String userId = WebUser.getNo();
+//            String ids = adminSceneService.getSubUserId(BaseUtil.getUserId(), BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
+            String ids = adminSceneService.getSubUserId(userId, BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
             stringBuffer.append(" and c.owner_user_id in (").append(ids).append(")");
         }else {
             return R.error("isSub参数不正确");
@@ -324,7 +337,7 @@ public class CrmBackLogService {
     /**
      *即将到期的合同
      */
-    public R endContract(BasePageRequest basePageRequest){
+    public R endContract(BasePageRequest basePageRequest) throws Exception {
         JSONObject jsonObject = basePageRequest.getJsonObject();
         Integer type = jsonObject.getInteger("type");
         Integer isSub = jsonObject.getInteger("isSub");
@@ -343,7 +356,9 @@ public class CrmBackLogService {
         if (isSub == 1){
             stringBuffer.append(" and owner_user_id = ").append(BaseUtil.getUserId());
         }else if (isSub == 2){
-            String ids = adminSceneService.getSubUserId(BaseUtil.getUserId(), BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
+            String userId = WebUser.getNo();
+//            String ids = adminSceneService.getSubUserId(BaseUtil.getUserId(), BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
+            String ids = adminSceneService.getSubUserId(userId, BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
             stringBuffer.append(" and owner_user_id in (").append(ids).append(")");
         }else {
             return R.error("isSub参数不正确");
@@ -366,7 +381,7 @@ public class CrmBackLogService {
      * @author wyq
      * 待进入客户池提醒
      */
-    public R putInPoolRemind(BasePageRequest basePageRequest){
+    public R putInPoolRemind(BasePageRequest basePageRequest) throws Exception {
         JSONObject jsonObject = basePageRequest.getJsonObject();
         Integer isSub = jsonObject.getInteger("isSub");
         Integer poolSetting = Db.queryInt("select status from aptenon_admin_config where name = 'customerPoolSetting' limit 1");
@@ -384,7 +399,9 @@ public class CrmBackLogService {
             if (isSub == 1){
                 stringBuffer.append(" and owner_user_id = ").append(BaseUtil.getUserId());
             }else if (isSub == 2){
-                String ids = adminSceneService.getSubUserId(BaseUtil.getUserId(), BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
+                String userId = WebUser.getNo();
+//                String ids = adminSceneService.getSubUserId(BaseUtil.getUserId(), BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
+                String ids = adminSceneService.getSubUserId(userId, BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1);
                 stringBuffer.append(" and owner_user_id in (").append(ids).append(")");
             }else {
                 return R.error("isSub参数不正确");

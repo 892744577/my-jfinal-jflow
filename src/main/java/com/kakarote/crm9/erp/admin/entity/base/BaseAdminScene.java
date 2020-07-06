@@ -36,13 +36,13 @@ public abstract class BaseAdminScene<M extends BaseAdminScene<M>> extends Model<
 		return getStr("name");
 	}
 
-	public BaseAdminScene setUserId(java.lang.Long userId) {
+	public BaseAdminScene setUserId(java.lang.String userId) {
 		set("user_id", userId);
 		return this;
 	}
 	
-	public java.lang.Long getUserId() {
-		return getLong("user_id");
+	public java.lang.String getUserId() {
+		return getStr("user_id");
 	}
 
 	public BaseAdminScene setSort(java.lang.Integer sort) {
