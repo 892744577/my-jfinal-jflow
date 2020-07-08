@@ -268,8 +268,10 @@ public class YeyxController extends Controller {
     @NotAction
     public void factory_remark(FactoryRemarkRequest factoryRemarkRequest){
         HrGongdan hrGongdan = hrGongDanService.getHrGongdanByOrderId(factoryRemarkRequest);
-        hrGongdan.setOtherRemark(factoryRemarkRequest.getRemark());
-        hrGongdan.update();
+        HrGongdan hrGongdanToUpdate = new HrGongdan();
+        hrGongdanToUpdate.setOID(hrGongdan.getOID());
+        hrGongdanToUpdate.setOtherRemark(factoryRemarkRequest.getRemark());
+        hrGongdanToUpdate.update();
     }
 
 }

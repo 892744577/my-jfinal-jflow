@@ -7,9 +7,11 @@ import cn.hutool.core.util.StrUtil;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.kakarote.crm9.erp.admin.entity.*;
+import com.kakarote.crm9.erp.admin.entity.vo.PortActivityAddressReq;
 import com.kakarote.crm9.erp.admin.entity.vo.PortActivityReq;
 import com.kakarote.crm9.erp.admin.entity.vo.PortEmpReq;
 import com.kakarote.crm9.erp.admin.service.PortActivityService;
@@ -435,7 +437,7 @@ public class PortActivityController extends Controller {
         portActivityAssist.setAsName(portActivityReq.getAsName());
         portActivityAssist.setAsAddress(portActivityReq.getAsAddress());
         portActivityAssist.setAsProductid(portActivityReq.getAsProductId());
-        portActivityAssist.setHelperInfo(portActivityReq.getHelperInfo());
+        portActivityAssist.setAsInfo(portActivityReq.getHelperInfo());
         Boolean flag = portActivityAssist.save();
         renderJson(R.ok().put("msg","保存成功!").put("data",portActivityAssist).put("code","000000"));
 
@@ -594,6 +596,25 @@ public class PortActivityController extends Controller {
         map.put("goods2Num",7000+num); //商品2参与人数
         map.put("goods3Num",8000+num); //商品3参与人数
         renderJson(R.ok().put("data", map).put("code","000000"));
+    }
+
+    /**
+     * 获取全部地址信息
+     */
+    public void getAllAddress(@Para("") PortActivityAddressReq portActivityAddressReq){
+        renderJson(R.ok().put("data", PortActivityAddress.dao.find(
+                Db.getSqlPara("admin.portActivityAddress.getAddress")
+        )).put("code","000000"));
+    }
+
+    /**
+     * 保存某条数据
+     */
+    public void updateAddress(@Para("") PortActivityAddressReq portActivityAddressReq){
+        PortActivityAddress portActivityAddress = new PortActivityAddress();
+        portActivityAddress.setId(portActivityAddressReq.getId());
+        portActivityAddress.setAddressData(portActivityAddressReq.getAddressData());
+        renderJson(R.ok().put("data", portActivityAddress.update()).put("code","000000"));
     }
 
 }

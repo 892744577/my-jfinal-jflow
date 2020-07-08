@@ -19,4 +19,7 @@
       #end
       order by a.rdt desc
   #end
+  #sql ("getHrhrGongDanByOrderId")
+    select * from hr_gongdan a where a.orderId=?
+  #end
 #end

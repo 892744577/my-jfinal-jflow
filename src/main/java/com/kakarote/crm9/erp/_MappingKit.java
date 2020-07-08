@@ -71,19 +71,20 @@ public class _MappingKit {
 		arp.addMapping("aptenon_work_task_log", "log_id", WorkTaskLog.class);
 		arp.addMapping("aptenon_work_user", "id", WorkUser.class);
 		arp.addMapping("aptenon_crm_business_change", "change_id", CrmBusinessChange.class);
-		//add by wangkaida
-		arp.addMapping("port_emp", "No", PortEmp.class);
-		arp.addMapping("port_emp_relation", "OID", PortEmpRelation.class);
+		//注册、工单
 		arp.addMapping("hr_register", "OID", HrRegister.class);
+		arp.addMapping("hr_gongdan", "OID", HrGongdan.class);
+		//活动
 		arp.addMapping("port_activity", "id", PortActivity.class);
+		arp.addMapping("port_activity_address", "id", PortActivityAddress.class);
+		arp.addMapping("port_activity_assist", "id", PortActivityAssist.class);
+		arp.addMapping("port_activity_emp", "No", PortActivityEmp.class);
+		arp.addMapping("port_activity_helper", "id", PortActivityHelper.class);
 		arp.addMapping("port_activity_playbill", "id", PortActivityPlaybill.class);
 		arp.addMapping("port_activity_share", "id", PortActivityShare.class);
 		arp.addMapping("port_dept", "No", PortDept.class);
-		arp.addMapping("port_activity_helper", "id", PortActivityHelper.class);
-		arp.addMapping("port_activity_assist", "id", PortActivityAssist.class);
-		arp.addMapping("port_activity_emp", "No", PortActivityEmp.class);
-		//add by tangmanrong --- 工单管理
-		arp.addMapping("hr_gongdan", "OID", HrGongdan.class);
+		arp.addMapping("port_emp", "No", PortEmp.class);
+		arp.addMapping("port_emp_relation", "OID", PortEmpRelation.class);
 	}
 }
 

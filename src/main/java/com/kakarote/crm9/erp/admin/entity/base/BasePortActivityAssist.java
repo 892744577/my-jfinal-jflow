@@ -9,68 +9,68 @@ import com.jfinal.plugin.activerecord.IBean;
 @SuppressWarnings("serial")
 public abstract class BasePortActivityAssist<M extends BasePortActivityAssist<M>> extends Model<M> implements IBean {
 
-	public void setId(java.lang.Integer id) {
+	public void setId(Long id) {
 		set("id", id);
 	}
-
-	public java.lang.Integer getId() {
-		return getInt("id");
+	
+	public Long getId() {
+		return getLong("id");
 	}
 
-	public void setAsAcId(java.lang.Integer asAcId) {
+	public void setAsAcId(Integer asAcId) {
 		set("as_ac_id", asAcId);
 	}
-
-	public java.lang.Integer getAsAcId() {
+	
+	public Integer getAsAcId() {
 		return getInt("as_ac_id");
 	}
 
-	public void setAsOpenid(java.lang.String asOpenid) {
+	public void setAsOpenid(String asOpenid) {
 		set("as_openid", asOpenid);
 	}
-
-	public java.lang.String getAsOpenid() {
+	
+	public String getAsOpenid() {
 		return getStr("as_openid");
 	}
 
-	public void setAsMobile(java.lang.String asMobile) {
+	public void setAsMobile(String asMobile) {
 		set("as_mobile", asMobile);
 	}
-
-	public java.lang.String getAsMobile() {
+	
+	public String getAsMobile() {
 		return getStr("as_mobile");
 	}
 
-	public void setAsName(java.lang.String asName) {
+	public void setAsName(String asName) {
 		set("as_name", asName);
 	}
-
-	public java.lang.String getAsName() {
+	
+	public String getAsName() {
 		return getStr("as_name");
 	}
 
-	public void setAsAddress(java.lang.String asAddress) {
+	public void setAsAddress(String asAddress) {
 		set("as_address", asAddress);
 	}
-
-	public java.lang.String getAsAddress() {
+	
+	public String getAsAddress() {
 		return getStr("as_address");
 	}
 
-	public void setAsProductid(java.lang.String asProductid) {
+	public void setAsProductid(String asProductid) {
 		set("as_productid", asProductid);
 	}
-
-	public java.lang.String getAsProductid() {
+	
+	public String getAsProductid() {
 		return getStr("as_productid");
 	}
 
-	public void setHelperInfo(java.lang.String helperInfo) {
-		set("helperInfo", helperInfo);
+	public void setAsInfo(String asInfo) {
+		set("as_info", asInfo);
 	}
-
-	public java.lang.String getHelperInfo() {
-		return getStr("helperInfo");
+	
+	public String getAsInfo() {
+		return getStr("as_info");
 	}
 
 }
