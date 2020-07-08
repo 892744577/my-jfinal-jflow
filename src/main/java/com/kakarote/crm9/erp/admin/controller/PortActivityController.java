@@ -588,13 +588,21 @@ public class PortActivityController extends Controller {
         HashMap<String,Integer> map = new HashMap<String,Integer>();
         int n = 5000;
         int num=(int) (Math.random() * n+1);
+        int m = 50;
+        int numSec=(int) (Math.random() * m+1);
         map.put("involvedCount",100000+num); //已参与人数
         map.put("assistCount",30000+num); //已助力人数
         map.put("browseCount",50000+num); //已浏览人数
         map.put("successCount",60000+num); //助力成功人数
         map.put("goods1Num",6000+num); //商品1参与人数
+        map.put("goods1Purchase",50+numSec); //商品1已抢
+        map.put("goods1Remain",10+numSec); //商品1仅剩
         map.put("goods2Num",7000+num); //商品2参与人数
+        map.put("goods2Purchase",80+numSec); //商品2已抢
+        map.put("goods2Remain",20+numSec); //商品2仅剩
         map.put("goods3Num",8000+num); //商品3参与人数
+        map.put("goods3Purchase",100+numSec); //商品3已抢
+        map.put("goods3Remain",30+numSec); //商品3仅剩
         renderJson(R.ok().put("data", map).put("code","000000"));
     }
 
