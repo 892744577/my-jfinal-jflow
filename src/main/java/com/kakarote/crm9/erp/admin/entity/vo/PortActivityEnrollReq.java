@@ -3,13 +3,10 @@ package com.kakarote.crm9.erp.admin.entity.vo;
 import lombok.Data;
 
 @Data
-public class PortActivityAddressReq {
+public class PortActivityEnrollReq {
     private Long id;
-    private String addressData;
-    private String dealer;
+    private String wxOpenId;
     private String name;
     private String address;
     private String phone;
-    private float longitude;
-    private float latitude;
 }
