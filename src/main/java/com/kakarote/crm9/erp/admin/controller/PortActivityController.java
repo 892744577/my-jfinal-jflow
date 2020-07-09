@@ -23,6 +23,7 @@ import com.kakarote.crm9.utils.R;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -259,6 +260,7 @@ public class PortActivityController extends Controller {
         portActivityShare.setSrToShareOpenid(portActivityReq.getToShareOpenId());
         portActivityShare.setSrPbId(portActivityReq.getPbId());
         portActivityShare.setSrAsId(portActivityReq.getAssistId());
+        portActivityShare.setCreateTime(new Date());
         Boolean flag = portActivityShare.save();
         renderJson(R.ok().put("msg","保存成功!").put("data",portActivityShare).put("code","000000"));
 
@@ -623,6 +625,20 @@ public class PortActivityController extends Controller {
         portActivityAddress.setId(portActivityAddressReq.getId());
         portActivityAddress.setAddressData(portActivityAddressReq.getAddressData());
         renderJson(R.ok().put("data", portActivityAddress.update()).put("code","000000"));
+    }
+
+
+    /**
+     * 根据openid获取报名信息，若为空则是还没报名，若有信息则返回
+     */
+    public void getEnroll(@Para("") PortActivityAddressReq portActivityAddressReq) {
+
+    }
+    /**
+     * 保存报名信息
+     */
+    public void saveEnroll(@Para("") PortActivityAddressReq portActivityAddressReq) {
+
     }
 
 }
