@@ -9,6 +9,8 @@ public class PortActivityAddressReq {
     private String dealer;
     private String name;
     private String address;
+    private String phone;
+    private String wxOpenId;
     private float longitude;
     private float latitude;
 }

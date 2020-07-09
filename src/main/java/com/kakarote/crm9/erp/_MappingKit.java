@@ -85,6 +85,7 @@ public class _MappingKit {
 		arp.addMapping("port_dept", "No", PortDept.class);
 		arp.addMapping("port_emp", "No", PortEmp.class);
 		arp.addMapping("port_emp_relation", "OID", PortEmpRelation.class);
+		arp.addMapping("port_activity_enroll", "id", PortActivityEnroll.class);
 	}
 }
 

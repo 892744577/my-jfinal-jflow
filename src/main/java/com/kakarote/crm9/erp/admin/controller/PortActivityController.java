@@ -630,15 +630,63 @@ public class PortActivityController extends Controller {
 
     /**
      * 根据openid获取报名信息，若为空则是还没报名，若有信息则返回
+     * @Author wangkaida
      */
     public void getEnroll(@Para("") PortActivityAddressReq portActivityAddressReq) {
+        if(StrUtil.isEmpty(portActivityAddressReq.getWxOpenId())){
+            renderJson(R.error("请输入微信公众号openId!").put("data",null).put("code","000038"));
+            return;
+        }
 
+        PortActivityEnroll portActivityEnrollDb = PortActivityEnroll.dao.findFirst(Db.getSql("admin.portActivityEnroll.getEnroll"),portActivityAddressReq.getWxOpenId());
+
+        if (portActivityEnrollDb != null) {
+            renderJson(R.ok().put("data", portActivityEnrollDb).put("code","000000"));
+        }else {
+            renderJson(R.error("查询到的报名信息为空!").put("data",null).put("code","000042"));
+            return;
+        }
     }
+
     /**
      * 保存报名信息
+     * @Author wangkaida
      */
     public void saveEnroll(@Para("") PortActivityAddressReq portActivityAddressReq) {
+        if(StrUtil.isEmpty(portActivityAddressReq.getWxOpenId())){
+            renderJson(R.error("请输入公众号openId!").put("data",null).put("code","000043"));
+            return;
+        }
 
+        if(StrUtil.isEmpty(portActivityAddressReq.getPhone())){
+            renderJson(R.error("请输入手机号!").put("data",null).put("code","000044"));
+            return;
+        }
+
+        if(portActivityAddressReq.getName() == null){
+            renderJson(R.error("请输入姓名!").put("data",null).put("code","000045"));
+            return;
+        }
+
+        if(portActivityAddressReq.getAddress() == null){
+            renderJson(R.error("请输入地址!").put("data",null).put("code","000046"));
+            return;
+        }
+
+        PortActivityEnroll portActivityEnrollDb = PortActivityEnroll.dao.findFirst(Db.getSql("admin.portActivityEnroll.getEnroll"),portActivityAddressReq.getWxOpenId());
+
+        if (portActivityEnrollDb != null) {
+            renderJson(R.error("已经报名,请勿重复提交!").put("data",null).put("code","000047"));
+            return;
+        }
+
+        PortActivityEnroll portActivityEnroll = new PortActivityEnroll();
+        portActivityEnroll.setWxOpenid(portActivityAddressReq.getWxOpenId());
+        portActivityEnroll.setPhone(portActivityAddressReq.getPhone());
+        portActivityEnroll.setName(portActivityAddressReq.getName());
+        portActivityEnroll.setAddress(portActivityAddressReq.getAddress());
+        Boolean flag = portActivityEnroll.save();
+        renderJson(R.ok().put("msg","保存成功!").put("data",portActivityEnroll).put("code","000000"));
     }
 
 }
