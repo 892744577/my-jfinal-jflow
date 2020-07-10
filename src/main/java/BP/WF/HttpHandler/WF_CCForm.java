@@ -65,7 +65,7 @@ public class WF_CCForm extends WebContralBase {
 			/// #region 执行装载模版.
 			if (dbs.size() == 0 && athDesc.getIsWoEnableTemplete() == true) {
 				/* 如果数量为0,就检查一下是否有模版如果有就加载模版文件. */
-				String templetePath = SystemConfig.getPathOfDataUser() + "AthTemplete\\"
+				String templetePath = SystemConfig.getPathOfDataUser() + "AthTemplete" + SystemConfig.getSeparator()
 						+ athDesc.getNoOfObj().trim();
 				if ((new File(templetePath)).isDirectory() == false) {
 					(new File(templetePath)).mkdirs();
@@ -84,7 +84,7 @@ public class WF_CCForm extends WebContralBase {
 					}
 
 					int oid = BP.DA.DBAccess.GenerOID();
-					String saveTo = athDesc.getSaveTo() + "\\" + oid + "."
+					String saveTo = athDesc.getSaveTo() + SystemConfig.getSeparator() + oid + "."
 							+ fl.getName().substring(fl.getName().lastIndexOf('.') + 1);
 					if (saveTo.contains("@") == true || saveTo.contains("*") == true) {
 						/* 如果有变量 */
@@ -4173,7 +4173,7 @@ public class WF_CCForm extends WebContralBase {
 
 		zipName = DataType.PraseStringToUrlFileName(zipName);
 
-		String url = getRequest().getContextPath() + "DataUser/Temp/" + WebUser.getNo() + "/" + zipName + ".zip";
+		String url = getRequest().getContextPath() + "/DataUser/Temp/" + WebUser.getNo() + "/" + zipName + ".zip";
 		return "url@" + url;
 
 	}

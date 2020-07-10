@@ -146,8 +146,8 @@ public class AttachmentUploadController extends BaseController {
 		String msg = null;
 		uploadFile(item, athDesc, en, msg, mapData, this.getFK_FrmAttachment(), getParasData());
 		
-		return;
-//		renderJson();
+//		return;
+		renderJson();
 	}
 
 	public void downLoad() {
