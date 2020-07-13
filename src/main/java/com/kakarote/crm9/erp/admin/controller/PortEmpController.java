@@ -849,4 +849,30 @@ public class PortEmpController extends Controller {
         }
 
     }
+
+    /*
+     * @Description //根据微信OpenId获取员工信息接口
+     * @Author wangkaida
+     * @Date 20:57 2020/7/13
+     * @Param [portEmpReq]
+     * @return void
+     **/
+    public void getPortEmpByWxOpenId(@Para("") PortEmpReq portEmpReq){
+        if(StrUtil.isEmpty(portEmpReq.getWxOpenId())){
+            renderJson(R.error("请输入微信公众号openId!").put("data",null).put("code","000038"));
+            return;
+        }
+
+        //手机号获取数据信息
+        PortActivityEmp portEmpDb = PortActivityEmp.dao.findFirst("SELECT * FROM port_activity_emp WHERE WxOpenId = ? LIMIT 0,1", portEmpReq.getWxOpenId());
+
+        if (portEmpDb != null) {
+            renderJson(R.ok().put("data",portEmpDb).put("code","000000"));
+
+        }else {
+            renderJson(R.error("查无此人,请先进行手机号绑定!").put("data",null).put("code","000001"));
+            return;
+        }
+
+    }
 }
