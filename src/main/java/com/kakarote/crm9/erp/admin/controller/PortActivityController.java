@@ -262,6 +262,16 @@ public class PortActivityController extends Controller {
         portActivityShare.setSrPbId(portActivityReq.getPbId());
         portActivityShare.setSrAsId(portActivityReq.getAssistId());
         portActivityShare.setCreateTime(new Date());
+
+        Record record = Db.findFirst(Db.getSql("admin.portActivityShare.validFlagOrNot"),portActivityReq.getPbId(),portActivityReq.getToShareOpenId(),portActivityReq.getToShareOpenId());
+        if (record != null) {
+            //查到数据则无效
+            portActivityShare.setValidFlag("0");
+        }else {
+            //查不到数据则有效
+            portActivityShare.setValidFlag("1");
+        }
+
         Boolean flag = portActivityShare.save();
         renderJson(R.ok().put("msg","保存成功!").put("data",portActivityShare).put("code","000000"));
 
