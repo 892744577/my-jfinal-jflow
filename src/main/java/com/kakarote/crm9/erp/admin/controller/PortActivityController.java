@@ -242,6 +242,10 @@ public class PortActivityController extends Controller {
             renderJson(R.error("请输入海报Id!").put("data",null).put("code","000020"));
             return;
         }
+        if(portActivityReq.getToShareOpenId() == null){
+            renderJson(R.error("请输入被分享人公众号Id!").put("data",null).put("code","000021"));
+            return;
+        }
 
 //        if(portActivityReq.getAssistId() == null){
 //            renderJson(R.error("请输入需被助力记录Id!").put("data",null).put("code","000027"));
@@ -264,10 +268,10 @@ public class PortActivityController extends Controller {
 
         if (!portActivityReq.getShareOpenId().equals(portActivityReq.getToShareOpenId())) {
 
-            List<PortActivityShare> portActivityShareList = PortActivityShare.dao.find(Db.getSql("admin.portActivityShare.secondStep"),portActivityReq.getToShareOpenId(),portActivityReq.getToShareOpenId());
+            List<PortActivityShare> portActivityShareList = PortActivityShare.dao.find(Db.getSql("admin.portActivityShare.secondStep"),portActivityReq.getToShareOpenId());
 
             if (portActivityShareList.size() == 0) {
-                Record record = Db.findFirst(Db.getSql("admin.portActivityShare.thirdStep"),portActivityReq.getPbId(),portActivityReq.getToShareOpenId(),portActivityReq.getToShareOpenId());
+                Record record = Db.findFirst(Db.getSql("admin.portActivityShare.thirdStep"),portActivityReq.getToShareOpenId(),portActivityReq.getToShareOpenId());
                 if (record != null) {
                     //查到数据则无效
                     portActivityShare.setValidFlag("0");
@@ -611,23 +615,25 @@ public class PortActivityController extends Controller {
      **/
     public void getAssistCount(){
         HashMap<String,Integer> map = new HashMap<String,Integer>();
-        int n = 5000;
+        int n = 500;
         int num=(int) (Math.random() * n+1);
-        int m = 100;
-        int numSec=(int) (Math.random() * m);
-        map.put("involvedCount",0+num); //已参与人数
-        map.put("assistCount",0+num); //已助力人数
-        map.put("browseCount",0+num); //已浏览人数
+        int m = 30;
+        int numSec1=(int) (Math.random() * m);
+        int numSec2=(int) (Math.random() * m);
+        int numSec3=(int) (Math.random() * m);
+        map.put("involvedCount",57+num); //已报名人数
+        map.put("assistCount",230+num); //已分享人数
+        map.put("browseCount",379+num); //已浏览人数
         map.put("successCount",0+num); //助力成功人数
         map.put("goods1Num",0+num); //商品1参与人数
-        map.put("goods1Purchase",0+numSec); //商品1已抢
-        map.put("goods1Remain",100-numSec); //商品1仅剩
+        map.put("goods1Purchase",0+numSec1); //商品1已抢
+        map.put("goods1Remain",30-numSec1); //商品1仅剩
         map.put("goods2Num",0+num); //商品2参与人数
-        map.put("goods2Purchase",0+numSec); //商品2已抢
-        map.put("goods2Remain",100-numSec); //商品2仅剩
+        map.put("goods2Purchase",0+numSec2); //商品2已抢
+        map.put("goods2Remain",30-numSec2); //商品2仅剩
         map.put("goods3Num",0+num); //商品3参与人数
-        map.put("goods3Purchase",0+numSec); //商品3已抢
-        map.put("goods3Remain",100-numSec); //商品3仅剩
+        map.put("goods3Purchase",0+numSec3); //商品3已抢
+        map.put("goods3Remain",120-numSec3); //商品3仅剩
         renderJson(R.ok().put("data", map).put("code","000000"));
     }
 
