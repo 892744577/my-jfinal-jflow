@@ -51,8 +51,8 @@ public class YeyxController extends Controller {
                     currentPrama.put("factory", hrGongdan.getFactory()); //厂商单标志：厂商单传固定值 2
                 if(!StringUtils.isEmpty(hrGongdan.getFacInWarranty()))
                     currentPrama.put("facInWarranty", hrGongdan.getFacInWarranty()+1); //标识产品是否在保
-                if(!StringUtils.isEmpty(hrGongdan.getSmcCityId()))
-                    currentPrama.put("cityId", hrGongdan.getSmcCityId()); //城市id
+                if(!StringUtils.isEmpty(Integer.parseInt(hrGongdan.getSMC().substring(0,4)+"00")))
+                    currentPrama.put("cityId", Integer.parseInt(hrGongdan.getSMC().substring(0,4)+"00")); //城市id
                 if(!StringUtils.isEmpty(hrGongdan.getTelephone()))
                     currentPrama.put("telephone", hrGongdan.getTelephone()); //用户手机号码
                 if(!StringUtils.isEmpty(hrGongdan.getContactName()))
@@ -80,7 +80,7 @@ public class YeyxController extends Controller {
                 if(!StringUtils.isEmpty(hrGongdan.getRemark()))
                     currentPrama.put("remark", hrGongdan.getRemark()); //服务单备注
                 currentPrama.put("orderDiscount", currentJson);
-                currentPrama.put("thirdOrderId", hrGongdan.get("FK_Flow") + "-" + hrGongdan.get("OID")+"-" + hrGongdan.getServiceNo());
+                currentPrama.put("thirdOrderId", "009" + "-" + hrGongdan.get("OID")+"-" + hrGongdan.getServiceNo());
 
                 long timestamp = System.currentTimeMillis()/1000;
                 String jsonStr = JSONObject.toJSONString(currentPrama);

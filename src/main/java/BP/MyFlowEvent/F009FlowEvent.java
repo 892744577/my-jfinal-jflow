@@ -65,8 +65,8 @@ public class F009FlowEvent extends FlowEventBase {
                         currentPrama.put("factory", Integer.parseInt(this.getSysPara().get("factory").toString())); //厂商单标志：厂商单传固定值 2
                     if(!StringUtils.isEmpty(this.getSysPara().get("facInWarranty")))
                         currentPrama.put("facInWarranty", Integer.parseInt(this.getSysPara().get("facInWarranty").toString())+1); //标识产品是否在保
-                    if(!StringUtils.isEmpty(this.getSysPara().get("smcCityId")))
-                        currentPrama.put("cityId", Integer.parseInt(this.getSysPara().get("smcCityId").toString())); //城市id
+                    if(!StringUtils.isEmpty(this.getSysPara().get("SMC")))
+                        currentPrama.put("cityId", Integer.parseInt(this.getSysPara().get("SMC").toString().substring(0,4)+"00")); //城市id
                     if(!StringUtils.isEmpty(this.getSysPara().get("telephone")))
                         currentPrama.put("telephone", this.getSysPara().get("telephone").toString()); //用户手机号码
                     if(!StringUtils.isEmpty(this.getSysPara().get("contactName")))
