@@ -11,13 +11,11 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.kakarote.crm9.erp.admin.entity.*;
-import com.kakarote.crm9.erp.admin.entity.vo.PortActivityAddressReq;
-import com.kakarote.crm9.erp.admin.entity.vo.PortActivityEnrollReq;
-import com.kakarote.crm9.erp.admin.entity.vo.PortActivityReq;
-import com.kakarote.crm9.erp.admin.entity.vo.PortEmpReq;
+import com.kakarote.crm9.erp.admin.entity.vo.*;
 import com.kakarote.crm9.erp.admin.service.PortActivityService;
 import com.kakarote.crm9.erp.sms.entity.LoginRequestDto;
 import com.kakarote.crm9.erp.wx.config.WxMpConfiguration;
+import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.kakarote.crm9.utils.QrCodeUtil;
 import com.kakarote.crm9.utils.R;
 
@@ -27,6 +25,7 @@ import java.io.ByteArrayInputStream;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /*
@@ -265,7 +264,7 @@ public class PortActivityController extends Controller {
 
         if (!portActivityReq.getShareOpenId().equals(portActivityReq.getToShareOpenId())) {
 
-            List<PortActivityShare> portActivityShareList = PortActivityShare.dao.find(Db.getSql("admin.portActivityShare.secondStep"),portActivityReq.getToShareOpenId());
+            List<PortActivityShare> portActivityShareList = PortActivityShare.dao.find(Db.getSql("admin.portActivityShare.secondStep"),portActivityReq.getToShareOpenId(),portActivityReq.getToShareOpenId());
 
             if (portActivityShareList.size() == 0) {
                 Record record = Db.findFirst(Db.getSql("admin.portActivityShare.thirdStep"),portActivityReq.getPbId(),portActivityReq.getToShareOpenId(),portActivityReq.getToShareOpenId());
@@ -614,21 +613,21 @@ public class PortActivityController extends Controller {
         HashMap<String,Integer> map = new HashMap<String,Integer>();
         int n = 5000;
         int num=(int) (Math.random() * n+1);
-        int m = 50;
-        int numSec=(int) (Math.random() * m+1);
-        map.put("involvedCount",100000+num); //已参与人数
-        map.put("assistCount",30000+num); //已助力人数
-        map.put("browseCount",50000+num); //已浏览人数
-        map.put("successCount",60000+num); //助力成功人数
-        map.put("goods1Num",6000+num); //商品1参与人数
-        map.put("goods1Purchase",50+numSec); //商品1已抢
-        map.put("goods1Remain",10+numSec); //商品1仅剩
-        map.put("goods2Num",7000+num); //商品2参与人数
-        map.put("goods2Purchase",80+numSec); //商品2已抢
-        map.put("goods2Remain",20+numSec); //商品2仅剩
-        map.put("goods3Num",8000+num); //商品3参与人数
-        map.put("goods3Purchase",100+numSec); //商品3已抢
-        map.put("goods3Remain",30+numSec); //商品3仅剩
+        int m = 100;
+        int numSec=(int) (Math.random() * m);
+        map.put("involvedCount",0+num); //已参与人数
+        map.put("assistCount",0+num); //已助力人数
+        map.put("browseCount",0+num); //已浏览人数
+        map.put("successCount",0+num); //助力成功人数
+        map.put("goods1Num",0+num); //商品1参与人数
+        map.put("goods1Purchase",0+numSec); //商品1已抢
+        map.put("goods1Remain",100-numSec); //商品1仅剩
+        map.put("goods2Num",0+num); //商品2参与人数
+        map.put("goods2Purchase",0+numSec); //商品2已抢
+        map.put("goods2Remain",100-numSec); //商品2仅剩
+        map.put("goods3Num",0+num); //商品3参与人数
+        map.put("goods3Purchase",0+numSec); //商品3已抢
+        map.put("goods3Remain",100-numSec); //商品3仅剩
         renderJson(R.ok().put("data", map).put("code","000000"));
     }
 
@@ -713,4 +712,20 @@ public class PortActivityController extends Controller {
         renderJson(R.ok().put("msg","保存成功!").put("data",portActivityEnroll).put("code","000000"));
     }
 
+    public void getStatistics(@Para("") PortActivityStaticsReq portActivityStaticsReq) {
+        Kv kv = Kv.by("openid",portActivityStaticsReq.getOpenid());
+        String readTotal = Db.queryStr(Db.getSqlPara("admin.portActivityShare.statistics1",kv).getSql(),portActivityStaticsReq.getOpenid());
+        String fissionTotal = Db.queryStr(Db.getSqlPara("admin.portActivityShare.statistics2",kv).getSql(),portActivityStaticsReq.getOpenid());
+        String today = DateUtil.changeDateTOStr3(new Date());
+        kv.set("today",today);
+        String readToday = Db.queryStr(Db.getSqlPara("admin.portActivityShare.statistics1",kv).getSql(),portActivityStaticsReq.getOpenid(),today);
+        String fissionToday = Db.queryStr(Db.getSqlPara("admin.portActivityShare.statistics2",kv).getSql(),portActivityStaticsReq.getOpenid(),today);
+
+        Map map  =new HashMap<>();
+        map.put("readTotal",readTotal);
+        map.put("fissionTotal",fissionTotal);
+        map.put("readToday",readToday);
+        map.put("fissionToday",fissionToday);
+        renderJson(R.ok().put("msg","保存成功!").put("data",map).put("code","000000"));
+    }
 }
