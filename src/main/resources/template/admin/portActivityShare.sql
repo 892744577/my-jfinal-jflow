@@ -24,4 +24,10 @@
       and DATE_FORMAT(d.create_time, '%Y-%m-%d') = #para(today)
     #end
   #end
+  #sql ("countHelper")
+    select count(*) from port_activity_helper a left join port_activity_assist b on a.assistId = b.id where b.as_productid = ?
+  #end
+  #sql ("countAssist")
+    select count(*) from port_activity_assist b where b.as_productid = ?
+  #end
 #end
