@@ -32,6 +32,7 @@ public class HrGongDanController extends Controller {
      * @param hrGongdanRequest
      */
     public void validate(@Para("") HrGongdanRequest hrGongdanRequest){
+
         renderJson(R.ok().put("data",hrGongDanService.update(hrGongdanRequest)));
     }
 
