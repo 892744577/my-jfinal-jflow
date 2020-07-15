@@ -73,4 +73,12 @@ public abstract class BasePortActivityAssist<M extends BasePortActivityAssist<M>
 		return getStr("as_info");
 	}
 
+	public void setCreateTime(java.util.Date createTime) {
+		set("create_time", createTime);
+	}
+	
+	public java.util.Date getCreateTime() {
+		return get("create_time");
+	}
+
 }

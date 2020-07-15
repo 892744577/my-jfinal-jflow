@@ -467,6 +467,7 @@ public class PortActivityController extends Controller {
         portActivityAssist.setAsAddress(portActivityReq.getAsAddress());
         portActivityAssist.setAsProductid(portActivityReq.getAsProductId());
         portActivityAssist.setAsInfo(portActivityReq.getHelperInfo());
+        portActivityAssist.setCreateTime(new Date());
         Boolean flag = portActivityAssist.save();
         renderJson(R.ok().put("msg","保存成功!").put("data",portActivityAssist).put("code","000000"));
 
@@ -630,19 +631,19 @@ public class PortActivityController extends Controller {
         int num4 = Db.queryInt(Db.getSql("admin.portActivityShare.countInvolvedNum"));
         int num5 = Db.queryInt(Db.getSql("admin.portActivityShare.countAssistNum"));
         int num6 = Db.queryInt(Db.getSql("admin.portActivityShare.countBrowseNum"));
-        map.put("involvedCount",57+num4); //已报名人数
-        map.put("assistCount",230+num5); //已分享人数
-        map.put("browseCount",379+num6); //已浏览人数
+        map.put("involvedCount",256+num4); //已报名人数
+        map.put("assistCount",1367+num5); //已分享人数
+        map.put("browseCount",4578+num6); //已浏览人数
         map.put("successCount",0+numSec1+numSec2+numSec3); //助力成功人数
         map.put("goods1Num",0+num1); //商品1参与人数
-        map.put("goods1Purchase",0+numSec1); //商品1已抢
+        map.put("goods1Purchase",numSec1); //商品1已抢
         map.put("goods1Remain",30-numSec1); //商品1仅剩
-        map.put("goods2Num",0+num2); //商品2参与人数
-        map.put("goods2Purchase",0+numSec2); //商品2已抢
+        map.put("goods2Num",num2); //商品2参与人数
+        map.put("goods2Purchase",numSec2); //商品2已抢
         map.put("goods2Remain",30-numSec2); //商品2仅剩
-        map.put("goods3Num",0+num3); //商品3参与人数
-        map.put("goods3Purchase",0+numSec3); //商品3已抢
-        map.put("goods3Remain",120-numSec3); //商品3仅剩
+        map.put("goods3Num",num3); //商品3参与人数
+        map.put("goods3Purchase",numSec3); //商品3已抢
+        map.put("goods3Remain",150-numSec3); //商品3仅剩
         renderJson(R.ok().put("data", map).put("code","000000"));
     }
 

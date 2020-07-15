@@ -3,6 +3,10 @@
     SELECT d.* FROM port_activity_share d where d.sr_share_openid!=d.sr_to_share_openid and d.sr_to_share_openid=?
   #end
   #sql ("thirdStep")
+    SELECT a.* FROM (SELECT d.* FROM port_activity_share d WHERE d.sr_share_openid != d.sr_to_share_openid) a
+    WHERE  a.sr_share_openid = ? OR a.sr_to_share_openid  = ?
+  #end
+  #sql ("thirdStep_bak_20200715")
     SELECT d.* FROM port_activity_share d,
         (SELECT MIN(a.id) id ,MIN(a.create_time) create_time FROM port_activity_share a
         WHERE  a.sr_share_openid != a.sr_to_share_openid GROUP BY a.sr_to_share_openid) b
