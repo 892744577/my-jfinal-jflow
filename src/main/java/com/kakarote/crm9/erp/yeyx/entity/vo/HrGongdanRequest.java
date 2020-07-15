@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 public class HrGongdanRequest {
     private int oid;
-    private int orderId;
+    private String orderId;
     private String serviceSp;
 
 }
