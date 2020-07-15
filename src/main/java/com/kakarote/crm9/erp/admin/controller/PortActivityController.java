@@ -627,9 +627,12 @@ public class PortActivityController extends Controller {
         int num1 = Db.queryInt(Db.getSql("admin.portActivityShare.countAssist"),1);
         int num2 = Db.queryInt(Db.getSql("admin.portActivityShare.countAssist"),2);
         int num3 = Db.queryInt(Db.getSql("admin.portActivityShare.countAssist"),3);
-        map.put("involvedCount",57); //已报名人数
-        map.put("assistCount",230); //已分享人数
-        map.put("browseCount",379); //已浏览人数
+        int num4 = Db.queryInt(Db.getSql("admin.portActivityShare.countInvolvedNum"));
+        int num5 = Db.queryInt(Db.getSql("admin.portActivityShare.countAssistNum"));
+        int num6 = Db.queryInt(Db.getSql("admin.portActivityShare.countBrowseNum"));
+        map.put("involvedCount",57+num4); //已报名人数
+        map.put("assistCount",230+num5); //已分享人数
+        map.put("browseCount",379+num6); //已浏览人数
         map.put("successCount",0+numSec1+numSec2+numSec3); //助力成功人数
         map.put("goods1Num",0+num1); //商品1参与人数
         map.put("goods1Purchase",0+numSec1); //商品1已抢

@@ -30,4 +30,13 @@
   #sql ("countAssist")
     select count(*) from port_activity_assist b where b.as_productid = ?
   #end
+  #sql ("countInvolvedNum")
+    select count(*) from port_activity_enroll
+  #end
+  #sql ("countAssistNum")
+    select count(*) from port_activity_share b where b.valid_flag = 1
+  #end
+  #sql ("countBrowseNum")
+    select count(*) from port_activity_share
+  #end
 #end
