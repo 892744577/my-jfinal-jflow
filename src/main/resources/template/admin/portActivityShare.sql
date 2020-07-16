@@ -43,4 +43,30 @@
   #sql ("countBrowseNum")
     select count(*) from port_activity_share
   #end
+  #sql ("excel")
+    SELECT a.wxopenid,a.name,e.numb total,f.numb readTotal,e1.numb today,f1.numb readToday,g.address FROM port_activity_emp a
+    LEFT JOIN  (
+      SELECT c.pb_source_openid,COUNT(*) numb FROM port_activity_share d
+      LEFT JOIN port_activity_playbill c ON d.sr_pb_id = c.id
+      WHERE 1=1 AND valid_flag=1 GROUP BY d.sr_pb_id,c.pb_source_openid
+      ) e ON a.wxopenid= e.pb_source_openid
+    LEFT JOIN  (
+      SELECT h.pb_source_openid,COUNT(*) numb FROM port_activity_share q
+      LEFT JOIN port_activity_playbill h ON q.sr_pb_id = h.id
+      GROUP BY q.sr_pb_id,h.pb_source_openid
+      ) f ON a.wxopenid= f.pb_source_openid
+    LEFT JOIN  (
+      SELECT c1.pb_source_openid,COUNT(*) numb FROM port_activity_share d1
+      LEFT JOIN port_activity_playbill c1 ON d1.sr_pb_id = c1.id
+      WHERE 1=1 AND valid_flag=1 AND DATE_FORMAT(NOW(),'%m-%d-%Y')=DATE_FORMAT(d1.`create_time`,'%m-%d-%Y')
+      GROUP BY d1.sr_pb_id,c1.pb_source_openid
+      ) e1 ON a.wxopenid= e1.pb_source_openid
+    LEFT JOIN  (
+      SELECT h1.pb_source_openid,COUNT(*) numb FROM port_activity_share q1
+      LEFT JOIN port_activity_playbill h1 ON q1.sr_pb_id = h1.id
+      WHERE DATE_FORMAT(NOW(),'%m-%d-%Y')=DATE_FORMAT(q1.`create_time`,'%m-%d-%Y')
+      GROUP BY q1.sr_pb_id,h1.pb_source_openid
+      ) f1 ON a.wxopenid=f1.pb_source_openid
+    LEFT JOIN port_activity_address g ON g.id=a.OrgNo
+  #end
 #end

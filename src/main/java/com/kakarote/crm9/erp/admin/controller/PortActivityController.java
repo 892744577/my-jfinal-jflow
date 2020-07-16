@@ -16,16 +16,17 @@ import com.kakarote.crm9.erp.admin.service.PortActivityService;
 import com.kakarote.crm9.erp.sms.entity.LoginRequestDto;
 import com.kakarote.crm9.erp.wx.config.WxMpConfiguration;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
+import com.kakarote.crm9.utils.CreateExcel;
 import com.kakarote.crm9.utils.QrCodeUtil;
 import com.kakarote.crm9.utils.R;
 
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.File;
+import java.io.OutputStream;
+import java.util.*;
 
 
 /*
@@ -637,7 +638,7 @@ public class PortActivityController extends Controller {
         map.put("successCount",0+numSec1+numSec2+numSec3); //助力成功人数
         map.put("goods1Num",0+num1); //商品1参与人数
         map.put("goods1Purchase",numSec1); //商品1已抢
-        map.put("goods1Remain",30-numSec1); //商品1仅剩
+        map.put("goods1Remain",60-numSec1); //商品1仅剩
         map.put("goods2Num",num2); //商品2参与人数
         map.put("goods2Purchase",numSec2); //商品2已抢
         map.put("goods2Remain",30-numSec2); //商品2仅剩
@@ -743,5 +744,46 @@ public class PortActivityController extends Controller {
         map.put("readToday",readToday);
         map.put("fissionToday",fissionToday);
         renderJson(R.ok().put("msg","保存成功!").put("data",map).put("code","000000"));
+    }
+
+    public void getExcel() {
+        HttpServletResponse response = this.getResponse();
+        List<Record> data = Db.find(Db.getSql("admin.portActivityShare.excel"));
+        try {
+            // 获得输出流
+            OutputStream output = response.getOutputStream();
+
+            // 设置应用类型，以及编码
+            response.setContentType("application/msexcel;charset=utf-8");
+            response.setHeader("Content-Disposition",
+                    "filename=" + new String(("ceshi"+".xls").getBytes("gb2312"), "iso8859-1"));
+            //转格式
+            List row = new ArrayList<String>();
+
+
+            for(int i=0;i<data.size();i++){
+                List<String> col = new ArrayList<String>();
+                Record record = data.get(i);
+                String [] recordNames = {"wxopenid","name","total","readTotal","today","readToday","address"};
+                String [] recordNamesZw = {"wxopenid","姓名","裂变数（总）","阅读数（总）","裂变数（今）","阅数（今）","地址"};
+                if(i==0){
+                    List<String> colName = new ArrayList<String>();
+                    for(String recordName:recordNamesZw){
+                        colName.add(recordName);
+                    }
+                    row.add(colName);
+                }
+                for(String recordName:recordNames){
+                    Object value = record.get(recordName) ;
+                    String temp = value!=null?value.toString():"";
+                    col.add(temp);
+                }
+                row.add(col);
+            }
+            CreateExcel.CreateSheet(row,output);
+            renderNull();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
