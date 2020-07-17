@@ -186,7 +186,7 @@ public class YeyxController extends Controller {
                     OrderCompleteRequest orderCompleteRequest = JSONObject.parseObject(toDoRequest.getJsonData(),OrderCompleteRequest.class);
                     this.order_complete(orderCompleteRequest);
                 } else if ("order_cancel".equals(toDoRequest.getFunId())) {
-                    log.info("==================接收完成时间：" + toDoRequest.getJsonData());
+                    log.info("==================接收取消：" + toDoRequest.getJsonData());
                     OrderCancelRequest orderCancelRequest = JSONObject.parseObject(toDoRequest.getJsonData(),OrderCancelRequest.class);
                     this.order_cancel(orderCancelRequest);
                 } else if ("factory_remark".equals(toDoRequest.getFunId())) {
@@ -257,8 +257,13 @@ public class YeyxController extends Controller {
     }
 
     @NotAction
-    public void order_cancel(OrderCancelRequest OrderCancelRequest){
-
+    public void order_cancel(OrderCancelRequest orderCancelRequest) throws Exception{
+        Hashtable myhtSend = new Hashtable();
+        myhtSend.put("cancelRemark", orderCancelRequest.getRemark());
+        SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(
+                orderCancelRequest.getThirdOrderId().split("-")[0],
+                Long.parseLong(orderCancelRequest.getThirdOrderId().split("-")[1]),
+                myhtSend, null, 907, "ZhouPan");
     }
 
     /**
