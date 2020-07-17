@@ -22,42 +22,43 @@ public class HrGongDanService {
     public Page<Record> queryPageList(BasePageRequest basePageRequest) {
         JSONObject jsonObject = basePageRequest.getJsonObject();
         Integer statistics = jsonObject.getInteger("statistics");
+        Integer status = jsonObject.getInteger("status");
         basePageRequest.setJsonObject(jsonObject);
         if (StrUtil.isEmpty(String.valueOf(statistics))){
             return new Page<>();
         }
+
+        //查询条件
         String search = basePageRequest.getJsonObject().getString("search");
+        Kv kv = Kv.by("search",search);
+
+        //时间
         if(statistics==1){ //本日
             String today = DateUtil.changeDateTOStr3(new Date());
-            return Db.paginate(
-                    basePageRequest.getPage(),
-                    basePageRequest.getLimit(),
-                    Db.getSqlPara("admin.hrGongDan.getHrGongDanPageList",
-                            Kv.by("today",today).set("search",search))
-            );
+            kv.set("today",today);
         }else if(statistics==2){ //本周
             String weekend = DateUtil.changeDateTOStr3(new Date());
-            return Db.paginate(
-                    basePageRequest.getPage(),
-                    basePageRequest.getLimit(),
-                    Db.getSqlPara("admin.hrGongDan.getHrGongDanPageList",
-                            Kv.by("weekend",weekend).set("search",search))
-            );
+            kv.set("weekend",weekend);
         }else if(statistics==3) { //本月
             String yearmonth = DateUtil.changeDateTOStr6(new Date());
-            return Db.paginate(
-                    basePageRequest.getPage(),
-                    basePageRequest.getLimit(),
-                    Db.getSqlPara("admin.hrGongDan.getHrGongDanPageList",
-                            Kv.by("yearmonth", yearmonth).set("search",search))
-            );
-        }else{
-            return Db.paginate(
-                    basePageRequest.getPage(),
-                    basePageRequest.getLimit(),
-                    Db.getSqlPara("admin.hrGongDan.getHrGongDanPageList",Kv.by("search",search))
-            );
+            kv.set("yearmonth", yearmonth);
         }
+
+        //状态
+        if(status==1){
+            kv.set("confirm", "902");
+        }else if(status==2) {
+            String overtime = DateUtil.changeDateTOStr3(new Date());
+            kv.set("overtime", overtime);
+        }else if(statistics==3) {
+            kv.set("toBeCompleted", "906");
+        }
+
+        return Db.paginate(
+                basePageRequest.getPage(),
+                basePageRequest.getLimit(),
+                Db.getSqlPara("admin.hrGongDan.getHrGongDanPageList",kv)
+        );
     }
 
     /**
