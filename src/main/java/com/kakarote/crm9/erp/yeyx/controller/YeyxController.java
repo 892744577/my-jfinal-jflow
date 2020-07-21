@@ -144,7 +144,7 @@ public class YeyxController extends Controller {
         String serviceSegmentation = hrGongdan.getServiceSegmentation() == null ? "" : hrGongdan.getServiceSegmentation(); //安装细分L--晾衣机，S-锁 ，D--门
         //计算hr_gongdan表数据条数
         String dateTime = DateUtil.changeDateTOStr2(new Date());
-        int totalNum = Db.queryInt("select MAX(SUBSTRING(serviceNo,-4)) + 1 from hr_gongdan t where DATE_FORMAT(t.rdt,'%Y%m%d') ="+ dateTime ) + 1;
+        int totalNum = Db.queryInt("select MAX(SUBSTRING(serviceNo,-4)) + 1 from hr_gongdan t where DATE_FORMAT(t.rdt,'%Y%m%d') ="+ dateTime );
         String STR_FORMAT = "0000";
         DecimalFormat df = new DecimalFormat(STR_FORMAT);
         String serialNum = df.format(totalNum); //流水号
