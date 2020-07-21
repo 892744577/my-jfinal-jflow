@@ -50,7 +50,7 @@ public class YeyxController extends Controller {
             HrGongdan hrGongdanUpdate = new HrGongdan();
             hrGongdanUpdate.setOID(hrGongdanRequest.getOid());
             hrGongdanUpdate.setOrderId(orderId);
-            hrGongdanUpdate.setOrderId(hrGongdan.getServiceNo());
+            hrGongdanUpdate.setServiceNo(hrGongdan.getServiceNo());
             hrGongdanUpdate.update();
             renderJson(R.ok().put("message", "成功"));
         }else {
@@ -202,7 +202,7 @@ public class YeyxController extends Controller {
                             hrGongdanAdd.setOID(toCancelOrderRequest.getOid());
                             hrGongdanAdd.setOrderId(orderId);  //更新新的orderId
                             hrGongdanAdd.setServiceNo(hrGongdan.getServiceNo()); //更新ServiceNo
-                            hrGongdanUpdate.update();
+                            hrGongdanAdd.update();
                             renderJson(R.ok().put("code",0).put("message", "取消成功且重新调用新增订单接口成功"));
                         }else {
                             Log.DebugWriteInfo("==============>取消成功但重新调用新增订单接口失败:"+addResult);
