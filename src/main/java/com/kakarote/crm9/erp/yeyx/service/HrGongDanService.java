@@ -50,7 +50,7 @@ public class HrGongDanService {
         }else if(status==2) {
             String overtime = DateUtil.changeDateTOStr3(new Date());
             kv.set("overtime", overtime);
-        }else if(statistics==3) {
+        }else if(status==3) {
             kv.set("toBeCompleted", "906");
         }
 
