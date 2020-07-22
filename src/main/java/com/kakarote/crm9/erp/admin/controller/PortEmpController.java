@@ -6,6 +6,7 @@ import BP.DA.Paras;
 import BP.Difference.SystemConfig;
 import BP.Port.Emp;
 import BP.Tools.HttpClientUtil;
+import BP.Tools.StringUtils;
 import BP.WF.SendReturnObjs;
 import BP.Web.WebUser;
 import cn.hutool.core.util.StrUtil;
@@ -874,5 +875,21 @@ public class PortEmpController extends Controller {
             return;
         }
 
+    }
+
+    /**
+     * 已登陆账户更新密码
+     */
+    public void updatePassword(@Para("") PortEmpReq portEmpReq) throws Exception{
+        PortEmp portEmp = new PortEmp();
+        String no = WebUser.getNo();
+        if(StringUtils.isNotEmpty(no)){
+            portEmp.setNo(no);
+            portEmp.setPass(portEmpReq.getPass());
+            portEmp.update();
+            renderJson(R.ok().put("data",portEmp).put("code","000000"));
+        }else{
+            renderJson(R.error("还没有登陆，请登陆!").put("data",null).put("code","000001"));
+        }
     }
 }
