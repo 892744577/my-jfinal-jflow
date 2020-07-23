@@ -133,14 +133,17 @@ public class YzjController extends Controller {
 
                 //对于不同名同手机、同名同手机，当作相同的人,更新
                 PortEmp portEmp1 = new PortEmp();
-                portEmp1 = portEmp1.findFirst("select * from port_emp where tel=" + emp.getString("phone"));
-                if( portEmp1 != null ){
-                    portEmp1.setFkDept(deptId);
-                    portEmp1.setYzjJobNo(emp.getString("jobNo"));
-                    portEmp1.setYzjOpenId(emp.getString("openId"));
-                    portEmp1.setZt(emp.getString("status"));
-                    portEmp1.update();
+                if(StringUtils.isNotEmpty(emp.getString("phone"))){ //手机号为空不做处理
+                    portEmp1 = portEmp1.findFirst("select * from port_emp where tel=" + emp.getString("phone"));
+                    if( portEmp1 != null ){
+                        portEmp1.setFkDept(deptId);
+                        portEmp1.setYzjJobNo(emp.getString("jobNo"));
+                        portEmp1.setYzjOpenId(emp.getString("openId"));
+                        portEmp1.setZt(emp.getString("status"));
+                        portEmp1.update();
+                    }
                 }
+
                 //对于同名不同手机号，当作不相同的人,更新
                 PortEmp portEmp2 = new PortEmp();
                 portEmp2 = portEmp2.findByIdLoadColumns(pinyin1,"No");
