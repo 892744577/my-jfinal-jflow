@@ -172,7 +172,7 @@ public class YeyxController extends Controller {
                 param.put("version","1");
                 param.put("timestamp",String.valueOf(timestamp));
                 param.put("jsonData",jsonStr);
-                log.info("==============>调用新增订单接口发送参数:" + JSONObject.toJSONString(param));
+                log.info("==============>调用取消订单接口发送参数:" + JSONObject.toJSONString(param));
                 String result = yeyxService.gatewayRequest(yeyxService.getPath() + "/cancelOrder", param);
                 JSONObject objectResult = JSONObject.parseObject(result);
 
@@ -231,6 +231,7 @@ public class YeyxController extends Controller {
             renderJson(R.ok().put("code",40003).put("message","参数不能为空"));
         }else{
             try{
+                log.info("==================当前登陆人："+WebUser.getNo());
                 if(WebUser.getNo()!=""){
 
                 }else{
@@ -242,6 +243,7 @@ public class YeyxController extends Controller {
                     DutyTimeRequest dutyTimeRequest = JSONObject.parseObject(toDoRequest.getJsonData(),DutyTimeRequest.class);
                     if(StringUtils.isNotEmpty(dutyTimeRequest.getThirdOrderId())){
                         this.duty_time(dutyTimeRequest);
+                        log.info("==================接收改约时间成功" );
                     }else{
                         renderJson(R.ok().put("code",404).put("message", "订单号为空"));
                     }
@@ -250,6 +252,7 @@ public class YeyxController extends Controller {
                     MasterInfoRequest masterInfoRequest = JSONObject.parseObject(toDoRequest.getJsonData(),MasterInfoRequest.class);
                     if(StringUtils.isNotEmpty(masterInfoRequest.getThirdOrderId())){
                         this.master_info(masterInfoRequest);
+                        log.info("==================接收派单时间成功" );
                     }else{
                         renderJson(R.ok().put("code",404).put("message", "订单号为空"));
                     }
@@ -258,6 +261,7 @@ public class YeyxController extends Controller {
                     MasterVisitRequest masterVisitRequest = JSONObject.parseObject(toDoRequest.getJsonData(),MasterVisitRequest.class);
                     if(StringUtils.isNotEmpty(masterVisitRequest.getThirdOrderId())){
                         this.master_visit(masterVisitRequest);
+                        log.info("==================接收上门时间成功" );
                     }else{
                         renderJson(R.ok().put("code",404).put("message", "订单号为空"));
                     }
@@ -266,6 +270,7 @@ public class YeyxController extends Controller {
                     OrderCompleteRequest orderCompleteRequest = JSONObject.parseObject(toDoRequest.getJsonData(),OrderCompleteRequest.class);
                     if(StringUtils.isNotEmpty(orderCompleteRequest.getThirdOrderId())){
                         this.order_complete(orderCompleteRequest);
+                        log.info("==================接收完成时间成功" );
                     }else{
                         renderJson(R.ok().put("code",404).put("message", "订单号为空"));
                     }
@@ -274,14 +279,16 @@ public class YeyxController extends Controller {
                     OrderCancelRequest orderCancelRequest = JSONObject.parseObject(toDoRequest.getJsonData(),OrderCancelRequest.class);
                     if(StringUtils.isNotEmpty(orderCancelRequest.getThirdOrderId())){
                         this.order_cancel(orderCancelRequest);
+                        log.info("==================接收取消成功" );
                     }else{
                         renderJson(R.ok().put("code",404).put("message", "订单号为空"));
                     }
                 } else if ("factory_remark".equals(toDoRequest.getFunId())) {
-                    log.info("==================接收完成时间：" + toDoRequest.getJsonData());
+                    log.info("==================接收商家备注：" + toDoRequest.getJsonData());
                     FactoryRemarkRequest factoryRemarkRequest = JSONObject.parseObject(toDoRequest.getJsonData(),FactoryRemarkRequest.class);
                     if(StringUtils.isNotEmpty(factoryRemarkRequest.getThirdOrderId())){
                         this.factory_remark(factoryRemarkRequest);
+                        log.info("==================接收商家备注成功" );
                     }else{
                         renderJson(R.ok().put("code",404).put("message", "订单号为空"));
                     }
@@ -289,8 +296,9 @@ public class YeyxController extends Controller {
                 WebUser.Exit();
                 renderJson(R.ok().put("code",200).put("message", "成功"));
             } catch (Exception e) {
+                log.error("==================接收信息流转异常原因：",e);
+                log.error("==================接收信息流转异常堆栈：",e.getStackTrace());
                 renderJson(R.ok().put("code",40000).put("message","未知错误"));
-                e.printStackTrace();
             }
         }
     }
