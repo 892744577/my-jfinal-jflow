@@ -144,13 +144,14 @@ public class YzjController extends Controller {
                     }
                 }
 
-                //对于同名不同手机号，当作不相同的人,更新
+                //对于同名不同手机号，当作不相同的人,暂不处理，因为同名的No不知道怎么设置
                 PortEmp portEmp2 = new PortEmp();
                 portEmp2 = portEmp2.findByIdLoadColumns(pinyin1,"No");
                 if( portEmp2 != null ){
                     //数据不做处理
                 }
 
+                //对于即不同名，也不同手机号，当作不同的人，插入
                 if(portEmp1 == null && portEmp2 == null){
                     PortEmp portEmp3 = new PortEmp();
                     portEmp3.setNo(pinyin1);
