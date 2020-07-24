@@ -4,6 +4,7 @@ import BP.DA.DBAccess;
 import BP.DA.Paras;
 import BP.Difference.SystemConfig;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
 import com.jfinal.core.paragetter.Para;
@@ -19,6 +20,7 @@ import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.kakarote.crm9.utils.CreateExcel;
 import com.kakarote.crm9.utils.QrCodeUtil;
 import com.kakarote.crm9.utils.R;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +38,7 @@ import java.util.*;
  * @Param
  * @return
  **/
+@Slf4j
 public class PortActivityController extends Controller {
 
     @Inject
@@ -460,6 +463,7 @@ public class PortActivityController extends Controller {
             return;
         }
 
+        log.info("=============接收助力信息："+JSON.toJSONString(portActivityReq));
         PortActivityAssist portActivityAssist = new PortActivityAssist();
         portActivityAssist.setAsAcId(portActivityReq.getAcId());
         portActivityAssist.setAsOpenid(portActivityReq.getAsOpenId());
@@ -638,7 +642,7 @@ public class PortActivityController extends Controller {
         map.put("successCount",0+numSec1+numSec2+numSec3); //助力成功人数
         map.put("goods1Num",0+num1); //商品1参与人数
         map.put("goods1Purchase",numSec1); //商品1已抢
-        map.put("goods1Remain",60-numSec1); //商品1仅剩
+        map.put("goods1Remain",90-numSec1); //商品1仅剩
         map.put("goods2Num",num2); //商品2参与人数
         map.put("goods2Purchase",numSec2); //商品2已抢
         map.put("goods2Remain",30-numSec2); //商品2仅剩
