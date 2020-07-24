@@ -795,7 +795,11 @@ public class CCFlowAPI
 				}
 
 				String uiIsEnable = dr.getValue("UIIsEnable").toString();
-				if (uiIsEnable.equals("0") == true && lgType.equals("1") == true)
+
+				/**
+				 * modify by tangmanrong 外键本来有存储了中文字段，不可编辑时不需要查，但是我没有使用中文字段，所以要放开
+				 */
+				/*if (uiIsEnable.equals("0") == true && lgType.equals("1") == true)
 				{
 					continue; //如果是外键，并且是不可以编辑的状态.
 				}
@@ -803,7 +807,7 @@ public class CCFlowAPI
 				if (uiIsEnable.equals("0") == true && lgType.equals("0") == true)
 				{
 					continue; //如果是外部数据源，并且是不可以编辑的状态.
-				}
+				}*/
 
 				// 检查是否有下拉框自动填充。
 				String keyOfEn = dr.getValue("KeyOfEn").toString();
