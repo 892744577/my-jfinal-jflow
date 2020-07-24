@@ -14,7 +14,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
 import com.kakarote.crm9.erp.admin.entity.*;
 import com.kakarote.crm9.erp.admin.entity.vo.PortEmpReq;
 import com.kakarote.crm9.erp.admin.service.PortEmpService;
@@ -888,6 +890,21 @@ public class PortEmpController extends Controller {
             portEmp.setPass(portEmpReq.getPass());
             portEmp.update();
             renderJson(R.ok().put("data",portEmp).put("code","000000"));
+        }else{
+            renderJson(R.error("还没有登陆，请登陆!").put("data",null).put("code","000001"));
+        }
+    }
+
+    /**
+     * 查询当前登陆人菜单权限
+     */
+    public void queryMenuByUserNo() throws Exception{
+        String no = WebUser.getNo();
+        if( StringUtils.isNotEmpty(no) && !"admin".equals(no)){
+            List<Record> recordList = Db.find(Db.getSqlPara("gpm.menu.queryMenuByUserId", Kv.by("userNo",no)));
+            renderJson(R.ok().put("data",recordList).put("admin",false).put("code","000000"));
+        }else if("admin".equals(no)){
+            renderJson(R.ok().put("data","该用户是管理员").put("admin",true).put("code","000000"));
         }else{
             renderJson(R.error("还没有登陆，请登陆!").put("data",null).put("code","000001"));
         }
