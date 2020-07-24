@@ -353,7 +353,7 @@ public class YeyxController extends Controller {
         SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(
                 orderCompleteRequest.getThirdOrderId().split("-")[0],
                 Long.parseLong(orderCompleteRequest.getThirdOrderId().split("-")[1]),
-                myhtSend, null, 906, "ZhouPan");
+                myhtSend, null, 906, null);
     }
 
     @NotAction
