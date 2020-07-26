@@ -642,10 +642,10 @@ public class PortActivityController extends Controller {
         map.put("successCount",0+numSec1+numSec2+numSec3); //助力成功人数
         map.put("goods1Num",0+num1); //商品1参与人数
         map.put("goods1Purchase",numSec1); //商品1已抢
-        map.put("goods1Remain",90-numSec1); //商品1仅剩
+        map.put("goods1Remain",130-numSec1); //商品1仅剩
         map.put("goods2Num",num2); //商品2参与人数
         map.put("goods2Purchase",numSec2); //商品2已抢
-        map.put("goods2Remain",30-numSec2); //商品2仅剩
+        map.put("goods2Remain",45-numSec2); //商品2仅剩
         map.put("goods3Num",num3); //商品3参与人数
         map.put("goods3Purchase",numSec3); //商品3已抢
         map.put("goods3Remain",150-numSec3); //商品3仅剩
