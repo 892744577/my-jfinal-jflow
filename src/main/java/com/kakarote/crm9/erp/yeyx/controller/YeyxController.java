@@ -327,7 +327,7 @@ public class YeyxController extends Controller {
             SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(
                     masterInfoRequest.getThirdOrderId().split("-")[0],
                     Long.parseLong(masterInfoRequest.getThirdOrderId().split("-")[1]),
-                    myhtSend,null,903,"ZhouPan");
+                    myhtSend,null,903,null);
     }
     /**
      * 上门
@@ -339,7 +339,7 @@ public class YeyxController extends Controller {
         SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(
                 masterVisitRequest.getThirdOrderId().split("-")[0],
                 Long.parseLong(masterVisitRequest.getThirdOrderId().split("-")[1]),
-                myhtSend,null,905,"ZhouPan");
+                myhtSend,null,905,null);
     }
 
     /**
@@ -363,7 +363,7 @@ public class YeyxController extends Controller {
         SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(
                 orderCancelRequest.getThirdOrderId().split("-")[0],
                 Long.parseLong(orderCancelRequest.getThirdOrderId().split("-")[1]),
-                myhtSend, null, 907, "ZhouPan");
+                myhtSend, null, 907, null);
     }
 
     /**
