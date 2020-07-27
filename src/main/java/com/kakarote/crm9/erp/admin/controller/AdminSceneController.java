@@ -113,4 +113,16 @@ public class AdminSceneController extends Controller {
     public void queryWorkOrderScene(@Para("type") Integer type) throws Exception {
         renderJson(adminSceneService.queryWorkOrderScene(type));
     }
+
+    /*
+     * @Description //查询工单场景字段
+     * @Author wangkaida
+     * @Date 9:38 2020/7/27
+     * @Param [label]
+     * @return void
+     **/
+    @NotNullValidate(value = "label",message = "label不能为空")
+    public void queryWorkOrderField(@Para("label")Integer label){
+        renderJson(adminSceneService.queryWorkOrderField(label));
+    }
 }

@@ -20,6 +20,7 @@ import com.kakarote.crm9.erp.admin.entity.AdminField;
 import com.kakarote.crm9.erp.admin.entity.AdminScene;
 import com.kakarote.crm9.erp.admin.entity.AdminSceneDefault;
 import com.kakarote.crm9.erp.crm.common.CrmEnum;
+import com.kakarote.crm9.erp.crm.common.WorkOrderEnum;
 import com.kakarote.crm9.erp.crm.service.CrmBusinessService;
 import com.kakarote.crm9.utils.BaseUtil;
 import com.kakarote.crm9.utils.FieldUtil;
@@ -777,52 +778,78 @@ public class AdminSceneService{
             ownerObject.fluentPut("owner_user_id", new JSONObject().fluentPut("name", "owner_user_id").fluentPut("condition", "is").fluentPut("value", userId));
             JSONObject subOwnerObject = new JSONObject();
             subOwnerObject.fluentPut("owner_user_id", new JSONObject().fluentPut("name", "owner_user_id").fluentPut("condition", "in").fluentPut("value", getSubUserId(userId, BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1)));
-            if(CrmEnum.CRM_LEADS.getType() == type){
-                systemScene.setName("全部线索").setData(new JSONObject().fluentPut("is_transform", new JSONObject().fluentPut("name", "is_transform").fluentPut("condition", "is").fluentPut("value", 0)).toString()).save();
-                ownerObject.fluentPut("owner_user_id", new JSONObject().fluentPut("name", "owner_user_id").fluentPut("condition", "is").fluentPut("value", userId)).fluentPut("is_transform", new JSONObject().fluentPut("name", "is_transform").fluentPut("condition", "is").fluentPut("value", 0));
-                systemScene.setSceneId(null).setName("我负责的线索").setData(ownerObject.toString()).save();
-                subOwnerObject.fluentPut("owner_user_id", new JSONObject().fluentPut("name", "owner_user_id").fluentPut("condition", "in").fluentPut("value", getSubUserId(userId, BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1))).fluentPut("is_transform", new JSONObject().fluentPut("name", "is_transform").fluentPut("condition", "is").fluentPut("value", 0));
-                systemScene.setSceneId(null).setName("下属负责的线索").setData(subOwnerObject.toString()).save();
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.fluentPut("is_transform", new JSONObject().fluentPut("name", "is_transform").fluentPut("condition", "is").fluentPut("value", "1"));
-                systemScene.setSceneId(null).setName("已转化的线索").setData(jsonObject.toString()).setBydata("transform").save();
-            }else if(CrmEnum.CRM_CUSTOMER.getType() == type){
-                systemScene.setName("全部客户").save();
-                systemScene.setSceneId(null).setName("我负责的客户").setData(ownerObject.toString()).save();
-                systemScene.setSceneId(null).setName("下属负责的客户").setData(subOwnerObject.toString()).save();
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.fluentPut("ro_user_id", new JSONObject().fluentPut("name", "ro_user_id").fluentPut("condition", "takePart").fluentPut("value", userId));
-                systemScene.setSceneId(null).setName("我参与的客户").setData(jsonObject.toString()).save();
-            }else if(CrmEnum.CRM_CONTACTS.getType() == type){
-                systemScene.setName("全部联系人").save();
-                systemScene.setSceneId(null).setName("我负责的联系人").setData(ownerObject.toString()).save();
-                systemScene.setSceneId(null).setName("下属负责的联系人").setData(subOwnerObject.toString()).save();
-            }else if(CrmEnum.CRM_PRODUCT.getType() == type){
-                systemScene.setName("全部产品").save();
-                systemScene.setSceneId(null).setName("上架的产品").setData(new JSONObject().fluentPut("是否上下架", new JSONObject().fluentPut("name", "是否上下架").fluentPut("condition", "is").fluentPut("value", "上架")).toString()).save();
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.fluentPut("是否上下架", new JSONObject().fluentPut("name", "是否上下架").fluentPut("condition", "is").fluentPut("value", "下架"));
-                systemScene.setSceneId(null).setName("下架的产品").setData(jsonObject.toString()).save();
-            }else if(CrmEnum.CRM_BUSINESS.getType() == type){
-                systemScene.setName("全部商机").save();
-                systemScene.setSceneId(null).setName("我负责的商机").setData(ownerObject.toString()).save();
-                systemScene.setSceneId(null).setName("下属负责的商机").setData(subOwnerObject.toString()).save();
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.fluentPut("ro_user_id", new JSONObject().fluentPut("name", "ro_user_id").fluentPut("condition", "takePart").fluentPut("value", userId));
-                systemScene.setSceneId(null).setName("我参与的商机").setData(jsonObject.toString()).save();
-            }else if(CrmEnum.CRM_CONTRACT.getType() == type){
-                systemScene.setName("全部合同").save();
-                systemScene.setSceneId(null).setName("我负责的合同").setData(ownerObject.toString()).save();
-                systemScene.setSceneId(null).setName("下属负责的合同").setData(subOwnerObject.toString()).save();
-                JSONObject jsonObject = new JSONObject();
-                jsonObject.fluentPut("ro_user_id", new JSONObject().fluentPut("name", "ro_user_id").fluentPut("condition", "takePart").fluentPut("value", userId));
-                systemScene.setSceneId(null).setName("我参与的合同").setData(jsonObject.toString()).save();
-            }else if(CrmEnum.CRM_RECEIVABLES.getType() == type){
-                systemScene.setName("全部回款").save();
-                systemScene.setSceneId(null).setName("我负责的回款").setData(ownerObject.toString()).save();
-                systemScene.setSceneId(null).setName("下属负责的回款").setData(subOwnerObject.toString()).save();
+            if(WorkOrderEnum.WorkOrder_NULL.getType() == type){
+                systemScene.setName("全部工单").save();
+                systemScene.setSceneId(null).setName("我负责的工单").setData(ownerObject.toString()).save();
+                systemScene.setSceneId(null).setName("下属负责的工单").setData(subOwnerObject.toString()).save();
             }
         }
         return R.ok().put("data", Db.find(Db.getSql("admin.scene.queryScene"), type, userId));
     }
+
+    /*
+     * @Description //查询工单场景字段
+     * @Author wangkaida
+     * @Date 9:44 2020/7/27
+     * @Param [label]
+     * @return com.kakarote.crm9.utils.R
+     **/
+    public R queryWorkOrderField(Integer label) {
+        List<Record> recordList = new LinkedList<>();
+        FieldUtil fieldUtil = new FieldUtil(recordList);
+        String[] settingArr = new String[]{};
+        if(WorkOrderEnum.WorkOrder_NULL.getType() == label){
+            fieldUtil.add("serviceSystem", "服务单第三方系统", "text", settingArr)
+                    .add("serviceType", "服务单类型", "text", settingArr)
+                    .add("serviceZt", "服务单状态", "text", settingArr)
+                    .add("reworkId", "返修原单号", "text", settingArr)
+                    .add("factory", "厂商单标志", "number", settingArr)
+                    .add("facInWarranty", "标识产品是否在保", "number", settingArr)
+                    .add("smcCityId", "城市id", "number", settingArr)
+                    .add("smcProvinceId", "省id", "number", settingArr)
+                    .add("smcDistrictId", "区id", "number", settingArr)
+                    .add("telephone", "联系电话", "mobile", settingArr)
+                    .add("contactName", "联系人姓名", "text", settingArr)
+                    .add("gender", "性别", "text", settingArr)
+                    .add("address", "地址", "text", settingArr)
+                    .add("shippingOrderNo", "发货单号", "text", settingArr)
+                    .add("dutyTime", "预约时间", "datetime", settingArr)
+                    .add("dutyTime1", "预约日期", "text", settingArr)
+                    .add("dutyTime2", "预约时间段", "text", settingArr)
+                    .add("productId", "言而有信产品id", "number", settingArr)
+                    .add("facProductId", "厂商产品id", "text", settingArr)
+                    .add("productCount", "产品数量", "number", settingArr)
+                    .add("orderDiscountAmount", "优惠金额", "number", settingArr)
+                    .add("orderDiscountSourceData", "优惠快照", "text", settingArr)
+                    .add("orderDiscountRemark", "优惠备注", "text", settingArr)
+                    .add("remark", "服务单备注", "text", settingArr)
+                    .add("SMC", "省市区", "text", settingArr)
+                    .add("orderDiscount", "订单优惠", "floatnumber", settingArr)
+                    .add("serviceSegmentation", "服务细分", "text", settingArr)
+                    .add("orderId", "第三方平台订单号", "text", settingArr)
+                    .add("masterName", "工程师名称", "text", settingArr)
+                    .add("masterPhone", "工程师手机号", "mobile", settingArr)
+                    .add("productPictureUrls", "完工图片地址列表", "text", settingArr)
+                    .add("serviceSp", "工单审批标志", "text", settingArr)
+                    .add("otherRemark", "其他备注", "text", settingArr)
+                    .add("servicePrice", "安装单单价", "floatnumber", settingArr)
+                    .add("serviceExtraCharge", "安装附加费", "floatnumber", settingArr)
+                    .add("cancelRemark", "取消备注", "text", settingArr)
+                    .add("acceptor", "下一节点处理人", "text", settingArr)
+                    .add("fuselageCode", "机身码", "text", settingArr)
+                    ;
+        }else{
+            return R.error("场景label不符合要求！");
+        }
+        recordList = fieldUtil.getRecordList();
+        List<Record> records = adminFieldService.customFieldList(label);
+        if(recordList != null && records != null){
+            for(Record r : records){
+                r.set("field_name", r.getStr("name"));
+            }
+            recordList.addAll(records);
+        }
+        return R.ok().put("data", recordList);
+    }
+
 }
