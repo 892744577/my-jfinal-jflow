@@ -5,9 +5,7 @@ import com.kakarote.crm9.erp.admin.entity.*;
 import com.kakarote.crm9.erp.crm.entity.*;
 import com.kakarote.crm9.erp.oa.entity.*;
 import com.kakarote.crm9.erp.work.entity.*;
-import com.kakarote.crm9.erp.yeyx.entity.HrGongdan;
-import com.kakarote.crm9.erp.yeyx.entity.HrGongdanBook;
-import com.kakarote.crm9.erp.yeyx.entity.HrGongdanRepair;
+import com.kakarote.crm9.erp.yeyx.entity.*;
 
 public class _MappingKit {
 
@@ -78,6 +76,8 @@ public class _MappingKit {
 		arp.addMapping("hr_gongdan", "OID", HrGongdan.class);
 		arp.addMapping("hr_gongdan_book", "id", HrGongdanBook.class);
 		arp.addMapping("hr_gongdan_repair", "id", HrGongdanRepair.class);
+        arp.addMapping("sys_sftable", "No", SysSftable.class);
+        arp.addMapping("sys_enummain", "No", SysEnummain.class);
 		//活动
 		arp.addMapping("port_activity", "id", PortActivity.class);
 		arp.addMapping("port_activity_address", "id", PortActivityAddress.class);

@@ -28,4 +28,10 @@
   #sql ("getHrGongDanByOrderId")
     select * from hr_gongdan a where a.orderId=#para(orderId)
   #end
+  #sql ("getSysSfTableByNo")
+    select * from sys_sftable a where a.No=?
+  #end
+  #sql ("getSysEnummainByNo")
+    select * from sys_enummain a where a.No=?
+  #end
 #end

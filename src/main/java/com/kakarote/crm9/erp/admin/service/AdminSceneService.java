@@ -16,9 +16,7 @@ import com.jfinal.plugin.activerecord.tx.Tx;
 import com.kakarote.crm9.common.config.cache.CaffeineCache;
 import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
 import com.kakarote.crm9.common.constant.BaseConstant;
-import com.kakarote.crm9.erp.admin.entity.AdminField;
-import com.kakarote.crm9.erp.admin.entity.AdminScene;
-import com.kakarote.crm9.erp.admin.entity.AdminSceneDefault;
+import com.kakarote.crm9.erp.admin.entity.*;
 import com.kakarote.crm9.erp.crm.common.CrmEnum;
 import com.kakarote.crm9.erp.crm.common.WorkOrderEnum;
 import com.kakarote.crm9.erp.crm.service.CrmBusinessService;
@@ -799,8 +797,91 @@ public class AdminSceneService{
         FieldUtil fieldUtil = new FieldUtil(recordList);
         String[] settingArr = new String[]{};
         if(WorkOrderEnum.WorkOrder_NULL.getType() == label){
-            fieldUtil.add("serviceSystem", "服务单第三方系统", "text", settingArr)
-                    .add("serviceType", "服务单类型", "text", settingArr)
+            List<Record> serviceTypeList = new ArrayList<>();
+            List<Record> serviceSystemList = new ArrayList<>();
+            List<Record> serviceSegmentationList = new ArrayList<>();
+            List<Record> acceptorList = new ArrayList<>();
+            List<Record> dutyTimeList = new ArrayList<>();
+            //服务单类型
+            SysSftable sysSfTableFWDLX = SysSftable.dao.findFirst(Db.getSql("admin.hrGongDan.getSysSfTableByNo"),"FWDLX");
+            if (sysSfTableFWDLX != null) {
+                String selectStatement = sysSfTableFWDLX.getSelectStatement();
+                String selectStatementSql = selectStatement.replace("~","\'");
+                List<Record> dataList = Db.find(selectStatementSql);
+
+                for(int i=0;i<dataList.size();i++){
+                    Record record = dataList.get(i);
+                    String No = record.getStr("No") ;
+                    String Name = record.getStr("Name") ;
+                    serviceTypeList.add(new Record().set("name",Name).set("value",No));
+                }
+
+            }
+
+            //服务单平台
+            SysSftable sysSfTableFWDPT = SysSftable.dao.findFirst(Db.getSql("admin.hrGongDan.getSysSfTableByNo"),"FWDPT");
+            if (sysSfTableFWDPT != null) {
+                String selectStatement = sysSfTableFWDPT.getSelectStatement();
+                String selectStatementSql = selectStatement.replace("~","\'");
+                List<Record> dataList = Db.find(selectStatementSql);
+
+                for(int i=0;i<dataList.size();i++){
+                    Record record = dataList.get(i);
+                    String No = record.getStr("No") ;
+                    String Name = record.getStr("Name") ;
+                    serviceSystemList.add(new Record().set("name",Name).set("value",No));
+                }
+
+            }
+
+            //服务单细分
+            SysSftable sysSfTableFWDXF = SysSftable.dao.findFirst(Db.getSql("admin.hrGongDan.getSysSfTableByNo"),"FWDXF");
+            if (sysSfTableFWDXF != null) {
+                String selectStatement = sysSfTableFWDXF.getSelectStatement();
+                String selectStatementSql = selectStatement.replace("~","\'");
+                List<Record> dataList = Db.find(selectStatementSql);
+
+                for(int i=0;i<dataList.size();i++){
+                    Record record = dataList.get(i);
+                    String No = record.getStr("No") ;
+                    String Name = record.getStr("Name") ;
+                    serviceSegmentationList.add(new Record().set("name",Name).set("value",No));
+                }
+
+            }
+
+            //下一节点处理人
+            SysSftable sysSfTableRenYuan = SysSftable.dao.findFirst(Db.getSql("admin.hrGongDan.getSysSfTableByNo"),"RenYuan");
+            if (sysSfTableRenYuan != null) {
+                String selectStatement = sysSfTableRenYuan.getSelectStatement();
+                String selectStatementSql = selectStatement.replace("~","\'");
+                List<Record> dataList = Db.find(selectStatementSql);
+
+                for(int i=0;i<dataList.size();i++){
+                    Record record = dataList.get(i);
+                    String No = record.getStr("No") ;
+                    String Name = record.getStr("Name") ;
+                    acceptorList.add(new Record().set("name",Name).set("value",No));
+                }
+
+            }
+
+            //预约时间段
+            SysEnummain sysEnummainYYSJD = SysEnummain.dao.findFirst(Db.getSql("admin.hrGongDan.getSysEnummainByNo"),"YYSJD");
+            if (sysEnummainYYSJD != null) {
+                String selectStatement = sysEnummainYYSJD.getCfgVal();
+                String [] dutyTimeArr = selectStatement.split("@");
+                for (String dutyTimeStr : dutyTimeArr) {
+                    String [] dutyTimeSecArr = dutyTimeStr.split("=");
+                    String No = dutyTimeSecArr[0] ;
+                    String Name = dutyTimeSecArr[1] ;
+                    dutyTimeList.add(new Record().set("name",Name).set("value",No));
+                }
+
+            }
+
+            fieldUtil.add("serviceSystem", "服务单第三方系统", "select", serviceSystemList)
+                    .add("serviceType", "服务单类型", "select", serviceTypeList)
                     .add("serviceZt", "服务单状态", "text", settingArr)
                     .add("reworkId", "返修原单号", "text", settingArr)
                     .add("factory", "厂商单标志", "number", settingArr)
@@ -815,7 +896,7 @@ public class AdminSceneService{
                     .add("shippingOrderNo", "发货单号", "text", settingArr)
                     .add("dutyTime", "预约时间", "datetime", settingArr)
                     .add("dutyTime1", "预约日期", "text", settingArr)
-                    .add("dutyTime2", "预约时间段", "text", settingArr)
+                    .add("dutyTime2", "预约时间段", "select", dutyTimeList)
                     .add("productId", "言而有信产品id", "number", settingArr)
                     .add("facProductId", "厂商产品id", "text", settingArr)
                     .add("productCount", "产品数量", "number", settingArr)
@@ -825,7 +906,7 @@ public class AdminSceneService{
                     .add("remark", "服务单备注", "text", settingArr)
                     .add("SMC", "省市区", "text", settingArr)
                     .add("orderDiscount", "订单优惠", "floatnumber", settingArr)
-                    .add("serviceSegmentation", "服务细分", "text", settingArr)
+                    .add("serviceSegmentation", "服务细分", "select", serviceSegmentationList)
                     .add("orderId", "第三方平台订单号", "text", settingArr)
                     .add("masterName", "工程师名称", "text", settingArr)
                     .add("masterPhone", "工程师手机号", "mobile", settingArr)
@@ -835,7 +916,7 @@ public class AdminSceneService{
                     .add("servicePrice", "安装单单价", "floatnumber", settingArr)
                     .add("serviceExtraCharge", "安装附加费", "floatnumber", settingArr)
                     .add("cancelRemark", "取消备注", "text", settingArr)
-                    .add("acceptor", "下一节点处理人", "text", settingArr)
+                    .add("acceptor", "下一节点处理人", "select", acceptorList)
                     .add("fuselageCode", "机身码", "text", settingArr)
                     ;
         }else{
@@ -852,4 +933,56 @@ public class AdminSceneService{
         return R.ok().put("data", recordList);
     }
 
+    /*
+     * @Description //设置工单场景
+     * @Author wangkaida
+     * @Date 9:55 2020/7/28
+     * @Param [adminScene]
+     * @return com.kakarote.crm9.utils.R
+     **/
+    @Before(Tx.class)
+    public R workOrderSceneConfig(AdminScene adminScene) throws Exception {
+//        Long userId = BaseUtil.getUser().getUserId();
+        String userId = WebUser.getNo();
+        String[] sortArr = adminScene.getNoHideIds().split(",");
+        for(int i = 0; i < sortArr.length; i++){
+            Db.update(Db.getSql("admin.scene.sort"), i + 1, adminScene.getType(), userId, sortArr[i]);
+        }
+        if(null != adminScene.getHideIds()){
+            String[] hideIdsArr = adminScene.getHideIds().split(",");
+            Record number = Db.findFirst(Db.getSqlPara("admin.scene.queryIsHideSystem", Kv.by("ids", hideIdsArr)));
+            if(number.getInt("number") > 0){
+                return R.error("系统场景不能隐藏");
+            }
+            Db.update(Db.getSqlPara("admin.scene.isHide", Kv.by("ids", hideIdsArr).set("type", adminScene.getType()).set("userId", userId)));
+        }
+        return R.ok();
+    }
+
+    /*
+     * @Description //查询工单场景设置
+     * @Author wangkaida
+     * @Date 14:17 2020/7/28
+     * @Param [adminScene]
+     * @return com.kakarote.crm9.utils.R
+     **/
+    public R queryWorkOrderSceneConfig(AdminScene adminScene) throws Exception {
+//        Long userId = BaseUtil.getUser().getUserId();
+        String userId = WebUser.getNo();
+        List<Record> valueList = Db.find(Db.getSql("admin.scene.queryScene"), adminScene.getType(), userId);
+        for(Record scene : valueList){
+            if(StrUtil.isNotEmpty(scene.getStr("data"))){
+                JSONObject jsonObject = JSON.parseObject(scene.getStr("data"));
+                scene.set("data", jsonObject);
+            }
+        }
+        List<Record> hideValueList = Db.find(Db.getSql("admin.scene.queryHideScene"), adminScene.getType(), userId);
+        for(Record hideScene : hideValueList){
+            if(StrUtil.isNotEmpty(hideScene.getStr("data"))){
+                JSONObject jsonObject = JSON.parseObject(hideScene.getStr("data"));
+                hideScene.set("data", jsonObject);
+            }
+        }
+        return R.ok().put("data", Kv.by("value", valueList).set("hide_value", hideValueList));
+    }
 }
