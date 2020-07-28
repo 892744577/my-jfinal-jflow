@@ -74,6 +74,8 @@ public class _MappingKit {
 		//注册、工单
 		arp.addMapping("hr_register", "OID", HrRegister.class);
 		arp.addMapping("hr_gongdan", "OID", HrGongdan.class);
+		arp.addMapping("sys_sftable", "No", SysSftable.class);
+		arp.addMapping("sys_enummain", "No", SysEnummain.class);
 		//活动
 		arp.addMapping("port_activity", "id", PortActivity.class);
 		arp.addMapping("port_activity_address", "id", PortActivityAddress.class);

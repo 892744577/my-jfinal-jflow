@@ -125,4 +125,29 @@ public class AdminSceneController extends Controller {
     public void queryWorkOrderField(@Para("label")Integer label){
         renderJson(adminSceneService.queryWorkOrderField(label));
     }
+
+    /*
+     * @Description //设置工单场景
+     * @Author wangkaida
+     * @Date 9:48 2020/7/28
+     * @Param [adminScene]
+     * @return void
+     **/
+    @NotNullValidate(value = "type",message = "type不能为空")
+    @NotNullValidate(value = "noHideIds",message = "显示场景不能为空")
+    public void workOrderSceneConfig(@Para("") AdminScene adminScene) throws Exception {
+        renderJson(adminSceneService.workOrderSceneConfig(adminScene));
+    }
+
+    /*
+     * @Description //查询工单场景设置
+     * @Author wangkaida
+     * @Date 14:16 2020/7/28
+     * @Param [adminScene]
+     * @return void
+     **/
+    @NotNullValidate(value = "type",message = "type不能为空")
+    public void queryWorkOrderSceneConfig(@Para("") AdminScene adminScene) throws Exception {
+        renderJson(adminSceneService.queryWorkOrderSceneConfig(adminScene));
+    }
 }
