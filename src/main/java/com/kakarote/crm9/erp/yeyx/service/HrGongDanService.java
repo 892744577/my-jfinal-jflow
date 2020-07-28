@@ -79,7 +79,7 @@ public class HrGongDanService {
      * @return
      */
     public HrGongdan getHrGongdanByOrderId(FactoryRemarkRequest factoryRemarkRequest) {
-        return HrGongdan.dao.findFirst(Db.getSqlPara("admin.hrGongDan.getHrGongDanPageList",Kv.by("orderId",factoryRemarkRequest.getOrderId())));
+        return HrGongdan.dao.findFirst(Db.getSqlPara("admin.hrGongDan.getHrGongDanByOrderId",Kv.by("orderId",factoryRemarkRequest.getOrderId())));
     }
 }
 

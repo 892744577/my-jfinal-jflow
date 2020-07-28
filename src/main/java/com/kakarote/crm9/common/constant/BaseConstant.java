@@ -20,6 +20,10 @@ public class BaseConstant implements Serializable {
      */
     public final static String UPLOAD_PATH = BaseUtil.isWindows() ? "D:\\upload\\" : "/usr/local/upload/";
 
+    /**
+     * 工单查询的文件路径
+     */
+    public final static String UPLOAD_PATH_GDCX = BaseUtil.isWindows() ? "D:\\upload\\" : "/usr/local/images/";
 
     /**
      * 角色类型列表

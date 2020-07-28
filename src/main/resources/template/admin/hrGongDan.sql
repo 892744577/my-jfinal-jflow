@@ -23,7 +23,6 @@
       #if(toBeCompleted)
       and b.FK_Node != #para(toBeCompleted)
       #end
-
       order by a.rdt desc
   #end
   #sql ("getHrGongDanByOrderId")

@@ -1,7 +1,5 @@
 package com.kakarote.crm9.erp.yeyx.controller;
 
-import BP.DA.DBAccess;
-import BP.DA.Paras;
 import BP.Difference.SystemConfig;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
@@ -12,26 +10,116 @@ import com.jfinal.core.Controller;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
 import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
-import com.kakarote.crm9.erp.admin.entity.PortEmp;
+import com.kakarote.crm9.common.constant.BaseConstant;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdan;
+import com.kakarote.crm9.erp.yeyx.entity.HrGongdanBook;
+import com.kakarote.crm9.erp.yeyx.entity.HrGongdanRepair;
+import com.kakarote.crm9.erp.yeyx.entity.vo.HrGongdanRepairRequest;
 import com.kakarote.crm9.erp.yeyx.entity.vo.HrGongdanRequest;
 import com.kakarote.crm9.erp.yeyx.service.HrGongDanService;
+import com.kakarote.crm9.erp.yeyx.service.HrGongdanAppointService;
+import com.kakarote.crm9.erp.yeyx.service.HrGongdanRepairService;
 import com.kakarote.crm9.erp.yzj.service.TokenService;
+import com.kakarote.crm9.utils.FileUploadUtil;
 import com.kakarote.crm9.utils.R;
+import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.util.*;
+import java.util.stream.Collectors;
 
+@Slf4j
 public class HrGongDanController extends Controller {
 
     @Inject
     private HrGongDanService hrGongDanService;
 
     @Inject
+    private HrGongdanRepairService hrGongdanRepairService;
+
+    @Inject
+    private HrGongdanAppointService hrGongdanAppointService;
+
+    @Inject
     private TokenService tokenService;
+
+    /**
+     * 初始化预约单号
+     */
+    public void initOrderNumAppoint() {
+        log.info("=======初始化报修单号");
+        String orderNumber = "";
+        while(true){
+            orderNumber = UUID.randomUUID().toString().replace("-", "").substring(0, 15);
+            Record record =  hrGongdanAppointService.getAppointByOrderNum(orderNumber);
+            if(record==null){
+                break;
+            }
+        }
+        renderJson(R.ok().put("data",orderNumber));
+    }
+    /**
+     * 保存预约单
+     */
+    public void saveHrGongdanAppoint(@Para("") HrGongdanRepairRequest hrGongdanRepairRequest) throws Exception  {
+        log.info("=======保存预约单");
+        HrGongdanBook hrGongdanBook = getModel(HrGongdanBook.class,"",true);
+        renderJson(R.ok().put("data",hrGongdanBook.save()));
+    }
+    /**
+     * 预约单查询
+     */
+    public void queryPageListAppoint(BasePageRequest basePageRequest) throws Exception  {
+        log.info("=======预约单查询");
+        HrGongdanBook hrGongdanBook = getModel(HrGongdanBook.class,"",true);
+        renderJson(R.ok().put("data",hrGongdanAppointService.queryPageList(basePageRequest)));
+    }
+
+
+    /**
+     * 初始化报修单号
+     */
+    public void initOrderNum() {
+        log.info("=======初始化报修单号");
+        String orderNumber = "";
+        while(true){
+            orderNumber = UUID.randomUUID().toString().replace("-", "").substring(0, 15);
+            Record record =  hrGongdanRepairService.getRepairByOrderNum(orderNumber);
+            if(record==null){
+                break;
+            }
+        }
+        renderJson(R.ok().put("data",orderNumber));
+    }
+    /**
+     * 保存报修单
+     */
+    public void saveHrGongdanRepair(@Para("") HrGongdanRepairRequest hrGongdanRepairRequest) throws Exception  {
+        log.info("=======保存报修单");
+        HrGongdanRepair hrGongdanRepair = getModel(HrGongdanRepair.class,"",true);
+        String photos = upload(getFiles()).stream().map(item->item.get(FileUploadUtil.ACCESS_PATH)).collect(Collectors.joining(";"));
+        hrGongdanRepair.setPhoto(photos);
+        renderJson(R.ok().put("data",hrGongdanRepair.save()));
+    }
+
+
+    public List<Map<String, String>> upload(List<UploadFile> list ) {
+        log.info("开始执行文件上传方法!");
+        return FileUploadUtil.upload(list,BaseConstant.UPLOAD_PATH,"");
+    }
+
+    /**
+     * 报修单查询
+     */
+    public void queryPageListRepair(BasePageRequest basePageRequest) throws Exception  {
+        log.info("=======报修单查询");
+        renderJson(R.ok().put("data",hrGongdanRepairService.queryPageList(basePageRequest)));
+    }
+
 
     /**
      * @author tmr
