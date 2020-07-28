@@ -871,8 +871,9 @@ public class AdminSceneService{
             if (sysEnummainYYSJD != null) {
                 String selectStatement = sysEnummainYYSJD.getCfgVal();
                 String [] dutyTimeArr = selectStatement.split("@");
-                for (String dutyTimeStr : dutyTimeArr) {
-                    String [] dutyTimeSecArr = dutyTimeStr.split("=");
+
+                for (int i = 1; i < dutyTimeArr.length; i++) {
+                    String [] dutyTimeSecArr = dutyTimeArr[i].split("=");
                     String No = dutyTimeSecArr[0] ;
                     String Name = dutyTimeSecArr[1] ;
                     dutyTimeList.add(new Record().set("name",Name).set("value",No));
