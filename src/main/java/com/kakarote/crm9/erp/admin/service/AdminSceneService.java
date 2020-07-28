@@ -803,7 +803,7 @@ public class AdminSceneService{
             List<Record> acceptorList = new ArrayList<>();
             List<Record> dutyTimeList = new ArrayList<>();
             //服务单类型
-            SysSftable sysSfTableFWDLX = SysSftable.dao.findFirst(Db.getSql("admin.hrGongDan.getSysSfTableByNo"),"FWDLX");
+            SysSftable sysSfTableFWDLX = SysSftable.dao.findFirst(Db.getSql("admin.dictionary.getSysSfTableByNo"),"FWDLX");
             if (sysSfTableFWDLX != null) {
                 String selectStatement = sysSfTableFWDLX.getSelectStatement();
                 String selectStatementSql = selectStatement.replace("~","\'");
@@ -819,7 +819,7 @@ public class AdminSceneService{
             }
 
             //服务单平台
-            SysSftable sysSfTableFWDPT = SysSftable.dao.findFirst(Db.getSql("admin.hrGongDan.getSysSfTableByNo"),"FWDPT");
+            SysSftable sysSfTableFWDPT = SysSftable.dao.findFirst(Db.getSql("admin.dictionary.getSysSfTableByNo"),"FWDPT");
             if (sysSfTableFWDPT != null) {
                 String selectStatement = sysSfTableFWDPT.getSelectStatement();
                 String selectStatementSql = selectStatement.replace("~","\'");
@@ -835,7 +835,7 @@ public class AdminSceneService{
             }
 
             //服务单细分
-            SysSftable sysSfTableFWDXF = SysSftable.dao.findFirst(Db.getSql("admin.hrGongDan.getSysSfTableByNo"),"FWDXF");
+            SysSftable sysSfTableFWDXF = SysSftable.dao.findFirst(Db.getSql("admin.dictionary.getSysSfTableByNo"),"FWDXF");
             if (sysSfTableFWDXF != null) {
                 String selectStatement = sysSfTableFWDXF.getSelectStatement();
                 String selectStatementSql = selectStatement.replace("~","\'");
@@ -851,7 +851,7 @@ public class AdminSceneService{
             }
 
             //下一节点处理人
-            SysSftable sysSfTableRenYuan = SysSftable.dao.findFirst(Db.getSql("admin.hrGongDan.getSysSfTableByNo"),"RenYuan");
+            SysSftable sysSfTableRenYuan = SysSftable.dao.findFirst(Db.getSql("admin.dictionary.getSysSfTableByNo"),"RenYuan");
             if (sysSfTableRenYuan != null) {
                 String selectStatement = sysSfTableRenYuan.getSelectStatement();
                 String selectStatementSql = selectStatement.replace("~","\'");
@@ -867,7 +867,7 @@ public class AdminSceneService{
             }
 
             //预约时间段
-            SysEnummain sysEnummainYYSJD = SysEnummain.dao.findFirst(Db.getSql("admin.hrGongDan.getSysEnummainByNo"),"YYSJD");
+            SysEnummain sysEnummainYYSJD = SysEnummain.dao.findFirst(Db.getSql("admin.dictionary.getSysEnummainByNo"),"YYSJD");
             if (sysEnummainYYSJD != null) {
                 String selectStatement = sysEnummainYYSJD.getCfgVal();
                 String [] dutyTimeArr = selectStatement.split("@");

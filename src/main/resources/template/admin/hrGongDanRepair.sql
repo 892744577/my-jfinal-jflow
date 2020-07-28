@@ -4,6 +4,7 @@
   #end
   #sql ("queryPageList")
     select a.* from hr_gongdan_repair a
+    where 1=1
     #if(search)
       and (a.contact like CONCAT('%',#para(search),'%') or a.phone like CONCAT('%',#para(search),'%') or a.address like CONCAT('%',#para(search),'%') or a.remark like CONCAT('%',#para(search),'%'))
     #end
