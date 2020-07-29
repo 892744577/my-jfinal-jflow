@@ -54,7 +54,7 @@ public class HrGongDanController extends Controller {
         log.info("=======初始化报修单号");
         String orderNumber = "";
         while(true){
-            orderNumber = UUID.randomUUID().toString().replace("-", "").substring(0, 15);
+            orderNumber = "YY"+UUID.randomUUID().toString().replace("-", "").substring(0, 15);
             Record record =  hrGongdanAppointService.getAppointByOrderNum(orderNumber);
             if(record==null){
                 break;
@@ -87,7 +87,7 @@ public class HrGongDanController extends Controller {
         log.info("=======初始化报修单号");
         String orderNumber = "";
         while(true){
-            orderNumber = UUID.randomUUID().toString().replace("-", "").substring(0, 15);
+            orderNumber = "BX"+ UUID.randomUUID().toString().replace("-", "").substring(0, 15);
             Record record =  hrGongdanRepairService.getRepairByOrderNum(orderNumber);
             if(record==null){
                 break;
