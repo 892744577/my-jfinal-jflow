@@ -14,13 +14,17 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
 import com.kakarote.crm9.common.constant.BaseConstant;
+import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdan;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanBook;
+import com.kakarote.crm9.erp.yeyx.entity.HrGongdanLog;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanRepair;
+import com.kakarote.crm9.erp.yeyx.entity.vo.HrGongdanLogRequest;
 import com.kakarote.crm9.erp.yeyx.entity.vo.HrGongdanRepairRequest;
 import com.kakarote.crm9.erp.yeyx.entity.vo.HrGongdanRequest;
 import com.kakarote.crm9.erp.yeyx.service.HrGongDanService;
 import com.kakarote.crm9.erp.yeyx.service.HrGongdanAppointService;
+import com.kakarote.crm9.erp.yeyx.service.HrGongdanLogService;
 import com.kakarote.crm9.erp.yeyx.service.HrGongdanRepairService;
 import com.kakarote.crm9.erp.yzj.service.TokenService;
 import com.kakarote.crm9.utils.FileUploadUtil;
@@ -29,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,31 +48,20 @@ public class HrGongDanController extends Controller {
 
     @Inject
     private HrGongdanAppointService hrGongdanAppointService;
+    @Inject
+    private HrGongdanLogService hrGongdanLogService;
 
     @Inject
     private TokenService tokenService;
 
-    /**
-     * 初始化预约单号
-     */
-    public void initOrderNumAppoint() {
-        log.info("=======初始化报修单号");
-        String orderNumber = "";
-        while(true){
-            orderNumber = "YY"+UUID.randomUUID().toString().replace("-", "").substring(0, 15);
-            Record record =  hrGongdanAppointService.getAppointByOrderNum(orderNumber);
-            if(record==null){
-                break;
-            }
-        }
-        renderJson(R.ok().put("data",orderNumber));
-    }
     /**
      * 保存预约单
      */
     public void saveHrGongdanAppoint(@Para("") HrGongdanRepairRequest hrGongdanRepairRequest) throws Exception  {
         log.info("=======保存预约单");
         HrGongdanBook hrGongdanBook = getModel(HrGongdanBook.class,"",true);
+        String serialNum = (new DecimalFormat("000")).format(hrGongdanAppointService.getAppointByOrderNum());//流水号格式化
+        hrGongdanBook.setOrderNumber("YY"+DateUtil.changeDateTOStr2(new Date())+serialNum);
         renderJson(R.ok().put("data",hrGongdanBook.save()));
     }
     /**
@@ -78,40 +72,43 @@ public class HrGongDanController extends Controller {
         HrGongdanBook hrGongdanBook = getModel(HrGongdanBook.class,"",true);
         renderJson(R.ok().put("data",hrGongdanAppointService.queryPageList(basePageRequest)));
     }
-
-
     /**
-     * 初始化报修单号
+     * 保存预约单处理记录
      */
-    public void initOrderNum() {
-        log.info("=======初始化报修单号");
-        String orderNumber = "";
-        while(true){
-            orderNumber = "BX"+ UUID.randomUUID().toString().replace("-", "").substring(0, 15);
-            Record record =  hrGongdanRepairService.getRepairByOrderNum(orderNumber);
-            if(record==null){
-                break;
-            }
+    public void saveHrGongdanLogBook(@Para("") HrGongdanLogRequest hrGongdanLogRequest) {
+        log.info("=======保存预约单处理记录");
+        HrGongdanLog hrGongdanLog = getModel(HrGongdanLog.class,"",true);
+        hrGongdanLog.setCreateTime(new Date());
+        if("2".equals(hrGongdanLogRequest.getDeal())){
+            HrGongdanBook hrGongdanBook = new HrGongdanBook();
+            hrGongdanBook.setOrderNumber(hrGongdanLog.getPreServiceNo());
+            hrGongdanBook.setDeal("2");
+            hrGongdanBook.update();
         }
-        renderJson(R.ok().put("data",orderNumber));
+        renderJson(R.ok().put("data",hrGongdanLog.save()));
     }
+
     /**
      * 保存报修单
      */
     public void saveHrGongdanRepair(@Para("") HrGongdanRepairRequest hrGongdanRepairRequest) throws Exception  {
         log.info("=======保存报修单");
         HrGongdanRepair hrGongdanRepair = getModel(HrGongdanRepair.class,"",true);
+        String serialNum = (new DecimalFormat("000")).format(hrGongdanRepairService.getRepairByOrderNum());//流水号格式化
+        hrGongdanRepair.setOrderNumber("BX"+ DateUtil.changeDateTOStr2(new Date())+serialNum);
         String photos = upload(getFiles()).stream().map(item->item.get(FileUploadUtil.ACCESS_PATH)).collect(Collectors.joining(";"));
         hrGongdanRepair.setPhoto(photos);
         renderJson(R.ok().put("data",hrGongdanRepair.save()));
     }
-
-
+    /**
+     * 报修单上传文件
+     * @param list
+     * @return
+     */
     public List<Map<String, String>> upload(List<UploadFile> list ) {
         log.info("开始执行文件上传方法!");
         return FileUploadUtil.upload(list,BaseConstant.UPLOAD_PATH,"");
     }
-
     /**
      * 报修单查询
      */
@@ -119,7 +116,28 @@ public class HrGongDanController extends Controller {
         log.info("=======报修单查询");
         renderJson(R.ok().put("data",hrGongdanRepairService.queryPageList(basePageRequest)));
     }
-
+    /**
+     * 保存报修单处理记录
+     */
+    public void saveHrGongdanLogRepair(@Para("") HrGongdanLogRequest hrGongdanLogRequest) throws Exception  {
+        log.info("=======保存预约单处理记录");
+        HrGongdanLog hrGongdanLog = getModel(HrGongdanLog.class,"",true);
+        hrGongdanLog.setCreateTime(new Date());
+        if("2".equals(hrGongdanLogRequest.getDeal()) ){
+            HrGongdanRepair hrGongdanRepair = new HrGongdanRepair();
+            hrGongdanRepair.setOrderNumber(hrGongdanLog.getPreServiceNo());
+            hrGongdanRepair.setDeal("2");
+            hrGongdanRepair.update();
+        }
+        renderJson(R.ok().put("data",hrGongdanLog.save()));
+    }
+    /**
+     * @author tmr
+     * 查询工单记录
+     */
+    public void queryPageListLog(BasePageRequest basePageRequest) {
+        renderJson(R.ok().put("data",hrGongdanLogService.queryPageList(basePageRequest)));
+    }
 
     /**
      * @author tmr

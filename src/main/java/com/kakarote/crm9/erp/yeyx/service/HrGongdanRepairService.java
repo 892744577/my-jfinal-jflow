@@ -6,15 +6,19 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
+import com.kakarote.crm9.erp.wx.util.DateUtil;
+
+import java.util.Date;
 
 public class HrGongdanRepairService {
     /**
-     * 根据orderId获取记录
-     * @param orderNumber
+     * 获取记录条数
      * @return
      */
-    public Record getRepairByOrderNum(String orderNumber) {
-        return  Db.findFirst(Db.getSqlPara("admin.hrGongDanRepair.getHrGongDanRepairInitNum",Kv.by("orderNumber",orderNumber)));
+    public int getRepairByOrderNum() {
+        String today = DateUtil.changeDateTOStr2(new Date());
+        Kv kv= Kv.by("today", today);
+        return  Db.queryInt(Db.getSqlPara("admin.hrGongDanRepair.getHrGongDanRepairInitNum",kv).getSql(),today);
     }
     /**
      * 根据orderId获取记录
