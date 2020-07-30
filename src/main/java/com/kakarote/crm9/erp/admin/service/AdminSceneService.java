@@ -365,7 +365,128 @@ public class AdminSceneService{
         }
         jsonObject.put("data",data);
         basePageRequest.setJsonObject(jsonObject);
-        return getCrmPageList(basePageRequest);
+//        return getCrmPageList(basePageRequest);
+        return getHrGongDanPageList(basePageRequest);
+    }
+
+    /*
+     * @Description //工单场景列表查询
+     * @Author wangkaida
+     * @Date 13:41 2020/7/29
+     * @Param [basePageRequest]
+     * @return com.kakarote.crm9.utils.R
+     **/
+    public R getHrGongDanPageList(BasePageRequest basePageRequest){
+        JSONObject jsonObject = basePageRequest.getJsonObject();
+        Integer statistics = jsonObject.getInteger("statistics");
+        Integer status = jsonObject.getInteger("status");
+        basePageRequest.setJsonObject(jsonObject);
+        if (StrUtil.isEmpty(String.valueOf(statistics))){
+            return R.error("statistics参数不能为空!");
+        }
+
+        //查询条件
+        String search = basePageRequest.getJsonObject().getString("search");
+        Kv kv = Kv.by("search",search);
+
+        //时间
+        if(statistics==1){ //本日
+            String today = com.kakarote.crm9.erp.wx.util.DateUtil.changeDateTOStr3(new Date());
+            kv.set("today",today);
+        }else if(statistics==2){ //本周
+            String weekend = com.kakarote.crm9.erp.wx.util.DateUtil.changeDateTOStr3(new Date());
+            kv.set("weekend",weekend);
+        }else if(statistics==3) { //本月
+            String yearmonth = com.kakarote.crm9.erp.wx.util.DateUtil.changeDateTOStr6(new Date());
+            kv.set("yearmonth", yearmonth);
+        }
+
+        //状态
+        if(status==1){
+            kv.set("confirm", "902");
+        }else if(status==2) {
+            String overtime = com.kakarote.crm9.erp.wx.util.DateUtil.changeDateTOStr3(new Date());
+            kv.set("overtime", overtime);
+        }else if(status==3) {
+            kv.set("toBeCompleted", "906");
+        }
+
+        String realm;
+        List<JSONObject> queryList = new ArrayList<>();
+        Integer type = jsonObject.getInteger("type");
+        //自定义字段列表
+        Map<String,AdminField> fieldMap = getWorkOrderAdminFieldMap(type);
+        //权限标识
+        switch(type){
+            case 0:
+                realm = "gongdan";
+                break;
+            default:
+                return R.error("type不符合要求");
+        }
+        JSONObject data = basePageRequest.getJsonObject().getJSONObject("data");
+        if (!appendSqlCondition(kv, fieldMap, queryList, data)){
+            return R.error("参数包含非法字段");
+        }
+//        if(StrUtil.isNotEmpty(search)){
+//            if (!appendWorkOrderSqlSearch(type, queryList, search)){
+//                return R.error("参数包含非法字段");
+//            }
+//            if(!kv.containsKey("fixed")){
+//                kv.set("fixed",true);
+//            }
+//        }
+
+        kv.set("orderByKey", "RDT").set("orderByType", "desc").set("fieldType", 1);
+        kv.set("page", (basePageRequest.getPage() - 1) * basePageRequest.getLimit()).set("limit", basePageRequest.getLimit());
+        String selectSql = "select * ";
+        JSONObject resultJsonObject = new JSONObject();
+        List<String> batchList = queryBatchId(queryList);
+        if(batchList.size()==0&&kv.containsKey("field")){
+            batchList.add("");
+        }
+        kv.set("select", selectSql).set("queryList", queryList).set("realm", realm).set("fieldMap", fieldMap).set("label", type);
+        kv.set("batchList",batchList);
+        SqlPara sqlPara = Db.getSqlPara("admin.hrGongDan.getHrGongDanListPage", kv);
+        List<Record> recordPage = Db.find(sqlPara);
+        resultJsonObject.put("list", recordPage);
+        SqlPara countSql = Db.getSqlPara("admin.hrGongDan.queryHrGongDanListCount", kv);
+        Integer count = Db.queryInt(countSql.getSql(), countSql.getPara());
+        resultJsonObject.put("totalRow", count);
+        return R.ok().put("data", resultJsonObject);
+    }
+
+    /*
+     * @Author wangkaida
+     * @Date 18:34 2020/7/29
+     * @Param [type]
+     * @return java.util.Map<java.lang.String,com.kakarote.crm9.erp.admin.entity.AdminField>
+     **/
+    private Map<String, AdminField> getWorkOrderAdminFieldMap(Integer type) {
+        Map<String,AdminField> adminFieldMap = CaffeineCache.ME.get("field", type);
+        if(adminFieldMap == null){
+            List<AdminField> adminFields = AdminField.dao.find("SELECT field_name,field_type,type FROM aptenon_admin_field WHERE label=?", type);
+            adminFieldMap = new HashMap<>();
+            for(AdminField adminField : adminFields){
+                adminFieldMap.put(adminField.getFieldName(), adminField);
+            }
+            AdminField adminField=new AdminField();
+            adminField.setFieldType(1);
+//            adminFieldMap.put("owner_user_id",adminField);
+//            adminFieldMap.put("create_user_id",adminField);
+//            adminFieldMap.put("create_time",adminField);
+//            adminFieldMap.put("update_time",adminField);
+//            adminFieldMap.put("is_transform",adminField);
+//            adminFieldMap.put("deal_status",adminField);
+//            adminFieldMap.put("customer_id",adminField);
+//            adminFieldMap.put("contract_id",adminField);
+//            adminFieldMap.put("contacts_id",adminField);
+//            adminFieldMap.put("leads_id",adminField);
+//            adminFieldMap.put("receivables_id",adminField);
+//            adminFieldMap.put("product_id",adminField);
+//            adminFieldMap.put("business_id",adminField);
+        }
+        return adminFieldMap;
     }
 
     /**
@@ -548,6 +669,28 @@ public class AdminSceneService{
             conditions.append(" and (business_name like '%").append(search).append("%')");
         } else {
             conditions.append(" and (number like '%").append(search).append("%')");
+        }
+        JSONObject sqlObject = new JSONObject();
+        sqlObject.put("sql", conditions.toString());
+        sqlObject.put("type", 1);
+        queryList.add(sqlObject);
+        return true;
+    }
+
+    /*
+     * @Author wangkaida
+     * @Date 11:36 2020/7/30
+     * @Param [type, queryList, search]
+     * @return boolean
+     **/
+    private boolean appendWorkOrderSqlSearch(Integer type, List<JSONObject> queryList, String search) {
+        if (!ParamsUtil.isValid(search)) {
+            return false;
+        }
+        StringBuilder conditions = new StringBuilder();
+        if (type == 0) {
+            conditions.append(" and (a.serviceNo like CONCAT('%',").append(search).append(",'%') or a.address like CONCAT('%',")
+                    .append(search).append(",'%') or a.contactName like CONCAT('%',").append(search).append(",'%') or a.telephone like CONCAT('%',").append(search).append(",'%'))");
         }
         JSONObject sqlObject = new JSONObject();
         sqlObject.put("sql", conditions.toString());

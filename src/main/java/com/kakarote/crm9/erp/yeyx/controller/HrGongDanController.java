@@ -1,6 +1,5 @@
 package com.kakarote.crm9.erp.yeyx.controller;
 
-import BP.Difference.SystemConfig;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -10,10 +9,10 @@ import com.jfinal.core.Controller;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
-import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
 import com.kakarote.crm9.common.constant.BaseConstant;
+import com.kakarote.crm9.erp.admin.service.AdminSceneService;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdan;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanBook;
@@ -54,6 +53,9 @@ public class HrGongDanController extends Controller {
 
     @Inject
     private TokenService tokenService;
+
+    @Inject
+    private AdminSceneService adminSceneService;
 
     /**
      * 保存预约单
@@ -147,7 +149,8 @@ public class HrGongDanController extends Controller {
      * 分页工单查询数据
      */
     public void queryPageList(BasePageRequest basePageRequest) {
-        renderJson(R.ok().put("data",hrGongDanService.queryPageList(basePageRequest)));
+//        renderJson(R.ok().put("data",hrGongDanService.queryPageList(basePageRequest)));
+        renderJson(R.ok().put("data",adminSceneService.filterConditionAndGetPageList(basePageRequest)));
     }
 
     /**
