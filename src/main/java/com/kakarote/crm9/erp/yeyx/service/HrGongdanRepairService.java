@@ -1,5 +1,6 @@
 package com.kakarote.crm9.erp.yeyx.service;
 
+import BP.Tools.StringUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
@@ -30,6 +31,11 @@ public class HrGongdanRepairService {
         //查询条件
         String search = basePageRequest.getJsonObject().getString("search");
         Kv kv = Kv.by("search",search);
+        //open_id
+        String open_id = basePageRequest.getJsonObject().getString("openId");
+        if(StringUtils.isNotEmpty(open_id)){
+            kv.set("open_id",open_id);
+        }
         return Db.paginate(
                 basePageRequest.getPage(),
                 basePageRequest.getLimit(),

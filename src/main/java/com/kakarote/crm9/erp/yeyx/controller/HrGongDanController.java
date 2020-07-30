@@ -35,6 +35,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.text.DecimalFormat;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -60,8 +61,9 @@ public class HrGongDanController extends Controller {
     public void saveHrGongdanAppoint(@Para("") HrGongdanRepairRequest hrGongdanRepairRequest) throws Exception  {
         log.info("=======保存预约单");
         HrGongdanBook hrGongdanBook = getModel(HrGongdanBook.class,"",true);
-        String serialNum = (new DecimalFormat("000")).format(hrGongdanAppointService.getAppointByOrderNum());//流水号格式化
-        hrGongdanBook.setOrderNumber("YY"+DateUtil.changeDateTOStr2(new Date())+serialNum);
+        String serialNum = (new DecimalFormat("00")).format(hrGongdanAppointService.getAppointByOrderNum());//流水号格式化
+        hrGongdanBook.setOrderNumber("YY"+DateUtil.changeDateTOStr2(new Date())+ThreadLocalRandom.current().nextInt(10, 100)+serialNum);
+        hrGongdanBook.setCreateTime(new Date());
         renderJson(R.ok().put("data",hrGongdanBook.save()));
     }
     /**
@@ -94,10 +96,11 @@ public class HrGongDanController extends Controller {
     public void saveHrGongdanRepair(@Para("") HrGongdanRepairRequest hrGongdanRepairRequest) throws Exception  {
         log.info("=======保存报修单");
         HrGongdanRepair hrGongdanRepair = getModel(HrGongdanRepair.class,"",true);
-        String serialNum = (new DecimalFormat("000")).format(hrGongdanRepairService.getRepairByOrderNum());//流水号格式化
-        hrGongdanRepair.setOrderNumber("BX"+ DateUtil.changeDateTOStr2(new Date())+serialNum);
+        String serialNum = (new DecimalFormat("00")).format(hrGongdanRepairService.getRepairByOrderNum());//流水号格式化
+        hrGongdanRepair.setOrderNumber("BX"+ DateUtil.changeDateTOStr2(new Date())+ThreadLocalRandom.current().nextInt(10, 100)+serialNum);
         String photos = upload(getFiles()).stream().map(item->item.get(FileUploadUtil.ACCESS_PATH)).collect(Collectors.joining(";"));
         hrGongdanRepair.setPhoto(photos);
+        hrGongdanRepair.setCreateTime(new Date());
         renderJson(R.ok().put("data",hrGongdanRepair.save()));
     }
     /**
@@ -107,7 +110,7 @@ public class HrGongDanController extends Controller {
      */
     public List<Map<String, String>> upload(List<UploadFile> list ) {
         log.info("开始执行文件上传方法!");
-        return FileUploadUtil.upload(list,BaseConstant.UPLOAD_PATH,"");
+        return FileUploadUtil.upload(list,BaseConstant.UPLOAD_PATH_GDCX,"");
     }
     /**
      * 报修单查询

@@ -25,7 +25,7 @@ public class FileUploadUtil {
 
     public static Map<String, String> upload(UploadFile file, String path, String prefix) {
         try {
-            String fileName = System.currentTimeMillis() +
+            String fileName = DateUtil.changeDateTOStr2(new Date())+System.currentTimeMillis() +
                     ThreadLocalRandom.current().nextInt(100, 1000) + "";
             // 文件扩展名
             String suffix = getFileExtention(file);
