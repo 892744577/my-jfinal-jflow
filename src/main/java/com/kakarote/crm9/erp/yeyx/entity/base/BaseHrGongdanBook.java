@@ -145,4 +145,12 @@ public abstract class BaseHrGongdanBook<M extends BaseHrGongdanBook<M>> extends 
 		return getInt("sourceType");
 	}
 
+	public void setDeal(String deal) {
+		set("deal", deal);
+	}
+	
+	public String getDeal() {
+		return getStr("deal");
+	}
+
 }

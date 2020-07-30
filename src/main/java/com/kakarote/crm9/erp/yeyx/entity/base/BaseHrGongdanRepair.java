@@ -145,4 +145,12 @@ public abstract class BaseHrGongdanRepair<M extends BaseHrGongdanRepair<M>> exte
 		return getInt("sourceType");
 	}
 
+	public void setDeal(String deal) {
+		set("deal", deal);
+	}
+	
+	public String getDeal() {
+		return getStr("deal");
+	}
+
 }
