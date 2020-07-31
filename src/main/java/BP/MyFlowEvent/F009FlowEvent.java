@@ -8,6 +8,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Aop;
 import com.jfinal.plugin.activerecord.Db;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
+import com.kakarote.crm9.erp.yeyx.entity.HrGongdanBook;
+import com.kakarote.crm9.erp.yeyx.entity.HrGongdanRepair;
 import com.kakarote.crm9.erp.yeyx.service.YeyxService;
 
 import java.text.DecimalFormat;
@@ -39,9 +41,7 @@ public class F009FlowEvent extends FlowEventBase {
                     //计算hr_gongdan表数据条数
                     String dateTime = DateUtil.changeDateTOStr2(new Date());
                     int totalNum = Db.queryInt("select MAX(SUBSTRING(serviceNo,-4)) + 1 from hr_gongdan t where DATE_FORMAT(t.rdt,'%Y%m%d') ="+ dateTime );
-                    String STR_FORMAT = "0000";
-                    DecimalFormat df = new DecimalFormat(STR_FORMAT);
-                    String serialNum = df.format(totalNum); //流水号
+                    String serialNum = (new DecimalFormat("0000")).format(totalNum);//流水号格式化
                     serviceNo = serviceSystem + serviceSegmentation + serviceType + dateTime + serialNum; //服务单编号
                     Row row = this.HisEn.getRow();
                     row.SetValByKey("serviceNo",serviceNo);
@@ -49,8 +49,22 @@ public class F009FlowEvent extends FlowEventBase {
                     //保存服务单号
                     this.HisEn.Update();
                 }
-
-                //1.2若系统是YX
+                //1.2若是预约单或报修单将旧单改为已生成工单
+                if(this.getSysPara().get("preServiceNo") != null){
+                    String preServiceNo = this.getSysPara().get("preServiceNo") == null ? "" : this.getSysPara().get("preServiceNo").toString(); //预约单或报修单号
+                    if(preServiceNo.contains("YY")){
+                        HrGongdanBook hrGongdanBook = new HrGongdanBook();
+                        hrGongdanBook.setOrderNumber(preServiceNo);
+                        hrGongdanBook.setIsGenerate(1);
+                        hrGongdanBook.update();
+                    }else if(preServiceNo.contains("BX")){
+                        HrGongdanRepair hrGongdanRepair = new HrGongdanRepair();
+                        hrGongdanRepair.setOrderNumber(preServiceNo);
+                        hrGongdanRepair.setIsGenerate(1);
+                        hrGongdanRepair.update();
+                    }
+                }
+                //1.3若系统是YX
                 String serviceSystem = this.getSysPara().get("serviceSystem") == null ? "": this.getSysPara().get("serviceSystem").toString(); //服务单第三方系统
                 if("YX".equals(serviceSystem)){
                     Map currentPrama = new HashMap();
