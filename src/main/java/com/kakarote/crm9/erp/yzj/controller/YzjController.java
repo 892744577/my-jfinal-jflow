@@ -140,6 +140,7 @@ public class YzjController extends Controller {
                         portEmp1.setYzjJobNo(emp.getString("jobNo"));
                         portEmp1.setYzjOpenId(emp.getString("openId"));
                         portEmp1.setZt(emp.getString("status"));
+                        portEmp1.setYzjJobTitle(emp.getString("jobTitle").trim());
                         portEmp1.update();
                     }
                 }
@@ -162,6 +163,7 @@ public class YzjController extends Controller {
                     portEmp3.setYzjJobNo(emp.getString("jobNo"));
                     portEmp3.setYzjOpenId(emp.getString("openId"));
                     portEmp3.setZt(emp.getString("status"));
+                    portEmp3.setYzjJobTitle(emp.getString("jobTitle").trim());
                     portEmp3.save();
                 }
             }
