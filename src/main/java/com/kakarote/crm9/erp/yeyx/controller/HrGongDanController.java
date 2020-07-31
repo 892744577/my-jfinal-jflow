@@ -30,8 +30,6 @@ import com.kakarote.crm9.utils.FileUploadUtil;
 import com.kakarote.crm9.utils.R;
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -150,7 +148,7 @@ public class HrGongDanController extends Controller {
      */
     public void queryPageList(BasePageRequest basePageRequest) {
 //        renderJson(R.ok().put("data",hrGongDanService.queryPageList(basePageRequest)));
-        renderJson(R.ok().put("data",adminSceneService.filterConditionAndGetPageList(basePageRequest)));
+        renderJson(adminSceneService.filterConditionAndGetPageList(basePageRequest));
     }
 
     /**
