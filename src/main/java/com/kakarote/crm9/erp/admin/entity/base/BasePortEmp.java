@@ -9,148 +9,156 @@ import com.jfinal.plugin.activerecord.IBean;
 @SuppressWarnings("serial")
 public abstract class BasePortEmp<M extends BasePortEmp<M>> extends Model<M> implements IBean {
 
-	public void setNo(java.lang.String No) {
+	public void setNo(String No) {
 		set("No", No);
 	}
-
-	public java.lang.String getNo() {
+	
+	public String getNo() {
 		return getStr("No");
 	}
 
-	public void setName(java.lang.String Name) {
+	public void setName(String Name) {
 		set("Name", Name);
 	}
-
-	public java.lang.String getName() {
+	
+	public String getName() {
 		return getStr("Name");
 	}
 
-	public void setPass(java.lang.String Pass) {
+	public void setPass(String Pass) {
 		set("Pass", Pass);
 	}
-
-	public java.lang.String getPass() {
+	
+	public String getPass() {
 		return getStr("Pass");
 	}
 
-	public void setFkDept(java.lang.String fkDept) {
+	public void setFkDept(String fkDept) {
 		set("FK_Dept", fkDept);
 	}
-
-	public java.lang.String getFkDept() {
+	
+	public String getFkDept() {
 		return getStr("FK_Dept");
 	}
 
-	public void setSID(java.lang.String SID) {
+	public void setSID(String SID) {
 		set("SID", SID);
 	}
-
-	public java.lang.String getSID() {
+	
+	public String getSID() {
 		return getStr("SID");
 	}
 
-	public void setTel(java.lang.String Tel) {
+	public void setTel(String Tel) {
 		set("Tel", Tel);
 	}
-
-	public java.lang.String getTel() {
+	
+	public String getTel() {
 		return getStr("Tel");
 	}
 
-	public void setEmail(java.lang.String Email) {
+	public void setEmail(String Email) {
 		set("Email", Email);
 	}
-
-	public java.lang.String getEmail() {
+	
+	public String getEmail() {
 		return getStr("Email");
 	}
 
-	public void setPinYin(java.lang.String PinYin) {
+	public void setPinYin(String PinYin) {
 		set("PinYin", PinYin);
 	}
-
-	public java.lang.String getPinYin() {
+	
+	public String getPinYin() {
 		return getStr("PinYin");
 	}
 
-	public void setSignType(java.lang.Integer SignType) {
+	public void setSignType(Integer SignType) {
 		set("SignType", SignType);
 	}
-
-	public java.lang.Integer getSignType() {
+	
+	public Integer getSignType() {
 		return getInt("SignType");
 	}
 
-	public void setIdx(java.lang.Integer Idx) {
+	public void setIdx(Integer Idx) {
 		set("Idx", Idx);
 	}
-
-	public java.lang.Integer getIdx() {
+	
+	public Integer getIdx() {
 		return getInt("Idx");
 	}
 
-	public void setEmpNo(java.lang.String EmpNo) {
+	public void setEmpNo(String EmpNo) {
 		set("EmpNo", EmpNo);
 	}
-
-	public java.lang.String getEmpNo() {
+	
+	public String getEmpNo() {
 		return getStr("EmpNo");
 	}
 
-	public void setOrgNo(java.lang.String OrgNo) {
+	public void setOrgNo(String OrgNo) {
 		set("OrgNo", OrgNo);
 	}
-
-	public java.lang.String getOrgNo() {
+	
+	public String getOrgNo() {
 		return getStr("OrgNo");
 	}
 
-	public void setWxAppOpenId(java.lang.String WxAppOpenId) {
+	public void setWxAppOpenId(String WxAppOpenId) {
 		set("WxAppOpenId", WxAppOpenId);
 	}
-
-	public java.lang.String getWxAppOpenId() {
+	
+	public String getWxAppOpenId() {
 		return getStr("WxAppOpenId");
 	}
 
-	public void setWxOpenId(java.lang.String WxOpenId) {
+	public void setWxOpenId(String WxOpenId) {
 		set("WxOpenId", WxOpenId);
 	}
-
-	public java.lang.String getWxOpenId() {
+	
+	public String getWxOpenId() {
 		return getStr("WxOpenId");
 	}
 
-	public void setAccountType(java.lang.String accountType) {
+	public void setAccountType(String accountType) {
 		set("accountType", accountType);
 	}
-
-	public java.lang.String getAccountType() {
+	
+	public String getAccountType() {
 		return getStr("accountType");
 	}
 
-	public void setYzjOpenId(java.lang.String yzjOpenId) {
+	public void setYzjOpenId(String yzjOpenId) {
 		set("yzjOpenId", yzjOpenId);
 	}
-
-	public java.lang.String getYzjOpenId() {
+	
+	public String getYzjOpenId() {
 		return getStr("yzjOpenId");
 	}
 
-	public void setYzjJobNo(java.lang.String yzjJobNo) {
+	public void setYzjJobNo(String yzjJobNo) {
 		set("yzjJobNo", yzjJobNo);
 	}
-
-	public java.lang.String getYzjJobNo() {
+	
+	public String getYzjJobNo() {
 		return getStr("yzjJobNo");
 	}
 
-	public void setZt(java.lang.String zt) {
+	public void setZt(String zt) {
 		set("zt", zt);
 	}
-
-	public java.lang.String getZt() {
+	
+	public String getZt() {
 		return getStr("zt");
+	}
+
+	public void setYzjJobTitle(String yzjJobTitle) {
+		set("yzjJobTitle", yzjJobTitle);
+	}
+	
+	public String getYzjJobTitle() {
+		return getStr("yzjJobTitle");
 	}
 
 }
