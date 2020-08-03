@@ -81,9 +81,10 @@ public class HrGongDanController extends Controller {
         log.info("=======保存预约单处理记录");
         HrGongdanLog hrGongdanLog = getModel(HrGongdanLog.class,"",true);
         hrGongdanLog.setCreateTime(new Date());
-        if("2".equals(hrGongdanLogRequest.getDeal())){
+        if(hrGongdanLogRequest.getDeal() == 2){
             HrGongdanBook hrGongdanBook = new HrGongdanBook();
-            hrGongdanBook.setOrderNumber(hrGongdanLog.getPreServiceNo());
+//            hrGongdanBook.setOrderNumber(hrGongdanLog.getPreServiceNo());
+            hrGongdanBook.setId(hrGongdanLogRequest.getGongDanId());
             hrGongdanBook.setDeal("2");
             hrGongdanBook.update();
         }
@@ -126,9 +127,10 @@ public class HrGongDanController extends Controller {
         log.info("=======保存预约单处理记录");
         HrGongdanLog hrGongdanLog = getModel(HrGongdanLog.class,"",true);
         hrGongdanLog.setCreateTime(new Date());
-        if("2".equals(hrGongdanLogRequest.getDeal()) ){
+        if(hrGongdanLogRequest.getDeal() == 2){
             HrGongdanRepair hrGongdanRepair = new HrGongdanRepair();
-            hrGongdanRepair.setOrderNumber(hrGongdanLog.getPreServiceNo());
+//            hrGongdanRepair.setOrderNumber(hrGongdanLog.getPreServiceNo());
+            hrGongdanRepair.setId(hrGongdanLogRequest.getGongDanId());
             hrGongdanRepair.setDeal("2");
             hrGongdanRepair.update();
         }

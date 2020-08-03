@@ -5,4 +5,5 @@ import lombok.Data;
 @Data
 public class HrGongdanLogRequest {
     private int deal;
+    private int gongDanId;
 }
