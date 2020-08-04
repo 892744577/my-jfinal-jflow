@@ -916,9 +916,9 @@ public class AdminSceneService{
             AdminScene systemScene = new AdminScene();
             systemScene.setUserId(userId).setSort(0).setData("").setIsHide(0).setIsSystem(1).setCreateTime(DateUtil.date()).setType(type);
             JSONObject ownerObject = new JSONObject();
-            ownerObject.fluentPut("owner_user_id", new JSONObject().fluentPut("name", "owner_user_id").fluentPut("condition", "is").fluentPut("value", userId));
+            ownerObject.fluentPut("FlowStarter", new JSONObject().fluentPut("name", "FlowStarter").fluentPut("condition", "is").fluentPut("value", userId));
             JSONObject subOwnerObject = new JSONObject();
-            subOwnerObject.fluentPut("owner_user_id", new JSONObject().fluentPut("name", "owner_user_id").fluentPut("condition", "in").fluentPut("value", getSubUserId(userId, BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1)));
+            subOwnerObject.fluentPut("FlowStarter", new JSONObject().fluentPut("name", "FlowStarter").fluentPut("condition", "in").fluentPut("value", getSubUserId(userId, BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1)));
             if(WorkOrderEnum.WorkOrder_NULL.getType() == type){
                 systemScene.setName("全部工单").save();
                 systemScene.setSceneId(null).setName("我负责的工单").setData(ownerObject.toString()).save();
