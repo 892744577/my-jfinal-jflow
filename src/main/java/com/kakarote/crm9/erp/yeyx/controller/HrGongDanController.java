@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
+import com.jfinal.core.NotAction;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
@@ -99,7 +100,10 @@ public class HrGongDanController extends Controller {
         HrGongdanRepair hrGongdanRepair = getModel(HrGongdanRepair.class,"",true);
         String serialNum = (new DecimalFormat("00")).format(hrGongdanRepairService.getRepairByOrderNum());//流水号格式化
         hrGongdanRepair.setOrderNumber("BX"+ DateUtil.changeDateTOStr2(new Date())+ThreadLocalRandom.current().nextInt(10, 100)+serialNum);
-        String photos = upload(getFiles()).stream().map(item->item.get(FileUploadUtil.ACCESS_PATH)).collect(Collectors.joining(";"));
+        String photos = "";
+        if(getFiles().size()>0){
+            photos = upload(getFiles()).stream().map(item->item.get(FileUploadUtil.ACCESS_PATH)).collect(Collectors.joining(";"));
+        }
         hrGongdanRepair.setPhoto(photos);
         hrGongdanRepair.setCreateTime(new Date());
         renderJson(R.ok().put("data",hrGongdanRepair.save()));
@@ -109,9 +113,11 @@ public class HrGongDanController extends Controller {
      * @param list
      * @return
      */
+    @NotAction
     public List<Map<String, String>> upload(List<UploadFile> list ) {
         log.info("开始执行文件上传方法!");
         return FileUploadUtil.upload(list,BaseConstant.UPLOAD_PATH_GDCX,"");
+
     }
     /**
      * 报修单查询
