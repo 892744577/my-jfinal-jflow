@@ -1,5 +1,6 @@
 package com.kakarote.crm9.erp.admin.service;
 
+import BP.Tools.StringUtils;
 import BP.Web.WebUser;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
@@ -366,7 +367,7 @@ public class AdminSceneService{
         jsonObject.put("data",data);
         basePageRequest.setJsonObject(jsonObject);
 //        return getCrmPageList(basePageRequest);
-        return getHrGongDanPageList(basePageRequest);
+        return getHrGongdanPageList(basePageRequest);
     }
 
     /*
@@ -376,7 +377,7 @@ public class AdminSceneService{
      * @Param [basePageRequest]
      * @return com.kakarote.crm9.utils.R
      **/
-    public R getHrGongDanPageList(BasePageRequest basePageRequest){
+    public R getHrGongdanPageList(BasePageRequest basePageRequest){
         JSONObject jsonObject = basePageRequest.getJsonObject();
         Integer statistics = jsonObject.getInteger("statistics");
         Integer status = jsonObject.getInteger("status");
@@ -428,14 +429,6 @@ public class AdminSceneService{
         if (!appendSqlCondition(kv, fieldMap, queryList, data)){
             return R.error("参数包含非法字段");
         }
-//        if(StrUtil.isNotEmpty(search)){
-//            if (!appendWorkOrderSqlSearch(type, queryList, search)){
-//                return R.error("参数包含非法字段");
-//            }
-//            if(!kv.containsKey("fixed")){
-//                kv.set("fixed",true);
-//            }
-//        }
 
         kv.set("orderByKey", "RDT").set("orderByType", "desc").set("fieldType", 1);
         kv.set("page", (basePageRequest.getPage() - 1) * basePageRequest.getLimit()).set("limit", basePageRequest.getLimit());
@@ -677,28 +670,6 @@ public class AdminSceneService{
         return true;
     }
 
-    /*
-     * @Author wangkaida
-     * @Date 11:36 2020/7/30
-     * @Param [type, queryList, search]
-     * @return boolean
-     **/
-    private boolean appendWorkOrderSqlSearch(Integer type, List<JSONObject> queryList, String search) {
-        if (!ParamsUtil.isValid(search)) {
-            return false;
-        }
-        StringBuilder conditions = new StringBuilder();
-        if (type == 0) {
-            conditions.append(" and (a.serviceNo like CONCAT('%',").append(search).append(",'%') or a.address like CONCAT('%',")
-                    .append(search).append(",'%') or a.contactName like CONCAT('%',").append(search).append(",'%') or a.telephone like CONCAT('%',").append(search).append(",'%'))");
-        }
-        JSONObject sqlObject = new JSONObject();
-        sqlObject.put("sql", conditions.toString());
-        sqlObject.put("type", 1);
-        queryList.add(sqlObject);
-        return true;
-    }
-
     private boolean appendSqlCondition(Kv kv, Map<String, AdminField> fieldMap, List<JSONObject> queryList, JSONObject data) {
         List<JSONObject> jsonObjectList = new ArrayList<>();
         if(data != null){
@@ -794,15 +765,10 @@ public class AdminSceneService{
                             sqlObject.put("connector","in");
                             sqlObject.put("value","("+value+")");
                         }
-                        if("datetime".equals(formType)){
+                        if("datetime".equals(formType) || "date".equals(formType)){
                             conditions.append(" between '").append(jsonObject.getString("start")).append("' and '").append(jsonObject.getString("end")).append("'");
                             sqlObject.put("connector","between");
                             sqlObject.put("value","'"+jsonObject.getString("start")+"'"+" and '"+jsonObject.getString("end")+"'");
-                        }
-                        if("date".equals(formType)){
-                            conditions.append(" between '").append(jsonObject.getString("startDate")).append("' and '").append(jsonObject.getString("endDate")).append("'");
-                            sqlObject.put("connector","between");
-                            sqlObject.put("value","'"+jsonObject.getString("startDate")+"'"+" and '"+jsonObject.getString("endDate")+"'");
                         }
                         sqlObject.put("type", fieldMap.get(name) != null ? fieldMap.get(name).getFieldType() : 2);
                     }
@@ -908,8 +874,9 @@ public class AdminSceneService{
     public R queryWorkOrderScene(Integer type) throws Exception {
 //        Long userId = BaseUtil.getUser().getUserId();
         String userId = WebUser.getNo();
-        //for test
-//        String userId = "wangkaida";
+        if(StringUtils.isEmpty(userId)){
+            R.error("用户没登陆，请重新登陆");
+        }
         //查询userId下是否有系统场景，没有则插入
         Integer number = Db.queryInt(Db.getSql("admin.scene.querySystemNumber"), type, userId);
         if(number.equals(0)){
@@ -1039,7 +1006,7 @@ public class AdminSceneService{
                     .add("address", "地址", "text", settingArr)
                     .add("shippingOrderNo", "发货单号", "text", settingArr)
                     .add("dutyTime", "预约时间", "datetime", settingArr)
-                    .add("dutyTime1", "预约日期", "text", settingArr)
+                    .add("dutyTime1", "预约日期", "date", settingArr)
                     .add("dutyTime2", "预约时间段", "select", dutyTimeList)
                     .add("productId", "言而有信产品id", "number", settingArr)
                     .add("facProductId", "厂商产品id", "text", settingArr)
