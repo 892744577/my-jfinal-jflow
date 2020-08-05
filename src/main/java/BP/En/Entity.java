@@ -3339,7 +3339,7 @@ public abstract class Entity implements Serializable {
 
 	// 方法
 	/**
-	 * 重新设置默信息.
+	 * 重新设置默信息. note： 只读的字段会被默认值覆盖，慎用 by tangmanrong
 	 * 
 	 * @throws Exception
 	 */
