@@ -2,6 +2,7 @@ package com.kakarote.crm9.erp.yeyx.controller;
 
 import BP.DA.Log;
 import BP.Port.Emp;
+import BP.Tools.DateUtils;
 import BP.Tools.StringUtils;
 import BP.WF.SendReturnObjs;
 import BP.Web.WebUser;
@@ -13,6 +14,7 @@ import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.Db;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdan;
+import com.kakarote.crm9.erp.yeyx.entity.HrGongdanZmnLog;
 import com.kakarote.crm9.erp.yeyx.entity.vo.*;
 import com.kakarote.crm9.erp.yeyx.service.HrGongDanService;
 import com.kakarote.crm9.erp.yeyx.service.YeyxService;
@@ -242,6 +244,16 @@ public class YeyxController extends Controller {
                     log.info("==================接收改约时间：" + toDoRequest.getJsonData());
                     DutyTimeRequest dutyTimeRequest = JSONObject.parseObject(toDoRequest.getJsonData(),DutyTimeRequest.class);
                     if(StringUtils.isNotEmpty(dutyTimeRequest.getThirdOrderId())){
+                        //录入记录
+                        HrGongdanZmnLog hrGongdanZmnLog = saveHrGongdanZmnLog(
+                                toDoRequest.getFunId(),
+                                dutyTimeRequest.getThirdOrderId(),
+                                dutyTimeRequest.getOrderId(),
+                                dutyTimeRequest.getOptTime());
+                        hrGongdanZmnLog.setDutyTime(dutyTimeRequest.getDutyTime());
+                        hrGongdanZmnLog.save();
+
+                        //数据
                         this.duty_time(dutyTimeRequest);
                         log.info("==================接收改约时间成功" );
                     }else{
@@ -251,6 +263,16 @@ public class YeyxController extends Controller {
                     log.info("==================接收派单时间：" + toDoRequest.getJsonData());
                     MasterInfoRequest masterInfoRequest = JSONObject.parseObject(toDoRequest.getJsonData(),MasterInfoRequest.class);
                     if(StringUtils.isNotEmpty(masterInfoRequest.getThirdOrderId())){
+                        //录入记录
+                        HrGongdanZmnLog hrGongdanZmnLog = saveHrGongdanZmnLog(
+                                toDoRequest.getFunId(),
+                                masterInfoRequest.getThirdOrderId(),
+                                masterInfoRequest.getOrderId(),
+                                masterInfoRequest.getOptTime());
+                        hrGongdanZmnLog.setMasterName(masterInfoRequest.getMasterName());
+                        hrGongdanZmnLog.setMasterPhone(masterInfoRequest.getMasterPhone());
+                        hrGongdanZmnLog.save();
+
                         this.master_info(masterInfoRequest);
                         log.info("==================接收派单时间成功" );
                     }else{
@@ -260,6 +282,14 @@ public class YeyxController extends Controller {
                     log.info("==================接收上门时间：" + toDoRequest.getJsonData());
                     MasterVisitRequest masterVisitRequest = JSONObject.parseObject(toDoRequest.getJsonData(),MasterVisitRequest.class);
                     if(StringUtils.isNotEmpty(masterVisitRequest.getThirdOrderId())){
+                        //录入记录
+                        HrGongdanZmnLog hrGongdanZmnLog = saveHrGongdanZmnLog(
+                                toDoRequest.getFunId(),
+                                masterVisitRequest.getThirdOrderId(),
+                                masterVisitRequest.getOrderId(),
+                                masterVisitRequest.getOptTime());
+                        hrGongdanZmnLog.save();
+
                         this.master_visit(masterVisitRequest);
                         log.info("==================接收上门时间成功" );
                     }else{
@@ -269,6 +299,15 @@ public class YeyxController extends Controller {
                     log.info("==================接收完成时间：" + toDoRequest.getJsonData());
                     OrderCompleteRequest orderCompleteRequest = JSONObject.parseObject(toDoRequest.getJsonData(),OrderCompleteRequest.class);
                     if(StringUtils.isNotEmpty(orderCompleteRequest.getThirdOrderId())){
+                        //录入记录
+                        HrGongdanZmnLog hrGongdanZmnLog = saveHrGongdanZmnLog(
+                                toDoRequest.getFunId(),
+                                orderCompleteRequest.getThirdOrderId(),
+                                orderCompleteRequest.getOrderId(),
+                                orderCompleteRequest.getOptTime());
+                        hrGongdanZmnLog.setCompleteRemark(orderCompleteRequest.getRemark());
+                        hrGongdanZmnLog.setCompleteUrl(orderCompleteRequest.getProductPictureUrls());
+                        hrGongdanZmnLog.save();
                         this.order_complete(orderCompleteRequest);
                         log.info("==================接收完成时间成功" );
                     }else{
@@ -278,6 +317,15 @@ public class YeyxController extends Controller {
                     log.info("==================接收取消：" + toDoRequest.getJsonData());
                     OrderCancelRequest orderCancelRequest = JSONObject.parseObject(toDoRequest.getJsonData(),OrderCancelRequest.class);
                     if(StringUtils.isNotEmpty(orderCancelRequest.getThirdOrderId())){
+                        //录入记录
+                        HrGongdanZmnLog hrGongdanZmnLog = saveHrGongdanZmnLog(
+                                toDoRequest.getFunId(),
+                                orderCancelRequest.getThirdOrderId(),
+                                orderCancelRequest.getOrderId(),
+                                orderCancelRequest.getOptTime());
+                        hrGongdanZmnLog.setCancelRemark(orderCancelRequest.getRemark());
+                        hrGongdanZmnLog.save();
+
                         this.order_cancel(orderCancelRequest);
                         log.info("==================接收取消成功" );
                     }else{
@@ -287,6 +335,15 @@ public class YeyxController extends Controller {
                     log.info("==================接收商家备注：" + toDoRequest.getJsonData());
                     FactoryRemarkRequest factoryRemarkRequest = JSONObject.parseObject(toDoRequest.getJsonData(),FactoryRemarkRequest.class);
                     if(StringUtils.isNotEmpty(factoryRemarkRequest.getThirdOrderId())){
+                        //录入记录
+                        HrGongdanZmnLog hrGongdanZmnLog = saveHrGongdanZmnLog(
+                                toDoRequest.getFunId(),
+                                factoryRemarkRequest.getThirdOrderId(),
+                                factoryRemarkRequest.getOrderId(),
+                                factoryRemarkRequest.getOptTime());
+                        hrGongdanZmnLog.setFactoryRemark(factoryRemarkRequest.getRemark());
+                        hrGongdanZmnLog.save();
+
                         this.factory_remark(factoryRemarkRequest);
                         log.info("==================接收商家备注成功" );
                     }else{
@@ -303,6 +360,17 @@ public class YeyxController extends Controller {
         }
     }
 
+    @NotAction
+    public HrGongdanZmnLog saveHrGongdanZmnLog(String funcId,String thirdOrderId,String orderId,Long optTime){
+        //录入记录
+        HrGongdanZmnLog hrGongdanZmnLog = new HrGongdanZmnLog();
+        hrGongdanZmnLog.setFuncId(funcId);
+        hrGongdanZmnLog.setThirdOrderId(thirdOrderId);
+        hrGongdanZmnLog.setOrderId(orderId);
+        hrGongdanZmnLog.setOptTime(optTime);
+        return hrGongdanZmnLog;
+    }
+
     /**
      * 改约，不涉及流程流转
      */
@@ -310,7 +378,7 @@ public class YeyxController extends Controller {
     public void duty_time(DutyTimeRequest dutyTimeRequest){
         HrGongdan hrGongdan = new HrGongdan();
         hrGongdan.setOID(Integer.valueOf(dutyTimeRequest.getThirdOrderId().split("-")[1]));
-        hrGongdan.setDutyTime(new Date(dutyTimeRequest.getDutyTime().longValue()*1000));
+        hrGongdan.setDutyTime(DateUtil.changeDateTOStr(new Date(dutyTimeRequest.getDutyTime().longValue()*1000)));
         hrGongdan.update();
     }
 

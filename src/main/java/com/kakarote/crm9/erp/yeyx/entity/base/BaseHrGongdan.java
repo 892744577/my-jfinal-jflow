@@ -241,6 +241,22 @@ public abstract class BaseHrGongdan<M extends BaseHrGongdan<M>> extends Model<M>
 		return getStr("FlowStarter");
 	}
 
+	public void setPreServiceNo(String preServiceNo) {
+		set("preServiceNo", preServiceNo);
+	}
+	
+	public String getPreServiceNo() {
+		return getStr("preServiceNo");
+	}
+
+	public void setPrePhoto(String prePhoto) {
+		set("prePhoto", prePhoto);
+	}
+	
+	public String getPrePhoto() {
+		return getStr("prePhoto");
+	}
+
 	public void setServiceNo(String serviceNo) {
 		set("serviceNo", serviceNo);
 	}
@@ -361,12 +377,28 @@ public abstract class BaseHrGongdan<M extends BaseHrGongdan<M>> extends Model<M>
 		return getStr("shippingOrderNo");
 	}
 
-	public void setDutyTime(java.util.Date dutyTime) {
+	public void setDutyTime(String dutyTime) {
 		set("dutyTime", dutyTime);
 	}
 	
-	public java.util.Date getDutyTime() {
-		return get("dutyTime");
+	public String getDutyTime() {
+		return getStr("dutyTime");
+	}
+
+	public void setDutyTime1(String dutyTime1) {
+		set("dutyTime1", dutyTime1);
+	}
+	
+	public String getDutyTime1() {
+		return getStr("dutyTime1");
+	}
+
+	public void setDutyTime2(String dutyTime2) {
+		set("dutyTime2", dutyTime2);
+	}
+	
+	public String getDutyTime2() {
+		return getStr("dutyTime2");
 	}
 
 	public void setProductId(Integer productId) {
@@ -495,6 +527,94 @@ public abstract class BaseHrGongdan<M extends BaseHrGongdan<M>> extends Model<M>
 	
 	public String getOtherRemark() {
 		return getStr("otherRemark");
+	}
+
+	public void setServicePrice(Double servicePrice) {
+		set("servicePrice", servicePrice);
+	}
+	
+	public Double getServicePrice() {
+		return getDouble("servicePrice");
+	}
+
+	public void setServiceExtraCharge(Double serviceExtraCharge) {
+		set("serviceExtraCharge", serviceExtraCharge);
+	}
+	
+	public Double getServiceExtraCharge() {
+		return getDouble("serviceExtraCharge");
+	}
+
+	public void setCancelRemark(String cancelRemark) {
+		set("cancelRemark", cancelRemark);
+	}
+	
+	public String getCancelRemark() {
+		return getStr("cancelRemark");
+	}
+
+	public void setAcceptor(String acceptor) {
+		set("acceptor", acceptor);
+	}
+	
+	public String getAcceptor() {
+		return getStr("acceptor");
+	}
+
+	public void setOtherRemarkOptTime(String otherRemarkOptTime) {
+		set("otherRemarkOptTime", otherRemarkOptTime);
+	}
+	
+	public String getOtherRemarkOptTime() {
+		return getStr("otherRemarkOptTime");
+	}
+
+	public void setCancelRemarkOptTime(java.util.Date cancelRemarkOptTime) {
+		set("cancelRemarkOptTime", cancelRemarkOptTime);
+	}
+	
+	public java.util.Date getCancelRemarkOptTime() {
+		return get("cancelRemarkOptTime");
+	}
+
+	public void setDutyTimeOptTime(java.util.Date dutyTimeOptTime) {
+		set("dutyTimeOptTime", dutyTimeOptTime);
+	}
+	
+	public java.util.Date getDutyTimeOptTime() {
+		return get("dutyTimeOptTime");
+	}
+
+	public void setMasterInfoOptTime(java.util.Date masterInfoOptTime) {
+		set("masterInfoOptTime", masterInfoOptTime);
+	}
+	
+	public java.util.Date getMasterInfoOptTime() {
+		return get("masterInfoOptTime");
+	}
+
+	public void setMasterVisitOptTime(java.util.Date masterVisitOptTime) {
+		set("masterVisitOptTime", masterVisitOptTime);
+	}
+	
+	public java.util.Date getMasterVisitOptTime() {
+		return get("masterVisitOptTime");
+	}
+
+	public void setCompleteOptTime(java.util.Date completeOptTime) {
+		set("completeOptTime", completeOptTime);
+	}
+	
+	public java.util.Date getCompleteOptTime() {
+		return get("completeOptTime");
+	}
+
+	public void setFuselageCode(String fuselageCode) {
+		set("fuselageCode", fuselageCode);
+	}
+	
+	public String getFuselageCode() {
+		return getStr("fuselageCode");
 	}
 
 }

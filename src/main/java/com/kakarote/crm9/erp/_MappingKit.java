@@ -77,6 +77,7 @@ public class _MappingKit {
 		arp.addMapping("hr_gongdan_book", "id", HrGongdanBook.class);
 		arp.addMapping("hr_gongdan_log", "id", HrGongdanLog.class);
 		arp.addMapping("hr_gongdan_repair", "id", HrGongdanRepair.class);
+		arp.addMapping("hr_gongdan_zmn_log", "id", HrGongdanZmnLog.class);
         arp.addMapping("sys_sftable", "No", SysSftable.class);
         arp.addMapping("sys_enummain", "No", SysEnummain.class);
 		//活动
