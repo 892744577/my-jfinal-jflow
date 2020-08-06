@@ -4,6 +4,7 @@ import BP.DA.Log;
 import BP.Port.Emp;
 import BP.Tools.DateUtils;
 import BP.Tools.StringUtils;
+import BP.WF.GenerWorkFlow;
 import BP.WF.SendReturnObjs;
 import BP.Web.WebUser;
 import com.alibaba.fastjson.JSONObject;
@@ -388,26 +389,50 @@ public class YeyxController extends Controller {
      */
     @NotAction
     public void master_info(MasterInfoRequest masterInfoRequest) throws Exception{
-            Hashtable myhtSend = new Hashtable();
-            //发送流程
-            myhtSend.put("masterName", masterInfoRequest.getMasterName());
-            myhtSend.put("masterPhone", masterInfoRequest.getMasterPhone());
-            SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(
-                    masterInfoRequest.getThirdOrderId().split("-")[0],
-                    Long.parseLong(masterInfoRequest.getThirdOrderId().split("-")[1]),
-                    myhtSend,null,903,null);
+            //若当前节点不是902，则不流转，直接更新数据
+            GenerWorkFlow gwf = new GenerWorkFlow();
+            gwf.setWorkID(Long.parseLong(masterInfoRequest.getThirdOrderId().split("-")[1]));
+            gwf.RetrieveFromDBSources();
+
+            //若是确认订单节点，往下流转，其他得只是更新数据
+            if(902 == gwf.getFK_Node()){
+                //发送流程
+                Hashtable myhtSend = new Hashtable();
+                myhtSend.put("masterName", masterInfoRequest.getMasterName());
+                myhtSend.put("masterPhone", masterInfoRequest.getMasterPhone());
+                SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(
+                        masterInfoRequest.getThirdOrderId().split("-")[0],
+                        Long.parseLong(masterInfoRequest.getThirdOrderId().split("-")[1]),
+                        myhtSend,null,903,null);
+            }else{
+                HrGongdan hrGongdan = new HrGongdan();
+                hrGongdan.setOID(Integer.valueOf(masterInfoRequest.getThirdOrderId().split("-")[1]));
+                hrGongdan.setMasterName(masterInfoRequest.getMasterName());
+                hrGongdan.setMasterPhone(masterInfoRequest.getMasterPhone());
+                hrGongdan.update();
+            }
+
     }
     /**
      * 上门
      */
     @NotAction
     public void master_visit(MasterVisitRequest masterVisitRequest) throws Exception{
-        Hashtable myhtSend = new Hashtable();
-        //发送流程
-        SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(
-                masterVisitRequest.getThirdOrderId().split("-")[0],
-                Long.parseLong(masterVisitRequest.getThirdOrderId().split("-")[1]),
-                myhtSend,null,905,null);
+        //若当前节点不是903，则不流转，直接更新数据
+        GenerWorkFlow gwf = new GenerWorkFlow();
+        gwf.setWorkID(Long.parseLong(masterVisitRequest.getThirdOrderId().split("-")[1]));
+        gwf.RetrieveFromDBSources();
+
+        //若是确认订单节点，往下流转，其他得只是更新数据
+        if(903 == gwf.getFK_Node()){
+            //发送流程
+            Hashtable myhtSend = new Hashtable();
+            SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(
+                    masterVisitRequest.getThirdOrderId().split("-")[0],
+                    Long.parseLong(masterVisitRequest.getThirdOrderId().split("-")[1]),
+                    myhtSend,null,905,null);
+        }
+
     }
 
     /**
@@ -415,13 +440,26 @@ public class YeyxController extends Controller {
      */
     @NotAction
     public void order_complete(OrderCompleteRequest orderCompleteRequest) throws Exception{
-        Hashtable myhtSend = new Hashtable();
-        //发送流程
-        myhtSend.put("productPictureUrls", orderCompleteRequest.getProductPictureUrls());
-        SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(
-                orderCompleteRequest.getThirdOrderId().split("-")[0],
-                Long.parseLong(orderCompleteRequest.getThirdOrderId().split("-")[1]),
-                myhtSend, null, 906, null);
+        //若当前节点不是905，则不流转，直接更新数据
+        GenerWorkFlow gwf = new GenerWorkFlow();
+        gwf.setWorkID(Long.parseLong(orderCompleteRequest.getThirdOrderId().split("-")[1]));
+        gwf.RetrieveFromDBSources();
+
+        //若是确认订单节点，往下流转，其他得只是更新数据
+        if(905 == gwf.getFK_Node()){
+            Hashtable myhtSend = new Hashtable();
+            //发送流程
+            myhtSend.put("productPictureUrls", orderCompleteRequest.getProductPictureUrls());
+            SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(
+                    orderCompleteRequest.getThirdOrderId().split("-")[0],
+                    Long.parseLong(orderCompleteRequest.getThirdOrderId().split("-")[1]),
+                    myhtSend, null, 906, null);
+        }else{
+            HrGongdan hrGongdan = new HrGongdan();
+            hrGongdan.setOID(Integer.valueOf(orderCompleteRequest.getThirdOrderId().split("-")[1]));
+            hrGongdan.setProductPictureUrls(orderCompleteRequest.getProductPictureUrls());
+            hrGongdan.update();
+        }
     }
 
     @NotAction
