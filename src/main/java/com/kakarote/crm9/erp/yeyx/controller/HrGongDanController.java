@@ -22,10 +22,7 @@ import com.kakarote.crm9.erp.yeyx.entity.HrGongdanRepair;
 import com.kakarote.crm9.erp.yeyx.entity.vo.HrGongdanLogRequest;
 import com.kakarote.crm9.erp.yeyx.entity.vo.HrGongdanRepairRequest;
 import com.kakarote.crm9.erp.yeyx.entity.vo.HrGongdanRequest;
-import com.kakarote.crm9.erp.yeyx.service.HrGongDanService;
-import com.kakarote.crm9.erp.yeyx.service.HrGongdanAppointService;
-import com.kakarote.crm9.erp.yeyx.service.HrGongdanLogService;
-import com.kakarote.crm9.erp.yeyx.service.HrGongdanRepairService;
+import com.kakarote.crm9.erp.yeyx.service.*;
 import com.kakarote.crm9.erp.yzj.service.TokenService;
 import com.kakarote.crm9.utils.FileUploadUtil;
 import com.kakarote.crm9.utils.R;
@@ -41,18 +38,16 @@ public class HrGongDanController extends Controller {
 
     @Inject
     private HrGongDanService hrGongDanService;
-
     @Inject
     private HrGongdanRepairService hrGongdanRepairService;
-
     @Inject
     private HrGongdanAppointService hrGongdanAppointService;
     @Inject
     private HrGongdanLogService hrGongdanLogService;
-
+    @Inject
+    private HrGongdanZmnLogService hrGongdanZmnLogService;
     @Inject
     private TokenService tokenService;
-
     @Inject
     private AdminSceneService adminSceneService;
 
@@ -142,12 +137,21 @@ public class HrGongDanController extends Controller {
         }
         renderJson(R.ok().put("data",hrGongdanLog.save()));
     }
+
     /**
      * @author tmr
      * 查询工单记录
      */
     public void queryPageListLog(BasePageRequest basePageRequest) {
         renderJson(R.ok().put("data",hrGongdanLogService.queryPageList(basePageRequest)));
+    }
+
+    /**
+     * @author tmr
+     * 查询啄木鸟接口记录
+     */
+    public void queryPageZmnLog(BasePageRequest basePageRequest) {
+        renderJson(R.ok().put("data",hrGongdanZmnLogService.queryPageList(basePageRequest)));
     }
 
     /**
