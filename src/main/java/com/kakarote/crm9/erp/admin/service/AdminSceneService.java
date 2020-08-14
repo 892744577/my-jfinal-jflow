@@ -874,6 +874,7 @@ public class AdminSceneService{
     public R queryWorkOrderScene(Integer type) throws Exception {
 //        Long userId = BaseUtil.getUser().getUserId();
         String userId = WebUser.getNo();
+        String fkDept = WebUser.getFK_Dept();
         if(StringUtils.isEmpty(userId)){
             R.error("用户没登陆，请重新登陆");
         }
@@ -885,11 +886,12 @@ public class AdminSceneService{
             JSONObject ownerObject = new JSONObject();
             ownerObject.fluentPut("FlowStarter", new JSONObject().fluentPut("name", "FlowStarter").fluentPut("condition", "is").fluentPut("value", userId));
             JSONObject subOwnerObject = new JSONObject();
-            subOwnerObject.fluentPut("FlowStarter", new JSONObject().fluentPut("name", "FlowStarter").fluentPut("condition", "in").fluentPut("value", getSubUserId(userId, BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1)));
+//            subOwnerObject.fluentPut("FlowStarter", new JSONObject().fluentPut("name", "FlowStarter").fluentPut("condition", "in").fluentPut("value", getSubUserId(userId, BaseConstant.AUTH_DATA_RECURSION_NUM).substring(1)));
+            subOwnerObject.fluentPut("FK_Dept", new JSONObject().fluentPut("name", "FK_Dept").fluentPut("condition", "is").fluentPut("value", fkDept));
             if(WorkOrderEnum.WorkOrder_NULL.getType() == type){
                 systemScene.setName("全部工单").save();
                 systemScene.setSceneId(null).setName("我负责的工单").setData(ownerObject.toString()).save();
-                systemScene.setSceneId(null).setName("下属负责的工单").setData(subOwnerObject.toString()).save();
+                systemScene.setSceneId(null).setName("部门工单").setData(subOwnerObject.toString()).save();
             }
         }
         return R.ok().put("data", Db.find(Db.getSql("admin.scene.queryScene"), type, userId));
