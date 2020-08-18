@@ -179,4 +179,17 @@ public class PortEmpService {
             return flag ? R.ok().put("msg","保存成功!").put("code","000000") : R.error("保存失败!").put("code","000001");
         }
     }
+
+    /*
+     * @Description //根据姓名获取员工信息
+     * @Author wangkaida
+     * @Date 15:19 2020/8/18
+     * @Param [portEmp]
+     * @return com.kakarote.crm9.erp.admin.entity.PortEmp
+     **/
+    public PortEmp getPortEmpByName(PortEmp portEmp){
+        PortEmp portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp a where a.Name=? ", portEmp.getName());
+        return portEmpDb;
+    }
+
 }

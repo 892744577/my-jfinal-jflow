@@ -7,7 +7,11 @@ import BP.WF.FlowEventBase;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Aop;
 import com.jfinal.plugin.activerecord.Db;
+import com.kakarote.crm9.erp.admin.entity.PortEmp;
+import com.kakarote.crm9.erp.admin.service.PortEmpService;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
+import com.kakarote.crm9.erp.wx.util.MaUtil;
+import com.kakarote.crm9.erp.wx.vo.MaReq;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanBook;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanRepair;
 import com.kakarote.crm9.erp.yeyx.service.YeyxService;
@@ -139,6 +143,56 @@ public class F009FlowEvent extends FlowEventBase {
                         Log.DebugWriteInfo("==============>调用新增订单接口失败:"+result);
                         return result;
                     }
+                }
+
+                //add by wangkaida
+                if("FWS".equals(serviceSystem)){
+                    //如果是服务商，则获取下一节点处理人信息
+                    String acceptor = this.getSysPara().get("acceptor").toString();
+                    PortEmp portEmp = new PortEmp();
+                    portEmp.setName(acceptor);
+                    PortEmp portEmpDb = Aop.get(PortEmpService.class).getPortEmpByName(portEmp);
+
+                    if (portEmpDb != null) {
+                        String appOpenId = portEmpDb.getWxAppOpenId();
+
+                        if(!StringUtils.isEmpty(appOpenId)) {
+                            //进行小程序信息推送
+                            MaReq maReq = new MaReq();
+                            maReq.setTouser(appOpenId);
+                            maReq.setTemplate_id("lm3q6txkoEe_aHxqUi7bcdyIw5vDSqYrUWU9nB9RbT4");
+                            maReq.setPage("pages/index/index");
+                            maReq.setMiniprogram_state("formal");
+                            JSONObject jsonObject=new JSONObject();
+                            jsonObject.put("character_string1",new JSONObject().fluentPut("value",(String) this.getSysPara().get("serviceNo")));
+                            jsonObject.put("thing3",new JSONObject().fluentPut("value",(String) this.getSysPara().get("contactName")));
+                            jsonObject.put("phone_number4",new JSONObject().fluentPut("value",(String) this.getSysPara().get("telephone")));
+                            jsonObject.put("phone_number9",new JSONObject().fluentPut("value","4009970090"));
+                            jsonObject.put("thing6",new JSONObject().fluentPut("value","服务单类型:"+(String) this.getSysPara().get("serviceType")+","+"地址:"+(String) this.getSysPara().get("address")));
+
+                            maReq.setData(jsonObject.toJSONString());
+
+                            String sb= MaUtil.ResponseMsg(maReq.getTouser(),maReq.getTemplate_id(),maReq.getPage(),maReq.getData(),maReq.getMiniprogram_state());
+
+                            try {
+                                boolean IsSend = MaUtil.PostMaMsg(sb);
+
+                                if (IsSend == true){
+                                    System.out.println("推送小程序信息成功!"+maReq.getTemplate_id());
+                                }else {
+                                    System.out.println("推送小程序信息失败!"+maReq.getTemplate_id());
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }else {
+                            System.out.println("进行小程序信息推送获取到的员工小程序openId为空!"+acceptor);
+                        }
+
+                    }else {
+                        System.out.println("进行小程序信息推送获取到的员工信息为空!"+acceptor);
+                    }
+
                 }
             }
         } catch (Exception e) {
