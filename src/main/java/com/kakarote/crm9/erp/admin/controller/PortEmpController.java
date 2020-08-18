@@ -690,30 +690,6 @@ public class PortEmpController extends Controller {
     }
 
     /*
-     * @Description //登录接口
-     * @Author wangkaida
-     * @Date 11:24 2020/5/23
-     * @Param [portEmp]
-     * @return void
-     **/
-    public void login(@Para("") PortEmpReq portEmp){
-
-        if(StrUtil.isEmpty(portEmp.getNo())){
-            renderJson(R.error("员工账号不能为空!").put("data",null).put("code","000031"));
-            return;
-        }
-
-        try {
-            WebUser.SignInOfGenerAuth(new Emp(portEmp.getNo()), "admin");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        renderJson(R.ok().put("msg","登录成功!").put("code","000000"));
-
-    }
-
-    /*
      * @Description //待办通过接口
      * @Author wangkaida
      * @Date 12:02 2020/5/23
