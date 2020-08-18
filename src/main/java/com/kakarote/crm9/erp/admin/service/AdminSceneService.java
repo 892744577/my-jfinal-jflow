@@ -412,6 +412,10 @@ public class AdminSceneService{
             kv.set("toBeCompleted", "906");
         }
 
+        //平台内服务商
+        String acceptor = basePageRequest.getJsonObject().getString("acceptor");
+        kv.set("acceptor",acceptor);
+
         String realm;
         List<JSONObject> queryList = new ArrayList<>();
         Integer type = jsonObject.getInteger("type");
@@ -891,7 +895,7 @@ public class AdminSceneService{
             if(WorkOrderEnum.WorkOrder_NULL.getType() == type){
                 systemScene.setName("全部工单").save();
                 systemScene.setSceneId(null).setName("我负责的工单").setData(ownerObject.toString()).save();
-                systemScene.setSceneId(null).setName("部门工单").setData(subOwnerObject.toString()).save();
+                systemScene.setSceneId(null).setName("本部门负责的工单").setData(subOwnerObject.toString()).save();
             }
         }
         return R.ok().put("data", Db.find(Db.getSql("admin.scene.queryScene"), type, userId));
