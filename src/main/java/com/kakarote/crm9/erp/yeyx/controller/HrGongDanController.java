@@ -1,5 +1,6 @@
 package com.kakarote.crm9.erp.yeyx.controller;
 
+import BP.Web.WebUser;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
@@ -38,6 +39,8 @@ public class HrGongDanController extends Controller {
 
     @Inject
     private HrGongDanService hrGongDanService;
+    @Inject
+    private HrGongDanAreaRelationService hrGongDanAreaRelationService;
     @Inject
     private HrGongdanRepairService hrGongdanRepairService;
     @Inject
@@ -156,10 +159,27 @@ public class HrGongDanController extends Controller {
 
     /**
      * @author tmr
+     * 查询地区师傅、地区系统的优先级关系
+     */
+    public void queryPageAreaRelation(BasePageRequest basePageRequest) {
+        renderJson(R.ok().put("data",hrGongDanAreaRelationService.queryPageList(basePageRequest)));
+    }
+
+    /**
+     * @author tmr
      * 分页工单查询数据
      */
     public void queryPageList(BasePageRequest basePageRequest) {
 //        renderJson(R.ok().put("data",hrGongDanService.queryPageList(basePageRequest)));
+        renderJson(adminSceneService.filterConditionAndGetPageList(basePageRequest));
+    }
+
+    /**
+     * @author tmr
+     * 分页工单查询数据 -- 特定服务商
+     */
+    public void queryPageListFws(BasePageRequest basePageRequest) throws Exception{
+        basePageRequest.setJsonObject(basePageRequest.getJsonObject().fluentPut("acceptor", WebUser.getNo()));
         renderJson(adminSceneService.filterConditionAndGetPageList(basePageRequest));
     }
 

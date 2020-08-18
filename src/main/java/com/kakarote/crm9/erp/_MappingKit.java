@@ -74,6 +74,7 @@ public class _MappingKit {
 		//注册、工单
 		arp.addMapping("hr_register", "OID", HrRegister.class);
 		arp.addMapping("hr_gongdan", "OID", HrGongdan.class);
+		arp.addMapping("hr_gongdan_area_relation", "id", HrGongdanAreaRelation.class);
 		arp.addMapping("hr_gongdan_book", "id", HrGongdanBook.class);
 		arp.addMapping("hr_gongdan_log", "id", HrGongdanLog.class);
 		arp.addMapping("hr_gongdan_repair", "id", HrGongdanRepair.class);
