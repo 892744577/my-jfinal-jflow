@@ -75,7 +75,7 @@ public class DateUtil {
             return null;
         }
     }
-    // 将字符串日期 转换成 yyyy-MM-dd
+    // 将字符串日期 转换成指定格式
     public static Date changeStrToDate3(String dateStr,String pattern) {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         Date date;
@@ -87,6 +87,8 @@ public class DateUtil {
             return null;
         }
     }
+
+    //日期转某个格式
     private static String getDateToStr(Date date, SimpleDateFormat sdf) {
         String dateStr = null;
         try {
