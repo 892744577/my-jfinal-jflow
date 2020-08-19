@@ -150,8 +150,8 @@ public class F009FlowEvent extends FlowEventBase {
                     //如果是服务商，则获取下一节点处理人信息
                     String acceptor = this.getSysPara().get("acceptor").toString();
                     PortEmp portEmp = new PortEmp();
-                    portEmp.setName(acceptor);
-                    PortEmp portEmpDb = Aop.get(PortEmpService.class).getPortEmpByName(portEmp);
+                    portEmp.setNo(acceptor);
+                    PortEmp portEmpDb = Aop.get(PortEmpService.class).getPortEmpByNo(portEmp);
 
                     if (portEmpDb != null) {
                         String appOpenId = portEmpDb.getWxAppOpenId();
