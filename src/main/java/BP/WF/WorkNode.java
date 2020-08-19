@@ -10,6 +10,8 @@ import BP.Tools.DateUtils;
 import BP.Tools.StringHelper;
 import BP.WF.Template.*;
 import BP.WF.Data.*;
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.*;
 import java.io.*;
 import java.time.*;
@@ -18,6 +20,7 @@ import java.math.*;
 /**
  * WF 的摘要说明. 工作流. 这里包含了两个方面 工作的信息． 流程的信息.
  */
+@Slf4j
 public class WorkNode {
 	/**
 	 * 判断一个人能不能对这个工作节点进行操作。
@@ -6912,12 +6915,13 @@ public class WorkNode {
 			/// #region 第二步: 进入核心的流程运转计算区域. 5*5 的方式处理不同的发送情况.
 
 			// 执行节点向下发送的25种情况的判断.
-			this.NodeSend_Send_5_5();  //tangmanrong 下一节点情况选则，重点方法
+			log.info("==================进入核心的流程运转计算区域.");
+/*生成待办，计算下一节点、人员的核心方法，tangmanrong*/			this.NodeSend_Send_5_5();
 
 			// 通过 55 之后要判断是否要结束流程，如果结束流程就执行相关的更新。
 			if (this.getIsStopFlow()) {
 				this.rptGe.setWFState(WFState.Complete);
-				this.Func_DoSetThisWorkOver();
+			    this.Func_DoSetThisWorkOver();
 				this.getHisGenerWorkFlow().Update(); // added by
 														// liuxc,2016-10=24,最后节点更新Sender字段
 				// 判断当前流程是否子流程，是否启用该流程结束后，主流程自动运行到下一节点@yuan
@@ -6929,8 +6933,8 @@ public class WorkNode {
 				if (this.getHisGenerWorkFlow().getWFState() == WFState.ReturnSta) {
 					BP.DA.DBAccess.RunSQL("UPDATE WF_ReturnWork SET IsBackTracking=0 WHERE WorkID=" + this.getWorkID());
 				}
-
-				this.Func_DoSetThisWorkOver();
+				log.info("==================通过 55 之后要判断是否要结束流程，如果结束流程就执行相关的更新.");
+/*结束当前待办 tangmanrong*/				    this.Func_DoSetThisWorkOver();
 
 				// 判断当前流程是子流程，并且启用运行到该节点时主流程自动运行到下一个节点@yuan
 				if (this.getHisGenerWorkFlow().getPWorkID() != 0 && this.getHisNode().getIsToParentNextNode() == true) {
