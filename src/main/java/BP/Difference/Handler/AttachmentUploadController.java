@@ -40,6 +40,7 @@ import BP.WF.Template.FrmNode;
 import BP.WF.Template.FrmSln;
 import BP.WF.Template.WhoIsPK;
 import BP.Web.WebUser;
+import com.kakarote.crm9.utils.R;
 
 public class AttachmentUploadController extends BaseController {
 
@@ -124,7 +125,7 @@ public class AttachmentUploadController extends BaseController {
 		
 		uploadFile(item, athDesc, en, msg, mapData, this.getFK_FrmAttachment(), parasData);
 
-		renderJson();
+		renderJson(R.ok());
 //		return;
  
 	}
@@ -147,7 +148,7 @@ public class AttachmentUploadController extends BaseController {
 		uploadFile(item, athDesc, en, msg, mapData, this.getFK_FrmAttachment(), getParasData());
 		
 //		return;
-		renderJson();
+		renderJson(R.ok());
 	}
 
 	public void downLoad() {
