@@ -423,7 +423,7 @@ public class PortActivityController extends Controller {
         }
         
         PortActivityHelper portActivityHelper = new PortActivityHelper();
-        portActivityHelper.setAssistId(portActivityReq.getAssistId());
+        portActivityHelper.setAssistId(Integer.parseInt(portActivityReq.getAssistId()));
         portActivityHelper.setHelperAppOpenId(portActivityReq.getHelperAppOpenId());
         portActivityHelper.setHelperOpenId(portActivityReq.getHelperOpenId());
         portActivityHelper.setHelperInfo(portActivityReq.getHelperInfo());
@@ -456,7 +456,7 @@ public class PortActivityController extends Controller {
             return;
         }
 
-        PortActivityAssist portActivityAssistDb = PortActivityAssist.dao.findFirst("SELECT * FROM port_activity_assist WHERE as_ac_id = ? and as_openid = ? LIMIT 0,1",portActivityReq.getAcId(),portActivityReq.getAsOpenId());
+        PortActivityAssist portActivityAssistDb = PortActivityAssist.dao.findFirst("SELECT * FROM port_activity_assist WHERE as_ac_id = ? and as_openid = ? and as_productid = ? LIMIT 0,1",portActivityReq.getAcId(),portActivityReq.getAsOpenId(),portActivityReq.getAsProductId());
 
         if (portActivityAssistDb != null) {
             renderJson(R.error("已经助力,请勿重复提交!").put("data",null).put("code","000037"));
@@ -496,14 +496,14 @@ public class PortActivityController extends Controller {
 
         if (portEmpDb != null) {
             //根据WxOpenId查询海报是否存在，无则生成海报，有则返回
-            PortActivityPlaybill portActivityPlaybillDb = PortActivityPlaybill.dao.findFirst("SELECT * FROM port_activity_playbill WHERE pb_source_openid = ? and pb_ac_id = 1 LIMIT 0,1",portEmpReq.getWxOpenId());
+            PortActivityPlaybill portActivityPlaybillDb = PortActivityPlaybill.dao.findFirst("SELECT * FROM port_activity_playbill WHERE pb_source_openid = ? and pb_ac_id = ? LIMIT 0,1",portEmpReq.getWxOpenId(),portEmpReq.getPb_ac_id());
             if (portActivityPlaybillDb != null) {
                 renderJson(R.ok().put("data", portActivityPlaybillDb).put("code","000000"));
             }else {
                 //生成海报,默认活动Id为1
                 PortActivityPlaybill portActivityPlaybill = new PortActivityPlaybill();
                 portActivityPlaybill.setPbSourceOpenid(portEmpReq.getWxOpenId());
-                portActivityPlaybill.setPbAcId(1);
+                portActivityPlaybill.setPbAcId(portEmpReq.getPb_ac_id());
                 Boolean flag = portActivityPlaybill.save();
 
                 //根据海报id生成小程序码
@@ -512,7 +512,7 @@ public class PortActivityController extends Controller {
                 byte[] pbWxCode = QrCodeUtil.imageToBytes(pbWxCodeBI,"png");
                 //更新小程序码到活动海报表
                 //合成海报
-                String pbName = QrCodeUtil.syntheticPlayBill(pbWxCode,pbId,1);
+                String pbName = QrCodeUtil.syntheticPlayBill(pbWxCode,pbId,portEmpReq.getPb_ac_id());
                 //更新海报名称到活动海报表
                 //将二维码以图片形式保存
                 String qrName = QrCodeUtil.syntheticPlayBillQrcode(pbWxCode,pbId);
@@ -601,10 +601,10 @@ public class PortActivityController extends Controller {
             return;
         }
 
-        PortActivityAssist portActivityAssistDb = PortActivityAssist.dao.findFirst("SELECT * FROM port_activity_assist WHERE as_openid = ? LIMIT 0,1",portEmpReq.getWxOpenId());
+        List<PortActivityAssist> portActivityAssistDbList = PortActivityAssist.dao.find("SELECT * FROM port_activity_assist WHERE as_openid = ? ",portEmpReq.getWxOpenId());
 
-        if (portActivityAssistDb != null) {
-            renderJson(R.ok().put("data", portActivityAssistDb).put("code","000000"));
+        if (portActivityAssistDbList != null && portActivityAssistDbList.size()>0) {
+            renderJson(R.ok().put("data", portActivityAssistDbList).put("code","000000"));
         }else {
             renderJson(R.error("查询到的发起助力的人员信息为空!").put("data",null).put("code","000042"));
             return;
@@ -667,7 +667,6 @@ public class PortActivityController extends Controller {
     public void updateAddress(@Para("") PortActivityAddressReq portActivityAddressReq){
         PortActivityAddress portActivityAddress = new PortActivityAddress();
         portActivityAddress.setId(portActivityAddressReq.getId());
-        portActivityAddress.setAddressData(portActivityAddressReq.getAddressData());
         renderJson(R.ok().put("data", portActivityAddress.update()).put("code","000000"));
     }
 
