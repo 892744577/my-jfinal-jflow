@@ -1301,7 +1301,7 @@ public class DataType {
 	 */
 	public static String getCurrentDataTime() {
 		Date dt = new Date();
-		SimpleDateFormat matter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		SimpleDateFormat matter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String date = matter.format(dt);
 		return date;
 	}
