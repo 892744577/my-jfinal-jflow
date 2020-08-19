@@ -12,7 +12,7 @@ public class PortActivityReq {
 	private Integer acId; //活动id
 	private Integer pbId; //海报id
 	private Integer shareId; //分享id
-	private Integer assistId; //需被助力记录id
+	private String assistId; //需被助力记录id
 	private String shareOpenId; //分享人公众号openid
 	private String toShareOpenId; //被分享人公众号openid
 	private String helperAppOpenId; //助力人小程序openid，针对本次活动，只能助力一次

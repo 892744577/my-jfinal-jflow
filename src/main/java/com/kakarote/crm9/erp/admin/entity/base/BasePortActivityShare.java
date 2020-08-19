@@ -25,12 +25,12 @@ public abstract class BasePortActivityShare<M extends BasePortActivityShare<M>> 
 		return getInt("sr_pb_id");
 	}
 
-	public void setSrAsId(Integer srAsId) {
+	public void setSrAsId(String srAsId) {
 		set("sr_as_id", srAsId);
 	}
 	
-	public Integer getSrAsId() {
-		return getInt("sr_as_id");
+	public String getSrAsId() {
+		return getStr("sr_as_id");
 	}
 
 	public void setSrShareOpenid(String srShareOpenid) {

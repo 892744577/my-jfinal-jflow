@@ -23,4 +23,7 @@ public class PortEmpReq {
 	private String t100Code; //客户编号
 	private Integer optType; //操作类型: 1.新增 2.修改
 
+	//getPlayBillByWxOpenId的活动id
+	private Integer pb_ac_id; //操作类型: 1.新增 2.修改
+
 }

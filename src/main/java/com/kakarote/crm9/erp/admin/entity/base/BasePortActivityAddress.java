@@ -17,14 +17,6 @@ public abstract class BasePortActivityAddress<M extends BasePortActivityAddress<
 		return getLong("id");
 	}
 
-	public void setAddressData(String addressData) {
-		set("address_data", addressData);
-	}
-	
-	public String getAddressData() {
-		return getStr("address_data");
-	}
-
 	public void setVisiable(String visiable) {
 		set("visiable", visiable);
 	}
@@ -79,6 +71,30 @@ public abstract class BasePortActivityAddress<M extends BasePortActivityAddress<
 	
 	public Float getLatitude() {
 		return getFloat("latitude");
+	}
+
+	public void setProvince(String province) {
+		set("province", province);
+	}
+	
+	public String getProvince() {
+		return getStr("province");
+	}
+
+	public void setCity(String city) {
+		set("city", city);
+	}
+	
+	public String getCity() {
+		return getStr("city");
+	}
+
+	public void setDistrict(String district) {
+		set("district", district);
+	}
+	
+	public String getDistrict() {
+		return getStr("district");
 	}
 
 }
