@@ -412,6 +412,12 @@ public class WF_WorkOpt_OneWork extends WebContralBase
 					ht.put("CanFlowPress", 1);
 				}
 
+				//跳转 modify by tangmanrong 少了跳转按钮
+				if (powers.contains("FlowDataSkip") == true)
+				{
+					ht.put("CanFlowSkip", 1);
+				}
+
 				break;
 			case Complete: // 完成.
 			case Delete: // 逻辑删除..
