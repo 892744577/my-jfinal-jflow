@@ -187,8 +187,8 @@ public class PortEmpService {
      * @Param [portEmp]
      * @return com.kakarote.crm9.erp.admin.entity.PortEmp
      **/
-    public PortEmp getPortEmpByName(PortEmp portEmp){
-        PortEmp portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp a where a.Name=? ", portEmp.getName());
+    public PortEmp getPortEmpByNo(PortEmp portEmp){
+        PortEmp portEmpDb = PortEmp.dao.findById(portEmp.getNo());
         return portEmpDb;
     }
 
