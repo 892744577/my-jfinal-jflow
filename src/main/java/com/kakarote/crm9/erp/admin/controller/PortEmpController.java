@@ -16,7 +16,9 @@ import com.jfinal.core.Controller;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
 import com.kakarote.crm9.erp.admin.entity.*;
 import com.kakarote.crm9.erp.admin.entity.vo.PortEmpReq;
 import com.kakarote.crm9.erp.admin.service.PortEmpService;
@@ -884,5 +886,11 @@ public class PortEmpController extends Controller {
         }else{
             renderJson(R.error("还没有登陆，请登陆!").put("data",null).put("code","000001"));
         }
+    }
+    /**
+     * 查询所有人员
+     */
+    public void queryEmpAll(BasePageRequest basePageRequest) throws Exception{
+        renderJson(R.ok().put("data",portEmpService.queryPageList(basePageRequest)));
     }
 }

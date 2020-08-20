@@ -6,6 +6,10 @@ import BP.DA.Paras;
 import BP.Difference.SystemConfig;
 import BP.Sys.CCFormAPI;
 import com.jfinal.aop.Inject;
+import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Page;
+import com.jfinal.plugin.activerecord.Record;
+import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
 import com.kakarote.crm9.erp.admin.entity.PortEmp;
 import com.kakarote.crm9.erp.admin.entity.PortEmpRelation;
 import com.kakarote.crm9.erp.admin.entity.Regist;
@@ -192,4 +196,18 @@ public class PortEmpService {
         return portEmpDb;
     }
 
+    /*
+     * @Description //根据姓名获取员工信息
+     * @Author wangkaida
+     * @Date 15:19 2020/8/18
+     * @Param [portEmp]
+     * @return com.kakarote.crm9.erp.admin.entity.PortEmp
+     **/
+    public Page<Record> queryPageList(BasePageRequest basePageRequest) {
+        return Db.paginate(
+                basePageRequest.getPage(),
+                basePageRequest.getLimit(),
+                Db.getSqlPara("admin.portEmp.queryPageList")
+        );
+    }
 }

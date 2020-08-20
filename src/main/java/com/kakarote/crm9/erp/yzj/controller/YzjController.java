@@ -80,7 +80,7 @@ public class YzjController extends Controller {
      * @author wyq
      * oa同步人员
      */
-    public void queryAllEmp() throws Exception {
+    public void synchronizeAllEmp() throws Exception {
         queryAllDept();
         String userInfoUrl = tokenService.getGatewayHost().concat("/openimport/open/person/getall?accessToken=").concat(tokenService.getAccessToken(null, tokenService.getErpSecret(), tokenService.getEid(), "resGroupSecret"));
         Map currentUserInfoPrama = new HashMap();
