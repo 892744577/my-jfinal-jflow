@@ -34,12 +34,15 @@ public class F009FlowEvent extends FlowEventBase {
         try {
             //1判断是否开始节点
             boolean isStartNode = this.HisNode.getIsStartNode();
+            //下个节点名称
+            String nextNodeName = this.SendReturnObjs.getMsgOfText();
+            String serviceSystem = this.getSysPara().get("serviceSystem") == null ? "": this.getSysPara().get("serviceSystem").toString(); //服务单第三方系统
             if (isStartNode) {
 
                 //1.1若serviceNo为空,初始化流水号
                 String serviceNo = this.getSysPara().get("serviceNo").toString();
                 if(this.getSysPara().get("serviceNo") == null || "".equals(this.getSysPara().get("serviceNo").toString())){
-                    String serviceSystem = this.getSysPara().get("serviceSystem") == null ? "" : this.getSysPara().get("serviceSystem").toString(); //服务单第三方系统
+//                    String serviceSystem = this.getSysPara().get("serviceSystem") == null ? "" : this.getSysPara().get("serviceSystem").toString(); //服务单第三方系统
                     String serviceType = this.getSysPara().get("serviceType") == null ? "" : "1".equals(this.getSysPara().get("serviceType"))  ? "A":"S"; //服务单类型
                     String serviceSegmentation = this.getSysPara().get("serviceSegmentation") == null ? "" : this.getSysPara().get("serviceSegmentation").toString(); //安装细分L--晾衣机，S-锁 ，D--门
                     //计算hr_gongdan表数据条数
@@ -69,7 +72,7 @@ public class F009FlowEvent extends FlowEventBase {
                     }
                 }
                 //1.3若系统是YX
-                String serviceSystem = this.getSysPara().get("serviceSystem") == null ? "": this.getSysPara().get("serviceSystem").toString(); //服务单第三方系统
+//                String serviceSystem = this.getSysPara().get("serviceSystem") == null ? "": this.getSysPara().get("serviceSystem").toString(); //服务单第三方系统
                 if("YX".equals(serviceSystem)){
                     Map currentPrama = new HashMap();
                     Map currentJson= new HashMap();
@@ -146,59 +149,72 @@ public class F009FlowEvent extends FlowEventBase {
                 }
 
                 //add by wangkaida
-                if("FWS".equals(serviceSystem)){
-                    //如果是服务商，则获取下一节点处理人信息
-                    String acceptor = this.getSysPara().get("acceptor").toString();
-                    PortEmp portEmp = new PortEmp();
-                    portEmp.setNo(acceptor);
-                    PortEmp portEmpDb = Aop.get(PortEmpService.class).getPortEmpByNo(portEmp);
-
-                    if (portEmpDb != null) {
-                        String appOpenId = portEmpDb.getWxAppOpenId();
-
-                        if(!StringUtils.isEmpty(appOpenId)) {
-                            //进行小程序信息推送
-                            MaReq maReq = new MaReq();
-                            maReq.setTouser(appOpenId);
-                            maReq.setTemplate_id("lm3q6txkoEe_aHxqUi7bcdyIw5vDSqYrUWU9nB9RbT4");
-                            maReq.setPage("pages/index/index");
-                            maReq.setMiniprogram_state("formal");
-                            JSONObject jsonObject=new JSONObject();
-                            jsonObject.put("character_string1",new JSONObject().fluentPut("value",(String) this.getSysPara().get("serviceNo")));
-                            jsonObject.put("thing3",new JSONObject().fluentPut("value",(String) this.getSysPara().get("contactName")));
-                            jsonObject.put("phone_number4",new JSONObject().fluentPut("value",(String) this.getSysPara().get("telephone")));
-                            jsonObject.put("phone_number9",new JSONObject().fluentPut("value","4009970090"));
-                            jsonObject.put("thing6",new JSONObject().fluentPut("value","服务单类型:"+(String) this.getSysPara().get("serviceType")+","+"地址:"+(String) this.getSysPara().get("address")));
-
-                            maReq.setData(jsonObject.toJSONString());
-
-                            String sb= MaUtil.ResponseMsg(maReq.getTouser(),maReq.getTemplate_id(),maReq.getPage(),maReq.getData(),maReq.getMiniprogram_state());
-
-                            try {
-                                boolean IsSend = MaUtil.PostMaMsg(sb);
-
-                                if (IsSend == true){
-                                    System.out.println("推送小程序信息成功!"+maReq.getTemplate_id());
-                                }else {
-                                    System.out.println("推送小程序信息失败!"+maReq.getTemplate_id());
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }else {
-                            System.out.println("进行小程序信息推送获取到的员工小程序openId为空!"+acceptor);
-                        }
-
-                    }else {
-                        System.out.println("进行小程序信息推送获取到的员工信息为空!"+acceptor);
-                    }
-
-                }
+                //进行小程序信息推送
+                sendMaMsg(serviceSystem,nextNodeName);
+            }else {
+                sendMaMsg(serviceSystem,nextNodeName);
             }
+
         } catch (Exception e) {
             e.printStackTrace();
         }
         return "F009FlowEvent工单申请流程";
+    }
+
+    /*
+     * @Description //进行小程序信息推送
+     * @Author wangkaida
+     * @Date 15:37 2020/8/21
+     **/
+    public void sendMaMsg(String serviceSystem,String nextNodeName) {
+        if("FWS".equals(serviceSystem)){
+            //如果是服务商，则获取下一节点处理人信息
+            String acceptor = this.getSysPara().get("acceptor").toString();
+            PortEmp portEmp = new PortEmp();
+            portEmp.setNo(acceptor);
+            PortEmp portEmpDb = Aop.get(PortEmpService.class).getPortEmpByNo(portEmp);
+
+            if (portEmpDb != null) {
+                String appOpenId = portEmpDb.getWxAppOpenId();
+
+                if(!StringUtils.isEmpty(appOpenId)) {
+                    //进行小程序信息推送
+                    MaReq maReq = new MaReq();
+                    maReq.setTouser(appOpenId);
+                    maReq.setTemplate_id("lm3q6txkoEe_aHxqUi7bcdyIw5vDSqYrUWU9nB9RbT4");
+                    maReq.setPage("pages/index/index");
+                    maReq.setMiniprogram_state("formal");
+                    JSONObject jsonObject=new JSONObject();
+                    jsonObject.put("character_string1",new JSONObject().fluentPut("value",(String) this.getSysPara().get("serviceNo")));
+                    jsonObject.put("thing3",new JSONObject().fluentPut("value",(String) this.getSysPara().get("contactName")));
+                    jsonObject.put("phone_number4",new JSONObject().fluentPut("value",(String) this.getSysPara().get("telephone")));
+                    jsonObject.put("phone_number9",new JSONObject().fluentPut("value","4009970090"));
+                    jsonObject.put("thing6",new JSONObject().fluentPut("value","工单流转到下一节点:"+nextNodeName+","+"服务单类型:"+(String) this.getSysPara().get("serviceType")+","+"地址:"+(String) this.getSysPara().get("address")));
+
+                    maReq.setData(jsonObject.toJSONString());
+
+                    String sb= MaUtil.ResponseMsg(maReq.getTouser(),maReq.getTemplate_id(),maReq.getPage(),maReq.getData(),maReq.getMiniprogram_state());
+
+                    try {
+                        boolean IsSend = MaUtil.PostMaMsg(sb);
+
+                        if (IsSend == true){
+                            System.out.println("推送小程序信息成功!"+maReq.getTemplate_id());
+                        }else {
+                            System.out.println("推送小程序信息失败!"+maReq.getTemplate_id());
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }else {
+                    System.out.println("进行小程序信息推送获取到的员工小程序openId为空!"+acceptor);
+                }
+
+            }else {
+                System.out.println("进行小程序信息推送获取到的员工信息为空!"+acceptor);
+            }
+
+        }
     }
 
 }
