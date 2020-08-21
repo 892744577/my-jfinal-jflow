@@ -72,8 +72,7 @@ public class F009FlowEvent extends FlowEventBase {
                     }
                 }
                 //1.3若系统是YX
-//                String serviceSystem = this.getSysPara().get("serviceSystem") == null ? "": this.getSysPara().get("serviceSystem").toString(); //服务单第三方系统
-                if("YX".equals(serviceSystem)){
+               if("YX".equals(serviceSystem)){
                     Map currentPrama = new HashMap();
                     Map currentJson= new HashMap();
 
@@ -147,14 +146,9 @@ public class F009FlowEvent extends FlowEventBase {
                         return result;
                     }
                 }
-
-                //add by wangkaida
-                //进行小程序信息推送
-                sendMaMsg(serviceSystem,nextNodeName);
-            }else {
-                sendMaMsg(serviceSystem,nextNodeName);
             }
-
+            //发送小程序信息
+            sendMaMsg(serviceSystem,nextNodeName);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -189,7 +183,7 @@ public class F009FlowEvent extends FlowEventBase {
                     jsonObject.put("thing3",new JSONObject().fluentPut("value",(String) this.getSysPara().get("contactName")));
                     jsonObject.put("phone_number4",new JSONObject().fluentPut("value",(String) this.getSysPara().get("telephone")));
                     jsonObject.put("phone_number9",new JSONObject().fluentPut("value","4009970090"));
-                    jsonObject.put("thing6",new JSONObject().fluentPut("value","工单流转到下一节点:"+nextNodeName+","+"服务单类型:"+(String) this.getSysPara().get("serviceType")+","+"地址:"+(String) this.getSysPara().get("address")));
+                    jsonObject.put("thing6",new JSONObject().fluentPut("value","工单流转到下一节点:"+nextNodeName+","+"服务单类型:"+(String) this.getSysPara().get("serviceTypeT")+","+"地址:"+(String) this.getSysPara().get("address")));
 
                     maReq.setData(jsonObject.toJSONString());
 
@@ -213,7 +207,6 @@ public class F009FlowEvent extends FlowEventBase {
             }else {
                 System.out.println("进行小程序信息推送获取到的员工信息为空!"+acceptor);
             }
-
         }
     }
 
