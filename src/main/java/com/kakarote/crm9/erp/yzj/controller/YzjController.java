@@ -5,6 +5,7 @@ import BP.DA.DataType;
 import BP.DA.Paras;
 import BP.Difference.SystemConfig;
 import BP.Tools.StringUtils;
+import com.alibaba.fastjson.JSON;
 import com.kakarote.crm9.erp.admin.entity.PortEmp;
 import com.kakarote.crm9.erp.admin.entity.PortDept;
 import com.alibaba.fastjson.JSONArray;
@@ -16,6 +17,7 @@ import com.kakarote.crm9.erp.admin.entity.PortEmp;
 import com.kakarote.crm9.erp.oa.entity.OaEvent;
 import com.kakarote.crm9.erp.sms.util.StringUtil;
 import com.kakarote.crm9.erp.yzj.service.TokenService;
+import com.kakarote.crm9.erp.yzj.vo.ClockInRequest;
 import com.kakarote.crm9.utils.R;
 
 import java.util.HashMap;
@@ -169,5 +171,35 @@ public class YzjController extends Controller {
             }
         }
         renderJson(R.ok());
+    }
+
+    /**
+     * 签到
+     */
+    public void clockIn(@Para("") ClockInRequest clockInRequest) throws Exception {
+        String listUrl = tokenService.getGatewayHost().concat("/attendance-data/v1/clockIn/clockintime/list?accessToken=").concat(tokenService.getAccessToken(null, tokenService.getErpSecretQd(), tokenService.getEid(), "resGroupSecret"));
+        Map listPrama = new HashMap();
+        listPrama.put("workDateFrom","1596243458000");
+        listPrama.put("workDateTo","1598317058000");
+        listPrama.put("openIds",clockInRequest.getOpenId());
+        String listReturn = tokenService.gatewayRequest(listUrl, listPrama);
+
+        String qdUrl = tokenService.getGatewayHost().concat("/attendance-data/v1/attSet/getUserPositionList?accessToken=").concat(tokenService.getAccessToken(null, tokenService.getErpSecretQd(), tokenService.getEid(), "resGroupSecret"));
+        Map currentQdPrama = new HashMap();
+        currentQdPrama.put("openId",clockInRequest.getOpenId());
+        String deptReturn = tokenService.gatewayRequestJson(qdUrl, JSON.toJSONString(currentQdPrama));
+
+        String singleUploadUrl = tokenService.getGatewayHost().concat("/attendance-data/v1/clockIn/singleUpload?accessToken=").concat(tokenService.getAccessToken(null, tokenService.getErpSecretQd(), tokenService.getEid(), "resGroupSecret"));
+        Map singleUploadPrama = new HashMap();
+        singleUploadPrama.put("openId",clockInRequest.getOpenId());
+        singleUploadPrama.put("clockType",1);
+        singleUploadPrama.put("clockInTime",clockInRequest.getClockInTime()*1000);
+        singleUploadPrama.put("positionId",clockInRequest.getPositionId());
+
+        String singleUploadReturn = tokenService.gatewayRequestJson(singleUploadUrl, JSON.toJSONString(singleUploadPrama));
+        renderJson(R.ok().put("listReturn",JSONObject.parseObject(listReturn))
+                .put("deptReturn",JSONObject.parseObject(deptReturn))
+                .put("singleUploadReturn",JSONObject.parseObject(singleUploadReturn)));
+
     }
 }

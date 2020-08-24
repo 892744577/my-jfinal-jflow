@@ -40,6 +40,8 @@ public class TokenService {
     @Getter
     private String erpSecret = SystemConfig.getCS_AppSettings().get("APP.ERPSECRET").toString();
     @Getter
+    private String erpSecretQd = SystemConfig.getCS_AppSettings().get("APP.ERPSECRET.QD").toString();
+    @Getter
     private String gatewayHost = SystemConfig.getCS_AppSettings().get("YUNZHIJIA.GATEWAY.HOST").toString();
 
     @Inject
@@ -72,7 +74,6 @@ public class TokenService {
         }if(scope.equals(SCOPES[2])) {
             // 获取resGroupSecret秘钥
             parm.put("eid", eid);
-            secret = erpSecret;
         }
         parm.put("secret", secret);
         String url = gatewayHost.concat("/oauth2/token/getAccessToken");
@@ -115,7 +116,7 @@ public class TokenService {
      * @return
      * @throws Exception
      */
-    public static String gatewayRequestJson(String url, String parm) throws Exception {
+    public String gatewayRequestJson(String url, String parm) throws Exception {
         Map headers = new HashMap(1); headers.put("Content-Type", APPLICATION_JSON);
         return HttpHelper.post(headers, parm, url, timeoutMillis);
     }
