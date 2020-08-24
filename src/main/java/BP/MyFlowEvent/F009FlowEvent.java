@@ -183,7 +183,8 @@ public class F009FlowEvent extends FlowEventBase {
                     jsonObject.put("thing3",new JSONObject().fluentPut("value",(String) this.getSysPara().get("contactName")));
                     jsonObject.put("phone_number4",new JSONObject().fluentPut("value",(String) this.getSysPara().get("telephone")));
                     jsonObject.put("phone_number9",new JSONObject().fluentPut("value","4009970090"));
-                    jsonObject.put("thing6",new JSONObject().fluentPut("value","工单流转到下一节点:"+nextNodeName+","+"服务单类型:"+(String) this.getSysPara().get("serviceTypeT")+","+"地址:"+(String) this.getSysPara().get("address")));
+//                    jsonObject.put("thing6",new JSONObject().fluentPut("value","下一节点:"+nextNodeName+","+"服务单类型:"+(String) this.getSysPara().get("serviceTypeT")+","+"地址:"+(String) this.getSysPara().get("address")));
+                    jsonObject.put("thing6",new JSONObject().fluentPut("value","下一节点:"+nextNodeName+","+"地址:"+(String) this.getSysPara().get("address")));
 
                     maReq.setData(jsonObject.toJSONString());
 
