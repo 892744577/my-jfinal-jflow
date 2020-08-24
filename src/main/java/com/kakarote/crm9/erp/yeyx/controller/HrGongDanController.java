@@ -20,6 +20,7 @@ import com.kakarote.crm9.erp.yeyx.entity.HrGongdan;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanBook;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanLog;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanRepair;
+import com.kakarote.crm9.erp.yeyx.entity.vo.HrGongdanAreaRelationRequest;
 import com.kakarote.crm9.erp.yeyx.entity.vo.HrGongdanLogRequest;
 import com.kakarote.crm9.erp.yeyx.entity.vo.HrGongdanRepairRequest;
 import com.kakarote.crm9.erp.yeyx.entity.vo.HrGongdanRequest;
@@ -163,6 +164,13 @@ public class HrGongDanController extends Controller {
      */
     public void queryPageAreaRelation(BasePageRequest basePageRequest) {
         renderJson(R.ok().put("data",hrGongDanAreaRelationService.queryPageList(basePageRequest)));
+    }
+    /**
+     * @author tmr
+     * 保存地区师傅、地区系统的优先级关系
+     */
+    public void saveAreaRelation(@Para("") HrGongdanAreaRelationRequest hrGongdanAreaRelationRequest) {
+        renderJson(R.ok().put("data",hrGongDanAreaRelationService.save(hrGongdanAreaRelationRequest)));
     }
 
     /**

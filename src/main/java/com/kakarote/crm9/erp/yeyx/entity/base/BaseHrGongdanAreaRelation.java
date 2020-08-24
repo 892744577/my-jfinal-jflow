@@ -9,14 +9,6 @@ import com.jfinal.plugin.activerecord.IBean;
 @SuppressWarnings("serial")
 public abstract class BaseHrGongdanAreaRelation<M extends BaseHrGongdanAreaRelation<M>> extends Model<M> implements IBean {
 
-	public void setId(Long id) {
-		set("id", id);
-	}
-	
-	public Long getId() {
-		return getLong("id");
-	}
-
 	public void setProvince(String province) {
 		set("province", province);
 	}
@@ -57,14 +49,6 @@ public abstract class BaseHrGongdanAreaRelation<M extends BaseHrGongdanAreaRelat
 		return getStr("fk_emp");
 	}
 
-	public void setStatus(String status) {
-		set("status", status);
-	}
-	
-	public String getStatus() {
-		return getStr("status");
-	}
-
 	public void setAreaType(String areaType) {
 		set("area_type", areaType);
 	}
@@ -79,6 +63,22 @@ public abstract class BaseHrGongdanAreaRelation<M extends BaseHrGongdanAreaRelat
 	
 	public String getPriority() {
 		return getStr("priority");
+	}
+
+	public void setValidFlag(String validFlag) {
+		set("valid_flag", validFlag);
+	}
+	
+	public String getValidFlag() {
+		return getStr("valid_flag");
+	}
+
+	public void setId(Long id) {
+		set("id", id);
+	}
+	
+	public Long getId() {
+		return getLong("id");
 	}
 
 }
