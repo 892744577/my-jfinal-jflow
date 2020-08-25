@@ -208,10 +208,16 @@ public class YeyxController extends Controller {
                             hrGongdanAdd.update();
                             renderJson(R.ok().put("code",0).put("message", "取消成功且重新调用新增订单接口成功"));
                         }else {
+                            //Log.DebugWriteInfo("==============>取消成功后撤回发送："+JSONObject.toJSONString(toCancelOrderRequest));
+                            //BP.WF.Dev2Interface.Flow_DoUnSend(toCancelOrderRequest.getFk_flow(),toCancelOrderRequest.getOid());
                             Log.DebugWriteInfo("==============>取消成功但重新调用新增订单接口失败:"+addResult);
+
                             renderJson(R.ok().put("code", 502).put("message", "result"));
                         }
                     }else{
+                        //取消成功并撤销发送
+                        //Log.DebugWriteInfo("==============>取消成功后撤回发送："+JSONObject.toJSONString(toCancelOrderRequest));
+                        //BP.WF.Dev2Interface.Flow_DoUnSend(toCancelOrderRequest.getFk_flow(),toCancelOrderRequest.getOid());
                         renderJson(R.ok().put("code",0).put("message", "取消成功"));
                     }
                 }else{
@@ -224,6 +230,16 @@ public class YeyxController extends Controller {
             }
         }else{
             renderJson(R.ok().put("code",40003).put("message","orderId不能为空"));
+        }
+    }
+
+    public void testCancel(@Para("") ToCancelOrderRequest toCancelOrderRequest){
+        try{
+            BP.WF.Dev2Interface.Flow_DoUnSend(toCancelOrderRequest.getFk_flow(),toCancelOrderRequest.getOid());
+            renderJson(R.ok().put("code",0).put("message", "取消成功"));
+        } catch (Exception e) {
+            renderJson(R.ok().put("code",40000).put("message","未知错误"));
+            e.printStackTrace();
         }
     }
     /**
