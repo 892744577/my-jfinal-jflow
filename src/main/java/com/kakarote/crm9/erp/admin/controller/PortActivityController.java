@@ -712,7 +712,7 @@ public class PortActivityController extends Controller {
             return;
         }
 
-        PortActivityEnroll portActivityEnrollDb = PortActivityEnroll.dao.findFirst(Db.getSql("admin.portActivityEnroll.getEnroll"),portActivityEnrollReq.getWxOpenId());
+        PortActivityEnroll portActivityEnrollDb = PortActivityEnroll.dao.findFirst(Db.getSql("admin.portActivityEnroll.getEnroll"),portActivityEnrollReq.getWxOpenId(),portActivityEnrollReq.getEn_ac_id());
 
         if (portActivityEnrollDb != null) {
             renderJson(R.error("已经报名,请勿重复提交!").put("data",null).put("code","000047"));
