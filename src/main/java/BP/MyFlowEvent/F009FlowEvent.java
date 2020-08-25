@@ -35,7 +35,13 @@ public class F009FlowEvent extends FlowEventBase {
             //1判断是否开始节点
             boolean isStartNode = this.HisNode.getIsStartNode();
             //下个节点名称
-            String nextNodeName = this.SendReturnObjs.getMsgOfText();
+            String nextNodeName = "";
+            for (BP.WF.SendReturnObj sendReturnObj: SendReturnObjs) {
+                if ("VarToNodeName".equals(sendReturnObj.MsgFlag)) {
+                    nextNodeName = sendReturnObj.MsgOfText;
+                }
+            }
+
             String serviceSystem = this.getSysPara().get("serviceSystem") == null ? "": this.getSysPara().get("serviceSystem").toString(); //服务单第三方系统
             if (isStartNode) {
 
