@@ -1,8 +1,5 @@
 package com.kakarote.crm9.erp.admin.controller;
 
-import BP.DA.DBAccess;
-import BP.DA.Paras;
-import BP.Difference.SystemConfig;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
@@ -14,7 +11,6 @@ import com.jfinal.plugin.activerecord.Record;
 import com.kakarote.crm9.erp.admin.entity.*;
 import com.kakarote.crm9.erp.admin.entity.vo.*;
 import com.kakarote.crm9.erp.admin.service.PortActivityService;
-import com.kakarote.crm9.erp.sms.entity.LoginRequestDto;
 import com.kakarote.crm9.erp.wx.config.WxMpConfiguration;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.kakarote.crm9.utils.CreateExcel;
@@ -492,7 +488,7 @@ public class PortActivityController extends Controller {
         }
 
         //手机号获取数据信息
-        PortActivityEmp portEmpDb = PortActivityEmp.dao.findFirst("SELECT * FROM port_activity_emp WHERE WxOpenId = ? LIMIT 0,1", portEmpReq.getWxOpenId());
+        PortActivityEmp portEmpDb = PortActivityEmp.dao.findFirst("SELECT * FROM port_activity_emp WHERE WxOpenId = ? and accountType = ?  LIMIT 0,1", portEmpReq.getWxOpenId(),portEmpReq.getPb_ac_id());
 
         if (portEmpDb != null) {
             //根据WxOpenId查询海报是否存在，无则生成海报，有则返回
@@ -642,10 +638,10 @@ public class PortActivityController extends Controller {
         map.put("successCount",0+numSec1+numSec2+numSec3); //助力成功人数
         map.put("goods1Num",0+num1); //商品1参与人数
         map.put("goods1Purchase",numSec1); //商品1已抢
-        map.put("goods1Remain",130-numSec1); //商品1仅剩
+        map.put("goods1Remain",30-numSec1); //商品1仅剩
         map.put("goods2Num",num2); //商品2参与人数
         map.put("goods2Purchase",numSec2); //商品2已抢
-        map.put("goods2Remain",45-numSec2); //商品2仅剩
+        map.put("goods2Remain",30-numSec2); //商品2仅剩
         map.put("goods3Num",num3); //商品3参与人数
         map.put("goods3Purchase",numSec3); //商品3已抢
         map.put("goods3Remain",150-numSec3); //商品3仅剩
@@ -681,7 +677,7 @@ public class PortActivityController extends Controller {
             return;
         }
 
-        PortActivityEnroll portActivityEnrollDb = PortActivityEnroll.dao.findFirst(Db.getSql("admin.portActivityEnroll.getEnroll"),portActivityEnrollReq.getWxOpenId());
+        PortActivityEnroll portActivityEnrollDb = PortActivityEnroll.dao.findFirst(Db.getSql("admin.portActivityEnroll.getEnroll"),portActivityEnrollReq.getWxOpenId(),portActivityEnrollReq.getEn_ac_id());
 
         if (portActivityEnrollDb != null) {
             renderJson(R.ok().put("data", portActivityEnrollDb).put("code","000000"));
@@ -728,6 +724,7 @@ public class PortActivityController extends Controller {
         portActivityEnroll.setPhone(portActivityEnrollReq.getPhone());
         portActivityEnroll.setName(portActivityEnrollReq.getName());
         portActivityEnroll.setAddress(portActivityEnrollReq.getAddress());
+        portActivityEnroll.setEnAcId(portActivityEnrollReq.getEn_ac_id());
         Boolean flag = portActivityEnroll.save();
         renderJson(R.ok().put("msg","保存成功!").put("data",portActivityEnroll).put("code","000000"));
     }

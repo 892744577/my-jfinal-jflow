@@ -9,4 +9,5 @@ public class PortActivityEnrollReq {
     private String name;
     private String address;
     private String phone;
+    private String en_ac_id;
 }

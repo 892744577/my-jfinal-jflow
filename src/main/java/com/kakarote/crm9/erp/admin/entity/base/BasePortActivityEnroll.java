@@ -49,4 +49,12 @@ public abstract class BasePortActivityEnroll<M extends BasePortActivityEnroll<M>
 		return getStr("address");
 	}
 
+	public void setEnAcId(String enAcId) {
+		set("en_ac_id", enAcId);
+	}
+	
+	public String getEnAcId() {
+		return getStr("en_ac_id");
+	}
+
 }
