@@ -24,6 +24,6 @@ public class PortEmpReq {
 	private Integer optType; //操作类型: 1.新增 2.修改
 
 	//getPlayBillByWxOpenId的活动id
-	private Integer pb_ac_id; //操作类型: 1.新增 2.修改
+	private Integer pb_ac_id; //活动id
 
 }

@@ -845,7 +845,8 @@ public class PortEmpController extends Controller {
         }
 
         //手机号获取数据信息
-        PortActivityEmp portEmpDb = PortActivityEmp.dao.findFirst("SELECT * FROM port_activity_emp WHERE WxOpenId = ? LIMIT 0,1", portEmpReq.getWxOpenId());
+        PortActivityEmp portEmpDb = PortActivityEmp.dao.findFirst("SELECT * FROM port_activity_emp WHERE WxOpenId = ? and accountType=? LIMIT 0,1",
+                portEmpReq.getWxOpenId(),portEmpReq.getPb_ac_id());
 
         if (portEmpDb != null) {
             renderJson(R.ok().put("data",portEmpDb).put("code","000000"));
