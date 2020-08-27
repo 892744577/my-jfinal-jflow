@@ -1,17 +1,27 @@
 package com.kakarote.crm9.erp.wx.controller;
 
 import BP.Difference.SystemConfig;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.paragetter.Para;
 import com.kakarote.crm9.erp.wx.config.WxMpConfiguration;
 import com.kakarote.crm9.erp.wx.util.MpUtil;
+import com.kakarote.crm9.erp.wx.vo.MaReq;
+import com.kakarote.crm9.erp.wx.vo.MpMsgSendReq;
 import com.kakarote.crm9.utils.R;
 import com.jfinal.core.Controller;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
+import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
+import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 public class MpController extends Controller {
 
@@ -19,6 +29,8 @@ public class MpController extends Controller {
     private WxMpConfiguration wxMpConfiguration;
 
     private String appid = SystemConfig.getCS_AppSettings().get("MP.APPID").toString();
+
+    private String maAppid = SystemConfig.getCS_AppSettings().get("MA.APPID").toString();
 
     public void getAccessTokenByInterface(){
         renderJson(R.ok().put("data",MpUtil.getAccessTokenByInterface()));
@@ -72,5 +84,22 @@ public class MpController extends Controller {
 
     }
 
+    /**
+     * 公众号发送模板消息
+     */
+    public void send(@Para("") MpMsgSendReq mpMsgSendReq) throws Exception{
+        WxMpService wxMpService = wxMpConfiguration.wxMpService();
+        WxMpTemplateMessage wxMpTemplateMessage = new WxMpTemplateMessage();
+        wxMpTemplateMessage.setToUser(mpMsgSendReq.getTouser());
+        wxMpTemplateMessage.setTemplateId(mpMsgSendReq.getTemplate_id());
 
+        WxMpTemplateMessage.MiniProgram miniProgram = new WxMpTemplateMessage.MiniProgram();
+        miniProgram.setAppid(this.maAppid);
+        miniProgram.setPagePath(mpMsgSendReq.getPage());
+        wxMpTemplateMessage.setMiniProgram(miniProgram);
+        List<WxMpTemplateData> ja = JSONArray.parseArray(mpMsgSendReq.getData(), WxMpTemplateData.class);
+        wxMpTemplateMessage.setData(ja);
+        wxMpService.getTemplateMsgService().sendTemplateMsg(wxMpTemplateMessage);
+        renderJson(R.ok());
+    }
 }
