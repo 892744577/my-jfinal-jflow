@@ -1,9 +1,9 @@
 #namespace("admin.portActivityShare")
   #sql ("secondStep")
-    SELECT d.* FROM port_activity_share d where d.sr_share_openid!=d.sr_to_share_openid and d.sr_to_share_openid=?
+    SELECT d.* FROM port_activity_share d left join port_activity_playbill b on b.id=d.sr_pb_id where d.sr_to_share_openid=? and b.pb_ac_id=?
   #end
   #sql ("thirdStep")
-    SELECT a.* FROM (SELECT d.* FROM port_activity_share d WHERE d.sr_share_openid != d.sr_to_share_openid) a
+    SELECT a.* FROM (SELECT d.* FROM port_activity_share d left join port_activity_playbill b on b.id=d.sr_pb_id WHERE d.sr_share_openid != d.sr_to_share_openid and b.pb_ac_id=?) a
     WHERE  a.sr_share_openid = ? OR a.sr_to_share_openid  = ?
   #end
   #sql ("thirdStep_bak_20200715")
@@ -48,25 +48,25 @@
     LEFT JOIN  (
       SELECT c.pb_source_openid,COUNT(*) numb FROM port_activity_share d
       LEFT JOIN port_activity_playbill c ON d.sr_pb_id = c.id
-      WHERE 1=1 AND valid_flag=1 GROUP BY d.sr_pb_id,c.pb_source_openid
+      WHERE 1=1 AND valid_flag=1 and c.pb_ac_id=? GROUP BY d.sr_pb_id,c.pb_source_openid
       ) e ON a.wxopenid= e.pb_source_openid
     LEFT JOIN  (
       SELECT h.pb_source_openid,COUNT(*) numb FROM port_activity_share q
-      LEFT JOIN port_activity_playbill h ON q.sr_pb_id = h.id
+      LEFT JOIN port_activity_playbill h ON q.sr_pb_id = h.id where h.pb_ac_id=?
       GROUP BY q.sr_pb_id,h.pb_source_openid
       ) f ON a.wxopenid= f.pb_source_openid
     LEFT JOIN  (
       SELECT c1.pb_source_openid,COUNT(*) numb FROM port_activity_share d1
       LEFT JOIN port_activity_playbill c1 ON d1.sr_pb_id = c1.id
-      WHERE 1=1 AND valid_flag=1 AND DATE_FORMAT(NOW(),'%m-%d-%Y')=DATE_FORMAT(d1.`create_time`,'%m-%d-%Y')
+      WHERE 1=1 and c1.pb_ac_id=?  AND valid_flag=1 AND DATE_FORMAT(NOW(),'%m-%d-%Y')=DATE_FORMAT(d1.`create_time`,'%m-%d-%Y')
       GROUP BY d1.sr_pb_id,c1.pb_source_openid
       ) e1 ON a.wxopenid= e1.pb_source_openid
     LEFT JOIN  (
       SELECT h1.pb_source_openid,COUNT(*) numb FROM port_activity_share q1
       LEFT JOIN port_activity_playbill h1 ON q1.sr_pb_id = h1.id
-      WHERE DATE_FORMAT(NOW(),'%m-%d-%Y')=DATE_FORMAT(q1.`create_time`,'%m-%d-%Y')
+      WHERE  h1.pb_ac_id=?  and DATE_FORMAT(NOW(),'%m-%d-%Y')=DATE_FORMAT(q1.`create_time`,'%m-%d-%Y')
       GROUP BY q1.sr_pb_id,h1.pb_source_openid
       ) f1 ON a.wxopenid=f1.pb_source_openid
-    LEFT JOIN port_activity_address g ON g.id=a.OrgNo
+    LEFT JOIN port_activity_address g ON g.id=a.OrgNo where a.accountType=?
   #end
 #end

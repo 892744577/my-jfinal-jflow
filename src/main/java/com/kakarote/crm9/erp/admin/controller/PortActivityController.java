@@ -252,7 +252,8 @@ public class PortActivityController extends Controller {
 //            return;
 //        }
 
-        PortActivityShare portActivityShareDb = PortActivityShare.dao.findFirst("SELECT * FROM port_activity_share WHERE sr_pb_id = ? and sr_share_openid = ? and sr_to_share_openid = ? LIMIT 0,1",portActivityReq.getPbId(),portActivityReq.getShareOpenId(),portActivityReq.getToShareOpenId());
+        PortActivityShare portActivityShareDb = PortActivityShare.dao.findFirst("SELECT * FROM port_activity_share WHERE sr_pb_id = ? and sr_share_openid = ? and sr_to_share_openid = ? LIMIT 0,1",
+                portActivityReq.getPbId(),portActivityReq.getShareOpenId(),portActivityReq.getToShareOpenId());
 
         if (portActivityShareDb != null) {
             renderJson(R.error("该活动已经分享!").put("data",portActivityShareDb).put("code","000000"));
@@ -268,10 +269,10 @@ public class PortActivityController extends Controller {
 
         if (!portActivityReq.getShareOpenId().equals(portActivityReq.getToShareOpenId())) {
 
-            List<PortActivityShare> portActivityShareList = PortActivityShare.dao.find(Db.getSql("admin.portActivityShare.secondStep"),portActivityReq.getToShareOpenId());
+            List<PortActivityShare> portActivityShareList = PortActivityShare.dao.find(Db.getSql("admin.portActivityShare.secondStep"),portActivityReq.getToShareOpenId(),portActivityReq.getAcId());
 
             if (portActivityShareList.size() == 0) {
-                Record record = Db.findFirst(Db.getSql("admin.portActivityShare.thirdStep"),portActivityReq.getToShareOpenId(),portActivityReq.getToShareOpenId());
+                Record record = Db.findFirst(Db.getSql("admin.portActivityShare.thirdStep"),portActivityReq.getToShareOpenId(),portActivityReq.getToShareOpenId(),portActivityReq.getAcId());
                 if (record != null) {
                     //查到数据则无效
                     portActivityShare.setValidFlag("0");
@@ -746,9 +747,9 @@ public class PortActivityController extends Controller {
         renderJson(R.ok().put("msg","保存成功!").put("data",map).put("code","000000"));
     }
 
-    public void getExcel() {
+    public void getExcel(@Para("") ExcelReq excelReq) {
         HttpServletResponse response = this.getResponse();
-        List<Record> data = Db.find(Db.getSql("admin.portActivityShare.excel"));
+        List<Record> data = Db.find(Db.getSql("admin.portActivityShare.excel"),excelReq.getAc_id(),excelReq.getAc_id(),excelReq.getAc_id(),excelReq.getAc_id(),excelReq.getAc_id());
         try {
             // 获得输出流
             OutputStream output = response.getOutputStream();
