@@ -3,13 +3,19 @@
     select count(*) from hr_gongdan_repair a where DATE_FORMAT(a.create_time, '%Y%m%d') = #para(today)
   #end
   #sql ("queryPageList")
-    select a.*,(case when a.deal='2' then '2' when (SELECT COUNT(*)>0 FROM hr_gongdan_log t1 WHERE t1.preServiceNo=a.orderNumber)=1 then '1' else '0' end) deal_1 from hr_gongdan_repair a where 1=1
+    select * from (
+    select a.*,(case when a.deal='2' then '2' when (SELECT COUNT(*)>0 FROM hr_gongdan_log t1
+    WHERE t1.preServiceNo=a.orderNumber)=1 then '1' else '0' end) deal_1 from hr_gongdan_repair a) b where 1=1
     #if(search)
-      and (a.orderNumber like CONCAT('%',#para(search),'%') or a.contact like CONCAT('%',#para(search),'%') or a.phone like CONCAT('%',#para(search),'%') or a.address like CONCAT('%',#para(search),'%') or a.remark like CONCAT('%',#para(search),'%'))
+      and (b.orderNumber like CONCAT('%',#para(search),'%') or b.contact like CONCAT('%',#para(search),'%')
+      or b.phone like CONCAT('%',#para(search),'%') or b.address like CONCAT('%',#para(search),'%') or b.remark like CONCAT('%',#para(search),'%'))
     #end
     #if(open_id)
-      and a.open_id = #para(open_id)
+      and b.open_id = #para(open_id)
     #end
-    order by a.create_time desc
+    #if(deal)
+      and b.deal_1 = #para(deal)
+    #end
+    order by b.create_time desc
   #end
 #end

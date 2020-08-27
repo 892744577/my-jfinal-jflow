@@ -36,6 +36,14 @@ public class HrGongdanRepairService {
         if(StringUtils.isNotEmpty(open_id)){
             kv.set("open_id",open_id);
         }
+        if(StringUtils.isNotEmpty(open_id)){
+            kv.set("open_id",open_id);
+        }
+        //处理状态
+        String deal = basePageRequest.getJsonObject().getString("deal");
+        if(StringUtils.isNotEmpty(deal)){
+            kv.set("deal",deal);
+        }
         return Db.paginate(
                 basePageRequest.getPage(),
                 basePageRequest.getLimit(),

@@ -105,6 +105,14 @@ public abstract class BaseHrGongdanRepair<M extends BaseHrGongdanRepair<M>> exte
 		return getInt("is_generate");
 	}
 
+	public void setCreator(String creator) {
+		set("creator", creator);
+	}
+	
+	public String getCreator() {
+		return getStr("creator");
+	}
+
 	public void setCreateTime(java.util.Date createTime) {
 		set("create_time", createTime);
 	}

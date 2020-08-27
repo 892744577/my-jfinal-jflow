@@ -57,4 +57,20 @@ public abstract class BaseHrGongdanLog<M extends BaseHrGongdanLog<M>> extends Mo
 		return get("create_time");
 	}
 
+	public void setPhone(String phone) {
+		set("phone", phone);
+	}
+	
+	public String getPhone() {
+		return getStr("phone");
+	}
+
+	public void setQuestionType(String questionType) {
+		set("questionType", questionType);
+	}
+	
+	public String getQuestionType() {
+		return getStr("questionType");
+	}
+
 }
