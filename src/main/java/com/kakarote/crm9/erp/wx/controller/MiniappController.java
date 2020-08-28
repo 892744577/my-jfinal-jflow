@@ -60,7 +60,7 @@ public class MiniappController extends Controller {
     }
 
     /*
-     * @Description //推送微信小程序信息
+     * @Description //推送微信小程序信息--订阅消息
      * @Author wangkaida
      * @Date 9:23 2020/8/11
      * @Param [toUserOpenId]
