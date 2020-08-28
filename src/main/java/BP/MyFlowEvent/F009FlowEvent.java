@@ -4,14 +4,15 @@ import BP.DA.Log;
 import BP.En.Row;
 import BP.Tools.StringUtils;
 import BP.WF.FlowEventBase;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Aop;
 import com.jfinal.plugin.activerecord.Db;
 import com.kakarote.crm9.erp.admin.entity.PortEmp;
 import com.kakarote.crm9.erp.admin.service.PortEmpService;
+import com.kakarote.crm9.erp.wx.service.MpService;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
-import com.kakarote.crm9.erp.wx.util.MaUtil;
-import com.kakarote.crm9.erp.wx.vo.MaReq;
+import com.kakarote.crm9.erp.wx.vo.MpMsgSendReq;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanBook;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanRepair;
 import com.kakarote.crm9.erp.yeyx.service.YeyxService;
@@ -153,8 +154,8 @@ public class F009FlowEvent extends FlowEventBase {
                     }
                 }
             }
-            //发送小程序信息
-            sendMaMsg(serviceSystem,nextNodeName);
+            //发送公众号信息
+            sendMpMsg(serviceSystem,nextNodeName);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -162,11 +163,13 @@ public class F009FlowEvent extends FlowEventBase {
     }
 
     /*
-     * @Description //进行小程序信息推送
+     * @Description //进行公众号信息推送
      * @Author wangkaida
-     * @Date 15:37 2020/8/21
+     * @Date 15:22 2020/8/28
+     * @Param [serviceSystem, nextNodeName]
+     * @return void
      **/
-    public void sendMaMsg(String serviceSystem,String nextNodeName) {
+    public void sendMpMsg(String serviceSystem,String nextNodeName) {
         if("FWS".equals(serviceSystem)){
             //如果是服务商，则获取下一节点处理人信息
             String acceptor = this.getSysPara().get("acceptor").toString();
@@ -175,35 +178,34 @@ public class F009FlowEvent extends FlowEventBase {
             PortEmp portEmpDb = Aop.get(PortEmpService.class).getPortEmpByNo(portEmp);
 
             if (portEmpDb != null) {
-                String appOpenId = portEmpDb.getWxAppOpenId();
+                String openId = portEmpDb.getWxOpenId();
 
-                if(!StringUtils.isEmpty(appOpenId)) {
-                    //进行小程序信息推送
-                    MaReq maReq = new MaReq();
-                    maReq.setTouser(appOpenId);
-                    maReq.setTemplate_id("lm3q6txkoEe_aHxqUi7bcdyIw5vDSqYrUWU9nB9RbT4");
-                    maReq.setPage("pages/index/index");
-                    maReq.setMiniprogram_state("formal");
-                    JSONObject jsonObject=new JSONObject();
-                    jsonObject.put("character_string1",new JSONObject().fluentPut("value",(String) this.getSysPara().get("serviceNo")));
-                    jsonObject.put("thing3",new JSONObject().fluentPut("value",(String) this.getSysPara().get("contactName")));
-                    jsonObject.put("phone_number4",new JSONObject().fluentPut("value",(String) this.getSysPara().get("telephone")));
-                    jsonObject.put("phone_number9",new JSONObject().fluentPut("value","4009970090"));
-//                    jsonObject.put("thing6",new JSONObject().fluentPut("value","下一节点:"+nextNodeName+","+"服务单类型:"+(String) this.getSysPara().get("serviceTypeT")+","+"地址:"+(String) this.getSysPara().get("address")));
-                    jsonObject.put("thing6",new JSONObject().fluentPut("value","下一节点:"+nextNodeName+","+"地址:"+(String) this.getSysPara().get("address")));
+                if(!StringUtils.isEmpty(openId)) {
+                    //进行信息推送
+                    MpMsgSendReq mpReq = new MpMsgSendReq();
+                    mpReq.setTouser(openId);
+                    mpReq.setTemplate_id("XTmM0MzNMV-9ZKjPh4AFRwOgrGFM1nnFDGsLoS-erA0");
+                    mpReq.setPage("pages/index/index");
 
-                    maReq.setData(jsonObject.toJSONString());
+                    JSONArray jsonArray=new JSONArray();
+                    jsonArray.add(new JSONObject().fluentPut("name","first").fluentPut("value","你有新的订单! "+(String) this.getSysPara().get("serviceNo")));
+                    jsonArray.add(new JSONObject().fluentPut("name","keyword1").fluentPut("value",(String) this.getSysPara().get("serviceSegmentationT")));
+                    jsonArray.add(new JSONObject().fluentPut("name","keyword2").fluentPut("value",(String) this.getSysPara().get("remark")));
+                    jsonArray.add(new JSONObject().fluentPut("name","remark").fluentPut("value","下一节点:"+nextNodeName+","+"服务单类型:"+(String) this.getSysPara().get("serviceTypeT")+","+"地址:"+(String) this.getSysPara().get("address")));
 
-                    String sb= MaUtil.ResponseMsg(maReq.getTouser(),maReq.getTemplate_id(),maReq.getPage(),maReq.getData(),maReq.getMiniprogram_state());
+                    mpReq.setData(jsonArray.toJSONString());
 
                     try {
-                        boolean IsSend = MaUtil.PostMaMsg(sb);
+                        String result = Aop.get(MpService.class).send(mpReq);
 
-                        if (IsSend == true){
-                            System.out.println("推送小程序信息成功!"+maReq.getTemplate_id());
-                        }else {
-                            System.out.println("推送小程序信息失败!"+maReq.getTemplate_id());
+                        JSONObject jsonObject = JSONObject.parseObject(result);
+
+                        if (null != jsonObject && jsonObject.getInteger("errcode") == 0) {
+                            System.out.println("推送小程序信息成功!"+mpReq.getTemplate_id());
+                        } else if (null != jsonObject) {
+                            System.out.println("推送小程序信息失败!"+mpReq.getTemplate_id());
                         }
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
