@@ -7,7 +7,7 @@
     select a.*,(case when a.deal='2' then '2' when (SELECT COUNT(*)>0 FROM hr_gongdan_log t1
     WHERE t1.preServiceNo=a.orderNumber)=1 then '1' else '0' end) deal_1 from hr_gongdan_repair a) b where 1=1
     #if(search)
-      and (b.orderNumber like CONCAT('%',#para(search),'%') or b.contact like CONCAT('%',#para(search),'%')
+      and (b.orderNumber like CONCAT('%',#para(search),'%') or b.contact like CONCAT('%',#para(search),'%') or b.equipSNCode like CONCAT('%',#para(search),'%')
       or b.phone like CONCAT('%',#para(search),'%') or b.address like CONCAT('%',#para(search),'%') or b.remark like CONCAT('%',#para(search),'%'))
     #end
     #if(open_id)
