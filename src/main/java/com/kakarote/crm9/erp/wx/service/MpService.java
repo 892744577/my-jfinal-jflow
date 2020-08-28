@@ -3,10 +3,8 @@ package com.kakarote.crm9.erp.wx.service;
 import BP.Difference.SystemConfig;
 import com.alibaba.fastjson.JSONArray;
 import com.jfinal.aop.Inject;
-import com.jfinal.core.paragetter.Para;
 import com.kakarote.crm9.erp.wx.config.WxMpConfiguration;
 import com.kakarote.crm9.erp.wx.vo.MpMsgSendReq;
-import com.kakarote.crm9.utils.R;
 import lombok.Getter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
@@ -23,6 +21,12 @@ public class MpService {
     @Getter
     private String maAppid = SystemConfig.getCS_AppSettings().get("MA.APPID").toString();
 
+    /**
+     * 发送公众号模板消息
+     * @param mpMsgSendReq
+     * @return
+     * @throws Exception
+     */
     public String send(MpMsgSendReq mpMsgSendReq) throws Exception{
         WxMpService wxMpService = this.wxMpConfiguration.wxMpService();
         WxMpTemplateMessage wxMpTemplateMessage = new WxMpTemplateMessage();
