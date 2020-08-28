@@ -36,8 +36,12 @@ public class F009FlowEvent extends FlowEventBase {
             //1判断是否开始节点
             boolean isStartNode = this.HisNode.getIsStartNode();
             //下个节点名称
+            String nextNodeID = "";
             String nextNodeName = "";
             for (BP.WF.SendReturnObj sendReturnObj: SendReturnObjs) {
+                if ("VarToNodeID".equals(sendReturnObj.MsgFlag)) {
+                    nextNodeID = sendReturnObj.MsgOfText;
+                }
                 if ("VarToNodeName".equals(sendReturnObj.MsgFlag)) {
                     nextNodeName = sendReturnObj.MsgOfText;
                 }
@@ -155,7 +159,7 @@ public class F009FlowEvent extends FlowEventBase {
                 }
             }
             //发送公众号信息
-            sendMpMsg(serviceSystem,nextNodeName);
+            sendMpMsg(serviceSystem,nextNodeID,nextNodeName);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -169,7 +173,7 @@ public class F009FlowEvent extends FlowEventBase {
      * @Param [serviceSystem, nextNodeName]
      * @return void
      **/
-    public void sendMpMsg(String serviceSystem,String nextNodeName) {
+    public void sendMpMsg(String serviceSystem,String nextNodeID,String nextNodeName) {
         if("FWS".equals(serviceSystem)){
             //如果是服务商，则获取下一节点处理人信息
             String acceptor = this.getSysPara().get("acceptor").toString();
@@ -188,10 +192,11 @@ public class F009FlowEvent extends FlowEventBase {
                     mpReq.setPage("pages/index/index");
 
                     JSONArray jsonArray=new JSONArray();
-                    jsonArray.add(new JSONObject().fluentPut("name","first").fluentPut("value","你有新的订单! "+(String) this.getSysPara().get("serviceNo")));
+                    String title = "908".equals(nextNodeID) ? "你有新的订单! ":nextNodeName;
+                    jsonArray.add(new JSONObject().fluentPut("name","first").fluentPut("value",title+(String) this.getSysPara().get("serviceNo")));
                     jsonArray.add(new JSONObject().fluentPut("name","keyword1").fluentPut("value",(String) this.getSysPara().get("serviceSegmentationT")));
-                    jsonArray.add(new JSONObject().fluentPut("name","keyword2").fluentPut("value",(String) this.getSysPara().get("remark")));
-                    jsonArray.add(new JSONObject().fluentPut("name","remark").fluentPut("value","下一节点:"+nextNodeName+","+"服务单类型:"+(String) this.getSysPara().get("serviceTypeT")+","+"地址:"+(String) this.getSysPara().get("address")));
+                    jsonArray.add(new JSONObject().fluentPut("name","keyword2").fluentPut("value",(String) this.getSysPara().get("contactName")+"\n"+(String) this.getSysPara().get("telephone")));
+                    jsonArray.add(new JSONObject().fluentPut("name","remark").fluentPut("value",(String) this.getSysPara().get("remark")));
 
                     mpReq.setData(jsonArray.toJSONString());
 
