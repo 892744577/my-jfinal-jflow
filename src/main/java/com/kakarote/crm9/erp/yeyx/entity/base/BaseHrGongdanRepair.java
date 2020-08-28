@@ -161,4 +161,28 @@ public abstract class BaseHrGongdanRepair<M extends BaseHrGongdanRepair<M>> exte
 		return getStr("deal");
 	}
 
+	public void setProductType(String productType) {
+		set("productType", productType);
+	}
+	
+	public String getProductType() {
+		return getStr("productType");
+	}
+
+	public void setProductColor(String productColor) {
+		set("productColor", productColor);
+	}
+	
+	public String getProductColor() {
+		return getStr("productColor");
+	}
+
+	public void setProductActivationDate(java.util.Date productActivationDate) {
+		set("productActivationDate", productActivationDate);
+	}
+	
+	public java.util.Date getProductActivationDate() {
+		return get("productActivationDate");
+	}
+
 }
