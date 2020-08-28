@@ -505,18 +505,18 @@ public class PortActivityController extends Controller {
 
                 //根据海报id生成小程序码
                 Long pbId = portActivityPlaybill.getLong("id");
-                BufferedImage pbWxCodeBI = QrCodeUtil.playBillWxQrCodeCreate(pbId,wxMpConfiguration);
-                byte[] pbWxCode = QrCodeUtil.imageToBytes(pbWxCodeBI,"png");
+//                BufferedImage pbWxCodeBI = QrCodeUtil.playBillWxQrCodeCreate(pbId,wxMpConfiguration);
+//                byte[] pbWxCode = QrCodeUtil.imageToBytes(pbWxCodeBI,"png");
                 //更新小程序码到活动海报表
                 //合成海报
-                String pbName = QrCodeUtil.syntheticPlayBill(pbWxCode,pbId,portEmpReq.getPb_ac_id());
+//                String pbName = QrCodeUtil.syntheticPlayBill(pbWxCode,pbId,portEmpReq.getPb_ac_id());
                 //更新海报名称到活动海报表
                 //将二维码以图片形式保存
-                String qrName = QrCodeUtil.syntheticPlayBillQrcode(pbWxCode,pbId);
+//                String qrName = QrCodeUtil.syntheticPlayBillQrcode(pbWxCode,pbId);
 
                 PortActivityPlaybill portActivityPlaybillUpdate = new PortActivityPlaybill();
-                portActivityPlaybillUpdate.setPbQrcode(qrName);
-                portActivityPlaybillUpdate.setPbPlaybill(pbName);
+//                portActivityPlaybillUpdate.setPbQrcode(qrName);
+//                portActivityPlaybillUpdate.setPbPlaybill(pbName);
                 portActivityPlaybillUpdate.setId(pbId);
                 portActivityPlaybillUpdate.update();
 
