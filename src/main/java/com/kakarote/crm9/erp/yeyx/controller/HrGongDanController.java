@@ -105,7 +105,8 @@ public class HrGongDanController extends Controller {
         }
         hrGongdanRepair.setPhoto(photos);
         hrGongdanRepair.setCreateTime(new Date());
-        renderJson(R.ok().put("data",hrGongdanRepair.save()));
+        hrGongdanRepair.setCreator(WebUser.getNo());
+        renderJson(R.ok().put("result",hrGongdanRepair.save()).put("data",hrGongdanRepair));
     }
     /**
      * 报修单上传文件

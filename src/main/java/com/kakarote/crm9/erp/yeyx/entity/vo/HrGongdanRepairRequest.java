@@ -77,4 +77,10 @@ public class HrGongdanRepairRequest {
     private Integer payType;
 
     private Integer sourceType;
+
+    private String productColor;
+    private String productType;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd",iso= DateTimeFormat.ISO.DATE)
+    private Date productActivationDate;
 }
