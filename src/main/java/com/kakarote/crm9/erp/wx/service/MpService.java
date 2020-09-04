@@ -6,12 +6,15 @@ import com.jfinal.aop.Inject;
 import com.kakarote.crm9.erp.wx.config.WxMpConfiguration;
 import com.kakarote.crm9.erp.wx.vo.MpMsgSendReq;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
 
 import java.util.List;
 
+@Slf4j
 public class MpService {
     @Inject
     private WxMpConfiguration wxMpConfiguration;
@@ -27,7 +30,7 @@ public class MpService {
      * @return
      * @throws Exception
      */
-    public String send(MpMsgSendReq mpMsgSendReq) throws Exception{
+    public String send(MpMsgSendReq mpMsgSendReq) {
         WxMpService wxMpService = this.wxMpConfiguration.wxMpService();
         WxMpTemplateMessage wxMpTemplateMessage = new WxMpTemplateMessage();
         wxMpTemplateMessage.setToUser(mpMsgSendReq.getTouser());
@@ -39,6 +42,11 @@ public class MpService {
         wxMpTemplateMessage.setMiniProgram(miniProgram);
         List<WxMpTemplateData> ja = JSONArray.parseArray(mpMsgSendReq.getData(), WxMpTemplateData.class);
         wxMpTemplateMessage.setData(ja);
-        return wxMpService.getTemplateMsgService().sendTemplateMsg(wxMpTemplateMessage);
+        try{
+            wxMpService.getTemplateMsgService().sendTemplateMsg(wxMpTemplateMessage);
+        } catch (WxErrorException e) {
+            return e.getError().getJson();
+        }
+        return "ok";
     }
 }

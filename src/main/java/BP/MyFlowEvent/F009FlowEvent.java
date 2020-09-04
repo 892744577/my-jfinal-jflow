@@ -200,20 +200,7 @@ public class F009FlowEvent extends FlowEventBase {
 
                     mpReq.setData(jsonArray.toJSONString());
                     Log.DebugWriteInfo("=====================发送通知请求参数："+jsonArray.toJSONString());
-                    try {
-                        String result = Aop.get(MpService.class).send(mpReq);
-                        Log.DebugWriteInfo("================发送通知结果："+result);
-                        JSONObject jsonObject = JSONObject.parseObject(result);
-
-                        if (null != jsonObject && jsonObject.getInteger("errcode") == 0) {
-                            Log.DebugWriteInfo("=============推送小程序信息成功!"+mpReq.getTemplate_id());
-                        } else if (null != jsonObject) {
-                            Log.DebugWriteInfo("==============推送小程序信息失败!"+mpReq.getTemplate_id());
-                        }
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    Aop.get(MpService.class).send(mpReq);
                 }else {
                     Log.DebugWriteInfo("进行小程序信息推送获取到的员工小程序openId为空!"+acceptor);
                 }
