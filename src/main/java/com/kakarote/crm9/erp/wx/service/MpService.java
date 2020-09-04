@@ -5,10 +5,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.jfinal.aop.Inject;
 import com.kakarote.crm9.erp.wx.config.WxMpConfiguration;
 import com.kakarote.crm9.erp.wx.vo.MpMsgSendReq;
+import com.kakarote.crm9.erp.wx.vo.MpUserInfoReq;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.result.WxMpUser;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
 
@@ -48,5 +50,18 @@ public class MpService {
             return e.getError().getJson();
         }
         return "ok";
+    }
+    /**
+     * 获取是否关注公众号
+     */
+    public WxMpUser userInfo(MpUserInfoReq mpUserInfoReq){
+        WxMpService wxMpService = this.wxMpConfiguration.wxMpService();
+        WxMpUser wxMpUser = new WxMpUser();
+        try {
+            wxMpUser = wxMpService.getUserService().userInfo(mpUserInfoReq.getOpenid());
+        } catch (WxErrorException e) {
+            e.getError().getJson();
+        }
+        return  wxMpUser;
     }
 }

@@ -7,6 +7,7 @@ import com.kakarote.crm9.erp.wx.config.WxMpConfiguration;
 import com.kakarote.crm9.erp.wx.service.MpService;
 import com.kakarote.crm9.erp.wx.util.MpUtil;
 import com.kakarote.crm9.erp.wx.vo.MpMsgSendReq;
+import com.kakarote.crm9.erp.wx.vo.MpUserInfoReq;
 import com.kakarote.crm9.utils.R;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -84,6 +85,11 @@ public class MpController extends Controller {
         }else{
             renderJson(R.error().put("data",result));
         }
-
+    }
+    /**
+     * 获取公众号用户基本信息---判断用户是否关注公众号
+     */
+    public void getUserData(@Para("") MpUserInfoReq mpUserInfoReq){
+        renderJson(R.ok().put("subscribe",mpService.userInfo(mpUserInfoReq).getSubscribe()));
     }
 }
