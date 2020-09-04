@@ -416,6 +416,10 @@ public class AdminSceneService{
         String acceptor = basePageRequest.getJsonObject().getString("acceptor");
         kv.set("acceptor",acceptor);
 
+        //其他第三方系统
+        String serviceSystem = basePageRequest.getJsonObject().getString("serviceSystem");
+        kv.set("serviceSystem",serviceSystem);
+
         String realm;
         List<JSONObject> queryList = new ArrayList<>();
         Integer type = jsonObject.getInteger("type");
