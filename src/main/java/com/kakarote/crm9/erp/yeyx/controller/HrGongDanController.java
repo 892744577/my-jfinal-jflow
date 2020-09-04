@@ -1,10 +1,13 @@
 package com.kakarote.crm9.erp.yeyx.controller;
 
+import BP.DA.Log;
+import BP.Tools.StringUtils;
 import BP.Web.WebUser;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.jfinal.aop.Aop;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
 import com.jfinal.core.NotAction;
@@ -15,8 +18,11 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
 import com.kakarote.crm9.common.constant.BaseConstant;
+import com.kakarote.crm9.erp.admin.entity.PortEmp;
 import com.kakarote.crm9.erp.admin.service.AdminSceneService;
+import com.kakarote.crm9.erp.wx.service.MpService;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
+import com.kakarote.crm9.erp.wx.vo.MpMsgSendReq;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdan;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanBook;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanLog;
@@ -111,6 +117,11 @@ public class HrGongDanController extends Controller {
         hrGongdanRepair.setCreateTime(new Date());
         hrGongdanRepair.setCreator(WebUser.getNo());
         //发送通知
+        //获取售后客服的微信公众号openId
+        List<PortEmp> portEmpList = PortEmp.dao.find(Db.getSql("admin.portEmp.queryAfterSalePortEmpList"));
+        if (portEmpList.size() > 0) {
+            sendMpMsg(portEmpList,hrGongdanRepairRequest);
+        }
 
         renderJson(R.ok().put("result",hrGongdanRepair.save()).put("data",hrGongdanRepair));
     }
@@ -331,6 +342,42 @@ public class HrGongDanController extends Controller {
             renderNull();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /*
+     * @Description //进行公众号信息推送
+     * @Author wangkaida
+     * @Date 16:39 2020/9/4
+     * @Param [portEmpList]
+     * @return void
+     **/
+    public void sendMpMsg(List<PortEmp> portEmpList,HrGongdanRepairRequest hrGongdanRepairRequest) {
+
+        for (PortEmp portEmp: portEmpList) {
+            String openId = portEmp.getWxOpenId();
+            String acceptor = portEmp.getNo();
+
+            if(!StringUtils.isEmpty(openId)) {
+                //进行信息推送
+                MpMsgSendReq mpReq = new MpMsgSendReq();
+                mpReq.setTouser(openId);
+                mpReq.setTemplate_id("XTmM0MzNMV-9ZKjPh4AFRwOgrGFM1nnFDGsLoS-erA0");
+                mpReq.setPage("pages/index/index");
+
+                JSONArray jsonArray=new JSONArray();
+                String title = "你有新的报修单! "+ hrGongdanRepairRequest.getOrderNumber();
+                jsonArray.add(new JSONObject().fluentPut("name","first").fluentPut("value",title));
+                jsonArray.add(new JSONObject().fluentPut("name","keyword1").fluentPut("value","报修单"));
+                jsonArray.add(new JSONObject().fluentPut("name","keyword2").fluentPut("value",hrGongdanRepairRequest.getContact()+"\n"+hrGongdanRepairRequest.getPhone()));
+                jsonArray.add(new JSONObject().fluentPut("name","remark").fluentPut("value",hrGongdanRepairRequest.getRemark()));
+
+                mpReq.setData(jsonArray.toJSONString());
+                Log.DebugWriteInfo("=====================发送通知请求参数："+jsonArray.toJSONString());
+                Aop.get(MpService.class).send(mpReq);
+            }else {
+                Log.DebugWriteInfo("进行小程序信息推送获取到的员工小程序openId为空!"+acceptor);
+            }
         }
     }
 
