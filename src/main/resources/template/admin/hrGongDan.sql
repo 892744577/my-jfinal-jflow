@@ -5,6 +5,9 @@
       #if(search)
       and (a.serviceNo like CONCAT('%',#para(search),'%') or a.address like CONCAT('%',#para(search),'%') or a.contactName like CONCAT('%',#para(search),'%') or a.telephone like CONCAT('%',#para(search),'%'))
       #end
+      #if(serviceSystem)
+      and a.serviceSystem = #para(serviceSystem)
+      #end
       #if(acceptor)
       and a.acceptor = #para(acceptor)
       #end
@@ -38,6 +41,9 @@
     where 1=1 and  b.FK_Node != 901
       #if(search)
       and (a.serviceNo like CONCAT('%',#para(search),'%') or a.address like CONCAT('%',#para(search),'%') or a.contactName like CONCAT('%',#para(search),'%') or a.telephone like CONCAT('%',#para(search),'%'))
+      #end
+      #if(serviceSystem)
+      and a.serviceSystem = #para(serviceSystem)
       #end
       #if(acceptor)
       and a.acceptor = #para(acceptor)
@@ -73,6 +79,9 @@
     where 1=1 and  b.FK_Node != 901
       #if(search)
       and (a.serviceNo like CONCAT('%',#para(search),'%') or a.address like CONCAT('%',#para(search),'%') or a.contactName like CONCAT('%',#para(search),'%') or a.telephone like CONCAT('%',#para(search),'%'))
+      #end
+      #if(serviceSystem)
+      and a.serviceSystem = #para(serviceSystem)
       #end
       #if(acceptor)
       and a.acceptor = #para(acceptor)
