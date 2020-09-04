@@ -2,7 +2,6 @@ package com.kakarote.crm9.erp.yeyx.controller;
 
 import BP.DA.Log;
 import BP.Port.Emp;
-import BP.Tools.DateUtils;
 import BP.Tools.StringUtils;
 import BP.WF.GenerWorkFlow;
 import BP.WF.SendReturnObjs;
@@ -43,7 +42,7 @@ public class YeyxController extends Controller {
     public void sendOrder(@Para("") HrGongdanRequest hrGongdanRequest){
         HrGongdan hrGongdan = HrGongdan.dao.findById(hrGongdanRequest.getOid());
         //重新生成serviceNo
-        this.getNewServiceNo(hrGongdan);
+        hrGongdan.setServiceNo(this.getNewServiceNo(hrGongdan));
         //发送
         String result = this.toSendOrder(hrGongdanRequest,hrGongdan);
         JSONObject objectResult = JSONObject.parseObject(result);
@@ -140,7 +139,7 @@ public class YeyxController extends Controller {
      * @param hrGongdan
      */
     @NotAction
-    public void getNewServiceNo(HrGongdan hrGongdan){
+    public String getNewServiceNo(HrGongdan hrGongdan){
         //重新生成serviceNo
         String serviceSystem = hrGongdan.getServiceSystem() == null ? "" : hrGongdan.getServiceSystem(); //服务单第三方系统
         String serviceType = hrGongdan.getServiceType() == null ? "" : "1".equals(hrGongdan.getServiceType())  ? "A":"S"; //服务单类型
@@ -152,7 +151,7 @@ public class YeyxController extends Controller {
         DecimalFormat df = new DecimalFormat(STR_FORMAT);
         String serialNum = df.format(totalNum); //流水号
         String serviceNo = serviceSystem  + serviceSegmentation + serviceType + dateTime + serialNum; //服务单编号
-        hrGongdan.setServiceNo(serviceNo);
+        return serviceNo;
     }
 
     /**
@@ -193,7 +192,7 @@ public class YeyxController extends Controller {
 
                         //查询工单
                         HrGongdan hrGongdan = HrGongdan.dao.findById(hrGongdanRequest.getOid());
-                        this.getNewServiceNo(hrGongdan);
+                        hrGongdan.setServiceNo(this.getNewServiceNo(hrGongdan));
 
                         //发送
                         String addResult = this.toSendOrder(hrGongdanRequest,hrGongdan);
