@@ -3,16 +3,18 @@ package com.kakarote.crm9.erp.wx.util;
 import BP.DA.DataType;
 import BP.Difference.SystemConfig;
 import BP.Tools.HttpClientUtil;
+import BP.Tools.StringUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.kakarote.crm9.erp.wx.vo.AccessToken;
 import lombok.extern.slf4j.Slf4j;
 
 /*
- * @Description //微信小程序工具类
+ * @Description //微信小程序工具类--已废弃
  * @Author wangkaida
  * @Date 17:19 2020/8/10
  **/
 @Slf4j
+@Deprecated
 public class MaUtil {
 
     /*
@@ -54,7 +56,7 @@ public class MaUtil {
     {
         String wxStr = "";
         String url = "https://api.weixin.qq.com/cgi-bin/message/subscribe/send?";
-        wxStr = PostForMa(sb, url);
+        wxStr = PostForMa(sb, url,null);
         if(DataType.IsNullOrEmpty(wxStr)==false){
             net.sf.json.JSONObject jd = net.sf.json.JSONObject.fromObject(wxStr);
             if(jd.get("errcode").toString().equals("0"))
@@ -71,9 +73,11 @@ public class MaUtil {
      * @Param [parameters, URL]
      * @return java.lang.String
      **/
-    public static String PostForMa(String parameters, String URL) throws Exception
+    public static String PostForMa(String parameters, String URL,String access_token) throws Exception
     {
-        String access_token = getAccessTokenByInterface().getAccessToken();
+        if(StringUtils.isEmpty(access_token)){
+            access_token = getAccessTokenByInterface().getAccessToken();
+        }
         URL = URL + "access_token=" + access_token;
         String str = HttpClientUtil.doPostJson(URL, parameters);
         return str;

@@ -13,23 +13,33 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
+import com.jfinal.core.NotAction;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
-import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.upload.UploadFile;
 import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
-import com.kakarote.crm9.erp.admin.entity.*;
+import com.kakarote.crm9.common.constant.BaseConstant;
+import com.kakarote.crm9.erp.admin.entity.HrRegister;
+import com.kakarote.crm9.erp.admin.entity.PortActivityEmp;
+import com.kakarote.crm9.erp.admin.entity.PortEmp;
+import com.kakarote.crm9.erp.admin.entity.PortEmpRelation;
 import com.kakarote.crm9.erp.admin.entity.vo.PortEmpReq;
 import com.kakarote.crm9.erp.admin.service.PortEmpService;
 import com.kakarote.crm9.erp.sms.entity.LoginRequestDto;
 import com.kakarote.crm9.erp.sms.service.SmsService;
+import com.kakarote.crm9.utils.FileUploadUtil;
 import com.kakarote.crm9.utils.R;
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 
 /*
@@ -39,6 +49,7 @@ import java.util.List;
  * @Param
  * @return
  **/
+@Slf4j
 public class PortEmpController extends Controller {
 
     @Inject
@@ -838,15 +849,17 @@ public class PortEmpController extends Controller {
      * @Param [portEmpReq]
      * @return void
      **/
-    public void getPortEmpByWxOpenId(@Para("") PortEmpReq portEmpReq){
+    public void getActivityEmpByWxOpenId(@Para("") PortEmpReq portEmpReq){
         if(StrUtil.isEmpty(portEmpReq.getWxOpenId())){
             renderJson(R.error("请输入微信公众号openId!").put("data",null).put("code","000038"));
             return;
         }
 
-        //手机号获取数据信息
-        PortActivityEmp portEmpDb = PortActivityEmp.dao.findFirst("SELECT * FROM port_activity_emp WHERE WxOpenId = ? and accountType=? LIMIT 0,1",
-                portEmpReq.getWxOpenId(),portEmpReq.getPb_ac_id());
+        //根据微信号和活动id获取店员信息
+        PortActivityEmp portEmpDb = PortActivityEmp.dao.findFirst(
+                Db.getSql("admin.portActivityEmp.getActivityEmpByWxOpenId"),
+                portEmpReq.getWxOpenId(),
+                portEmpReq.getPb_ac_id());
 
         if (portEmpDb != null) {
             renderJson(R.ok().put("data",portEmpDb).put("code","000000"));
@@ -855,7 +868,41 @@ public class PortEmpController extends Controller {
             renderJson(R.error("查无此人,请先进行手机号绑定!").put("data",null).put("code","000001"));
             return;
         }
+    }
 
+    public void saveCrowdWxCodeByOpenId(@Para("") PortEmpReq portEmpReq){
+        if(StrUtil.isEmpty(portEmpReq.getWxOpenId())){
+            renderJson(R.error("请输入微信公众号openId!").put("data",null).put("code","000038"));
+            return;
+        }
+
+        //根据微信号和活动id获取店员信息
+        PortActivityEmp portActivityEmp = PortActivityEmp.dao.findFirst(
+                Db.getSql("admin.portActivityEmp.getActivityEmpByWxOpenId"),
+                portEmpReq.getWxOpenId(),
+                portEmpReq.getPb_ac_id());
+
+        if(getFiles().size()>0 && portActivityEmp!=null){
+            String fileName = upload(getFiles()).stream().map(item->item.get(FileUploadUtil.ACCESS_PATH)).collect(Collectors.joining(";"));
+            portActivityEmp.setCrowdName(portEmpReq.getCrowdName());
+            portActivityEmp.setSID(fileName);
+            portActivityEmp.update();
+            renderJson(R.ok().put("data",portActivityEmp).put("code","000000"));
+        }else {
+            renderJson(R.error("文件上传失败，请联系管理员").put("data",null).put("code","000001"));
+            return;
+        }
+    }
+
+    /**
+     * 报修单上传文件
+     * @param list
+     * @return
+     */
+    @NotAction
+    public List<Map<String, String>> upload(List<UploadFile> list ) {
+        log.info("开始执行文件上传方法!");
+        return FileUploadUtil.upload(list, BaseConstant.UPLOAD_PATH_HD,"");
     }
 
     /**

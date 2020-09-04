@@ -26,4 +26,6 @@ public class PortEmpReq {
 	//getPlayBillByWxOpenId的活动id
 	private Integer pb_ac_id; //活动id
 
+	//群名称
+	private String crowdName; //群名称
 }
