@@ -11,6 +11,7 @@ import com.jfinal.core.NotAction;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
 import com.kakarote.crm9.common.constant.BaseConstant;
@@ -26,10 +27,13 @@ import com.kakarote.crm9.erp.yeyx.entity.vo.HrGongdanRepairRequest;
 import com.kakarote.crm9.erp.yeyx.entity.vo.HrGongdanRequest;
 import com.kakarote.crm9.erp.yeyx.service.*;
 import com.kakarote.crm9.erp.yzj.service.TokenService;
+import com.kakarote.crm9.utils.CreateExcel;
 import com.kakarote.crm9.utils.FileUploadUtil;
 import com.kakarote.crm9.utils.R;
 import lombok.extern.slf4j.Slf4j;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.OutputStream;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
@@ -106,6 +110,8 @@ public class HrGongDanController extends Controller {
         hrGongdanRepair.setPhoto(photos);
         hrGongdanRepair.setCreateTime(new Date());
         hrGongdanRepair.setCreator(WebUser.getNo());
+        //发送通知
+
         renderJson(R.ok().put("result",hrGongdanRepair.save()).put("data",hrGongdanRepair));
     }
     /**
@@ -191,6 +197,14 @@ public class HrGongDanController extends Controller {
         basePageRequest.setJsonObject(basePageRequest.getJsonObject().fluentPut("acceptor", WebUser.getNo()));
         renderJson(adminSceneService.filterConditionAndGetPageList(basePageRequest));
     }
+    /**
+     * @author tmr
+     * 分页工单查询数据 -- 啄木鸟
+     */
+    public void queryPageListServiceSystem(BasePageRequest basePageRequest) throws Exception{
+        basePageRequest.setJsonObject(basePageRequest.getJsonObject().fluentPut("serviceSystem", "YX"));
+        renderJson(adminSceneService.filterConditionAndGetPageList(basePageRequest));
+    }
 
     /**
      * 校验数据
@@ -273,6 +287,48 @@ public class HrGongDanController extends Controller {
             JSONArray resultArray = JSONObject.parseObject(result).getJSONArray("data");
             renderJson(R.ok().put("data", resultArray).put("code","000000"));
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void getExcel(BasePageRequest basePageRequest) {
+        HttpServletResponse response = this.getResponse();
+        JSONObject jsonObject = (com.alibaba.fastjson.JSONObject) adminSceneService.filterConditionAndGetPageList(basePageRequest).get("data");
+        List<Record> list = (List<Record>) jsonObject.get("list");
+        try {
+            // 获得输出流
+            OutputStream output = response.getOutputStream();
+
+            // 设置应用类型，以及编码
+            response.setContentType("application/msexcel;charset=utf-8");
+            response.setHeader("Content-Disposition",
+                    "filename=" + new String(("hr_gongdan"+".xls").getBytes("gb2312"), "iso8859-1"));
+            //转格式
+            List row = new ArrayList<String>();
+
+
+            for(int i=0;i<list.size();i++){
+                List<String> col = new ArrayList<String>();
+                Record record = list.get(i);
+                String [] recordNames = {"serviceNo","Title","NodeName","contactName","telephone","readToday","address"};
+                String [] recordNamesZw = {"工单单号","标题","工单状态","联系人","联系电话","阅数（今）","地址"};
+                if(i==0){
+                    List<String> colName = new ArrayList<String>();
+                    for(String recordName:recordNamesZw){
+                        colName.add(recordName);
+                    }
+                    row.add(colName);
+                }
+                for(String recordName:recordNames){
+                    Object value = record.get(recordName) ;
+                    String temp = value!=null?value.toString():"";
+                    col.add(temp);
+                }
+                row.add(col);
+            }
+            CreateExcel.CreateSheet(row,output);
+            renderNull();
         } catch (Exception e) {
             e.printStackTrace();
         }
