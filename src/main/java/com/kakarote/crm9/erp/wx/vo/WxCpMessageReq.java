@@ -10,4 +10,5 @@ public class WxCpMessageReq {
 
     //text消息
     private String content;
+
 }
