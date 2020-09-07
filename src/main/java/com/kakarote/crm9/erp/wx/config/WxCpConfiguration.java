@@ -52,13 +52,23 @@ public class WxCpConfiguration {
 
     public void initProperties(){
         this.properties.setCorpId(SystemConfig.getCS_AppSettings().get("CP.CORPID").toString());
+
+        WxCpProperties.AppConfig config = new WxCpProperties.AppConfig();
+        config.setAgentId(Integer.parseInt("0"));
+        config.setSecret(SystemConfig.getCS_AppSettings().get("CP.CORPSECRET").toString());
+        config.setAesKey("");
+        config.setToken("");
+
         WxCpProperties.AppConfig config1 = new WxCpProperties.AppConfig();
         config1.setAgentId(Integer.parseInt(SystemConfig.getCS_AppSettings().get("CP1.AGENTID").toString()));
         config1.setSecret(SystemConfig.getCS_AppSettings().get("CP1.APPSECRET").toString());
-        config1.setAesKey(SystemConfig.getCS_AppSettings().get("CP1.AESKEY").toString());
-        config1.setToken(SystemConfig.getCS_AppSettings().get("CP1.TOKEN").toString());
+        config1.setAesKey("");
+        config1.setToken("");
+
         List<WxCpProperties.AppConfig> configs = new ArrayList<WxCpProperties.AppConfig>();
+        configs.add(config);
         configs.add(config1);
+
         this.properties.setAppConfigs(configs);
         if (configs == null) {
             throw new RuntimeException("大哥，拜托先看下项目首页的说明（readme文件），添加下相关配置，注意别配错了！");

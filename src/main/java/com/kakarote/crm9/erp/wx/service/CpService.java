@@ -10,12 +10,17 @@ import me.chanjar.weixin.cp.bean.WxCpMessage;
 
 @Slf4j
 public class CpService {
-    private String agentId = SystemConfig.getCS_AppSettings().get("CP1.APPID").toString();
+    private String agentId = SystemConfig.getCS_AppSettings().get("CP1.AGENTID").toString();
     /**
-     * 获取应用agentid对应的access_token
+     * 获取企业内部
      */
-    public void getCpAccessToken(){
+    public String getCpAccessToken(){
         WxCpService wxCpService = WxCpConfiguration.getCpService(Integer.parseInt(this.agentId));
+        try {
+            return wxCpService.getAccessToken();
+        } catch (WxErrorException e) {
+            return e.getError().getJson();
+        }
     }
     /**
      * 获取当前网页的登陆人信息
