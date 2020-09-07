@@ -46,6 +46,11 @@
 
         <!-- Qrcode 二维码需要的jar包 -->
         <com.google.zxing.version>2.2</com.google.zxing.version>
+
+        <!--wxjava-->
+        <weixin-java-mp.version>3.7.0</weixin-java-mp.version>
+        <weixin-java-miniapp.version>3.7.0</weixin-java-miniapp.version>
+        <weixin-java-cp.version>3.9.0</weixin-java-cp.version>
     </properties>
 
     <!-- 使用阿里 maven 库 -->
@@ -528,14 +533,18 @@
         <dependency>
             <groupId>com.github.binarywang</groupId>
             <artifactId>weixin-java-miniapp</artifactId>
-            <version>3.7.0</version>
+            <version>${weixin-java-miniapp.version}</version>
         </dependency>
         <dependency>
             <groupId>com.github.binarywang</groupId>
             <artifactId>weixin-java-mp</artifactId>
-            <version>3.7.0</version>
+            <version>${weixin-java-mp.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>weixin-java-cp</artifactId>
+            <version>${weixin-java-cp.version}</version>
+        </dependency>
         <!--微信集成 end-->
 
         <!--互亿无线的短信认证 start-->
@@ -559,6 +568,14 @@
             <artifactId>pdfbox</artifactId>
             <version>2.0.8</version>
         </dependency>
+
+        <!--websocket start-->
+        <dependency>
+            <groupId>javax.websocket</groupId>
+            <artifactId>javax.websocket-api</artifactId>
+            <version>1.1</version>
+        </dependency>
+        <!--websocket end-->
     </dependencies>
 
     <build>

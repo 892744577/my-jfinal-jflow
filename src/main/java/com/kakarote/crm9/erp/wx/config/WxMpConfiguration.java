@@ -2,15 +2,15 @@ package com.kakarote.crm9.erp.wx.config;
 
 
 import BP.Difference.SystemConfig;
-import com.kakarote.crm9.erp.wx.handler.*;
+import com.kakarote.crm9.erp.wx.mphandler.*;
 import com.kakarote.crm9.erp.wx.util.MpUtil;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
 import me.chanjar.weixin.mp.config.impl.WxMpDefaultConfigImpl;
-import org.springframework.context.annotation.Bean;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +31,7 @@ import static me.chanjar.weixin.mp.constant.WxMpEventConstants.POI_CHECK_NOTIFY;
  */
 @AllArgsConstructor
 @NoArgsConstructor
+@Data
 public class WxMpConfiguration {
     private  LogHandler logHandler;
     private  NullHandler nullHandler;

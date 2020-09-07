@@ -14,7 +14,6 @@ import com.google.common.collect.Maps;
 import me.chanjar.weixin.common.bean.result.WxMediaUploadResult;
 import me.chanjar.weixin.common.error.WxErrorException;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +27,7 @@ public class WxMaConfiguration {
 
     private static Map<String, WxMaMessageRouter> routers = Maps.newHashMap();
     private static Map<String, WxMaService> maServices = Maps.newHashMap();
+    private static WxMaProperties properties=new WxMaProperties();
 
     public static WxMaService getMaService(String appid) {
         WxMaService wxService = maServices.get(appid);
@@ -42,20 +42,32 @@ public class WxMaConfiguration {
         return routers.get(appid);
     }
 
-    public void init() {
+    public static WxMaProperties getProperties(){
+        return properties;
+    }
 
-
+    /**
+     * 初始化配置
+     */
+    public void initProperties(){
         WxMaProperties.Config config1 = new WxMaProperties.Config();
         config1.setAppid(SystemConfig.getCS_AppSettings().get("MA.APPID").toString());
         config1.setSecret(SystemConfig.getCS_AppSettings().get("MA.APPSECRET").toString());
         List<WxMaProperties.Config> configs = new ArrayList<WxMaProperties.Config>();
         configs.add(config1);
+        this.properties.setConfigs(configs);
 
         if (configs == null) {
             throw new RuntimeException("大哥，拜托先看下项目首页的说明（readme文件），添加下相关配置，注意别配错了！");
         }
+    }
 
-        maServices = configs.stream()
+    /**
+     * 初始化小程序,只能调用一次
+     */
+    public void init() {
+        this.initProperties();
+        maServices = this.properties.getConfigs().stream()
             .map(a -> {
                 WxMaDefaultConfigImpl config = new WxMaDefaultConfigImpl();
                 config.setAppid(a.getAppid());

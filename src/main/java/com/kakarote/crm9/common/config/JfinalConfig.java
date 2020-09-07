@@ -7,8 +7,18 @@ import BP.workFlowWeb.config.JflowRouter;
 import BP.workFlowWeb.jflowHandler.StaticHandler;
 import cn.hutool.core.util.ClassLoaderUtil;
 import com.jfinal.aop.Aop;
+import com.jfinal.config.*;
+import com.jfinal.core.paragetter.ParaProcessorBuilder;
 import com.jfinal.ext.proxy.CglibProxyFactory;
-import com.jfinal.plugin.activerecord.dialect.*;
+import com.jfinal.kit.PathKit;
+import com.jfinal.kit.Prop;
+import com.jfinal.kit.PropKit;
+import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
+import com.jfinal.plugin.activerecord.dialect.MysqlDialect;
+import com.jfinal.plugin.cron4j.Cron4jPlugin;
+import com.jfinal.plugin.druid.DruidPlugin;
+import com.jfinal.render.RenderManager;
+import com.jfinal.template.Engine;
 import com.kakarote.crm9.common.config.cache.CaffeineCache;
 import com.kakarote.crm9.common.config.json.ErpJsonFactory;
 import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
@@ -17,7 +27,6 @@ import com.kakarote.crm9.common.config.paragetter.PageParaGetter;
 import com.kakarote.crm9.common.config.redis.RedisPlugin;
 import com.kakarote.crm9.common.config.render.ErpRenderFactory;
 import com.kakarote.crm9.common.constant.BaseConstant;
-import com.kakarote.crm9.common.handler.ProxyHandler;
 import com.kakarote.crm9.common.service.JflowRefreshService;
 import com.kakarote.crm9.erp._MappingKit;
 import com.kakarote.crm9.erp.admin.common.AdminRouter;
@@ -26,17 +35,8 @@ import com.kakarote.crm9.erp.crm.common.CrmRouter;
 import com.kakarote.crm9.erp.oa.common.OaRouter;
 import com.kakarote.crm9.erp.sms.common.SmsRouter;
 import com.kakarote.crm9.erp.work.common.WorkRouter;
-import com.jfinal.config.*;
-import com.jfinal.core.paragetter.ParaProcessorBuilder;
-import com.jfinal.kit.PathKit;
-import com.jfinal.kit.Prop;
-import com.jfinal.kit.PropKit;
-import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
-import com.jfinal.plugin.cron4j.Cron4jPlugin;
-import com.jfinal.plugin.druid.DruidPlugin;
-import com.jfinal.render.RenderManager;
-import com.jfinal.template.Engine;
 import com.kakarote.crm9.erp.wx.common.WxRouter;
+import com.kakarote.crm9.erp.wx.config.WxCpConfiguration;
 import com.kakarote.crm9.erp.wx.config.WxMaConfiguration;
 import com.kakarote.crm9.erp.yeyx.common.YeyxRouter;
 import com.kakarote.crm9.erp.yzj.common.YzjRouter;
@@ -206,6 +206,10 @@ public class JfinalConfig extends JFinalConfig {
         //初始化小程序的配置
         WxMaConfiguration wxMaConfiguration= new WxMaConfiguration();
         wxMaConfiguration.init();
+
+        //初始化企业微信的配置
+        WxCpConfiguration wxCpConfiguration= new WxCpConfiguration();
+        wxCpConfiguration.init();
 
         //刷新流程事件实体 add by tangamnrong
         JflowRefreshService jflowRefreshService = Aop.get(JflowRefreshService.class);
