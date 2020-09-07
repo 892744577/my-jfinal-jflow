@@ -1,4 +1,4 @@
-package com.kakarote.crm9.erp.wx.handler;
+package com.kakarote.crm9.erp.wx.mphandler;
 
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpService;

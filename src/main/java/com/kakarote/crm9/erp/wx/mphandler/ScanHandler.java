@@ -1,14 +1,12 @@
-package com.kakarote.crm9.erp.wx.handler;
-
-import java.util.Map;
-
-import org.springframework.stereotype.Component;
+package com.kakarote.crm9.erp.wx.mphandler;
 
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
+
+import java.util.Map;
 
 /**
  * @author Binary Wang(https://github.com/binarywang)

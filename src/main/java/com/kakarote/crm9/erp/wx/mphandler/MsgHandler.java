@@ -1,6 +1,6 @@
-package com.kakarote.crm9.erp.wx.handler;
+package com.kakarote.crm9.erp.wx.mphandler;
 
-import com.kakarote.crm9.erp.wx.builder.TextBuilder;
+import com.kakarote.crm9.erp.wx.mpbuilder.TextBuilder;
 import com.kakarote.crm9.erp.wx.util.JsonUtils;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;

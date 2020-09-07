@@ -1,4 +1,4 @@
-package com.kakarote.crm9.erp.wx.builder;
+package com.kakarote.crm9.erp.wx.mpbuilder;
 
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;

@@ -1,11 +1,9 @@
-package com.kakarote.crm9.erp.wx.builder;
+package com.kakarote.crm9.erp.wx.mpbuilder;
 
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @author Binary Wang(https://github.com/binarywang)
