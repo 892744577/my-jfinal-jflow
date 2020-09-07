@@ -48,9 +48,10 @@
         <com.google.zxing.version>2.2</com.google.zxing.version>
 
         <!--wxjava-->
-        <weixin-java-mp.version>3.7.0</weixin-java-mp.version>
-        <weixin-java-miniapp.version>3.7.0</weixin-java-miniapp.version>
+        <weixin-java-mp.version>3.9.0</weixin-java-mp.version>
+        <weixin-java-miniapp.version>3.9.0</weixin-java-miniapp.version>
         <weixin-java-cp.version>3.9.0</weixin-java-cp.version>
+        <weixin-java-common.version>3.9.0</weixin-java-common.version>
     </properties>
 
     <!-- 使用阿里 maven 库 -->
@@ -544,6 +545,12 @@
             <groupId>com.github.binarywang</groupId>
             <artifactId>weixin-java-cp</artifactId>
             <version>${weixin-java-cp.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.binarywang</groupId>
+            <artifactId>weixin-java-common</artifactId>
+            <version>${weixin-java-common.version}</version>
         </dependency>
         <!--微信集成 end-->
 

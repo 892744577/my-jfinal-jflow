@@ -46,8 +46,8 @@ public class MpController extends Controller {
         WxMpOAuth2AccessToken wxMpOAuth2AccessToken = null;
         WxMpUser wxMpUser = null;
         try {
-            wxMpOAuth2AccessToken = wxMpService.oauth2getAccessToken(code);
-            wxMpUser = wxMpService.oauth2getUserInfo(wxMpOAuth2AccessToken, null);
+            wxMpOAuth2AccessToken = wxMpService.getOAuth2Service().getAccessToken(code);
+            wxMpUser = wxMpService.getOAuth2Service().getUserInfo(wxMpOAuth2AccessToken, null);
         } catch (WxErrorException e) {
             e.printStackTrace();
         }
