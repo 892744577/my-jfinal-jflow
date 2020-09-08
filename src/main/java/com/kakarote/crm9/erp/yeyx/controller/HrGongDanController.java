@@ -20,9 +20,11 @@ import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
 import com.kakarote.crm9.common.constant.BaseConstant;
 import com.kakarote.crm9.erp.admin.entity.PortEmp;
 import com.kakarote.crm9.erp.admin.service.AdminSceneService;
+import com.kakarote.crm9.erp.wx.service.CpService;
 import com.kakarote.crm9.erp.wx.service.MpService;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.kakarote.crm9.erp.wx.vo.MpMsgSendReq;
+import com.kakarote.crm9.erp.wx.vo.WxCpMessageReq;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdan;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanBook;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanLog;
@@ -121,10 +123,13 @@ public class HrGongDanController extends Controller {
         List<PortEmp> portEmpList = PortEmp.dao.find(Db.getSql("admin.portEmp.queryAfterSalePortEmpList"));
         if (portEmpList.size() > 0) {
             sendMpMsg(portEmpList,hrGongdanRepairRequest);
+            //推送企业微信信息
+            sendCpMsg(portEmpList,hrGongdanRepairRequest);
         }
 
         renderJson(R.ok().put("result",hrGongdanRepair.save()).put("data",hrGongdanRepair));
     }
+
     /**
      * 报修单上传文件
      * @param list
@@ -379,6 +384,29 @@ public class HrGongDanController extends Controller {
                 Log.DebugWriteInfo("进行小程序信息推送获取到的员工小程序openId为空!"+acceptor);
             }
         }
+    }
+
+    /*
+     * @Description //进行企业微信信息推送
+     * @Author wangkaida
+     * @Date 10:11 2020/9/8
+     * @Param [hrGongdanRepairRequest]
+     * @return void
+     **/
+    private void sendCpMsg(List<PortEmp> portEmpList,HrGongdanRepairRequest hrGongdanRepairRequest) {
+        WxCpMessageReq wxCpMessageReq = new WxCpMessageReq();
+        String toUser = "";
+        for (PortEmp portEmp: portEmpList) {
+            toUser = toUser + portEmp.getTel() + "|";
+        }
+        if (StringUtils.isNotBlank(toUser)) {
+            toUser = toUser.substring(0, toUser.lastIndexOf("|"));
+        }
+        wxCpMessageReq.setUser(toUser);
+        String title = "你有新的报修单! "+ hrGongdanRepairRequest.getOrderNumber();
+        String sendContent = title + "\n 联系人:"+hrGongdanRepairRequest.getContact() + "\n 联系电话:"+hrGongdanRepairRequest.getPhone() + "\n 故障描述:"+hrGongdanRepairRequest.getRemark();
+        wxCpMessageReq.setContent(sendContent);
+        Aop.get(CpService.class).sendTextMsg(wxCpMessageReq);
     }
 
 }
