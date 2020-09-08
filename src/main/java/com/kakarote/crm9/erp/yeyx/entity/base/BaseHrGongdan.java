@@ -561,54 +561,6 @@ public abstract class BaseHrGongdan<M extends BaseHrGongdan<M>> extends Model<M>
 		return getStr("acceptor");
 	}
 
-	public void setOtherRemarkOptTime(String otherRemarkOptTime) {
-		set("otherRemarkOptTime", otherRemarkOptTime);
-	}
-	
-	public String getOtherRemarkOptTime() {
-		return getStr("otherRemarkOptTime");
-	}
-
-	public void setCancelRemarkOptTime(java.util.Date cancelRemarkOptTime) {
-		set("cancelRemarkOptTime", cancelRemarkOptTime);
-	}
-	
-	public java.util.Date getCancelRemarkOptTime() {
-		return get("cancelRemarkOptTime");
-	}
-
-	public void setDutyTimeOptTime(java.util.Date dutyTimeOptTime) {
-		set("dutyTimeOptTime", dutyTimeOptTime);
-	}
-	
-	public java.util.Date getDutyTimeOptTime() {
-		return get("dutyTimeOptTime");
-	}
-
-	public void setMasterInfoOptTime(java.util.Date masterInfoOptTime) {
-		set("masterInfoOptTime", masterInfoOptTime);
-	}
-	
-	public java.util.Date getMasterInfoOptTime() {
-		return get("masterInfoOptTime");
-	}
-
-	public void setMasterVisitOptTime(java.util.Date masterVisitOptTime) {
-		set("masterVisitOptTime", masterVisitOptTime);
-	}
-	
-	public java.util.Date getMasterVisitOptTime() {
-		return get("masterVisitOptTime");
-	}
-
-	public void setCompleteOptTime(java.util.Date completeOptTime) {
-		set("completeOptTime", completeOptTime);
-	}
-	
-	public java.util.Date getCompleteOptTime() {
-		return get("completeOptTime");
-	}
-
 	public void setFuselageCode(String fuselageCode) {
 		set("fuselageCode", fuselageCode);
 	}
@@ -623,6 +575,14 @@ public abstract class BaseHrGongdan<M extends BaseHrGongdan<M>> extends Model<M>
 	
 	public String getServiceExtraChargeBz() {
 		return getStr("serviceExtraChargeBz");
+	}
+
+	public void setBigNoteHtmlText(String BigNoteHtmlText) {
+		set("BigNoteHtmlText", BigNoteHtmlText);
+	}
+	
+	public String getBigNoteHtmlText() {
+		return getStr("BigNoteHtmlText");
 	}
 
 }
