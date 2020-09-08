@@ -15,8 +15,8 @@ public class CpController extends Controller {
     /**
      * 获取应用agentid对应的access_token
      */
-    public void getCpAccessToken(){
-        renderJson(R.ok().put("data",cpService.getCpAccessToken()));
+    public void getCpAccessToken(@Para("") WxCpMessageReq wxCpMessageReq){
+        renderJson(R.ok().put("data",cpService.getCpAccessToken(wxCpMessageReq.getAgentId())));
     }
 
     /**

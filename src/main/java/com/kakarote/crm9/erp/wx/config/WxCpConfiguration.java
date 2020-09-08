@@ -54,20 +54,20 @@ public class WxCpConfiguration {
         this.properties.setCorpId(SystemConfig.getCS_AppSettings().get("CP.CORPID").toString());
 
         WxCpProperties.AppConfig config = new WxCpProperties.AppConfig();
-        config.setAgentId(0);
-        config.setSecret(SystemConfig.getCS_AppSettings().get("CP.CORPSECRET").toString());
+        config.setAgentId(WxCpAgentIdEmun.agent0.getCode());
+        config.setSecret(WxCpAgentIdEmun.agent0.getScret());
         config.setAesKey("");
         config.setToken("");
 
         WxCpProperties.AppConfig config1 = new WxCpProperties.AppConfig();
-        config1.setAgentId(Integer.parseInt(SystemConfig.getCS_AppSettings().get("CP1.AGENTID").toString()));
-        config1.setSecret(SystemConfig.getCS_AppSettings().get("CP1.APPSECRET").toString());
+        config1.setAgentId(WxCpAgentIdEmun.agent1.getCode());
+        config1.setSecret(WxCpAgentIdEmun.agent1.getScret());
         config1.setAesKey("");
         config1.setToken("");
 
         WxCpProperties.AppConfig config2 = new WxCpProperties.AppConfig();
-        config2.setAgentId(Integer.parseInt(SystemConfig.getCS_AppSettings().get("CP2.AGENTID").toString()));
-        config2.setSecret(SystemConfig.getCS_AppSettings().get("CP2.APPSECRET").toString());
+        config2.setAgentId(WxCpAgentIdEmun.agent2.getCode());
+        config2.setSecret(WxCpAgentIdEmun.agent2.getScret());
         config2.setAesKey("");
         config2.setToken("");
 
