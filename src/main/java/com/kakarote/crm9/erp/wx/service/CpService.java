@@ -6,7 +6,11 @@ import com.kakarote.crm9.erp.wx.vo.WxCpMessageReq;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.api.WxCpService;
+import me.chanjar.weixin.cp.bean.WxCpDepart;
 import me.chanjar.weixin.cp.bean.WxCpMessage;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Slf4j
 public class CpService {
@@ -51,5 +55,19 @@ public class CpService {
             return e.getError().getJson();
         }
         return "ok";
+    }
+
+    /**
+     * 获取所有部门
+     */
+    public List<WxCpDepart> getAllDept(){
+        WxCpService wxCpService =WxCpConfiguration.getCpService(0);
+        List<WxCpDepart> list=new ArrayList<>();
+        try {
+            list= wxCpService.getDepartmentService().list(null);
+        } catch (WxErrorException e) {
+            e.getError().getJson();
+        }
+        return list;
     }
 }

@@ -54,7 +54,7 @@ public class WxCpConfiguration {
         this.properties.setCorpId(SystemConfig.getCS_AppSettings().get("CP.CORPID").toString());
 
         WxCpProperties.AppConfig config = new WxCpProperties.AppConfig();
-        config.setAgentId(Integer.parseInt("0"));
+        config.setAgentId(0);
         config.setSecret(SystemConfig.getCS_AppSettings().get("CP.CORPSECRET").toString());
         config.setAesKey("");
         config.setToken("");
@@ -64,6 +64,12 @@ public class WxCpConfiguration {
         config1.setSecret(SystemConfig.getCS_AppSettings().get("CP1.APPSECRET").toString());
         config1.setAesKey("");
         config1.setToken("");
+
+        WxCpProperties.AppConfig config2 = new WxCpProperties.AppConfig();
+        config2.setAgentId(Integer.parseInt(SystemConfig.getCS_AppSettings().get("CP2.AGENTID").toString()));
+        config2.setSecret(SystemConfig.getCS_AppSettings().get("CP2.APPSECRET").toString());
+        config2.setAesKey("");
+        config2.setToken("");
 
         List<WxCpProperties.AppConfig> configs = new ArrayList<WxCpProperties.AppConfig>();
         configs.add(config);
