@@ -123,9 +123,9 @@ public class HrGongDanController extends Controller {
         //获取售后客服的微信公众号openId
         List<PortEmp> portEmpList = PortEmp.dao.find(Db.getSql("admin.portEmp.queryAfterSalePortEmpList"));
         if (portEmpList.size() > 0) {
-            sendMpMsg(portEmpList,hrGongdanRepairRequest);
+            sendMpMsg(portEmpList,hrGongdanRepair);
             //推送企业微信信息
-            sendCpMsg(portEmpList,hrGongdanRepairRequest);
+            sendCpMsg(portEmpList,hrGongdanRepair);
         }
 
         renderJson(R.ok().put("result",hrGongdanRepair.save()).put("data",hrGongdanRepair));
@@ -358,7 +358,7 @@ public class HrGongDanController extends Controller {
      * @Param [portEmpList]
      * @return void
      **/
-    public void sendMpMsg(List<PortEmp> portEmpList,HrGongdanRepairRequest hrGongdanRepairRequest) {
+    public void sendMpMsg(List<PortEmp> portEmpList,HrGongdanRepair hrGongdanRepairRequest) {
 
         for (PortEmp portEmp: portEmpList) {
             String openId = portEmp.getWxOpenId();
@@ -394,7 +394,7 @@ public class HrGongDanController extends Controller {
      * @Param [hrGongdanRepairRequest]
      * @return void
      **/
-    private void sendCpMsg(List<PortEmp> portEmpList,HrGongdanRepairRequest hrGongdanRepairRequest) {
+    private void sendCpMsg(List<PortEmp> portEmpList,HrGongdanRepair hrGongdanRepairRequest) {
         WxCpMessageReq wxCpMessageReq = new WxCpMessageReq();
         wxCpMessageReq.setAgentId(WxCpAgentIdEmun.agent1.getCode());
         String toUser = "";
@@ -406,7 +406,7 @@ public class HrGongDanController extends Controller {
         }
         wxCpMessageReq.setUser(toUser);
         String title = "你有新的报修单! "+ hrGongdanRepairRequest.getOrderNumber();
-        String sendContent = title + "\n 联系人:"+hrGongdanRepairRequest.getContact() + "\n 联系电话:"+hrGongdanRepairRequest.getPhone() + "\n 故障描述:"+hrGongdanRepairRequest.getRemark();
+        String sendContent = title + "\n联系人:"+hrGongdanRepairRequest.getContact() + "\n联系电话:"+hrGongdanRepairRequest.getPhone() + "\n故障描述:"+hrGongdanRepairRequest.getRemark();
         wxCpMessageReq.setContent(sendContent);
         Aop.get(CpService.class).sendTextMsg(wxCpMessageReq);
     }
