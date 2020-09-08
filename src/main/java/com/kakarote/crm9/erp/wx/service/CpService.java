@@ -1,5 +1,6 @@
 package com.kakarote.crm9.erp.wx.service;
 
+import com.kakarote.crm9.erp.wx.config.WxCpAgentIdEmun;
 import com.kakarote.crm9.erp.wx.config.WxCpConfiguration;
 import com.kakarote.crm9.erp.wx.vo.WxCpMessageReq;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,7 @@ import java.util.List;
 @Slf4j
 public class CpService {
     /**
-     * 获取企业内部
+     * 获取企业内部、第三方应用、自建应用accesstoken
      */
     public String getCpAccessToken(Integer agentId){
         WxCpService wxCpService = WxCpConfiguration.getCpService(agentId);
@@ -59,7 +60,7 @@ public class CpService {
      * 获取所有部门
      */
     public List<WxCpDepart> getAllDept(){
-        WxCpService wxCpService =WxCpConfiguration.getCpService(0);
+        WxCpService wxCpService =WxCpConfiguration.getCpService(WxCpAgentIdEmun.agent0.getCode());
         List<WxCpDepart> list=new ArrayList<>();
         try {
             list= wxCpService.getDepartmentService().list(null);
