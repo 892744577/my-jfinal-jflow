@@ -20,6 +20,7 @@ import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
 import com.kakarote.crm9.common.constant.BaseConstant;
 import com.kakarote.crm9.erp.admin.entity.PortEmp;
 import com.kakarote.crm9.erp.admin.service.AdminSceneService;
+import com.kakarote.crm9.erp.wx.config.WxCpAgentIdEmun;
 import com.kakarote.crm9.erp.wx.service.CpService;
 import com.kakarote.crm9.erp.wx.service.MpService;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
@@ -395,6 +396,7 @@ public class HrGongDanController extends Controller {
      **/
     private void sendCpMsg(List<PortEmp> portEmpList,HrGongdanRepairRequest hrGongdanRepairRequest) {
         WxCpMessageReq wxCpMessageReq = new WxCpMessageReq();
+        wxCpMessageReq.setAgentId(WxCpAgentIdEmun.agent1.getCode());
         String toUser = "";
         for (PortEmp portEmp: portEmpList) {
             toUser = toUser + portEmp.getTel() + "|";
