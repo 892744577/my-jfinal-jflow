@@ -21,6 +21,10 @@ public class BaseConstant implements Serializable {
     public final static String UPLOAD_PATH = BaseUtil.isWindows() ? "D:\\upload\\" : "/usr/local/upload/";
 
     /**
+     *
+     */
+    public final static String UPLOAD_PATH_PLAYBILL = BaseUtil.isWindows() ? "D:\\upload\\" : "/usr/local/images/crm/playbill/";
+    /**
      * 工单查询的文件路径
      */
     public final static String UPLOAD_PATH_GDCX = BaseUtil.isWindows() ? "D:\\upload\\" : "/usr/local/images/";
