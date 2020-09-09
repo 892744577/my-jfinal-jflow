@@ -21,7 +21,6 @@ public class PortFileController extends Controller {
      *
      */
     public void upload(){
-
-        renderJson(FileUploadUtil.upload(getFile(), BaseConstant.UPLOAD_PATH_GDCX,"aptenon","jpg"));
+        renderJson(FileUploadUtil.upload(getFile(), BaseConstant.UPLOAD_PATH_GDCX,"aptenon","",true));
     }
 }

@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * 文件上传工具类
+ * 文件上传工具类，上传文件将默认存放到jfinal的默认路径（详看jfinal-cos），然后使用奔雷将文件转移到真正的业务路径下
  */
 @Slf4j
 public class FileUploadUtil {
@@ -39,26 +39,27 @@ public class FileUploadUtil {
 
     /**
      * 上传单个文件,重载
-     * @param file
-     * @param path
-     * @param prefix
-     * @return
-     */
+     * */
     public static Map<String, String> upload(UploadFile file, String path, String prefix) {
         String fileName = DateUtil.changeDateTOStr2(new Date())+System.currentTimeMillis() +
                 ThreadLocalRandom.current().nextInt(100, 1000) + "";
-        return upload(file,path,fileName,prefix);
+        return upload(file,path,fileName,prefix,true);
     }
-
+    public static Map<String, String> upload(UploadFile file, String path, String prefix,boolean isCover) {
+        String fileName = DateUtil.changeDateTOStr2(new Date())+System.currentTimeMillis() +
+                ThreadLocalRandom.current().nextInt(100, 1000) + "";
+        return upload(file,path,fileName,prefix,isCover);
+    }
     /**
      * 上传单个文件,重载
-     * @param file
-     * @param path
-     * @param fileName
-     * @param prefix
+     * @param file 上传的文件
+     * @param path 文件输出目录
+     * @param fileName 文件名,不传则默认（时间1+时间2+3位随机数)
+     * @param prefix 文件名前缀
+     * @param isCover 是否覆盖,不传则默认true
      * @return
      */
-    public static Map<String, String> upload(UploadFile file, String path, String fileName,String prefix) {
+    public static Map<String, String> upload(UploadFile file, String path, String fileName,String prefix,boolean isCover) {
         try {
             // 文件扩展名
             String suffix = getFileExtention(file);
@@ -66,9 +67,15 @@ public class FileUploadUtil {
             String urlPath = path + newFileName;
             String fileDirectory = path;
             String filePath = urlPath;
-            File f = new File(fileDirectory);
-            if (!f.exists() && !f.isDirectory()) {
-                f.mkdirs();
+            File dir = new File(fileDirectory);
+            File destFile = new File(filePath);
+            //若目录不存在，则创建目录
+            if (!dir.exists() && !dir.isDirectory()) {
+                dir.mkdirs();
+            }
+            //若文件已存在，则覆盖
+            if (isCover && destFile.exists() && destFile.isFile()) {
+                destFile.delete();
             }
             //写入文件到真实路径文件
             transferTo(file.getFile(),new File(filePath));
