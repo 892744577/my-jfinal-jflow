@@ -2,12 +2,6 @@ package com.kakarote.crm9.utils;
 
 import BP.Difference.SystemConfig;
 import cn.binarywang.wx.miniapp.api.WxMaService;
-import com.google.zxing.BarcodeFormat;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatWriter;
-import com.google.zxing.WriterException;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.kakarote.crm9.common.constant.BaseConstant;
 import com.kakarote.crm9.erp.admin.entity.PortActivity;
 import com.kakarote.crm9.erp.sms.entity.PictureRequestDto;
@@ -17,15 +11,11 @@ import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
 
 import javax.imageio.ImageIO;
-import javax.imageio.stream.ImageOutputStream;
-import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
-import java.awt.geom.RoundRectangle2D;
 import java.awt.image.BufferedImage;
-import java.io.*;
-import java.net.URLEncoder;
-import java.util.Base64;
-import java.util.Hashtable;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
 
 /*
  * @Description //生成二维码工具类
@@ -49,7 +39,7 @@ public class QrCodeUtil {
         try {
             PictureRequestDto pictureRequestDto = new PictureRequestDto();
             pictureRequestDto.setBt(pbWxCode);
-            String picPath = BaseConstant.UPLOAD_PATH + "/PlayBill/";
+            String picPath = BaseConstant.UPLOAD_PATH_PLAYBILL;
             outPicName = "HB_QR"+pbId+".jpg";
             pictureRequestDto.setOutPicPath(picPath+outPicName);
 
@@ -133,7 +123,7 @@ public class QrCodeUtil {
             PictureRequestDto pictureRequestDto = new PictureRequestDto();
             pictureRequestDto.setBt(pbWxCode);
 
-            String picPath = BaseConstant.UPLOAD_PATH + "/PlayBill/";
+            String picPath = BaseConstant.UPLOAD_PATH_PLAYBILL;
             pictureRequestDto.setBackPicPath(picPath + portActivityDb.getAcPlaybillImg());
             outPicName = "HB_"+pbId+".jpg";
             pictureRequestDto.setOutPicPath(picPath+outPicName);
