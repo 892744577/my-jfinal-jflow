@@ -27,7 +27,7 @@ public class BaseConstant implements Serializable {
     /**
      * h5活动的文件路径
      */
-    public final static String UPLOAD_PATH_HD = BaseUtil.isWindows() ? "D:\\upload\\" : "/usr/local/images/crm/crowd";
+    public final static String UPLOAD_PATH_HD = BaseUtil.isWindows() ? "D:\\upload\\" : "/usr/local/images/crm/crowd/";
 
     /**
      * 角色类型列表

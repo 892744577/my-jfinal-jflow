@@ -22,11 +22,44 @@ public class FileUploadUtil {
     public static String RELATIVE_PATH = "relativePath";//图片保存的相对路径
     public static String ACCESS_PATH = "accessPath";//图片访问路径，用于前台图片回显
 
+    /**
+     * 获取文件扩展名
+     *
+     * @param file 文件
+     * @return
+     */
+    public static String getFileExtention(UploadFile file) {
+        String extension = null;
+        if (file != null) {
+            String fileName = file.getOriginalFileName();
+            extension = fileName.substring(fileName.lastIndexOf(".") + 1);
+        }
+        return extension;
+    }
 
+    /**
+     * 上传单个文件,重载
+     * @param file
+     * @param path
+     * @param prefix
+     * @return
+     */
     public static Map<String, String> upload(UploadFile file, String path, String prefix) {
+        String fileName = DateUtil.changeDateTOStr2(new Date())+System.currentTimeMillis() +
+                ThreadLocalRandom.current().nextInt(100, 1000) + "";
+        return upload(file,path,fileName,prefix);
+    }
+
+    /**
+     * 上传单个文件,重载
+     * @param file
+     * @param path
+     * @param fileName
+     * @param prefix
+     * @return
+     */
+    public static Map<String, String> upload(UploadFile file, String path, String fileName,String prefix) {
         try {
-            String fileName = DateUtil.changeDateTOStr2(new Date())+System.currentTimeMillis() +
-                    ThreadLocalRandom.current().nextInt(100, 1000) + "";
             // 文件扩展名
             String suffix = getFileExtention(file);
             String newFileName = prefix + fileName + COMMA + suffix;
@@ -73,7 +106,13 @@ public class FileUploadUtil {
         }
     }
 
-
+    /**
+     * 多文件上传
+     * @param fileList
+     * @param path
+     * @param prefix
+     * @return
+     */
     public static List<Map<String, String>> upload(List<UploadFile> fileList, String path, String prefix) {
         if (fileList == null || fileList.isEmpty()) {
             throw new RuntimeException("请上传文件");
@@ -89,20 +128,5 @@ public class FileUploadUtil {
             log.error("upload", e);
             throw new RuntimeException("上传文件失败");
         }
-    }
-
-    /**
-     * 获取文件扩展名
-     *
-     * @param file 文件
-     * @return
-     */
-    public static String getFileExtention(UploadFile file) {
-        String extension = null;
-        if (file != null) {
-            String fileName = file.getOriginalFileName();
-            extension = fileName.substring(fileName.lastIndexOf(".") + 1);
-        }
-        return extension;
     }
 }
