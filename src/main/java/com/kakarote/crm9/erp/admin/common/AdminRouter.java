@@ -26,5 +26,6 @@ public class AdminRouter extends Routes {
         add("/port/emp", PortEmpController.class);
         add("/port/activity", PortActivityController.class);
         add("/port/login", PortLoginController.class);
+        add("/port/file", PortFileController.class);
     }
 }
