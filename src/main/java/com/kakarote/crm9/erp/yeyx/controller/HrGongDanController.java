@@ -406,7 +406,7 @@ public class HrGongDanController extends Controller {
         }
         wxCpMessageReq.setUser(toUser);
         String title = "你有新的报修单! "+ hrGongdanRepairRequest.getOrderNumber();
-        String sendContent = title + "\n联系人:"+hrGongdanRepairRequest.getContact() + "\n联系电话:"+hrGongdanRepairRequest.getPhone() + "\n故障描述:"+hrGongdanRepairRequest.getRemark();
+        String sendContent = title + "\n联系人:"+hrGongdanRepairRequest.getContact() + "\n联系电话:"+hrGongdanRepairRequest.getPhone() + "\n地址:"+hrGongdanRepairRequest.getAddress() + "\n故障描述:"+hrGongdanRepairRequest.getRemark();
         wxCpMessageReq.setContent(sendContent);
         Aop.get(CpService.class).sendTextMsg(wxCpMessageReq);
     }
