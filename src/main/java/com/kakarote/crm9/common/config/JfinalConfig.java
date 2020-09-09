@@ -58,7 +58,7 @@ public class JfinalConfig extends JFinalConfig {
     public void configConstant(Constants me) {
         me.setDevMode(prop.getBoolean("jfinal.devMode", true));
         me.setInjectDependency(true);
-        //设置上传文件到哪个目录
+        //设置上传文件到哪个目录,默认在webapps下建一个upload文件夹，这里可以修改具体参考jfinal文档，在使用getFile()\getFiles()时会默认上传到该文件夹
         if(ClassLoaderUtil.isPresent("com.jfinal.server.undertow.UndertowServer")){
             me.setBaseUploadPath(BaseConstant.UPLOAD_PATH);
             me.setBaseDownloadPath(BaseConstant.UPLOAD_PATH);
