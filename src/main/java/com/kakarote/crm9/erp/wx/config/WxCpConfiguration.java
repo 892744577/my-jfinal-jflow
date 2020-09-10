@@ -73,6 +73,7 @@ public class WxCpConfiguration {
         List<WxCpProperties.AppConfig> configs = new ArrayList<WxCpProperties.AppConfig>();
         configs.add(config);
         configs.add(config1);
+        configs.add(config2);
 
         this.properties.setAppConfigs(configs);
         if (configs == null) {
