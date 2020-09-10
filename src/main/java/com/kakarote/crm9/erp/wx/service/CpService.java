@@ -1,5 +1,6 @@
 package com.kakarote.crm9.erp.wx.service;
 
+import com.alibaba.fastjson.JSON;
 import com.kakarote.crm9.erp.wx.config.WxCpAgentIdEmun;
 import com.kakarote.crm9.erp.wx.config.WxCpConfiguration;
 import com.kakarote.crm9.erp.wx.vo.WxCpMessageReq;
@@ -50,6 +51,7 @@ public class CpService {
                 .build();
         WxCpService wxCpService =WxCpConfiguration.getCpService(wxCpMessageReq.getAgentId());
         try {
+            log.info("=======发送无忧消息："+ JSON.toJSONString(message));
             wxCpService.messageSend(message);
         } catch (WxErrorException e) {
             return e.getError().getJson();
