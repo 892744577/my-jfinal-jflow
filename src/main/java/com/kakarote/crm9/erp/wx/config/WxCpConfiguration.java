@@ -1,6 +1,5 @@
 package com.kakarote.crm9.erp.wx.config;
 
-import BP.Difference.SystemConfig;
 import com.google.common.collect.Maps;
 import com.kakarote.crm9.erp.wx.cphandler.*;
 import lombok.AllArgsConstructor;
@@ -51,7 +50,7 @@ public class WxCpConfiguration {
     }
 
     public void initProperties(){
-        this.properties.setCorpId(SystemConfig.getCS_AppSettings().get("CP.CORPID").toString());
+        this.properties.setCorpId(WxCpAgentIdEmun.corpId);
 
         WxCpProperties.AppConfig config = new WxCpProperties.AppConfig();
         config.setAgentId(WxCpAgentIdEmun.agent0.getCode());

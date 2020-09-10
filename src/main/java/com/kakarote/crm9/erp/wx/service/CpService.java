@@ -8,6 +8,7 @@ import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.api.WxCpService;
 import me.chanjar.weixin.cp.bean.WxCpDepart;
 import me.chanjar.weixin.cp.bean.WxCpMessage;
+import me.chanjar.weixin.cp.bean.WxCpOauth2UserInfo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,5 +69,18 @@ public class CpService {
             e.getError().getJson();
         }
         return list;
+    }
+
+    public WxCpOauth2UserInfo autoLoginByCode(String code) {
+        WxCpService wxCpService =WxCpConfiguration.getCpService(WxCpAgentIdEmun.agent2.getCode());
+        WxCpOauth2UserInfo wxCpOauth2UserInfo = new WxCpOauth2UserInfo();
+        try {
+            wxCpOauth2UserInfo = wxCpService.getOauth2Service().getUserInfo(code);
+        } catch (WxErrorException e) {
+            e.getError().getJson();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return wxCpOauth2UserInfo;
     }
 }

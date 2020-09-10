@@ -18,6 +18,7 @@ public enum WxCpAgentIdEmun {
   private Integer code;
   private String scret;
   private String description;
+  protected static String corpId=SystemConfig.getCS_AppSettings().get("CP.CORPID").toString();
   WxCpAgentIdEmun(Integer code,String scret,String description) {
     this.code = code;
     this.scret = scret;
