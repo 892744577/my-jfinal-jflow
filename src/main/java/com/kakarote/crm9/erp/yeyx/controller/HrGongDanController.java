@@ -1,6 +1,7 @@
 package com.kakarote.crm9.erp.yeyx.controller;
 
 import BP.DA.Log;
+import BP.Difference.SystemConfig;
 import BP.Tools.StringUtils;
 import BP.Web.WebUser;
 import cn.hutool.core.util.StrUtil;
@@ -396,7 +397,7 @@ public class HrGongDanController extends Controller {
      **/
     private void sendCpMsg(List<PortEmp> portEmpList,HrGongdanRepair hrGongdanRepairRequest) {
         WxCpMessageReq wxCpMessageReq = new WxCpMessageReq();
-        wxCpMessageReq.setAgentId(WxCpAgentIdEmun.agent1.getCode());
+        wxCpMessageReq.setAgentId(WxCpAgentIdEmun.agent2.getCode());
         String toUser = "";
         for (PortEmp portEmp: portEmpList) {
             toUser = toUser + portEmp.getTel() + "|";
@@ -405,7 +406,9 @@ public class HrGongDanController extends Controller {
             toUser = toUser.substring(0, toUser.lastIndexOf("|"));
         }
         wxCpMessageReq.setUser(toUser);
-        String title = "你有新的报修单! "+ hrGongdanRepairRequest.getOrderNumber();
+        String wxCorpId = SystemConfig.getCS_AppSettings().get("WxCpAgentIdEmun.corpId").toString();
+        String redirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+wxCorpId+"&redirect_uri=http%3a%2f%2fapp.aptenon.com%2fcrm%2fcrmAdmin%2findex.html%3ftype%3drepaireQuery%23%2fwx%2fwxWorkAuthPage&response_type=code&scope=snsapi_base&state=#wechat_redirect";
+        String title = "你有新的报修单! <a href=\""+redirectUrl+"\">"+hrGongdanRepairRequest.getOrderNumber()+"</a>";
         String sendContent = title + "\n联系人:"+hrGongdanRepairRequest.getContact() + "\n联系电话:"+hrGongdanRepairRequest.getPhone() + "\n地址:"+hrGongdanRepairRequest.getAddress() + "\n故障描述:"+hrGongdanRepairRequest.getRemark();
         wxCpMessageReq.setContent(sendContent);
         Aop.get(CpService.class).sendTextMsg(wxCpMessageReq);
