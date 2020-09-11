@@ -82,7 +82,7 @@ public class HrGongDanController extends Controller {
         List<PortEmp> portEmpList = PortEmp.dao.find(Db.getSql("admin.portEmp.queryAfterSalePortEmpList"));
         if (portEmpList.size() > 0) {
             //推送企业微信信息
-            sendAppointCpMsg(portEmpList,hrGongdanBook);
+            sendCpMsg(portEmpList,null,hrGongdanBook);
         }
         renderJson(R.ok().put("data",hrGongdanBook.save()));
     }
@@ -132,7 +132,7 @@ public class HrGongDanController extends Controller {
         if (portEmpList.size() > 0) {
             sendMpMsg(portEmpList,hrGongdanRepair);
             //推送企业微信信息
-            sendCpMsg(portEmpList,hrGongdanRepair);
+            sendCpMsg(portEmpList,hrGongdanRepair,null);
         }
 
         renderJson(R.ok().put("result",hrGongdanRepair.save()).put("data",hrGongdanRepair));
@@ -395,13 +395,13 @@ public class HrGongDanController extends Controller {
     }
 
     /*
-     * @Description //进行报修单企业微信信息推送
+     * @Description //进行企业微信信息推送
      * @Author wangkaida
      * @Date 10:11 2020/9/8
      * @Param [hrGongdanRepairRequest]
      * @return void
      **/
-    private void sendCpMsg(List<PortEmp> portEmpList,HrGongdanRepair hrGongdanRepairRequest) {
+    private void sendCpMsg(List<PortEmp> portEmpList,HrGongdanRepair hrGongdanRepairRequest,HrGongdanBook hrGongdanBookRequest) {
         WxCpMessageReq wxCpMessageReq = new WxCpMessageReq();
         wxCpMessageReq.setAgentId(WxCpAgentIdEmun.agent2.getCode());
         String toUser = "";
@@ -412,34 +412,22 @@ public class HrGongDanController extends Controller {
             toUser = toUser.substring(0, toUser.lastIndexOf("|"));
         }
         wxCpMessageReq.setUser(toUser);
-        String redirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+WxCpAgentIdEmun.corpId+"&redirect_uri=http%3a%2f%2fapp.aptenon.com%2fcrm%2fcrmAdmin%2findex.html%3ftype%3drepaireQuery%23%2fwx%2fwxWorkAuthPage&response_type=code&scope=snsapi_base&state=#wechat_redirect";
-        String title = "你有新的报修单! <a href=\""+redirectUrl+"\">"+hrGongdanRepairRequest.getOrderNumber()+"</a>";
-        String sendContent = title + "\n联系人:"+hrGongdanRepairRequest.getContact() + "\n联系电话:"+hrGongdanRepairRequest.getPhone() + "\n地址:"+hrGongdanRepairRequest.getAddress() + "\n故障描述:"+hrGongdanRepairRequest.getRemark();
-        wxCpMessageReq.setContent(sendContent);
-        Aop.get(CpService.class).sendTextMsg(wxCpMessageReq);
-    }
 
-    /*
-     * @Description //进行预约单企业微信信息推送
-     * @Author wangkaida
-     * @Date 14:29 2020/9/11
-     * @Param [portEmpList, hrGongdanBook]
-     * @return void
-     **/
-    private void sendAppointCpMsg(List<PortEmp> portEmpList,HrGongdanBook hrGongdanBookRequest) {
-        WxCpMessageReq wxCpMessageReq = new WxCpMessageReq();
-        wxCpMessageReq.setAgentId(WxCpAgentIdEmun.agent2.getCode());
-        String toUser = "";
-        for (PortEmp portEmp: portEmpList) {
-            toUser = toUser + portEmp.getTel() + "|";
+        String redirectUrl = "";
+        String title = "";
+        String sendContent = "";
+        if (hrGongdanRepairRequest != null) {
+            redirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+WxCpAgentIdEmun.corpId+"&redirect_uri=http%3a%2f%2fapp.aptenon.com%2fcrm%2fcrmAdmin%2findex.html%3ftype%3drepaireQuery%23%2fwx%2fwxWorkAuthPage&response_type=code&scope=snsapi_base&state=#wechat_redirect";
+            title = "你有新的报修单! <a href=\""+redirectUrl+"\">"+hrGongdanRepairRequest.getOrderNumber()+"</a>";
+            sendContent = title + "\n联系人:"+hrGongdanRepairRequest.getContact() + "\n联系电话:"+hrGongdanRepairRequest.getPhone() + "\n地址:"+hrGongdanRepairRequest.getAddress() + "\n故障描述:"+hrGongdanRepairRequest.getRemark();
         }
-        if (StringUtils.isNotBlank(toUser)) {
-            toUser = toUser.substring(0, toUser.lastIndexOf("|"));
+        if (hrGongdanBookRequest != null) {
+            redirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+WxCpAgentIdEmun.corpId+"&redirect_uri=http%3A%2F%2Fapp.aptenon.com%2Fcrm%2FcrmAdmin%2Findex.html%3Ftype%3DappointQuery%23%2Fwx%2FwxWorkAuthPage&response_type=code&scope=snsapi_base&state=#wechat_redirect";
+            title = "你有新的预约单! <a href=\""+redirectUrl+"\">"+hrGongdanBookRequest.getOrderNumber()+"</a>";
+            sendContent = title + "\n联系人:"+hrGongdanBookRequest.getContact() + "\n联系电话:"+hrGongdanBookRequest.getPhone() + "\n地址:"+hrGongdanBookRequest.getAddress() + "\n预约描述:"+hrGongdanBookRequest.getRemark();
         }
-        wxCpMessageReq.setUser(toUser);
-        String redirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+WxCpAgentIdEmun.corpId+"&redirect_uri=http%3A%2F%2Fapp.aptenon.com%2Fcrm%2FcrmAdmin%2Findex.html%3Ftype%3DappointQuery%23%2Fwx%2FwxWorkAuthPage&response_type=code&scope=snsapi_base&state=#wechat_redirect";
-        String title = "你有新的预约单! <a href=\""+redirectUrl+"\">"+hrGongdanBookRequest.getOrderNumber()+"</a>";
-        String sendContent = title + "\n联系人:"+hrGongdanBookRequest.getContact() + "\n联系电话:"+hrGongdanBookRequest.getPhone() + "\n地址:"+hrGongdanBookRequest.getAddress() + "\n预约描述:"+hrGongdanBookRequest.getRemark();
+
+
         wxCpMessageReq.setContent(sendContent);
         Aop.get(CpService.class).sendTextMsg(wxCpMessageReq);
     }
