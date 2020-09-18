@@ -5,6 +5,7 @@ import com.kakarote.crm9.erp.wx.config.WxCpAgentIdEmun;
 import com.kakarote.crm9.erp.wx.config.WxCpConfiguration;
 import com.kakarote.crm9.erp.wx.vo.WxCpMessageReq;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.common.bean.WxJsapiSignature;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.cp.api.WxCpService;
 import me.chanjar.weixin.cp.bean.WxCpDepart;
@@ -84,5 +85,20 @@ public class CpService {
             e.printStackTrace();
         }
         return wxCpOauth2UserInfo;
+    }
+
+    /**
+     * 获取config
+     * @param url
+     * @return
+     */
+    public WxJsapiSignature getJsapiConfig(String url,Integer agnetId){
+        WxCpService wxCpService =WxCpConfiguration.getCpService(agnetId);
+        try {
+             return wxCpService.createJsapiSignature(url);
+        } catch (WxErrorException e) {
+            e.getError().getJson();
+        }
+        return null;
     }
 }

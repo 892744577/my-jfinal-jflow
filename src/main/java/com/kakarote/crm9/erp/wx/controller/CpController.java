@@ -6,6 +6,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.core.paragetter.Para;
 import com.jfinal.plugin.activerecord.Db;
 import com.kakarote.crm9.erp.admin.entity.PortEmp;
+import com.kakarote.crm9.erp.wx.config.WxCpAgentIdEmun;
 import com.kakarote.crm9.erp.wx.service.CpService;
 import com.kakarote.crm9.erp.wx.vo.WxCpMessageReq;
 import com.kakarote.crm9.utils.R;
@@ -49,5 +50,11 @@ public class CpController extends Controller {
         }else{
             renderJson(R.ok().put("msg","登录失败!").put("code","000001"));
         }
+    }
+
+    public void getJsapiConfig(@Para("url") String url){
+        renderJson(R.ok()
+                .put("data",cpService.getJsapiConfig(url,WxCpAgentIdEmun.agent2.getCode()))
+                .put("agentId", WxCpAgentIdEmun.agent2.getCode()));
     }
 }
