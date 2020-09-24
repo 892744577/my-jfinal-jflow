@@ -142,8 +142,8 @@ public class F009FlowEvent extends FlowEventBase {
                     param.put("jsonData",jsonStr);
                     Log.DebugWriteInfo("==============>调用新增订单接口发送参数:" + JSONObject.toJSONString(param));
                     String result = yeyxService.gatewayRequest(yeyxService.getPath() + "/createOrder", param);
+                    Log.DebugWriteInfo("==============>调用新增订单接口返回结果:" + result);
                     JSONObject objectResult = JSONObject.parseObject(result);
-
                     if(objectResult.getInteger("status") == 200 && objectResult.getJSONObject("data") !=null){
                         String orderId = objectResult.getJSONObject("data").getString("orderId");
                         Log.DebugWriteInfo("==============>调用新增订单接口成功,返回orderId:"+orderId);
@@ -153,7 +153,7 @@ public class F009FlowEvent extends FlowEventBase {
                         //保存服务单号
                         this.HisEn.Update();
                     }else {
-                        Log.DebugWriteInfo("==============>调用新增订单接口失败:"+result);
+                        Log.DebugWriteInfo("==============>调用新增订单接口失败");
                         return result;
                     }
                 }
