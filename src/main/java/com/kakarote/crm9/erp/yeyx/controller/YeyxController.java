@@ -56,7 +56,7 @@ public class YeyxController extends Controller {
             hrGongdanUpdate.update();
             renderJson(R.ok().put("message", "成功"));
         }else {
-            Log.DebugWriteInfo("==============>调用新增订单接口失败:"+result);
+            Log.DebugWriteInfo("==============>调用新增订单接口失败");
             renderJson(R.ok().put("code", 500).put("message", "result"));
         }
     }
@@ -125,6 +125,7 @@ public class YeyxController extends Controller {
             String result ="";
             try {
                 result = yeyxService.gatewayRequest(yeyxService.getPath() + "/createOrder", param);
+                log.info("==============>调用新增订单接口返回数据:"+result);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -461,7 +462,7 @@ public class YeyxController extends Controller {
         gwf.RetrieveFromDBSources();
 
         //若是确认订单节点，往下流转，其他得只是更新数据
-        if(905 == gwf.getFK_Node()){
+        if(905 == gwf.getFK_Node() || 903 == gwf.getFK_Node()){
             Hashtable myhtSend = new Hashtable();
             //发送流程
             myhtSend.put("productPictureUrls", orderCompleteRequest.getProductPictureUrls());
