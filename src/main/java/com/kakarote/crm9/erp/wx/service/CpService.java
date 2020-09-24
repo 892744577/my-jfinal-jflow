@@ -75,6 +75,11 @@ public class CpService {
         return list;
     }
 
+    /**
+     * 根据code获取userId
+     * @param code
+     * @return
+     */
     public WxCpOauth2UserInfo autoLoginByCode(String code) {
         WxCpService wxCpService =WxCpConfiguration.getCpService(WxCpAgentIdEmun.agent2.getCode());
         WxCpOauth2UserInfo wxCpOauth2UserInfo = new WxCpOauth2UserInfo();
