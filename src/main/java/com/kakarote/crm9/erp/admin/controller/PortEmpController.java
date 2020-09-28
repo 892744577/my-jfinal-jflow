@@ -21,10 +21,7 @@ import com.jfinal.plugin.activerecord.Record;
 import com.jfinal.upload.UploadFile;
 import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
 import com.kakarote.crm9.common.constant.BaseConstant;
-import com.kakarote.crm9.erp.admin.entity.HrRegister;
-import com.kakarote.crm9.erp.admin.entity.PortActivityEmp;
-import com.kakarote.crm9.erp.admin.entity.PortEmp;
-import com.kakarote.crm9.erp.admin.entity.PortEmpRelation;
+import com.kakarote.crm9.erp.admin.entity.*;
 import com.kakarote.crm9.erp.admin.entity.vo.PortEmpReq;
 import com.kakarote.crm9.erp.admin.service.PortEmpService;
 import com.kakarote.crm9.erp.sms.entity.LoginRequestDto;
@@ -870,6 +867,10 @@ public class PortEmpController extends Controller {
         }
     }
 
+    /**
+     * 上传群二维码
+     * @param portEmpReq
+     */
     public void saveCrowdWxCodeByOpenId(@Para("") PortEmpReq portEmpReq){
         if(StrUtil.isEmpty(portEmpReq.getWxOpenId())){
             renderJson(R.error("请输入微信公众号openId!").put("data",null).put("code","000038"));
@@ -895,7 +896,35 @@ public class PortEmpController extends Controller {
     }
 
     /**
-     * 报修单上传文件
+     * 上传群二维码到海报表
+     * @param portEmpReq
+     */
+    public void saveCrowdWxCodeByOpenId2(@Para("") PortEmpReq portEmpReq){
+        if(StrUtil.isEmpty(portEmpReq.getWxOpenId())){
+            renderJson(R.error("请输入微信公众号openId!").put("data",null).put("code","000038"));
+            return;
+        }
+
+        //根据微信号和活动id获取店员信息
+        PortActivityPlaybill portActivityPlaybill = PortActivityPlaybill.dao.findFirst(
+                Db.getSql("admin.portActivityEmp.getActivityPlaybillByWxOpenId"),
+                portEmpReq.getWxOpenId(),
+                portEmpReq.getPb_ac_id());
+
+        if(getFiles().size()>0 && portActivityPlaybill!=null){
+            String fileName = upload(getFiles()).stream().map(item->item.get(FileUploadUtil.ACCESS_PATH)).collect(Collectors.joining(";"));
+            portActivityPlaybill.setPbCrowdName(portEmpReq.getCrowdName());
+            portActivityPlaybill.setPbCrowd(fileName);
+            portActivityPlaybill.update();
+            renderJson(R.ok().put("data",portActivityPlaybill).put("code","000000"));
+        }else {
+            renderJson(R.error("文件上传失败，请联系管理员").put("data",null).put("code","000001"));
+            return;
+        }
+    }
+
+    /**
+     * 群二维码上传文件
      * @param list
      * @return
      */
