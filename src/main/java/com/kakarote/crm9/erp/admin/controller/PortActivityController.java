@@ -18,11 +18,8 @@ import com.kakarote.crm9.utils.QrCodeUtil;
 import com.kakarote.crm9.utils.R;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.OutputStream;
 import java.util.*;
 
@@ -453,7 +450,10 @@ public class PortActivityController extends Controller {
             return;
         }
 
-        PortActivityAssist portActivityAssistDb = PortActivityAssist.dao.findFirst("SELECT * FROM port_activity_assist WHERE as_ac_id = ? and as_openid = ? and as_productid = ? LIMIT 0,1",portActivityReq.getAcId(),portActivityReq.getAsOpenId(),portActivityReq.getAsProductId());
+        PortActivityAssist portActivityAssistDb = PortActivityAssist.dao.findFirst(Db.getSql("admin.portActivityAssist.isAssist")
+                ,portActivityReq.getAcId()
+                ,portActivityReq.getAsOpenId()
+                ,portActivityReq.getAsProductId());
 
         if (portActivityAssistDb != null) {
             renderJson(R.error("已经助力,请勿重复提交!").put("data",null).put("code","000037"));
@@ -544,7 +544,8 @@ public class PortActivityController extends Controller {
             return;
         }
 
-        PortActivityAssist portActivityAssistDb = PortActivityAssist.dao.findFirst("SELECT * FROM port_activity_assist WHERE id = ? LIMIT 0,1",portActivityReq.getAssistId());
+        PortActivityAssist portActivityAssistDb = PortActivityAssist.dao.findFirst(Db.getSql("admin.portActivityAssist.getActivityAssistById")
+                ,portActivityReq.getAssistId());
 
         if (portActivityAssistDb != null) {
 
@@ -598,7 +599,8 @@ public class PortActivityController extends Controller {
             return;
         }
 
-        List<PortActivityAssist> portActivityAssistDbList = PortActivityAssist.dao.find("SELECT * FROM port_activity_assist WHERE as_openid = ? ",portEmpReq.getWxOpenId());
+        List<PortActivityAssist> portActivityAssistDbList = PortActivityAssist.dao.find(Db.getSql("admin.portActivityAssist.getActivityAssistByOpenid")
+                ,portEmpReq.getWxOpenId());
 
         if (portActivityAssistDbList != null && portActivityAssistDbList.size()>0) {
             renderJson(R.ok().put("data", portActivityAssistDbList).put("code","000000"));
@@ -678,7 +680,9 @@ public class PortActivityController extends Controller {
             return;
         }
 
-        PortActivityEnroll portActivityEnrollDb = PortActivityEnroll.dao.findFirst(Db.getSql("admin.portActivityEnroll.getEnroll"),portActivityEnrollReq.getWxOpenId(),portActivityEnrollReq.getEn_ac_id());
+        PortActivityEnroll portActivityEnrollDb = PortActivityEnroll.dao.findFirst(Db.getSql("admin.portActivityEnroll.getEnroll")
+                ,portActivityEnrollReq.getWxOpenId()
+                ,portActivityEnrollReq.getEn_ac_id());
 
         if (portActivityEnrollDb != null) {
             renderJson(R.ok().put("data", portActivityEnrollDb).put("code","000000"));
