@@ -63,9 +63,11 @@ public class F009FlowEvent extends FlowEventBase {
                     serviceNo = serviceSystem + serviceSegmentation + serviceType + dateTime + serialNum; //服务单编号
                     Row row = this.HisEn.getRow();
                     row.SetValByKey("serviceNo",serviceNo);
+                    Log.DebugWriteInfo("==============>调用新增订单生成serviceNo:" + serviceNo);
                     this.HisEn.setRow(row);
                     //保存服务单号
                     this.HisEn.Update();
+                    Log.DebugWriteInfo("==============>调用新增订单更新到数据库serviceNo:" + serviceNo);
                 }
                 //1.2若是预约单或报修单将旧单改为已生成工单
                 if(this.getSysPara().get("preServiceNo") != null){
