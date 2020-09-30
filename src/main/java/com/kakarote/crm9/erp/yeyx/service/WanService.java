@@ -39,6 +39,8 @@ public class WanService {
             map.put("companyNo",this.companyNo);
             map.put("aesStr",aesStr);
             map.put("digestStr",EncodeUtil.getMD5(aesStr));
+            map.put("childAccount",null);
+            map.put("noticeUrl",null);
             return JSON.toJSONString(map);
         } catch (Exception e) {
             e.printStackTrace();
