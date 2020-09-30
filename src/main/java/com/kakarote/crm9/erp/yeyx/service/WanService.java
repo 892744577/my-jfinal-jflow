@@ -32,15 +32,13 @@ public class WanService {
     public String getJsonData(String jsonStr) {
 
         try {
-            String aesStr = EncodeUtil.encryption(this.companySecret,jsonStr);
+            //Base64 加密
             Map map = new HashMap();
             long timestamp =  System.currentTimeMillis();
             map.put("timestamp",timestamp);
-            map.put("companyNo",this.companyNo);
-            map.put("aesStr",aesStr);
-            map.put("digestStr",EncodeUtil.getMD5(aesStr));
-            map.put("childAccount",null);
-            map.put("noticeUrl",null);
+            map.put("licenseId",this.licenseId);
+            map.put("busData",EncodeUtil.encryptBASE64(jsonStr.getBytes()));
+            map.put("checkData",EncodeUtil.getMD5(jsonStr+this.companySecret));
             return JSON.toJSONString(map);
         } catch (Exception e) {
             e.printStackTrace();

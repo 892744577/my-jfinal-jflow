@@ -19,10 +19,7 @@ import com.kakarote.crm9.erp.yeyx.service.WanService;
 import com.kakarote.crm9.erp.yeyx.service.YeyxService;
 
 import java.text.DecimalFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class F009FlowEvent extends FlowEventBase {
     @Override
@@ -161,6 +158,7 @@ public class F009FlowEvent extends FlowEventBase {
                     }
                 }else if ("WSF".equals(serviceSystem)) {
                    //add by wangkaidda 调用万师傅下单接口
+                   List wanList = new ArrayList();
                    Map currentPrama = new HashMap();
 
                    //调用新增订单接口
@@ -171,47 +169,31 @@ public class F009FlowEvent extends FlowEventBase {
                        currentPrama.put("buyerPhone", this.getSysPara().get("telephone").toString()); //用户手机号码
                        currentPrama.put("contactPhone", this.getSysPara().get("telephone").toString()); //用户手机号码
                    if(!StringUtils.isEmpty(this.getSysPara().get("smcProvinceId")))
-                       currentPrama.put("province", this.getSysPara().get("smcProvinceId").toString()); //省id
+                       currentPrama.put("province", this.getSysPara().get("SMC").toString().substring(0,2)+"0000"); //省id
                    if(!StringUtils.isEmpty(this.getSysPara().get("smcCityId")))
-                       currentPrama.put("city", this.getSysPara().get("smcCityId").toString()); //城市id
+                       currentPrama.put("city", this.getSysPara().get("SMC").toString().substring(0,4)+"00"); //城市id
                    if(!StringUtils.isEmpty(this.getSysPara().get("smcDistrictId")))
-                       currentPrama.put("county", this.getSysPara().get("smcDistrictId").toString()); //省id
+                       currentPrama.put("county", this.getSysPara().get("SMC").toString()); //区id
                    if(!StringUtils.isEmpty(this.getSysPara().get("address"))) {
                        currentPrama.put("address", this.getSysPara().get("address").toString()); //详细地址
                    }
                    if(!StringUtils.isEmpty(this.getSysPara().get("remark")))
                        currentPrama.put("buyerNote", this.getSysPara().get("remark").toString()); //服务单备注
-
                    currentPrama.put("serveCategory", 1);
                    currentPrama.put("serveType", 1);
                    currentPrama.put("goodsList", new JSONArray());
-
                    currentPrama.put("orderId", this.getSysPara().get("FK_Flow") + "-" + this.getSysPara().get("OID")+"-" + serviceNo);
+                   wanList.add(currentPrama);
+                   String jsonStr = JSONObject.toJSONString(wanList);
 
+                   //加密参数
                    WanService wanService = Aop.get(WanService.class);
-
-                   String jsonStr = JSONObject.toJSONString(currentPrama);
-
                    String reqJsonStr = wanService.getJsonData(jsonStr);
 
                    //调用新增订单接口
                    Log.DebugWriteInfo("==============>调用新增订单接口发送参数:" + reqJsonStr);
                    String result = wanService.gatewayRequestJson(wanService.getPath() + "/batchCreateAsync", reqJsonStr);
                    Log.DebugWriteInfo("==============>调用新增订单接口返回结果:" + result);
-                   JSONObject objectResult = JSONObject.parseObject(result);
-                   if(objectResult.getInteger("retCode") == 200 && objectResult.getJSONObject("retData") !=null){
-                       String orderId = objectResult.getJSONObject("retData").getJSONObject("successInfo").getString("wanshifuOrderNo");
-                       Log.DebugWriteInfo("==============>调用新增订单接口成功,返回orderId:"+orderId);
-                       Row row = this.HisEn.getRow();
-                       row.SetValByKey("orderId",orderId);
-                       this.HisEn.setRow(row);
-                       //保存服务单号
-                       this.HisEn.Update();
-                   }else {
-                       Log.DebugWriteInfo("==============>调用新增订单接口失败");
-                       return result;
-                   }
-
                }
             }
             //发送公众号信息
