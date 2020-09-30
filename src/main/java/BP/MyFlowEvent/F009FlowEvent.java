@@ -15,6 +15,7 @@ import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.kakarote.crm9.erp.wx.vo.MpMsgSendReq;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanBook;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanRepair;
+import com.kakarote.crm9.erp.yeyx.service.WanService;
 import com.kakarote.crm9.erp.yeyx.service.YeyxService;
 
 import java.text.DecimalFormat;
@@ -158,7 +159,60 @@ public class F009FlowEvent extends FlowEventBase {
                         Log.DebugWriteInfo("==============>调用新增订单接口失败");
                         return result;
                     }
-                }
+                }else if ("WSF".equals(serviceSystem)) {
+                   //add by wangkaidda 调用万师傅下单接口
+                   Map currentPrama = new HashMap();
+
+                   //调用新增订单接口
+                   if(!StringUtils.isEmpty(this.getSysPara().get("contactName")))
+                       currentPrama.put("buyerName", this.getSysPara().get("contactName").toString()); //联系人姓名
+                       currentPrama.put("contactName", this.getSysPara().get("contactName").toString()); //联系人姓名
+                   if(!StringUtils.isEmpty(this.getSysPara().get("telephone")))
+                       currentPrama.put("buyerPhone", this.getSysPara().get("telephone").toString()); //用户手机号码
+                       currentPrama.put("contactPhone", this.getSysPara().get("telephone").toString()); //用户手机号码
+                   if(!StringUtils.isEmpty(this.getSysPara().get("smcProvinceId")))
+                       currentPrama.put("province", this.getSysPara().get("smcProvinceId").toString()); //省id
+                   if(!StringUtils.isEmpty(this.getSysPara().get("smcCityId")))
+                       currentPrama.put("city", this.getSysPara().get("smcCityId").toString()); //城市id
+                   if(!StringUtils.isEmpty(this.getSysPara().get("smcDistrictId")))
+                       currentPrama.put("county", this.getSysPara().get("smcDistrictId").toString()); //省id
+                   if(!StringUtils.isEmpty(this.getSysPara().get("address"))) {
+                       currentPrama.put("address", this.getSysPara().get("address").toString()); //详细地址
+                   }
+                   if(!StringUtils.isEmpty(this.getSysPara().get("remark")))
+                       currentPrama.put("buyerNote", this.getSysPara().get("remark").toString()); //服务单备注
+
+                   currentPrama.put("serveCategory", 1);
+                   currentPrama.put("serveType", 1);
+                   currentPrama.put("goodsList", new JSONArray());
+
+                   currentPrama.put("orderId", this.getSysPara().get("FK_Flow") + "-" + this.getSysPara().get("OID")+"-" + serviceNo);
+
+                   WanService wanService = Aop.get(WanService.class);
+
+                   String jsonStr = JSONObject.toJSONString(currentPrama);
+
+                   String reqJsonStr = wanService.getJsonData(jsonStr);
+
+                   //调用新增订单接口
+                   Log.DebugWriteInfo("==============>调用新增订单接口发送参数:" + reqJsonStr);
+                   String result = wanService.gatewayRequestJson(wanService.getPath() + "/batchCreateAsync", reqJsonStr);
+                   Log.DebugWriteInfo("==============>调用新增订单接口返回结果:" + result);
+                   JSONObject objectResult = JSONObject.parseObject(result);
+                   if(objectResult.getInteger("retCode") == 200 && objectResult.getJSONObject("retData") !=null){
+                       String orderId = objectResult.getJSONObject("retData").getJSONObject("successInfo").getString("wanshifuOrderNo");
+                       Log.DebugWriteInfo("==============>调用新增订单接口成功,返回orderId:"+orderId);
+                       Row row = this.HisEn.getRow();
+                       row.SetValByKey("orderId",orderId);
+                       this.HisEn.setRow(row);
+                       //保存服务单号
+                       this.HisEn.Update();
+                   }else {
+                       Log.DebugWriteInfo("==============>调用新增订单接口失败");
+                       return result;
+                   }
+
+               }
             }
             //发送公众号信息
             sendMpMsg(serviceSystem,nextNodeID,nextNodeName);
