@@ -1,7 +1,7 @@
 package com.kakarote.crm9.erp.yeyx.service;
 
-
 import BP.Difference.SystemConfig;
+import com.alibaba.fastjson.JSON;
 import com.kakarote.crm9.erp.yeyx.util.EncodeUtil;
 import com.kakarote.crm9.erp.yzj.util.HttpHelper;
 import lombok.Getter;
@@ -29,9 +29,17 @@ public class WanService {
     @Getter
     private String path = SystemConfig.getCS_AppSettings().get("WAN.path").toString();
 
-    public String getAscData(String jsonStr,long timestamp,String version) {
+    public String getJsonData(String jsonStr) {
+
         try {
-            return EncodeUtil.encryption(this.companySecret,jsonStr );
+            String aesStr = EncodeUtil.encryption(this.companySecret,jsonStr);
+            Map map = new HashMap();
+            long timestamp =  System.currentTimeMillis();
+            map.put("timestamp",timestamp);
+            map.put("companyNo",this.companyNo);
+            map.put("aesStr",aesStr);
+            map.put("digestStr",EncodeUtil.getMD5(aesStr));
+            return JSON.toJSONString(map);
         } catch (Exception e) {
             e.printStackTrace();
         }
