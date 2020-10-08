@@ -14,4 +14,9 @@
   #sql ("queryAfterSalePortEmpList")
     select a.* from port_emp a left join gpm_groupemp b on a.No = b.FK_Emp left join gpm_group c on b.FK_Group = c.No where b.FK_Group in ('03')
   #end
+  #sql ("getEmpAndActivityEmpByTel")
+    SELECT d.* FROM port_emp d where d.tel = ?
+    union
+    SELECT d.* FROM port_activity_emp d where d.tel = ?
+  #end
 #end
