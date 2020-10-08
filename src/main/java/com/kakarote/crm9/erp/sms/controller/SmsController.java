@@ -1,10 +1,11 @@
 package com.kakarote.crm9.erp.sms.controller;
 
 import com.alibaba.fastjson.JSON;
-import com.google.zxing.WriterException;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
 import com.jfinal.core.paragetter.Para;
+import com.jfinal.plugin.activerecord.Db;
+import com.kakarote.crm9.erp.admin.entity.PortEmp;
 import com.kakarote.crm9.erp.sms.entity.LoginRequestDto;
 import com.kakarote.crm9.erp.sms.entity.PictureRequestDto;
 import com.kakarote.crm9.erp.sms.service.SmsService;
@@ -29,12 +30,18 @@ public class SmsController extends Controller {
      * 发送手机验证码
      */
     public void sendCode(@Para("") LoginRequestDto loginRequestDto){
-        log.info("=========手机认证获取验证码请求信息："+ JSON.toJSONString(loginRequestDto));
-        String appid=smsService.getAccount();
-        String appSecret=smsService.getPassword();
-        smsService.send(loginRequestDto);
+        PortEmp emp = PortEmp.dao.findFirst(Db.getSql("admin.portEmp.getEmpAndActivityEmpByTel"),loginRequestDto.getMobile(),loginRequestDto.getMobile());
+        if(emp == null){
+            log.info("=========非活动邀请者不能使用该功能，请联系管理员："+ JSON.toJSONString(loginRequestDto));
+            renderJson(R.ok().put("msg","非活动邀请者不能使用该功能，请联系管理员").put("code","000000"));
+        }else{
+            log.info("=========手机认证获取验证码请求信息："+ JSON.toJSONString(loginRequestDto));
+            String appid=smsService.getAccount();
+            String appSecret=smsService.getPassword();
+            smsService.send(loginRequestDto);
+            renderJson(R.ok().put("openId","xxx").put("code","000000"));
+        }
 
-        renderJson(R.ok().put("openId","xxx").put("code","000000"));
     }
 
     /**
