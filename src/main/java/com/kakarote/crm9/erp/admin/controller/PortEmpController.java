@@ -173,6 +173,7 @@ public class PortEmpController extends Controller {
      * @Param [portEmp]
      * @return void
      **/
+    @Deprecated
     public void wechatBind(@Para("") PortEmpReq portEmpReq){
 //        PortEmp portEmp = getModel(PortEmp.class,"");
 
@@ -215,6 +216,26 @@ public class PortEmpController extends Controller {
             return;
         }
 
+    }
+
+    /**
+     * 绑定小程序openid与微信公众号openid
+     * @param portEmpReq
+     */
+    public void wechatBindByAppOpenId(@Para("") PortEmpReq portEmpReq){
+        //手机号获取数据信息
+        PortEmp portEmp = new PortEmp();
+        portEmp.setWxAppOpenId(portEmpReq.getWxAppOpenId());
+        PortEmp portEmpDb = portEmpService.getPortEmpByWxAppOpenId(portEmp);
+
+        if (portEmpDb != null) {
+            portEmpDb.setWxOpenId(portEmpReq.getWxOpenId());
+            portEmpDb.update();
+            renderJson(R.error("小程序openid绑定公众号openid成功").put("data",null).put("code","000000"));
+        }else {
+            renderJson(R.error("查无此人,请先进行手机号绑定!").put("data",null).put("code","000001"));
+            return;
+        }
     }
 
     /*
