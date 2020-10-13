@@ -29,6 +29,9 @@
       #if(toBeCompleted)
       and b.FK_Node != #para(toBeCompleted)
       #end
+      #if(serviceSp)
+      and a.serviceSp = #para(serviceSp)
+      #end
 
       order by a.rdt desc
   #end
@@ -65,6 +68,9 @@
       #end
       #if(toBeCompleted)
       and b.FK_Node != #para(toBeCompleted)
+      #end
+      #if(serviceSp)
+      and a.serviceSp = #para(serviceSp)
       #end
     ) as views
         where 1=1
@@ -103,6 +109,9 @@
       #end
       #if(toBeCompleted)
       and b.FK_Node != #para(toBeCompleted)
+      #end
+      #if(serviceSp)
+      and a.serviceSp = #para(serviceSp)
       #end
     ) as views
         where 1=1

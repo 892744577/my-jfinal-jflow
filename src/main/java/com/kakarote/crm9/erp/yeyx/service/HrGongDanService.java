@@ -53,6 +53,8 @@ public class HrGongDanService {
             kv.set("overtime", overtime);
         }else if(status==3) {
             kv.set("toBeCompleted", "906");
+        }else if(status==4) {
+            kv.set("serviceSp", 2);
         }
 
         return Db.paginate(

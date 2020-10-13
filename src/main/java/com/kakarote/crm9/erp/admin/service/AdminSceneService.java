@@ -410,6 +410,8 @@ public class AdminSceneService{
             kv.set("overtime", overtime);
         }else if(status==3) {
             kv.set("toBeCompleted", "906");
+        }else if(status==4) {
+            kv.set("serviceSp", 2);
         }
 
         //平台内服务商
