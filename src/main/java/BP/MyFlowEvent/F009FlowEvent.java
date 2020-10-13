@@ -13,6 +13,7 @@ import com.kakarote.crm9.erp.admin.service.PortEmpService;
 import com.kakarote.crm9.erp.wx.service.MpService;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.kakarote.crm9.erp.wx.vo.MpMsgSendReq;
+import com.kakarote.crm9.erp.yeyx.entity.HrGongdan;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanBook;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanRepair;
 import com.kakarote.crm9.erp.yeyx.service.WanService;
@@ -43,6 +44,22 @@ public class F009FlowEvent extends FlowEventBase {
                 if ("VarToNodeName".equals(sendReturnObj.MsgFlag)) {
                     nextNodeName = sendReturnObj.MsgOfText;
                 }
+            }
+
+            //当工单去到服务完成时，售后单自动审核通过
+            if("906".equals(nextNodeID) &&
+                    (
+                            "KS".equals(this.getSysPara().get("serviceSegmentation").toString()) ||
+                                    "GS".equals(this.getSysPara().get("serviceSegmentation").toString()) ||
+                                    "FGS".equals(this.getSysPara().get("serviceSegmentation").toString()) ||
+                                    "KP".equals(this.getSysPara().get("serviceSegmentation").toString())
+                    )
+            ){
+                Log.DebugWriteInfo("==============>调用新增订单生成serviceSp开始");
+                HrGongdan hrGongdan = HrGongdan.dao.findById(this.getSysPara().get("OID").toString());
+                hrGongdan.setServiceSp("1");
+                hrGongdan.update();
+                Log.DebugWriteInfo("==============>调用新增订单生成serviceSp结束");
             }
 
             String serviceSystem = this.getSysPara().get("serviceSystem") == null ? "": this.getSysPara().get("serviceSystem").toString(); //服务单第三方系统
