@@ -156,7 +156,7 @@ public class F009FlowEvent extends FlowEventBase {
                         Log.DebugWriteInfo("==============>调用新增订单接口失败");
                         return result;
                     }
-                }else if ("WSF".equals(serviceSystem)) {
+               }else if ("WSF".equals(serviceSystem)) {
                    //add by wangkaidda 调用万师傅下单接口
                    List wanList = new ArrayList();
                    Map currentPrama = new HashMap();
@@ -168,21 +168,49 @@ public class F009FlowEvent extends FlowEventBase {
                    if(!StringUtils.isEmpty(this.getSysPara().get("telephone")))
                        currentPrama.put("buyerPhone", this.getSysPara().get("telephone").toString()); //用户手机号码
                        currentPrama.put("contactPhone", this.getSysPara().get("telephone").toString()); //用户手机号码
-                   if(!StringUtils.isEmpty(this.getSysPara().get("smcProvinceId")))
-                       currentPrama.put("province", this.getSysPara().get("SMC").toString().substring(0,2)+"0000"); //省id
-                   if(!StringUtils.isEmpty(this.getSysPara().get("smcCityId")))
-                       currentPrama.put("city", this.getSysPara().get("SMC").toString().substring(0,4)+"00"); //城市id
-                   if(!StringUtils.isEmpty(this.getSysPara().get("smcDistrictId")))
-                       currentPrama.put("county", this.getSysPara().get("SMC").toString()); //区id
-                   if(!StringUtils.isEmpty(this.getSysPara().get("address"))) {
+                   if(!StringUtils.isEmpty(this.getSysPara().get("smcProvinceIdT")))
+                       currentPrama.put("province", this.getSysPara().get("smcProvinceIdT").toString()); //省
+                   if(!StringUtils.isEmpty(this.getSysPara().get("smcCityIdT")))
+                       currentPrama.put("city", this.getSysPara().get("smcCityIdT").toString()); //城市
+                   if(!StringUtils.isEmpty(this.getSysPara().get("smcDistrictIdT")))
+                       currentPrama.put("county", this.getSysPara().get("smcDistrictIdT").toString()); //区
+                   if(!StringUtils.isEmpty(this.getSysPara().get("address")))
                        currentPrama.put("address", this.getSysPara().get("address").toString()); //详细地址
-                   }
                    if(!StringUtils.isEmpty(this.getSysPara().get("remark")))
                        currentPrama.put("buyerNote", this.getSysPara().get("remark").toString()); //服务单备注
-                   currentPrama.put("serveCategory", 1);
-                   currentPrama.put("serveType", 1);
-                   currentPrama.put("goodsList", new JSONArray());
+                   if(!StringUtils.isEmpty(this.getSysPara().get("SFYSD")))
+                       currentPrama.put("customArriveStatus", this.getSysPara().get("SFYSD").toString()); //货物是否到客户家
+                   currentPrama.put("serveType", 4);
                    currentPrama.put("orderId", this.getSysPara().get("FK_Flow") + "-" + this.getSysPara().get("OID")+"-" + serviceNo);
+
+                   //新增商品列表
+                   List goodsList = new ArrayList();
+                   Map goodsList1 = new HashMap();
+
+                   if("12122".equals(this.getSysPara().get("facProductId").toString())){
+                       currentPrama.put("serveCategory", 17); //服务单，晾衣架
+                       goodsList1.put("goodsCategory",323); //晾衣架
+                       goodsList1.put("categoryChild",324); //晾衣架
+                   }else{
+                       currentPrama.put("serveCategory", 15); //服务单，智能锁
+                       goodsList1.put("goodsCategory",0); //根类型
+                       goodsList1.put("categoryChild",238); //半自动智能锁
+                   }
+                   if("DS".equals(this.getSysPara().get("serviceSegmentation").toString())
+                           || "SS".equals(this.getSysPara().get("serviceSegmentation").toString())
+                           || "L".equals(this.getSysPara().get("serviceSegmentation").toString())){
+                       goodsList1.put("goodsNote",""); //安装，备注为空
+                   }else{
+                       goodsList1.put("goodsNote",this.getSysPara().get("serviceSegmentation").toString()); //维修，
+                   }
+
+                   goodsList1.put("goodsNumber",Integer.parseInt(this.getSysPara().get("productCount").toString()));
+                   goodsList1.put("goodsName",this.getSysPara().get("serviceSegmentation").toString());
+                   goodsList1.put("goodsImgUrl","http://pic1.nipic.com/2008-08-14/2008814183939909_2.jpg");
+                   goodsList.add(goodsList1);
+                   currentPrama.put("goodsList", goodsList);
+
+
                    wanList.add(currentPrama);
                    String jsonStr = JSONObject.toJSONString(wanList);
 
@@ -191,8 +219,9 @@ public class F009FlowEvent extends FlowEventBase {
                    String reqJsonStr = wanService.getJsonData(jsonStr);
 
                    //调用新增订单接口
+                   Log.DebugWriteInfo("==============>调用新增订单接口发送参数:" + jsonStr);
                    Log.DebugWriteInfo("==============>调用新增订单接口发送参数:" + reqJsonStr);
-                   String result = wanService.gatewayRequestJson(wanService.getPath() + "/batchCreateAsync", reqJsonStr);
+                   String result = wanService.gatewayRequestJson(wanService.getPath() + "/order/batchCreateAsync", reqJsonStr);
                    Log.DebugWriteInfo("==============>调用新增订单接口返回结果:" + result);
                }
             }
