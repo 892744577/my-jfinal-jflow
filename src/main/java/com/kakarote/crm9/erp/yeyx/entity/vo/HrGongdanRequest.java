@@ -1,12 +1,14 @@
 package com.kakarote.crm9.erp.yeyx.entity.vo;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 
-@Data
+@Getter
+@Setter
 @Accessors(chain = true)
 public class HrGongdanRequest {
-    private int oid;
+    private Integer oid;
     private String orderId;
     private String serviceSp;
 

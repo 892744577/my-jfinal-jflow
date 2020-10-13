@@ -11,6 +11,7 @@ import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdan;
 import com.kakarote.crm9.erp.yeyx.entity.vo.FactoryRemarkRequest;
 import com.kakarote.crm9.erp.yeyx.entity.vo.HrGongdanRequest;
+import com.kakarote.crm9.erp.yeyx.entity.vo.ToCancelOrderRequest;
 
 import java.util.Date;
 
@@ -74,12 +75,20 @@ public class HrGongDanService {
     }
 
     /**
-     * 根据orderId获取记录
+     * 根据orderId获取记录1
      * @param factoryRemarkRequest
      * @return
      */
     public HrGongdan getHrGongdanByOrderId(FactoryRemarkRequest factoryRemarkRequest) {
         return HrGongdan.dao.findFirst(Db.getSqlPara("admin.hrGongDan.getHrGongDanByOrderId",Kv.by("orderId",factoryRemarkRequest.getOrderId())));
+    }
+    /**
+     * 根据orderId获取记录2
+     * @param toCancelOrderRequest
+     * @return
+     */
+    public HrGongdan getHrGongdanByOrderId(ToCancelOrderRequest toCancelOrderRequest) {
+        return HrGongdan.dao.findFirst(Db.getSqlPara("admin.hrGongDan.getHrGongDanByOrderId",Kv.by("orderId",toCancelOrderRequest.getOrderId())));
     }
 }
 

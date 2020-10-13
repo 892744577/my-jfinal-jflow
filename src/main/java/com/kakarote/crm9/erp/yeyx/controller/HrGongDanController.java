@@ -221,8 +221,17 @@ public class HrGongDanController extends Controller {
      * @author tmr
      * 分页工单查询数据 -- 啄木鸟
      */
-    public void queryPageListServiceSystem(BasePageRequest basePageRequest) throws Exception{
+    public void queryPageListYXServiceSystem(BasePageRequest basePageRequest) throws Exception{
         basePageRequest.setJsonObject(basePageRequest.getJsonObject().fluentPut("serviceSystem", "YX"));
+        renderJson(adminSceneService.filterConditionAndGetPageList(basePageRequest));
+    }
+
+    /**
+     * @author tmr
+     * 分页工单查询数据 -- 啄木鸟
+     */
+    public void queryPageListWSFServiceSystem(BasePageRequest basePageRequest) throws Exception{
+        basePageRequest.setJsonObject(basePageRequest.getJsonObject().fluentPut("serviceSystem", "WSF"));
         renderJson(adminSceneService.filterConditionAndGetPageList(basePageRequest));
     }
 
@@ -231,7 +240,6 @@ public class HrGongDanController extends Controller {
      * @param hrGongdanRequest
      */
     public void validate(@Para("") HrGongdanRequest hrGongdanRequest){
-
         renderJson(R.ok().put("data",hrGongDanService.update(hrGongdanRequest)));
     }
 
@@ -248,7 +256,7 @@ public class HrGongDanController extends Controller {
     }
 
     /*
-     * @Description //根据订单号获取保修卡信息接口
+     * @Description //根据出货单号获取保修卡信息接口
      * @Author wangkaida
      * @Date 11:06 2020/7/14
      * @Param [hrGongdanRequest]
@@ -256,7 +264,10 @@ public class HrGongDanController extends Controller {
      **/
     public void getWarrantyCardByShippingOrderNo(@Para("") HrGongdanRequest hrGongdanRequest){
         //根据orderId获取出货单号
-        HrGongdan hrGongdanDb = HrGongdan.dao.findFirst(Db.getSqlPara("admin.hrGongDan.getHrGongDanByOrderId", Kv.by("orderId",hrGongdanRequest.getOrderId())));
+        //HrGongdan hrGongdanDb = HrGongdan.dao.findFirst(Db.getSqlPara("admin.hrGongDan.getHrGongDanByOrderId", Kv.by("orderId",hrGongdanRequest.getOrderId())));
+        //根据orderId获取出货单号
+        //根据oid获取出货单号
+        HrGongdan hrGongdanDb = HrGongdan.dao.findById(hrGongdanRequest.getOid());
         if (hrGongdanDb != null) {
             String shippingOrderNo = hrGongdanDb.getShippingOrderNo();
 
