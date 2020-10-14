@@ -521,6 +521,14 @@ public abstract class BaseHrGongdan<M extends BaseHrGongdan<M>> extends Model<M>
 		return getStr("serviceSp");
 	}
 
+	public void setServiceSpRemark(String serviceSpRemark) {
+		set("serviceSpRemark", serviceSpRemark);
+	}
+	
+	public String getServiceSpRemark() {
+		return getStr("serviceSpRemark");
+	}
+
 	public void setOtherRemark(String otherRemark) {
 		set("otherRemark", otherRemark);
 	}
@@ -583,6 +591,30 @@ public abstract class BaseHrGongdan<M extends BaseHrGongdan<M>> extends Model<M>
 	
 	public String getBigNoteHtmlText() {
 		return getStr("BigNoteHtmlText");
+	}
+
+	public void setSPTPXXT(String SPTPXXT) {
+		set("SPTPXXT", SPTPXXT);
+	}
+	
+	public String getSPTPXXT() {
+		return getStr("SPTPXXT");
+	}
+
+	public void setSPTPXX(String SPTPXX) {
+		set("SPTPXX", SPTPXX);
+	}
+	
+	public String getSPTPXX() {
+		return getStr("SPTPXX");
+	}
+
+	public void setSFYSD(String SFYSD) {
+		set("SFYSD", SFYSD);
+	}
+	
+	public String getSFYSD() {
+		return getStr("SFYSD");
 	}
 
 }

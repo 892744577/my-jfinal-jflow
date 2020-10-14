@@ -1,5 +1,6 @@
 package com.kakarote.crm9.erp.yeyx.service;
 
+import BP.Tools.StringUtils;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.kit.Kv;
@@ -72,6 +73,12 @@ public class HrGongDanService {
     public boolean update(HrGongdanRequest hrGongdanRequest) {
         HrGongdan hrGongdan = new HrGongdan();
         hrGongdan.setOID(hrGongdanRequest.getOid());
+        if(StringUtils.isNotEmpty(hrGongdanRequest.getFuselageCode()) && "1".equals(hrGongdanRequest.getServiceSp())){
+            hrGongdan.setFuselageCode(hrGongdanRequest.getFuselageCode());
+        }
+        if(StringUtils.isNotEmpty(hrGongdanRequest.getServiceSpRemark())){
+            hrGongdan.setServiceSpRemark(hrGongdanRequest.getServiceSpRemark());
+        }
         hrGongdan.setServiceSp(hrGongdanRequest.getServiceSp());
         return hrGongdan.update();
     }
