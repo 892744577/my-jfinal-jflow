@@ -3,13 +3,17 @@
     select a.*,b.FK_Node,b.NodeName from hr_gongdan a left join wf_generworkflow b on a.oid = b.WorkID
     where 1=1 and  b.FK_Node != 901
       #if(search)
-      and (a.serviceNo like CONCAT('%',#para(search),'%') or a.address like CONCAT('%',#para(search),'%') or a.contactName like CONCAT('%',#para(search),'%') or a.telephone like CONCAT('%',#para(search),'%'))
+      and (a.serviceNo like CONCAT('%',#para(search),'%') or a.orderId like CONCAT('%',#para(search),'%') or a.address like CONCAT('%',#para(search),'%') or a.contactName like CONCAT('%',#para(search),'%') or a.telephone like CONCAT('%',#para(search),'%'))
       #end
       #if(serviceSystem)
       and a.serviceSystem = #para(serviceSystem)
       #end
       #if(acceptor)
       and a.acceptor = #para(acceptor)
+      #end
+      #if(master)
+        and EXISTS(
+        SELECT * FROM nd9track d WHERE d.ndfrom='908' AND d.tag LIKE CONCAT('%',#para(master),'%') AND a.oid=d.WorkID)
       #end
       #if(today)
       and DATE_FORMAT(a.rdt, '%Y-%m-%d') = #para(today)
@@ -43,13 +47,17 @@
     select a.*,b.FK_Node,b.NodeName,c.name acceptorName from hr_gongdan a left join wf_generworkflow b on a.oid = b.WorkID left join port_emp c on a.acceptor = c.no
     where 1=1 and  b.FK_Node != 901
       #if(search)
-      and (a.serviceNo like CONCAT('%',#para(search),'%') or a.address like CONCAT('%',#para(search),'%') or a.contactName like CONCAT('%',#para(search),'%') or a.telephone like CONCAT('%',#para(search),'%'))
+      and (a.serviceNo like CONCAT('%',#para(search),'%') or a.orderId like CONCAT('%',#para(search),'%') or a.address like CONCAT('%',#para(search),'%') or a.contactName like CONCAT('%',#para(search),'%') or a.telephone like CONCAT('%',#para(search),'%'))
       #end
       #if(serviceSystem)
       and a.serviceSystem = #para(serviceSystem)
       #end
       #if(acceptor)
       and a.acceptor = #para(acceptor)
+      #end
+      #if(master)
+        and EXISTS(
+        SELECT * FROM nd9track d WHERE d.ndfrom='908' AND d.tag LIKE CONCAT('%',#para(master),'%') AND a.oid=d.WorkID)
       #end
       #if(today)
       and DATE_FORMAT(a.rdt, '%Y-%m-%d') = #para(today)
@@ -84,13 +92,17 @@
     select a.*,b.FK_Node,b.NodeName,c.name acceptorName from hr_gongdan a left join wf_generworkflow b on a.oid = b.WorkID left join port_emp c on a.acceptor = c.no
     where 1=1 and  b.FK_Node != 901
       #if(search)
-      and (a.serviceNo like CONCAT('%',#para(search),'%') or a.address like CONCAT('%',#para(search),'%') or a.contactName like CONCAT('%',#para(search),'%') or a.telephone like CONCAT('%',#para(search),'%'))
+      and (a.serviceNo like CONCAT('%',#para(search),'%') or a.orderId like CONCAT('%',#para(search),'%') or a.address like CONCAT('%',#para(search),'%') or a.contactName like CONCAT('%',#para(search),'%') or a.telephone like CONCAT('%',#para(search),'%'))
       #end
       #if(serviceSystem)
       and a.serviceSystem = #para(serviceSystem)
       #end
       #if(acceptor)
       and a.acceptor = #para(acceptor)
+      #end
+      #if(master)
+        and EXISTS(
+        SELECT * FROM nd9track d WHERE d.ndfrom='908' AND d.tag LIKE CONCAT('%',#para(master),'%') AND a.oid=d.WorkID)
       #end
       #if(today)
       and DATE_FORMAT(a.rdt, '%Y-%m-%d') = #para(today)
