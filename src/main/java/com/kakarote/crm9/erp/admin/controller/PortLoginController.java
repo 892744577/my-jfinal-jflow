@@ -50,7 +50,7 @@ public class PortLoginController extends Controller {
     }
 
     /**
-     * @Description //根据小程序openid登录接口
+     * @Description //根据账号密码登陆
      * @param portEmp
      * @throws Exception
      */
@@ -71,6 +71,5 @@ public class PortLoginController extends Controller {
         }else{
             renderJson(R.ok().put("msg","账号不存在或密码错误!").put("code","000031"));
         }
-
     }
 }
