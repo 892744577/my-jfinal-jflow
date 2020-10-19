@@ -263,33 +263,43 @@ public class HrGongDanController extends Controller {
      * @return void
      **/
     public void getWarrantyCardByShippingOrderNo(@Para("") HrGongdanRequest hrGongdanRequest){
-        //根据orderId获取出货单号
-        //HrGongdan hrGongdanDb = HrGongdan.dao.findFirst(Db.getSqlPara("admin.hrGongDan.getHrGongDanByOrderId", Kv.by("orderId",hrGongdanRequest.getOrderId())));
-        //根据orderId获取出货单号
-        //根据oid获取出货单号
-        HrGongdan hrGongdanDb = HrGongdan.dao.findById(hrGongdanRequest.getOid());
-        if (hrGongdanDb != null) {
-            String shippingOrderNo = hrGongdanDb.getShippingOrderNo();
-
-            String url = "http://app.aptenon.com:80/api/v1/tenon-social-adapter/tenon/weixin/warrantyCards/getWarrantyCardByShippingOrderNo";
-            try {
-                if (StrUtil.isNotEmpty(shippingOrderNo)) {
-                    Map currentPrama = new HashMap();
-                    currentPrama.put("shippingOrderNo", shippingOrderNo);
-                    String result = tokenService.gatewayRequest(url, currentPrama);
-                    JSONArray resultArray = JSONObject.parseObject(result).getJSONArray("data");
-                    renderJson(R.ok().put("data", resultArray).put("code","000000"));
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
+        String shippingOrderNo = hrGongdanRequest.getShippingOrderNo();
+        String url = "http://app.aptenon.com:80/api/v1/tenon-social-adapter/tenon/weixin/warrantyCards/getWarrantyCardByShippingOrderNo";
+        try {
+            if (StrUtil.isNotEmpty(shippingOrderNo)) {
+                Map currentPrama = new HashMap();
+                currentPrama.put("shippingOrderNo", shippingOrderNo);
+                String result = tokenService.gatewayRequest(url, currentPrama);
+                JSONArray resultArray = JSONObject.parseObject(result).getJSONArray("data");
+                renderJson(R.ok().put("data", resultArray).put("code","000000"));
+            }else{
+                renderJson(R.error("出货单号为空").put("code","000001"));
             }
-
-        }else {
-            renderJson(R.error("根据orderId获取到的工单信息为空!").put("data",null).put("code","000048"));
-            return;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
 
+    /**
+     * 根据机身码获取数据
+     * @param hrGongdanRequest
+     */
+    public void getWarrantyCardByMcuId(@Para("") HrGongdanRequest hrGongdanRequest){
+        String fuselageCode = hrGongdanRequest.getFuselageCode();
+        String url = "http://app.aptenon.com:80/api/v1/tenon-social-adapter/tenon/weixin/warrantyCards/getWarrantyCardByMcuId";
+        try {
+            if (StrUtil.isNotEmpty(fuselageCode)) {
+                Map currentPrama = new HashMap();
+                currentPrama.put("mcuId", fuselageCode);
+                String result = tokenService.gatewayRequest(url, currentPrama);
+                JSONArray resultArray = JSONObject.parseObject(result).getJSONArray("data");
+                renderJson(R.ok().put("data", resultArray).put("code","000000"));
+            }else{
+                renderJson(R.error("机身码为空").put("code","000001"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /*
