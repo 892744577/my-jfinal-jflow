@@ -219,6 +219,14 @@ public class HrGongDanController extends Controller {
     }
     /**
      * @author tmr
+     * 分页工单查询数据 -- 特定服务商 -- 团员
+     */
+    public void queryPageListFwsTy(BasePageRequest basePageRequest) throws Exception{
+        basePageRequest.setJsonObject(basePageRequest.getJsonObject().fluentPut("master", WebUser.getNo()));
+        renderJson(adminSceneService.filterConditionAndGetPageList(basePageRequest));
+    }
+    /**
+     * @author tmr
      * 分页工单查询数据 -- 啄木鸟
      */
     public void queryPageListYXServiceSystem(BasePageRequest basePageRequest) throws Exception{

@@ -13,11 +13,8 @@ import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
 import com.kakarote.crm9.erp.admin.entity.PortEmp;
 import com.kakarote.crm9.erp.admin.entity.PortEmpRelation;
 import com.kakarote.crm9.erp.admin.entity.Regist;
-import com.kakarote.crm9.erp.admin.entity.vo.PortEmpReq;
 import com.kakarote.crm9.erp.yzj.service.TokenService;
 import com.kakarote.crm9.utils.R;
-
-import java.util.List;
 
 public class PortEmpService {
 
@@ -32,7 +29,7 @@ public class PortEmpService {
     }
 
     /**
-     * 判断账号情况
+     * 手机号查找账号信息
      * @param portEmp
      */
     public PortEmp getPortEmp(PortEmp portEmp){
@@ -64,13 +61,27 @@ public class PortEmpService {
     }
 
     /**
-     * 第三方查找账号
+     * 主键查找账号信息
+     * @param portEmp
+     */
+    public PortEmp getPortEmpByNo(PortEmp portEmp){
+        PortEmp portEmp0 = new PortEmp();
+        //1、主键是否存在
+        portEmp0 = PortEmp.dao.findFirst("SELECT * FROM port_emp a where a.No=? ", portEmp.getNo());
+        if(portEmp0!=null){
+            portEmp.setTel(portEmp0.getTel());
+            return this.getPortEmp(portEmp); //该小程序openId已绑定手机号，判断是代理商还是员工
+        }else{
+            return null;
+        }
+    }
+
+    /**
+     * 第三方查找账号信息
      * @param portEmp
      */
     public PortEmp getPortEmpByWxAppOpenId(PortEmp portEmp){
-
         PortEmp portEmp0 = new PortEmp();
-
         //1、第三方查找账号是否存在
         portEmp0 = PortEmp.dao.findFirst("SELECT * FROM port_emp a where a.WxAppOpenId=? ", portEmp.getWxAppOpenId());
         if(portEmp0!=null){
@@ -182,18 +193,6 @@ public class PortEmpService {
 
             return flag ? R.ok().put("msg","保存成功!").put("code","000000") : R.error("保存失败!").put("code","000001");
         }
-    }
-
-    /*
-     * @Description //根据姓名获取员工信息
-     * @Author wangkaida
-     * @Date 15:19 2020/8/18
-     * @Param [portEmp]
-     * @return com.kakarote.crm9.erp.admin.entity.PortEmp
-     **/
-    public PortEmp getPortEmpByNo(PortEmp portEmp){
-        PortEmp portEmpDb = PortEmp.dao.findById(portEmp.getNo());
-        return portEmpDb;
     }
 
     /*

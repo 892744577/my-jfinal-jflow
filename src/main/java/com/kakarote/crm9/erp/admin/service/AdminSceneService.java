@@ -418,6 +418,10 @@ public class AdminSceneService{
         String acceptor = basePageRequest.getJsonObject().getString("acceptor");
         kv.set("acceptor",acceptor);
 
+        //平台内服务商-团员
+        String master = basePageRequest.getJsonObject().getString("master");
+        kv.set("master",master);
+
         //其他第三方系统
         String serviceSystem = basePageRequest.getJsonObject().getString("serviceSystem");
         kv.set("serviceSystem",serviceSystem);

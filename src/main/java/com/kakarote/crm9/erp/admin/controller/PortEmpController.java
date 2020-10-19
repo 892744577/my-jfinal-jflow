@@ -143,23 +143,20 @@ public class PortEmpController extends Controller {
      * @return void
      **/
     public void portEmpInfo(@Para("") PortEmpReq portEmpReq){
-
         PortEmp portEmpDb = null;
-
+        PortEmp portEmp = new PortEmp();
         if (StrUtil.isNotEmpty(portEmpReq.getName())) {
-            portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE No = ? LIMIT 0,1", portEmpReq.getName());
+            portEmp.setNo(portEmpReq.getName());
+            portEmpDb = portEmpService.getPortEmpByNo(portEmp);
+            //portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE No = ? LIMIT 0,1", portEmpReq.getName());
         }else if (StrUtil.isNotEmpty(portEmpReq.getWxAppOpenId())){
             //第三方id查询用户信息
-            PortEmp portEmp = new PortEmp();
             portEmp.setWxAppOpenId(portEmpReq.getWxAppOpenId());
             portEmpDb = portEmpService.getPortEmpByWxAppOpenId(portEmp);
         }
-
-
         if (portEmpDb != null) {
             portEmpDb.setPass(""); //密码置空返回
             renderJson(R.ok().put("data",portEmpDb).put("code","000000"));
-
         }else {
             renderJson(R.error("查无此人,请先进行手机号绑定!").put("data",null).put("code","000001"));
             return;
