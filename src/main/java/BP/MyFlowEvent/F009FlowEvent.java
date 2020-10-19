@@ -16,6 +16,7 @@ import com.kakarote.crm9.erp.wx.vo.MpMsgSendReq;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdan;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanBook;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanRepair;
+import com.kakarote.crm9.erp.yeyx.entity.HrGongdanZmnLog;
 import com.kakarote.crm9.erp.yeyx.service.WanService;
 import com.kakarote.crm9.erp.yeyx.service.YeyxService;
 
@@ -63,6 +64,7 @@ public class F009FlowEvent extends FlowEventBase {
             }
 
             String serviceSystem = this.getSysPara().get("serviceSystem") == null ? "": this.getSysPara().get("serviceSystem").toString(); //服务单第三方系统
+            Row row = this.HisEn.getRow();
             if (isStartNode) {
 
                 //1.1若serviceNo为空,初始化流水号
@@ -76,13 +78,8 @@ public class F009FlowEvent extends FlowEventBase {
                     int totalNum = Db.queryInt("select IFNULL(MAX(SUBSTRING(serviceNo,-4)) + 1,0) from hr_gongdan t where DATE_FORMAT(t.rdt,'%Y%m%d') ="+ dateTime );
                     String serialNum = (new DecimalFormat("0000")).format(totalNum);//流水号格式化
                     serviceNo = serviceSystem + serviceSegmentation + serviceType + dateTime + serialNum; //服务单编号
-                    Row row = this.HisEn.getRow();
                     row.SetValByKey("serviceNo",serviceNo);
                     Log.DebugWriteInfo("==============>调用新增订单生成serviceNo:" + serviceNo);
-                    this.HisEn.setRow(row);
-                    //保存服务单号
-                    this.HisEn.Update();
-                    Log.DebugWriteInfo("==============>调用新增订单更新到数据库serviceNo:" + serviceNo);
                 }
                 //1.2若是预约单或报修单将旧单改为已生成工单
                 if(this.getSysPara().get("preServiceNo") != null){
@@ -128,13 +125,13 @@ public class F009FlowEvent extends FlowEventBase {
                     if(!StringUtils.isEmpty(this.getSysPara().get("dutyTime")))
                         currentPrama.put("dutyTime", this.getSysPara().get("dutyTime").toString()); //预约时间
                     if(!StringUtils.isEmpty(this.getSysPara().get("productId")))
-                        currentPrama.put("productId", (int)this.getSysPara().get("productId")); //言而有信产品ID
+                        currentPrama.put("productId", Integer.parseInt(this.getSysPara().get("productId").toString())); //言而有信产品ID
                     if(!StringUtils.isEmpty(this.getSysPara().get("facProductId")))
                         currentPrama.put("facProductId", this.getSysPara().get("facProductId").toString()); //厂商产品ID
                     if(!StringUtils.isEmpty(this.getSysPara().get("productCount")))
-                        currentPrama.put("productCount", (int)this.getSysPara().get("productCount")); //产品数量
+                        currentPrama.put("productCount", Integer.parseInt(this.getSysPara().get("productCount").toString())); //产品数量
                     if(!StringUtils.isEmpty(this.getSysPara().get("orderDiscountAmount")))
-                        currentJson.put("amount", (int) this.getSysPara().get("orderDiscountAmount")); //优惠金额，单位分
+                        currentJson.put("amount", Integer.parseInt(this.getSysPara().get("orderDiscountAmount").toString())); //优惠金额，单位分
                     if(!StringUtils.isEmpty(this.getSysPara().get("orderDiscountSourceData")))
                         currentJson.put("sourceData", this.getSysPara().get("orderDiscountSourceData").toString()); //订单优惠快照
                     if(!StringUtils.isEmpty(this.getSysPara().get("orderDiscountRemark")))
@@ -164,15 +161,23 @@ public class F009FlowEvent extends FlowEventBase {
                     if(objectResult.getInteger("status") == 200 && objectResult.getJSONObject("data") !=null){
                         String orderId = objectResult.getJSONObject("data").getString("orderId");
                         Log.DebugWriteInfo("==============>调用新增订单接口成功,返回orderId:"+orderId);
-                        Row row = this.HisEn.getRow();
                         row.SetValByKey("orderId",orderId);
-                        this.HisEn.setRow(row);
-                        //保存服务单号
-                        this.HisEn.Update();
+                        //记录日志
+                        HrGongdanZmnLog hrGongdanZmnLog = new HrGongdanZmnLog();
+                        hrGongdanZmnLog.setFuncId("createOrder");
+                        hrGongdanZmnLog.setThirdOrderId(this.getSysPara().get("FK_Flow") + "-" + this.getSysPara().get("OID")+"-" + serviceNo);
+                        hrGongdanZmnLog.setOrderId(orderId);
+                        hrGongdanZmnLog.setOptTime(new Date().getTime()/1000);
+                        hrGongdanZmnLog.save();
                     }else {
                         Log.DebugWriteInfo("==============>调用新增订单接口失败");
                         return result;
                     }
+                   //保存本系统服务单号、及第三方系统单号
+                   this.HisEn.setRow(row);
+                   this.HisEn.Update();
+                   Log.DebugWriteInfo("==============>调用新增订单更新服务单信息");
+
                }else if ("WSF".equals(serviceSystem)) {
                    //add by wangkaidda 调用万师傅下单接口
                    List wanList = new ArrayList();
@@ -208,21 +213,15 @@ public class F009FlowEvent extends FlowEventBase {
                        currentPrama.put("serveCategory", 17); //服务单，晾衣架
                        goodsList1.put("goodsCategory",323); //晾衣架
                        goodsList1.put("categoryChild",324); //晾衣架
+                       goodsList1.put("goodsName","晾衣架");
                    }else{
                        currentPrama.put("serveCategory", 15); //服务单，智能锁
                        goodsList1.put("goodsCategory",0); //根类型
                        goodsList1.put("categoryChild",238); //半自动智能锁
+                       goodsList1.put("goodsName","智能锁");
                    }
-                   if("DS".equals(this.getSysPara().get("serviceSegmentation").toString())
-                           || "SS".equals(this.getSysPara().get("serviceSegmentation").toString())
-                           || "L".equals(this.getSysPara().get("serviceSegmentation").toString())){
-                       goodsList1.put("goodsNote",""); //安装，备注为空
-                   }else{
-                       goodsList1.put("goodsNote",this.getSysPara().get("serviceSegmentation").toString()); //维修，
-                   }
-
+                   goodsList1.put("goodsNote",this.getSysPara().get("serviceSegmentation").toString());
                    goodsList1.put("goodsNumber",Integer.parseInt(this.getSysPara().get("productCount").toString()));
-                   goodsList1.put("goodsName",this.getSysPara().get("serviceSegmentation").toString());
                    goodsList1.put("goodsImgUrl","http://pic1.nipic.com/2008-08-14/2008814183939909_2.jpg");
                    goodsList.add(goodsList1);
                    currentPrama.put("goodsList", goodsList);
