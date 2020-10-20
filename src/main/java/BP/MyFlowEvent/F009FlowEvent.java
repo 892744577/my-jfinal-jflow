@@ -240,6 +240,8 @@ public class F009FlowEvent extends FlowEventBase {
                    String result = wanService.gatewayRequestJson(wanService.getPath() + "/order/batchCreateAsync", reqJsonStr);
                    Log.DebugWriteInfo("==============>调用新增订单接口返回结果:" + result);
                }
+               this.HisEn.Update();
+               Log.DebugWriteInfo("==============>服务商更新服务单信息");
             }
             //发送公众号信息
             sendMpMsg(serviceSystem,nextNodeID,nextNodeName);
