@@ -401,7 +401,7 @@ public class YeyxController extends Controller {
 
 
     /**
-     * 派单,流程从订单确认流转到下一环节，派单
+     * 确认订单->分派成功
      */
     @NotAction
     public void master_info(MasterInfoRequest masterInfoRequest) throws Exception{
@@ -429,8 +429,11 @@ public class YeyxController extends Controller {
             }
 
     }
+
     /**
-     * 上门
+     * 分派成功->预约确认
+     * @param masterVisitRequest
+     * @throws Exception
      */
     @NotAction
     public void master_visit(MasterVisitRequest masterVisitRequest) throws Exception{
@@ -452,7 +455,9 @@ public class YeyxController extends Controller {
     }
 
     /**
-     * 完成
+     * 预约确认->完成
+     * @param orderCompleteRequest
+     * @throws Exception
      */
     @NotAction
     public void order_complete(OrderCompleteRequest orderCompleteRequest) throws Exception{

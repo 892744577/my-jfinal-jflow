@@ -2,6 +2,8 @@ package com.kakarote.crm9.erp.yeyx.controller;
 
 import BP.Port.Emp;
 import BP.Tools.StringUtils;
+import BP.WF.GenerWorkFlow;
+import BP.WF.SendReturnObjs;
 import BP.Web.WebUser;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -120,32 +122,32 @@ public class WanController extends Controller {
                         hrGongdanWsfLog.setMasterPhone(dataJSONObject.getString("masterPhone"));
                         hrGongdanWsfLog.setMasterLevel(dataJSONObject.getString("masterLevel"));
                         hrGongdanWsfLog.save();
-                        this.enterprise_order_sp(data);
+                        this.enterprise_order_sp(thirdOrderId,dataJSONObject);
                         break;
                     case "reserve_customer": //预约时间
                         hrGongdanWsfLog.setDutyTime(dataJSONObject.getString("appointTime"));
                         hrGongdanWsfLog.save();
-                        this.reserve_customer(data);
+                        this.reserve_customer(thirdOrderId,dataJSONObject);
                         break;
                     case "logiscs_sign":  //已完成物流点提货（送货到楼下，送 货到家，送货到家并安装才有此节 点）
                         break;
                     case "wait_serve_complete": //已上门
                         hrGongdanWsfLog.save();
-                        this.wait_serve_complete(data);
+                        this.wait_serve_complete(thirdOrderId,dataJSONObject);
                         break;
                     case "serve_complete ": //已完工
                         hrGongdanWsfLog.setCompleteTime(dataJSONObject.getString("completeTime"));
                         hrGongdanWsfLog.save();
-                        this.serve_complete(data);
+                        this.serve_complete(thirdOrderId,dataJSONObject);
                         break;
                     case "order_mark ": //备注
                         hrGongdanWsfLog.setFactoryRemark(dataJSONObject.getString("content"));
                         hrGongdanWsfLog.save();
-                        this.order_mark(data);
+                        this.order_mark(thirdOrderId,dataJSONObject);
                         break;
                     case "order_cancel ": //订单取消
                         hrGongdanWsfLog.save();
-                        this.order_cancel(data);
+                        this.order_cancel(thirdOrderId,dataJSONObject);
                         break;
                 }
             } catch (Exception e) {
@@ -167,33 +169,115 @@ public class WanController extends Controller {
         return hrGongdanWsfLog;
     }
 
+    /**
+     * 确认订单->分派成功
+     * @param thirdOrderId
+     * @param dataJSONObject
+     * @throws Exception
+     */
     @NotAction
-    private void enterprise_order_sp(String data) {
+    private void enterprise_order_sp(String thirdOrderId, JSONObject dataJSONObject) throws Exception{
 
+        //若当前节点不是912，则不流转，直接更新数据
+        GenerWorkFlow gwf = new GenerWorkFlow();
+        gwf.setWorkID(Long.parseLong(thirdOrderId.split("-")[1]));
+        gwf.RetrieveFromDBSources();
+
+        //若是确认订单节点，往下流转，其他得只是更新数据
+        if(912 == gwf.getFK_Node()){
+            //发送流程
+            Hashtable myhtSend = new Hashtable();
+            myhtSend.put("masterName", dataJSONObject.getString("masterName"));
+            myhtSend.put("masterPhone", dataJSONObject.getString("masterPhone"));
+            SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(
+                    thirdOrderId.split("-")[0],
+                    Long.parseLong(thirdOrderId.split("-")[1]),
+                    myhtSend,null,913,null);
+        }else{
+            HrGongdan hrGongdan = new HrGongdan();
+            hrGongdan.setOID(Integer.valueOf(thirdOrderId.split("-")[1]));
+            hrGongdan.setMasterName(dataJSONObject.getString("masterName"));
+            hrGongdan.setMasterPhone(dataJSONObject.getString("masterPhone"));
+            hrGongdan.update();
+        }
+    }
+
+    /**
+     * 记录预约时间
+     * @param thirdOrderId
+     * @param dataJSONObject
+     * @throws Exception
+     */
+    @NotAction
+    private void reserve_customer(String thirdOrderId, JSONObject dataJSONObject) throws Exception{
+        HrGongdan hrGongdan = new HrGongdan();
+        hrGongdan.setOID(Integer.valueOf(thirdOrderId.split("-")[1]));
+        hrGongdan.setDutyTime1(dataJSONObject.getString("masterPhone"));
+        hrGongdan.update();
+    }
+
+    /**
+     * 分派成功->预约确认
+     * @param thirdOrderId
+     * @param dataJSONObject
+     * @throws Exception
+     */
+    @NotAction
+    private void wait_serve_complete(String thirdOrderId, JSONObject dataJSONObject) throws Exception{
+        //若当前节点不是903，则不流转，直接更新数据
+        GenerWorkFlow gwf = new GenerWorkFlow();
+        gwf.setWorkID(Long.parseLong(thirdOrderId.split("-")[1]));
+        gwf.RetrieveFromDBSources();
+
+        //若是确认订单节点，往下流转，其他得只是更新数据
+        if(913 == gwf.getFK_Node()){
+            //发送流程
+            Hashtable myhtSend = new Hashtable();
+            SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(
+                    thirdOrderId.split("-")[0],
+                    Long.parseLong(thirdOrderId.split("-")[1]),
+                    myhtSend,null,915,null);
+        }
+    }
+
+    /**
+     *
+     * 预约确认->完成
+     * @param thirdOrderId
+     * @param dataJSONObject
+     * @throws Exception
+     */
+    @NotAction
+    private void serve_complete(String thirdOrderId, JSONObject dataJSONObject) throws Exception{
+        //若当前节点不是905，则不流转，直接更新数据
+        GenerWorkFlow gwf = new GenerWorkFlow();
+        gwf.setWorkID(Long.parseLong(thirdOrderId.split("-")[1]));
+        gwf.RetrieveFromDBSources();
+
+        //若是确认订单节点，往下流转，其他得只是更新数据
+        if(915 == gwf.getFK_Node() || 913 == gwf.getFK_Node()){
+            Hashtable myhtSend = new Hashtable();
+            //发送流程
+            //myhtSend.put("productPictureUrls", dataJSONObject.getString(""));
+            SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(
+                    thirdOrderId.split("-")[0],
+                    Long.parseLong(thirdOrderId.split("-")[1]),
+                    myhtSend, null, 906, null);
+        }else{
+            HrGongdan hrGongdan = new HrGongdan();
+            hrGongdan.setOID(Integer.valueOf(thirdOrderId.split("-")[1]));
+            //hrGongdan.setProductPictureUrls(orderCompleteRequest.getProductPictureUrls());
+            hrGongdan.update();
+        }
     }
 
     @NotAction
-    private void reserve_customer(String data) {
+    private void order_mark(String thirdOrderId, JSONObject dataJSONObject) throws Exception{
         //记录日志
     }
 
     @NotAction
-    private void wait_serve_complete(String data) {
-        //记录日志
-    }
-
-    @NotAction
-    private void serve_complete(String data) {
-        //记录日志
-    }
-
-    @NotAction
-    private void order_mark(String data) {
-        //记录日志
-    }
-
-    @NotAction
-    public void order_cancel(String data){
+    public void order_cancel(String thirdOrderId, JSONObject dataJSONObject) throws Exception{
         Hashtable myhtSend = new Hashtable();
     }
 }

@@ -76,6 +76,7 @@ public class _MappingKit {
 		arp.addMapping("hr_gongdan", "OID", HrGongdan.class);
 		arp.addMapping("hr_gongdan_area_relation", "id", HrGongdanAreaRelation.class);
 		arp.addMapping("hr_gongdan_book", "id", HrGongdanBook.class);
+		arp.addMapping("hr_gongdan_fjf", "OID", HrGongdanFjf.class);
 		arp.addMapping("hr_gongdan_log", "id", HrGongdanLog.class);
 		arp.addMapping("hr_gongdan_repair", "id", HrGongdanRepair.class);
 		arp.addMapping("hr_gongdan_wsf_log", "id", HrGongdanWsfLog.class);
