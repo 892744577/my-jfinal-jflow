@@ -5,8 +5,20 @@ import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
+import com.kakarote.crm9.erp.wx.util.DateUtil;
 
-public class HrGongdanLogService {
+import java.util.Date;
+
+public class HrGongdanFjfService {
+    /**
+     * 获取记录条数
+     * @return
+     */
+    public int getFjfByOrderNum() {
+        String today = DateUtil.changeDateTOStr2(new Date());
+        Kv kv= Kv.by("today", today);
+        return  Db.queryInt(Db.getSqlPara("admin.hrGongDanFjf.getHrGongDanFjfInitNum",kv).getSql(),today);
+    }
     /**
      * @author tmr
      * 分页工单查询记录
@@ -19,7 +31,7 @@ public class HrGongdanLogService {
         return Db.paginate(
                 basePageRequest.getPage(),
                 basePageRequest.getLimit(),
-                Db.getSqlPara("admin.hrGongDanLog.queryPageList",kv)
+                Db.getSqlPara("admin.hrGongDanFjf.queryPageList",kv)
         );
     }
 }

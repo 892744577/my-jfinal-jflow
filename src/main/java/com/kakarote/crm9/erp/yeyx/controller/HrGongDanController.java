@@ -25,10 +25,7 @@ import com.kakarote.crm9.erp.wx.service.MpService;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.kakarote.crm9.erp.wx.vo.MpMsgSendReq;
 import com.kakarote.crm9.erp.wx.vo.WxCpMessageReq;
-import com.kakarote.crm9.erp.yeyx.entity.HrGongdan;
-import com.kakarote.crm9.erp.yeyx.entity.HrGongdanBook;
-import com.kakarote.crm9.erp.yeyx.entity.HrGongdanLog;
-import com.kakarote.crm9.erp.yeyx.entity.HrGongdanRepair;
+import com.kakarote.crm9.erp.yeyx.entity.*;
 import com.kakarote.crm9.erp.yeyx.entity.vo.HrGongdanAreaRelationRequest;
 import com.kakarote.crm9.erp.yeyx.entity.vo.HrGongdanLogRequest;
 import com.kakarote.crm9.erp.yeyx.entity.vo.HrGongdanRepairRequest;
@@ -56,6 +53,8 @@ public class HrGongDanController extends Controller {
     @Inject
     private HrGongdanAppointService hrGongdanAppointService;
     @Inject
+    private HrGongdanFjfService hrGongdanFjfService;
+    @Inject
     private HrGongdanLogService hrGongdanLogService;
     @Inject
     private HrGongdanZmnLogService hrGongdanZmnLogService;
@@ -78,7 +77,7 @@ public class HrGongDanController extends Controller {
         List<PortEmp> portEmpList = PortEmp.dao.find(Db.getSql("admin.portEmp.queryAfterSalePortEmpList"));
         if (portEmpList.size() > 0) {
             //推送企业微信信息
-            sendCpMsg(portEmpList,null,hrGongdanBook);
+            sendCpBook(portEmpList,hrGongdanBook);
         }
         renderJson(R.ok().put("data",hrGongdanBook.save()));
     }
@@ -128,7 +127,7 @@ public class HrGongDanController extends Controller {
         if (portEmpList.size() > 0) {
             sendMpMsg(portEmpList,hrGongdanRepair);
             //推送企业微信信息
-            sendCpMsg(portEmpList,hrGongdanRepair,null);
+            sendCpRepair(portEmpList,hrGongdanRepair);
         }
 
         renderJson(R.ok().put("result",hrGongdanRepair.save()).put("data",hrGongdanRepair));
@@ -244,7 +243,59 @@ public class HrGongDanController extends Controller {
     }
 
     /**
-     * 校验数据
+     * 保存附加费申请
+     */
+    public void HrGongdanFjfSave() throws Exception {
+        log.info("=======保存附加费申请");
+        HrGongdanFjf hrGongdanFjf = getModel(HrGongdanFjf.class,"",true);
+        String serialNum = (new DecimalFormat("00")).format(hrGongdanFjfService.getFjfByOrderNum());//流水号格式化
+        hrGongdanFjf.setOrderNumber("FJF"+ DateUtil.changeDateTOStr2(new Date())+ThreadLocalRandom.current().nextInt(10, 100)+serialNum);
+        hrGongdanFjf.setCreatetor(WebUser.getNo());
+        hrGongdanFjf.setCreateTime(new Date());
+        hrGongdanFjf.save();
+        //获取售后客服的微信公众号openId,发送通知
+        List<PortEmp> portEmpList = PortEmp.dao.find(Db.getSql("admin.portEmp.queryAfterSalePortEmpList"));
+        if (portEmpList.size() > 0) {
+            //推送企业微信信息
+            sendCpFjf(portEmpList,hrGongdanFjf);
+        }
+        renderJson(R.ok());
+    }
+
+    /**
+     * 附加费申请-查询
+     */
+    public void HrGongdanFjfquery(BasePageRequest basePageRequest){
+        log.info("=======附加费申请查询");
+        renderJson(R.ok().put("data",hrGongdanFjfService.queryPageList(basePageRequest)));
+    }
+
+    /**
+     * 附加费申请-审批
+     */
+    public void HrGongdanFjfSp() throws Exception {
+        log.info("=======附加费申请-审批");
+        HrGongdanFjf hrGongdanFjf = getModel(HrGongdanFjf.class,"",true);
+        HrGongdanFjf hrGongdanFjfUpdate = new HrGongdanFjf();
+        hrGongdanFjfUpdate.setId(hrGongdanFjf.getId());
+        hrGongdanFjfUpdate.setSp(hrGongdanFjf.getSp());
+        hrGongdanFjfUpdate.setSpTime(new Date());
+        hrGongdanFjfUpdate.setSpRemark(hrGongdanFjf.getSpRemark());
+        hrGongdanFjfUpdate.setSptor(WebUser.getNo());
+        hrGongdanFjfUpdate.update();
+        if(1==hrGongdanFjf.getSp()){
+            HrGongdanFjf hrGongdanFjfQuery = HrGongdanFjf.dao.findById(hrGongdanFjf.getId());
+            HrGongdan hrGongdan = new HrGongdan();
+            hrGongdan.setOID(hrGongdanFjfQuery.getWorkId());
+            hrGongdan.setServiceExtraCharge(hrGongdanFjfQuery.getFjf());
+            hrGongdan.setServiceExtraChargeBz(hrGongdanFjf.getSpRemark());
+            hrGongdan.update();
+        }
+        renderJson(R.ok());
+    }
+
+    /**
+     * 审批
      * @param hrGongdanRequest
      */
     public void validate(@Para("") HrGongdanRequest hrGongdanRequest){
@@ -252,7 +303,7 @@ public class HrGongDanController extends Controller {
     }
 
     /**
-     * 批量校验数据
+     * 批量审批
      */
     public void validateMore(){
         JSONArray array = JSON.parseArray(this.getRawData());
@@ -263,8 +314,8 @@ public class HrGongDanController extends Controller {
         renderJson(R.ok());
     }
 
-    /*
-     * @Description //根据出货单号获取保修卡信息接口
+    /**
+     * @Description 根据出货单号获取保修卡信息接口
      * @Author wangkaida
      * @Date 11:06 2020/7/14
      * @Param [hrGongdanRequest]
@@ -310,7 +361,7 @@ public class HrGongDanController extends Controller {
         }
     }
 
-    /*
+    /**
      * @Description //根据订单号批量获取保修卡信息接口
      * @Author wangkaida
      * @Date 15:24 2020/7/14
@@ -341,8 +392,8 @@ public class HrGongDanController extends Controller {
         }
     }
 
-    /*
-     * @Description //进行公众号信息推送
+    /**
+     * @Description 进行公众号信息推送
      * @Author wangkaida
      * @Date 16:39 2020/9/4
      * @Param [portEmpList]
@@ -377,14 +428,47 @@ public class HrGongDanController extends Controller {
         }
     }
 
-    /*
+    /**
+     * @Description //进行企业微信信息推送1
+     * @Author wangkaida
+     * @Date 10:11 2020/9/8
+     * @Param [hrGongdanRepairRequest]
+     * @return void
+     **/
+    private void sendCpBook(List<PortEmp> portEmpList,HrGongdanBook hrGongdanBookRequest) {
+        sendCpMsg(portEmpList,null,hrGongdanBookRequest,null);
+    }
+
+    /**
+     * @Description //进行企业微信信息推送2
+     * @Author wangkaida
+     * @Date 10:11 2020/9/8
+     * @Param [hrGongdanRepairRequest]
+     * @return void
+     **/
+    private void sendCpRepair(List<PortEmp> portEmpList,HrGongdanRepair hrGongdanRepairRequest) {
+        sendCpMsg(portEmpList,hrGongdanRepairRequest,null,null);
+    }
+
+    /**
+     * @Description //进行企业微信信息推送3
+     * @Author wangkaida
+     * @Date 10:11 2020/9/8
+     * @Param [hrGongdanRepairRequest]
+     * @return void
+     **/
+    private void sendCpFjf(List<PortEmp> portEmpList,HrGongdanFjf hrGongdanFjf) {
+        sendCpMsg(portEmpList,null,null,hrGongdanFjf);
+    }
+
+    /**
      * @Description //进行企业微信信息推送
      * @Author wangkaida
      * @Date 10:11 2020/9/8
      * @Param [hrGongdanRepairRequest]
      * @return void
      **/
-    private void sendCpMsg(List<PortEmp> portEmpList,HrGongdanRepair hrGongdanRepairRequest,HrGongdanBook hrGongdanBookRequest) {
+    private void sendCpMsg(List<PortEmp> portEmpList,HrGongdanRepair hrGongdanRepairRequest,HrGongdanBook hrGongdanBookRequest,HrGongdanFjf hrGongdanFjf) {
         WxCpMessageReq wxCpMessageReq = new WxCpMessageReq();
         wxCpMessageReq.setAgentId(WxCpAgentIdEmun.agent2.getCode());
         String toUser = "";
@@ -408,6 +492,11 @@ public class HrGongDanController extends Controller {
             redirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+WxCpAgentIdEmun.corpId+"&redirect_uri=http%3A%2F%2Fapp.aptenon.com%2Fcrm%2FcrmAdmin%2Findex.html%3Ftype%3DappointQuery%23%2Fwx%2FwxWorkAuthPage&response_type=code&scope=snsapi_base&state=#wechat_redirect";
             title = "你有新的预约单! <a href=\""+redirectUrl+"\">"+hrGongdanBookRequest.getOrderNumber()+"</a>";
             sendContent = title + "\n联系人:"+hrGongdanBookRequest.getContact() + "\n联系电话:"+hrGongdanBookRequest.getPhone() + "\n地址:"+hrGongdanBookRequest.getAddress() + "\n预约描述:"+hrGongdanBookRequest.getRemark();
+        }
+        if (hrGongdanFjf != null) {
+            redirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+WxCpAgentIdEmun.corpId+"&redirect_uri=http%3A%2F%2Fapp.aptenon.com%2Fcrm%2FcrmAdmin%2Findex.html%3Ftype%3DappointQuery%23%2Fwx%2FwxWorkAuthPage&response_type=code&scope=snsapi_base&state=#wechat_redirect";
+            title = "你有新的附加费反馈单! <a href=\""+redirectUrl+"\">"+hrGongdanFjf.getOrderNumber()+"</a>";
+            sendContent = title + "\n工单单号:"+hrGongdanFjf.getServiceNo() + "\n附加费用(元):"+hrGongdanFjf.getFjf() + "\n申请修改原因:"+hrGongdanFjf.getRemark();
         }
 
 

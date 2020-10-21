@@ -9,20 +9,44 @@ import com.jfinal.plugin.activerecord.Model;
 @SuppressWarnings("serial")
 public abstract class BaseHrGongdanFjf<M extends BaseHrGongdanFjf<M>> extends Model<M> implements IBean {
 
-	public void setOID(Long OID) {
-		set("OID", OID);
+	public void setId(Long id) {
+		set("id", id);
 	}
 	
-	public Long getOID() {
-		return getLong("OID");
+	public Long getId() {
+		return getLong("id");
 	}
 
-	public void setFjf(Integer fjf) {
+	public void setOrderNumber(String orderNumber) {
+		set("orderNumber", orderNumber);
+	}
+	
+	public String getOrderNumber() {
+		return getStr("orderNumber");
+	}
+
+	public void setWorkId(Integer workId) {
+		set("workId", workId);
+	}
+	
+	public Integer getWorkId() {
+		return getInt("workId");
+	}
+
+	public void setServiceNo(String serviceNo) {
+		set("serviceNo", serviceNo);
+	}
+	
+	public String getServiceNo() {
+		return getStr("serviceNo");
+	}
+
+	public void setFjf(Double fjf) {
 		set("fjf", fjf);
 	}
 	
-	public Integer getFjf() {
-		return getInt("fjf");
+	public Double getFjf() {
+		return getDouble("fjf");
 	}
 
 	public void setRemark(String remark) {
@@ -47,6 +71,38 @@ public abstract class BaseHrGongdanFjf<M extends BaseHrGongdanFjf<M>> extends Mo
 	
 	public String getSpRemark() {
 		return getStr("spRemark");
+	}
+
+	public void setSpTime(java.util.Date spTime) {
+		set("spTime", spTime);
+	}
+	
+	public java.util.Date getSpTime() {
+		return get("spTime");
+	}
+
+	public void setSptor(String sptor) {
+		set("sptor", sptor);
+	}
+	
+	public String getSptor() {
+		return getStr("sptor");
+	}
+
+	public void setCreateTime(java.util.Date createTime) {
+		set("createTime", createTime);
+	}
+	
+	public java.util.Date getCreateTime() {
+		return get("createTime");
+	}
+
+	public void setCreatetor(String createtor) {
+		set("createtor", createtor);
+	}
+	
+	public String getCreatetor() {
+		return getStr("createtor");
 	}
 
 }
