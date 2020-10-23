@@ -93,31 +93,36 @@ public class WanController extends Controller {
     public void toDo(){
         String rawData = getRawData();
         log.info("订单节点回调通知rawData===========:"+rawData);
-        JSONObject jsonObject = JSONObject.parseObject(new String(EncodeUtil.decryptBASE64(rawData)));
+        JSONObject rawJSONObject = JSONObject.parseObject(rawData);
+        JSONObject jsonObject = JSONObject.parseObject(new String(EncodeUtil.decryptBASE64(rawJSONObject.getString("busData"))));
+        log.info("订单节点回调通知busData===========:"+jsonObject.toJSONString());
         String orderStatus = jsonObject.getString("orderStatus");
         String thirdOrderId = jsonObject.getString("thirdOrderId");
         String data = jsonObject.getString("data");
         if(StringUtils.isNotEmpty(thirdOrderId)){
             //记录日志
-            HrGongdanWsfLog hrGongdanWsfLog = saveHrGongdanWsfLog(orderStatus,thirdOrderId,null,(new Date()).getTime());
+            HrGongdan hrGongdan = HrGongdan.dao.findById(thirdOrderId.split("-")[1]);
+            HrGongdanWsfLog hrGongdanWsfLog = saveHrGongdanWsfLog(orderStatus,thirdOrderId,hrGongdan.getOrderId(),(new Date()).getTime());
+
+            //处理data数据
             JSONObject dataJSONObject= JSONObject.parseObject(data);
             try {
                 log.info("==================当前登陆人："+ WebUser.getNo());
-
                 if(WebUser.getNo()!=""){
 
                 }else{
                     WebUser.SignInOfGenerAuth(new Emp("WSFHuangQiang"), "WSFHuangQiang");
                 }
-
                 switch(orderStatus){
                     case "wait_pay":
                         break;
-                    case "wait_reserve_customer ": //总包已报价（月结订单），已托管费 用（非月结订单）
+                    case "wait_reserve_customer": //总包已报价（月结订单），已托管费 用（非月结订单）
+                        log.info("==================订单节点回调通知备注wait_reserve_customer");
                         hrGongdanWsfLog.setOfferPrice(dataJSONObject.getString("offerPrice"));
                         hrGongdanWsfLog.save();
                         break;
-                    case "enterprise_order_sp ": //已派单
+                    case "enterprise_order_sp": //已派单
+                        log.info("==================订单节点回调通知备注enterprise_order_sp");
                         hrGongdanWsfLog.setMasterName(dataJSONObject.getString("masterName"));
                         hrGongdanWsfLog.setMasterPhone(dataJSONObject.getString("masterPhone"));
                         hrGongdanWsfLog.setMasterLevel(dataJSONObject.getString("masterLevel"));
@@ -125,6 +130,7 @@ public class WanController extends Controller {
                         this.enterprise_order_sp(thirdOrderId,dataJSONObject);
                         break;
                     case "reserve_customer": //预约时间
+                        log.info("==================订单节点回调通知备注reserve_customer");
                         hrGongdanWsfLog.setDutyTime(dataJSONObject.getString("appointTime"));
                         hrGongdanWsfLog.save();
                         this.reserve_customer(thirdOrderId,dataJSONObject);
@@ -132,24 +138,29 @@ public class WanController extends Controller {
                     case "logiscs_sign":  //已完成物流点提货（送货到楼下，送 货到家，送货到家并安装才有此节 点）
                         break;
                     case "wait_serve_complete": //已上门
+                        log.info("==================订单节点回调通知备注wait_serve_complete");
                         hrGongdanWsfLog.save();
                         this.wait_serve_complete(thirdOrderId,dataJSONObject);
                         break;
-                    case "serve_complete ": //已完工
+                    case "serve_complete": //已完工
+                        log.info("==================订单节点回调通知备注serve_complete");
                         hrGongdanWsfLog.setCompleteTime(dataJSONObject.getString("completeTime"));
                         hrGongdanWsfLog.save();
                         this.serve_complete(thirdOrderId,dataJSONObject);
                         break;
-                    case "order_mark ": //备注
+                    case "order_mark": //备注
+                        log.info("==================订单节点回调通知备注order_mark");
                         hrGongdanWsfLog.setFactoryRemark(dataJSONObject.getString("content"));
                         hrGongdanWsfLog.save();
                         this.order_mark(thirdOrderId,dataJSONObject);
                         break;
-                    case "order_cancel ": //订单取消
+                    case "order_cancel": //订单取消
+                        log.info("==================订单节点回调通知备注order_cancel");
                         hrGongdanWsfLog.save();
                         this.order_cancel(thirdOrderId,dataJSONObject);
                         break;
                 }
+                log.info("==================订单节点回调通知结束");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -279,5 +290,9 @@ public class WanController extends Controller {
     @NotAction
     public void order_cancel(String thirdOrderId, JSONObject dataJSONObject) throws Exception{
         Hashtable myhtSend = new Hashtable();
+        SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(
+                thirdOrderId.split("-")[0],
+                Long.parseLong(thirdOrderId.split("-")[1]),
+                myhtSend, null, 907, null);
     }
 }

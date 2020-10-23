@@ -215,6 +215,17 @@ public class YeyxController extends Controller {
                             renderJson(R.ok().put("code", 502).put("message", "result"));
                         }
                     }else{
+                        //记录取消操作
+                        //录入记录
+                        //查询工单
+                        HrGongdan hrGongdan = HrGongdan.dao.findById(toCancelOrderRequest.getOid());
+                        HrGongdanZmnLog hrGongdanZmnLog = saveHrGongdanZmnLog(
+                                "cancelOrder",
+                                "009-"+toCancelOrderRequest.getOid()+"-"+hrGongdan.getServiceNo(),
+                                toCancelOrderRequest.getOrderId(),
+                                new Date().getTime());
+                        hrGongdanZmnLog.setCancelRemark("客服主动取消");
+                        hrGongdanZmnLog.save();
                         //取消成功并撤销发送
                         //Log.DebugWriteInfo("==============>取消成功后撤回发送："+JSONObject.toJSONString(toCancelOrderRequest));
                         //BP.WF.Dev2Interface.Flow_DoUnSend(toCancelOrderRequest.getFk_flow(),toCancelOrderRequest.getOid());

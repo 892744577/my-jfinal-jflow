@@ -200,27 +200,34 @@ public class F009FlowEvent extends FlowEventBase {
                        currentPrama.put("address", this.getSysPara().get("address").toString()); //详细地址
                    if(!StringUtils.isEmpty(this.getSysPara().get("remark")))
                        currentPrama.put("buyerNote", this.getSysPara().get("remark").toString()); //服务单备注
-                   if(!StringUtils.isEmpty(this.getSysPara().get("SFYSD")))
-                       currentPrama.put("customArriveStatus", this.getSysPara().get("SFYSD").toString()); //货物是否到客户家
-                   currentPrama.put("serveType", 4);
+                   if(!StringUtils.isEmpty(this.getSysPara().get("customArriveStatus")))
+                       currentPrama.put("customArriveStatus", this.getSysPara().get("customArriveStatus").toString()); //货物是否到客户家
                    currentPrama.put("orderId", this.getSysPara().get("FK_Flow") + "-" + this.getSysPara().get("OID")+"-" + serviceNo);
-
+                   //单子是安装还是维修
+                   if("DS".equals(this.getSysPara().get("serviceSegmentation").toString())
+                           ||"SS".equals(this.getSysPara().get("serviceSegmentation").toString())
+                           ||"L".equals(this.getSysPara().get("serviceSegmentation").toString())){
+                       currentPrama.put("serveType", 4); //安装
+                   }else{
+                       currentPrama.put("serveType", 5); //维修
+                   }
                    //新增商品列表
                    List goodsList = new ArrayList();
                    Map goodsList1 = new HashMap();
-
                    if("12122".equals(this.getSysPara().get("facProductId").toString())){
                        currentPrama.put("serveCategory", 17); //服务单，晾衣架
+                       currentPrama.put("toMasterId", 4957974691L); //总包，晾衣架
                        goodsList1.put("goodsCategory",323); //晾衣架
                        goodsList1.put("categoryChild",324); //晾衣架
                        goodsList1.put("goodsName","晾衣架");
                    }else{
                        currentPrama.put("serveCategory", 15); //服务单，智能锁
-                       goodsList1.put("goodsCategory",0); //根类型
-                       goodsList1.put("categoryChild",238); //半自动智能锁
+                       currentPrama.put("toMasterId", 4957869477L); //总包，智能锁
+                       goodsList1.put("goodsCategory",338); //根类型
+                       goodsList1.put("categoryChild",0); //半自动智能锁
                        goodsList1.put("goodsName","智能锁");
                    }
-                   goodsList1.put("goodsNote",this.getSysPara().get("serviceSegmentation").toString());
+                   goodsList1.put("goodsNote",this.getSysPara().get("serviceSegmentationT").toString());
                    goodsList1.put("goodsNumber",Integer.parseInt(this.getSysPara().get("productCount").toString()));
                    goodsList1.put("goodsImgUrl","http://pic1.nipic.com/2008-08-14/2008814183939909_2.jpg");
                    goodsList.add(goodsList1);
