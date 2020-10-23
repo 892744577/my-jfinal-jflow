@@ -59,6 +59,8 @@ public class HrGongDanController extends Controller {
     @Inject
     private HrGongdanZmnLogService hrGongdanZmnLogService;
     @Inject
+    private HrGongdanWsfLogService hrGongdanWsfLogService;
+    @Inject
     private TokenService tokenService;
     @Inject
     private AdminSceneService adminSceneService;
@@ -182,6 +184,14 @@ public class HrGongDanController extends Controller {
      */
     public void queryPageZmnLog(BasePageRequest basePageRequest) {
         renderJson(R.ok().put("data",hrGongdanZmnLogService.queryPageList(basePageRequest)));
+    }
+
+    /**
+     * @author tmr
+     * 查询啄木鸟接口记录
+     */
+    public void queryPageWsfLog(BasePageRequest basePageRequest) {
+        renderJson(R.ok().put("data",hrGongdanWsfLogService.queryPageList(basePageRequest)));
     }
 
     /**

@@ -19,6 +19,7 @@ import com.kakarote.crm9.erp.yeyx.entity.vo.WanGoodsConfigRequest;
 import com.kakarote.crm9.erp.yeyx.service.HrGongDanService;
 import com.kakarote.crm9.erp.yeyx.service.WanService;
 import com.kakarote.crm9.erp.yeyx.util.EncodeUtil;
+import com.kakarote.crm9.utils.R;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Date;
@@ -63,7 +64,9 @@ public class WanController extends Controller {
         currentPrama.put("timestamp",System.currentTimeMillis());
         currentPrama.put("thirdOrderId","009-" + hrGongdan.getOID()+"-" + hrGongdan.getServiceNo());
         currentPrama.put("reason",toCancelOrderRequest.getRemark());
-        renderJson(WanService.gatewayRequestJson(wanService.getPath() + "/order/close", JSONObject.toJSONString(currentPrama)));
+        log.info("发送取消通知===========:"+ JSONObject.toJSONString(currentPrama));
+        WanService.gatewayRequestJson(wanService.getPath() + "/order/close", JSONObject.toJSONString(currentPrama));
+        renderJson(R.ok().put("code",0).put("message", "取消通知发送成功"));
     }
     /**
      * 下单结果回调通知
@@ -77,13 +80,16 @@ public class WanController extends Controller {
         JSONArray array = jsonObject.getJSONArray("successInfo");
         for(int i=0;i<array.size();i++){
             JSONObject temp = array.getJSONObject(i);
-            //跟新数据
+            //更新orderId
             String thirdOrderId = temp.getString("thirdOrderId");
             String wanshifuOrderNo = temp.getString("wanshifuOrderNo");
             HrGongdan hrGongdan = new HrGongdan();
             hrGongdan.setOID(Integer.parseInt(thirdOrderId.split("-")[1]));
             hrGongdan.setOrderId(wanshifuOrderNo);
             hrGongdan.update();
+            //记录日志
+            HrGongdanWsfLog hrGongdanWsfLog = saveHrGongdanWsfLog("createOrder",thirdOrderId,wanshifuOrderNo,(new Date()).getTime()/1000);
+            hrGongdanWsfLog.save();
         }
         renderJson();
     }
@@ -165,8 +171,7 @@ public class WanController extends Controller {
                 e.printStackTrace();
             }
         }
-
-        renderJson();
+        renderJson(R.ok().put("code",0));
     }
 
     @NotAction
@@ -247,13 +252,13 @@ public class WanController extends Controller {
             SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(
                     thirdOrderId.split("-")[0],
                     Long.parseLong(thirdOrderId.split("-")[1]),
-                    myhtSend,null,915,null);
+                    myhtSend,null,914,null);
         }
     }
 
     /**
      *
-     * 预约确认->完成
+     * 成功预约、预约确认->完成
      * @param thirdOrderId
      * @param dataJSONObject
      * @throws Exception
@@ -266,7 +271,7 @@ public class WanController extends Controller {
         gwf.RetrieveFromDBSources();
 
         //若是确认订单节点，往下流转，其他得只是更新数据
-        if(915 == gwf.getFK_Node() || 913 == gwf.getFK_Node()){
+        if(914 == gwf.getFK_Node() || 913 == gwf.getFK_Node()){
             Hashtable myhtSend = new Hashtable();
             //发送流程
             //myhtSend.put("productPictureUrls", dataJSONObject.getString(""));
@@ -289,10 +294,17 @@ public class WanController extends Controller {
 
     @NotAction
     public void order_cancel(String thirdOrderId, JSONObject dataJSONObject) throws Exception{
-        Hashtable myhtSend = new Hashtable();
-        SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(
-                thirdOrderId.split("-")[0],
-                Long.parseLong(thirdOrderId.split("-")[1]),
-                myhtSend, null, 907, null);
+        GenerWorkFlow gwf = new GenerWorkFlow();
+        gwf.setWorkID(Long.parseLong(thirdOrderId.split("-")[1]));
+        gwf.RetrieveFromDBSources();
+        //完成前都可取消
+        if(912 == gwf.getFK_Node() || 913 == gwf.getFK_Node() || 914 == gwf.getFK_Node()){
+            Hashtable myhtSend = new Hashtable();
+            SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(
+                    thirdOrderId.split("-")[0],
+                    Long.parseLong(thirdOrderId.split("-")[1]),
+                    myhtSend, null, 907, null);
+        }
+
     }
 }
