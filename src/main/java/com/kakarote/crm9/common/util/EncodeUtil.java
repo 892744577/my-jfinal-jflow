@@ -1,4 +1,4 @@
-package com.kakarote.crm9.erp.yeyx.util;
+package com.kakarote.crm9.common.util;
 
 import java.util.Base64;
 

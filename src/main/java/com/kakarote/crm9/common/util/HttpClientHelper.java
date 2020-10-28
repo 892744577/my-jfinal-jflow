@@ -1,4 +1,4 @@
-package com.kakarote.crm9.erp.yzj.util;
+package com.kakarote.crm9.common.util;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.entity.GzipDecompressingEntity;

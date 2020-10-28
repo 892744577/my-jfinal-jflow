@@ -214,22 +214,38 @@ public class F009FlowEvent extends FlowEventBase {
                    //新增商品列表
                    List goodsList = new ArrayList();
                    Map goodsList1 = new HashMap();
+
+                   //商品信息
+                   JSONObject productOneT = JSONObject.parseObject(this.getSysPara().get("productOneT").toString());
+                   if(!StringUtils.isEmpty(productOneT.get("listPicUrl")))
+                       goodsList1.put("goodsImgUrl", productOneT.get("listPicUrl"));
+                   else
+                       goodsList1.put("goodsImgUrl", "http://pic1.nipic.com/2008-08-14/2008814183939909_2.jpg");
+
+
                    if("12122".equals(this.getSysPara().get("facProductId").toString())){
                        currentPrama.put("serveCategory", 17); //服务单，晾衣架
                        currentPrama.put("toMasterId", 4957974691L); //总包，晾衣架
                        goodsList1.put("goodsCategory",323); //晾衣架
                        goodsList1.put("categoryChild",324); //晾衣架
-                       goodsList1.put("goodsName","晾衣架");
+                       if(!StringUtils.isEmpty(productOneT.get("name")))
+                           goodsList1.put("goodsName", productOneT.get("name"));
+                       else
+                           goodsList1.put("goodsName", "晾衣架");
                    }else{
                        currentPrama.put("serveCategory", 15); //服务单，智能锁
                        currentPrama.put("toMasterId", 4957869477L); //总包，智能锁
                        goodsList1.put("goodsCategory",338); //根类型
                        goodsList1.put("categoryChild",0); //半自动智能锁
-                       goodsList1.put("goodsName","智能锁");
+                       if(!StringUtils.isEmpty(productOneT.get("name")))
+                           goodsList1.put("goodsName", productOneT.get("name"));
+                       else
+                           goodsList1.put("goodsName", "智能锁");
                    }
                    goodsList1.put("goodsNote",this.getSysPara().get("serviceSegmentationT").toString());
                    goodsList1.put("goodsNumber",Integer.parseInt(this.getSysPara().get("productCount").toString()));
-                   goodsList1.put("goodsImgUrl","http://pic1.nipic.com/2008-08-14/2008814183939909_2.jpg");
+
+
                    goodsList.add(goodsList1);
                    currentPrama.put("goodsList", goodsList);
 

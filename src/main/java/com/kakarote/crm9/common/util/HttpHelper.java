@@ -1,4 +1,4 @@
-package com.kakarote.crm9.erp.yzj.util;
+package com.kakarote.crm9.common.util;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
