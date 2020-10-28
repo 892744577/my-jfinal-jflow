@@ -593,28 +593,28 @@ public abstract class BaseHrGongdan<M extends BaseHrGongdan<M>> extends Model<M>
 		return getStr("BigNoteHtmlText");
 	}
 
-	public void setSPTPXXT(String SPTPXXT) {
-		set("SPTPXXT", SPTPXXT);
+	public void setCustomArriveStatus(String customArriveStatus) {
+		set("customArriveStatus", customArriveStatus);
 	}
 	
-	public String getSPTPXXT() {
-		return getStr("SPTPXXT");
+	public String getCustomArriveStatus() {
+		return getStr("customArriveStatus");
 	}
 
-	public void setSPTPXX(String SPTPXX) {
-		set("SPTPXX", SPTPXX);
+	public void setProductOneT(String productOneT) {
+		set("productOneT", productOneT);
 	}
 	
-	public String getSPTPXX() {
-		return getStr("SPTPXX");
+	public String getProductOneT() {
+		return getStr("productOneT");
 	}
 
-	public void setSFYSD(String SFYSD) {
-		set("SFYSD", SFYSD);
+	public void setProductOne(String productOne) {
+		set("productOne", productOne);
 	}
 	
-	public String getSFYSD() {
-		return getStr("SFYSD");
+	public String getProductOne() {
+		return getStr("productOne");
 	}
 
 }

@@ -11,6 +11,7 @@ import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
 import com.jfinal.core.NotAction;
 import com.jfinal.core.paragetter.Para;
+import com.kakarote.crm9.common.util.EncodeUtil;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdan;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanWsfLog;
 import com.kakarote.crm9.erp.yeyx.entity.vo.HrGongdanRequest;
@@ -18,7 +19,6 @@ import com.kakarote.crm9.erp.yeyx.entity.vo.ToCancelOrderRequest;
 import com.kakarote.crm9.erp.yeyx.entity.vo.WanGoodsConfigRequest;
 import com.kakarote.crm9.erp.yeyx.service.HrGongDanService;
 import com.kakarote.crm9.erp.yeyx.service.WanService;
-import com.kakarote.crm9.erp.yeyx.util.EncodeUtil;
 import com.kakarote.crm9.utils.R;
 import lombok.extern.slf4j.Slf4j;
 
@@ -150,6 +150,7 @@ public class WanController extends Controller {
                         break;
                     case "serve_complete": //已完工
                         log.info("==================订单节点回调通知备注serve_complete");
+                        hrGongdanWsfLog.setCompleteUrl(dataJSONObject.getString("completePictureList"));
                         hrGongdanWsfLog.setCompleteTime(dataJSONObject.getString("completeTime"));
                         hrGongdanWsfLog.save();
                         this.serve_complete(thirdOrderId,dataJSONObject);
