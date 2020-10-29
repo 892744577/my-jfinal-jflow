@@ -22,10 +22,7 @@ import com.kakarote.crm9.erp.yeyx.service.WanService;
 import com.kakarote.crm9.utils.R;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 万师傅接口对接类
@@ -150,7 +147,10 @@ public class WanController extends Controller {
                         break;
                     case "serve_complete": //已完工
                         log.info("==================订单节点回调通知备注serve_complete");
-                        hrGongdanWsfLog.setCompleteUrl(dataJSONObject.getString("completePictureList"));
+                        JSONArray jsonArray = dataJSONObject.getJSONArray("completePictureList");
+                        List<String> list = jsonArray.toJavaList(String.class);
+                        String str = String.join(",", list);
+                        hrGongdanWsfLog.setCompleteUrl(str);
                         hrGongdanWsfLog.setCompleteTime(dataJSONObject.getString("completeTime"));
                         hrGongdanWsfLog.save();
                         this.serve_complete(thirdOrderId,dataJSONObject);
