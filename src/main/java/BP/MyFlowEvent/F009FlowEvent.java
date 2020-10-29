@@ -179,6 +179,8 @@ public class F009FlowEvent extends FlowEventBase {
                    Log.DebugWriteInfo("==============>调用新增订单更新服务单信息");
 
                }else if ("WSF".equals(serviceSystem)) {
+                   WanService wanService = Aop.get(WanService.class);
+
                    //add by wangkaidda 调用万师傅下单接口
                    List wanList = new ArrayList();
                    Map currentPrama = new HashMap();
@@ -217,7 +219,7 @@ public class F009FlowEvent extends FlowEventBase {
 
                    //商品信息
                    JSONObject productOneT = JSONObject.parseObject(this.getSysPara().get("productOneT").toString());
-                   if(!StringUtils.isEmpty(productOneT.get("listPicUrl")))
+                   if(!StringUtils.isEmpty(productOneT) && !StringUtils.isEmpty(productOneT.get("listPicUrl")))
                        goodsList1.put("goodsImgUrl", productOneT.get("listPicUrl"));
                    else
                        goodsList1.put("goodsImgUrl", "http://pic1.nipic.com/2008-08-14/2008814183939909_2.jpg");
@@ -225,19 +227,19 @@ public class F009FlowEvent extends FlowEventBase {
 
                    if("12122".equals(this.getSysPara().get("facProductId").toString())){
                        currentPrama.put("serveCategory", 17); //服务单，晾衣架
-                       currentPrama.put("toMasterId", 4957974691L); //总包，晾衣架
+                       currentPrama.put("toMasterId", Long.parseLong(wanService.getDrierMasterId())); //总包，晾衣架
                        goodsList1.put("goodsCategory",323); //晾衣架
                        goodsList1.put("categoryChild",324); //晾衣架
-                       if(!StringUtils.isEmpty(productOneT.get("name")))
+                       if(!StringUtils.isEmpty(productOneT) && !StringUtils.isEmpty(productOneT.get("name")))
                            goodsList1.put("goodsName", productOneT.get("name"));
                        else
                            goodsList1.put("goodsName", "晾衣架");
                    }else{
                        currentPrama.put("serveCategory", 15); //服务单，智能锁
-                       currentPrama.put("toMasterId", 4957869477L); //总包，智能锁
+                       currentPrama.put("toMasterId", Long.parseLong(wanService.getLockMasterId())); //总包，智能锁
                        goodsList1.put("goodsCategory",338); //根类型
                        goodsList1.put("categoryChild",0); //半自动智能锁
-                       if(!StringUtils.isEmpty(productOneT.get("name")))
+                       if(!StringUtils.isEmpty(productOneT) && !StringUtils.isEmpty(productOneT.get("name")))
                            goodsList1.put("goodsName", productOneT.get("name"));
                        else
                            goodsList1.put("goodsName", "智能锁");
@@ -254,7 +256,6 @@ public class F009FlowEvent extends FlowEventBase {
                    String jsonStr = JSONObject.toJSONString(wanList);
 
                    //加密参数
-                   WanService wanService = Aop.get(WanService.class);
                    String reqJsonStr = wanService.getJsonData(jsonStr);
 
                    //调用新增订单接口
