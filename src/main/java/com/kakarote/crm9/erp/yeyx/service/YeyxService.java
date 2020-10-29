@@ -2,7 +2,7 @@ package com.kakarote.crm9.erp.yeyx.service;
 
 
 import BP.Difference.SystemConfig;
-import com.kakarote.crm9.erp.yzj.util.HttpHelper;
+import com.kakarote.crm9.common.util.HttpHelper;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 

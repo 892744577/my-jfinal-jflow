@@ -2,8 +2,8 @@ package com.kakarote.crm9.erp.yeyx.service;
 
 import BP.Difference.SystemConfig;
 import com.alibaba.fastjson.JSON;
-import com.kakarote.crm9.erp.yeyx.util.EncodeUtil;
-import com.kakarote.crm9.erp.yzj.util.HttpHelper;
+import com.kakarote.crm9.common.util.EncodeUtil;
+import com.kakarote.crm9.common.util.HttpHelper;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,6 +28,10 @@ public class WanService {
     private String companySecret = SystemConfig.getCS_AppSettings().get("WAN.companySecret").toString();
     @Getter
     private String path = SystemConfig.getCS_AppSettings().get("WAN.path").toString();
+    @Getter
+    private String lockMasterId = SystemConfig.getCS_AppSettings().get("WAN.Lock.masterId").toString();
+    @Getter
+    private String drierMasterId = SystemConfig.getCS_AppSettings().get("WAN.Drier.masterId").toString();
 
     public String getJsonData(String jsonStr) {
 
@@ -37,7 +41,7 @@ public class WanService {
             long timestamp =  System.currentTimeMillis();
             map.put("timestamp",timestamp);
             map.put("licenseId",this.licenseId);
-            map.put("busData",EncodeUtil.encryptBASE64(jsonStr.getBytes()));
+            map.put("busData", EncodeUtil.encryptBASE64(jsonStr.getBytes()));
             map.put("checkData",EncodeUtil.getMD5(jsonStr+this.companySecret));
             return JSON.toJSONString(map);
         } catch (Exception e) {
