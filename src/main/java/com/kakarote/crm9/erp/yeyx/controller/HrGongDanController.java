@@ -64,6 +64,10 @@ public class HrGongDanController extends Controller {
     private TokenService tokenService;
     @Inject
     private AdminSceneService adminSceneService;
+    @Inject
+    private HrGongdanHistoryService hrGongdanHistoryService;
+    @Inject
+    private HrGongdanHistoryWsfService hrGongdanHistoryWsfService;
 
     /**
      * 保存预约单
@@ -402,6 +406,18 @@ public class HrGongDanController extends Controller {
         }
     }
 
+    /**
+     * 历史单查询
+     */
+    public void getHrGongdanHistoryService(BasePageRequest basePageRequest){
+        renderJson(R.ok().put("data", hrGongdanHistoryService.queryPageList(basePageRequest)).put("code","000000"));
+    }
+    /**
+     * 万师傅历史单查询
+     */
+    public void getHrGongdanHistoryWsfService(BasePageRequest basePageRequest){
+        renderJson(R.ok().put("data", hrGongdanHistoryWsfService.queryPageList(basePageRequest)).put("code","000000"));
+    }
     /**
      * @Description 进行公众号信息推送
      * @Author wangkaida
