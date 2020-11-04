@@ -153,7 +153,7 @@ public class WanController extends Controller {
                         hrGongdanWsfLog.setCompleteUrl(str);
                         hrGongdanWsfLog.setCompleteTime(dataJSONObject.getString("completeTime"));
                         hrGongdanWsfLog.save();
-                        this.serve_complete(thirdOrderId,dataJSONObject);
+                        this.serve_complete(thirdOrderId,dataJSONObject,str);
                         break;
                     case "order_mark": //备注
                         log.info("==================订单节点回调通知备注order_mark");
@@ -262,10 +262,11 @@ public class WanController extends Controller {
      * 成功预约、预约确认->完成
      * @param thirdOrderId
      * @param dataJSONObject
+     * @param str
      * @throws Exception
      */
     @NotAction
-    private void serve_complete(String thirdOrderId, JSONObject dataJSONObject) throws Exception{
+    private void serve_complete(String thirdOrderId, JSONObject dataJSONObject, String str) throws Exception{
         //若当前节点不是905，则不流转，直接更新数据
         GenerWorkFlow gwf = new GenerWorkFlow();
         gwf.setWorkID(Long.parseLong(thirdOrderId.split("-")[1]));
@@ -275,7 +276,7 @@ public class WanController extends Controller {
         if(914 == gwf.getFK_Node() || 913 == gwf.getFK_Node()){
             Hashtable myhtSend = new Hashtable();
             //发送流程
-            //myhtSend.put("productPictureUrls", dataJSONObject.getString(""));
+            myhtSend.put("productPictureUrls", str);
             SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(
                     thirdOrderId.split("-")[0],
                     Long.parseLong(thirdOrderId.split("-")[1]),
