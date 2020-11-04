@@ -6,8 +6,8 @@ package com.kakarote.crm9.erp.sms.util;//接口类型：互亿无线触发短信
 //（3）该代码仅供接入互亿无线短信接口参考使用，客户可根据实际需要自行编写；
 
 import com.jfinal.aop.Aop;
+import com.kakarote.crm9.common.util.HttpHelper;
 import com.kakarote.crm9.erp.sms.entity.Sms;
-import com.kakarote.crm9.erp.yzj.util.HttpHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.NameValuePair;
