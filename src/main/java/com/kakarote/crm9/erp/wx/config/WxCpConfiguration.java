@@ -70,6 +70,12 @@ public class WxCpConfiguration {
         config2.setAesKey("");
         config2.setToken("");
 
+        WxCpProperties.AppConfig config3 = new WxCpProperties.AppConfig();
+        config2.setAgentId(WxCpAgentIdEmun.agent3.getCode());
+        config2.setSecret(WxCpAgentIdEmun.agent3.getScret());
+        config2.setAesKey("");
+        config2.setToken("");
+
         List<WxCpProperties.AppConfig> configs = new ArrayList<WxCpProperties.AppConfig>();
         configs.add(config);
         configs.add(config1);
