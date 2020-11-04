@@ -22,7 +22,7 @@ public class SFTableHandler_Controller extends com.jfinal.core.Controller{
     public void productList() throws Exception
     {
         //获取商城的产品列表
-        renderJson(httpService.gatewayRequestJson("http://ap:8201/weshop-admin/mobile/goods/list?pageNum=1&pageSize=1000",
+        renderJson(httpService.gatewayRequestJson("http://ap:8201/weshop-admin/mobile/goods/listAfterSale?pageNum=1&pageSize=1000",
                 JSON.toJSONString(new HashMap())));
     }
 }
