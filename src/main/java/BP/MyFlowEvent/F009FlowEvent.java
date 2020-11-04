@@ -202,6 +202,8 @@ public class F009FlowEvent extends FlowEventBase {
                        currentPrama.put("address", this.getSysPara().get("address").toString()); //详细地址
                    if(!StringUtils.isEmpty(this.getSysPara().get("remark")))
                        currentPrama.put("buyerNote", this.getSysPara().get("remark").toString()); //服务单备注
+//                   if(!StringUtils.isEmpty(this.getSysPara().get("trackingNumber")))
+//                       currentPrama.put("logiscsNo", this.getSysPara().get("trackingNumber").toString()); //物流单号
                    if(!StringUtils.isEmpty(this.getSysPara().get("customArriveStatus")))
                        currentPrama.put("customArriveStatus", this.getSysPara().get("customArriveStatus").toString()); //货物是否到客户家
                    currentPrama.put("orderId", this.getSysPara().get("FK_Flow") + "-" + this.getSysPara().get("OID")+"-" + serviceNo);
@@ -217,14 +219,26 @@ public class F009FlowEvent extends FlowEventBase {
                    List goodsList = new ArrayList();
                    Map goodsList1 = new HashMap();
 
-                   //商品信息
+                   //客户图片信息+商品图片信息
+                   String goodsImgUrl = "";
+                   String ath_customerAccessories = this.getSysPara().get("ath_customerAccessories").toString();
+                   if(!StringUtils.isEmpty(ath_customerAccessories)) {
+                       //只允许图片格式发送
+                       String [] goodImg = ath_customerAccessories.split(",");
+                       for(String temp : goodImg){
+                           if(temp.contains(".jpg") ||
+                                   temp.contains(".png")){
+                               goodsImgUrl = goodsImgUrl + temp + ",";
+                           }
+                       }
+                       goodsImgUrl = goodsImgUrl.replace("\\","/");
+                   }
                    JSONObject productOneT = JSONObject.parseObject(this.getSysPara().get("productOneT").toString());
                    if(!StringUtils.isEmpty(productOneT) && !StringUtils.isEmpty(productOneT.get("listPicUrl")))
-                       goodsList1.put("goodsImgUrl", productOneT.get("listPicUrl"));
+                       goodsList1.put("goodsImgUrl", goodsImgUrl+productOneT.get("listPicUrl"));
                    else
-                       goodsList1.put("goodsImgUrl", "http://pic1.nipic.com/2008-08-14/2008814183939909_2.jpg");
-
-
+                       goodsList1.put("goodsImgUrl", goodsImgUrl+"http://pic1.nipic.com/2008-08-14/2008814183939909_2.jpg");
+                    //商品信息
                    if("12122".equals(this.getSysPara().get("facProductId").toString())){
                        currentPrama.put("serveCategory", 17); //服务单，晾衣架
                        currentPrama.put("toMasterId", Long.parseLong(wanService.getDrierMasterId())); //总包，晾衣架
