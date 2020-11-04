@@ -2,6 +2,7 @@ package com.kakarote.crm9.erp.yeyx.common;
 
 import com.jfinal.config.Routes;
 import com.kakarote.crm9.erp.yeyx.controller.HrGongDanController;
+import com.kakarote.crm9.erp.yeyx.controller.ProjectManageController;
 import com.kakarote.crm9.erp.yeyx.controller.WanController;
 import com.kakarote.crm9.erp.yeyx.controller.YeyxController;
 
@@ -13,5 +14,7 @@ public class YeyxRouter extends Routes {
         add("/wan", WanController.class); //言而有信订单平台
         //工单系统
         add("/hr/gongdan", HrGongDanController.class);
+        //工程项目管理系统
+        add("/projectmanage", ProjectManageController.class);
     }
 }
