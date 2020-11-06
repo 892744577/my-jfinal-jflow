@@ -97,6 +97,15 @@ public class _MappingKit {
 		arp.addMapping("port_emp", "No", PortEmp.class);
 		arp.addMapping("port_emp_relation", "OID", PortEmpRelation.class);
 		arp.addMapping("port_activity_enroll", "id", PortActivityEnroll.class);
+		//微信粉丝管理
+		arp.addMapping("wxcms_account_agent", "id", WxcmsAccountAgent.class);
+		arp.addMapping("wxcms_account_agent_qrcode", "id", WxcmsAccountAgentQrcode.class);
+		arp.addMapping("wxcms_account_agent_shop", "id", WxcmsAccountAgentShop.class);
+		// Composite Primary Key order: id,open_id
+		arp.addMapping("wxcms_account_fans", "id,open_id", WxcmsAccountFans.class);
+		arp.addMapping("wxcms_account_qrcode_fans", "id", WxcmsAccountQrcodeFans.class);
+		arp.addMapping("wxcms_account_shop", "id", WxcmsAccountShop.class);
+		arp.addMapping("wxcms_account_shop_qrcode", "id", WxcmsAccountShopQrcode.class);
 	}
 }
 
