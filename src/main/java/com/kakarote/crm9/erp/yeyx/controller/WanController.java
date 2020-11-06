@@ -229,7 +229,7 @@ public class WanController extends Controller {
     private void reserve_customer(String thirdOrderId, JSONObject dataJSONObject) throws Exception{
         HrGongdan hrGongdan = new HrGongdan();
         hrGongdan.setOID(Integer.valueOf(thirdOrderId.split("-")[1]));
-        hrGongdan.setDutyTime1(dataJSONObject.getString("masterPhone"));
+        hrGongdan.setDutyTime(dataJSONObject.getString("appointTime"));
         hrGongdan.update();
     }
 
