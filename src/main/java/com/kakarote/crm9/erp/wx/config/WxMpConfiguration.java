@@ -49,6 +49,8 @@ public class WxMpConfiguration {
         WxMpProperties.MpConfig config1 = new WxMpProperties.MpConfig();
         config1.setAppId(SystemConfig.getCS_AppSettings().get("MP.APPID").toString());
         config1.setSecret(SystemConfig.getCS_AppSettings().get("MP.APPSECRET").toString());
+        config1.setSecret(SystemConfig.getCS_AppSettings().get("MP.TOKEN").toString());
+        config1.setSecret(SystemConfig.getCS_AppSettings().get("MP.EncodingAESKey").toString());
         List<WxMpProperties.MpConfig> configs = new ArrayList<WxMpProperties.MpConfig>();
         configs.add(config1);
 
