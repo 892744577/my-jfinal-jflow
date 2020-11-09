@@ -5,6 +5,7 @@ import com.kakarote.crm9.erp.admin.entity.*;
 import com.kakarote.crm9.erp.crm.entity.*;
 import com.kakarote.crm9.erp.oa.entity.*;
 import com.kakarote.crm9.erp.work.entity.*;
+import com.kakarote.crm9.erp.wxcms.entity.*;
 import com.kakarote.crm9.erp.yeyx.entity.*;
 
 public class _MappingKit {
