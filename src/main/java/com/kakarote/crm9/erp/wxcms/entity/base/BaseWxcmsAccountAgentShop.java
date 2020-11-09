@@ -1,4 +1,4 @@
-package com.kakarote.crm9.erp.admin.entity.base;
+package com.kakarote.crm9.erp.wxcms.entity.base;
 
 import com.jfinal.plugin.activerecord.IBean;
 import com.jfinal.plugin.activerecord.Model;
@@ -25,12 +25,12 @@ public abstract class BaseWxcmsAccountAgentShop<M extends BaseWxcmsAccountAgentS
 		return getStr("agent_id");
 	}
 
-	public void setShopid(Long shopid) {
-		set("shopid", shopid);
+	public void setShopId(Long shopId) {
+		set("shop_id", shopId);
 	}
 	
-	public Long getShopid() {
-		return getLong("shopid");
+	public Long getShopId() {
+		return getLong("shop_id");
 	}
 
 }

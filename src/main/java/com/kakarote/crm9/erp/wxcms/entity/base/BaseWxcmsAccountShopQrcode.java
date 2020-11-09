@@ -1,4 +1,4 @@
-package com.kakarote.crm9.erp.admin.entity.base;
+package com.kakarote.crm9.erp.wxcms.entity.base;
 
 import com.jfinal.plugin.activerecord.IBean;
 import com.jfinal.plugin.activerecord.Model;
@@ -17,12 +17,12 @@ public abstract class BaseWxcmsAccountShopQrcode<M extends BaseWxcmsAccountShopQ
 		return getLong("id");
 	}
 
-	public void setShopid(Long shopid) {
-		set("shopid", shopid);
+	public void setShopId(Long shopId) {
+		set("shop_id", shopId);
 	}
 	
-	public Long getShopid() {
-		return getLong("shopid");
+	public Long getShopId() {
+		return getLong("shop_id");
 	}
 
 	public void setQrcodeParam(String qrcodeParam) {
@@ -39,6 +39,14 @@ public abstract class BaseWxcmsAccountShopQrcode<M extends BaseWxcmsAccountShopQ
 	
 	public String getQrcodeUrl() {
 		return getStr("qrcode_url");
+	}
+
+	public void setCreateTime(java.util.Date createTime) {
+		set("create_time", createTime);
+	}
+	
+	public java.util.Date getCreateTime() {
+		return get("create_time");
 	}
 
 }

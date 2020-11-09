@@ -33,11 +33,30 @@ public class WxCmsController extends Controller {
             WxMpQrCodeTicket wxMpQrCodeTicket = mpService.qrCodeCreateLastTicket(shopNo);
             //2、批量生成参数二维码并插入表shop_qrcode
             WxcmsAccountShopQrcode wxcmsAccountShopQrcode = new WxcmsAccountShopQrcode();
-            wxcmsAccountShopQrcode.setShopid(wxcmsAccountShop.getId());
+            wxcmsAccountShopQrcode.setShopId(wxcmsAccountShop.getId());
             wxcmsAccountShopQrcode.setQrcodeParam(shopNo);
             wxcmsAccountShopQrcode.setQrcodeUrl(wxMpQrCodeTicket.getUrl());
             wxcmsAccountShopQrcode.save();
         }
         renderJson(R.ok());
+    }
+
+    /**
+     * 查询代理商、门店、粉丝
+     */
+    public void getAgents(String scence) {
+
+    }
+    /**
+     * 查询代理商、门店、粉丝
+     */
+    public void getShops(String scence) {
+
+    }
+    /**
+     * 查询代理商、门店、粉丝
+     */
+    public void getFans(String scence) {
+
     }
 }

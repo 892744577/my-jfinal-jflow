@@ -1,10 +1,14 @@
 package com.kakarote.crm9.erp.wx.mphandler;
 
 import com.jfinal.aop.Aop;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.Record;
 import com.kakarote.crm9.erp.wx.mpbuilder.TextBuilder;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
-import com.kakarote.crm9.erp.wxcms.entity.*;
+import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountFans;
+import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountQrcodeFans;
+import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountShopQrcode;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -15,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -47,38 +52,14 @@ public class SubscribeHandler extends AbstractHandler {
                         //判断是新码还是旧码，新码直接保存到qrcode_fans表
                         WxcmsAccountShopQrcode wxcmsAccountShopQrcodeDb = WxcmsAccountShopQrcode.dao.findFirst(Db.getSql("admin.wxcmsAccountShopQrcode.getShopByQrcodeParam")
                                 ,eventKey);
-
                         if (wxcmsAccountShopQrcodeDb == null) {
                             //说明新码表里面不存在，则是旧码，用旧码去换取新码保存
-                            //1.先去agent_qrcode表找到代理商
-                            WxcmsAccountAgentQrcode wxcmsAccountAgentQrcodeDb = WxcmsAccountAgentQrcode.dao.findFirst(Db.getSql("admin.wxcmsAccountAgentQrcode.getAgentByQrcodeParam")
-                                    ,eventKey);
-                            if (wxcmsAccountAgentQrcodeDb != null) {
-                            //2.在agent_shop表由agent_id找到shop,找不到则默认id为1的shop
-                            WxcmsAccountAgentShop wxcmsAccountAgentShopDb = WxcmsAccountAgentShop.dao.findFirst(Db.getSql("admin.wxcmsAccountAgentShop.getShopByAgentId")
-                                    ,wxcmsAccountAgentQrcodeDb.getAgentId());
-                                if (wxcmsAccountAgentShopDb != null) {
-                                    //3.在表shop_qrcode由shopid找到二维码信息
-                                    WxcmsAccountShopQrcode wxcmsAccountShopQrcode = WxcmsAccountShopQrcode.dao.findFirst(Db.getSql("admin.wxcmsAccountShopQrcode.getQrcodeParamByShopId")
-                                            ,wxcmsAccountAgentShopDb.getShopid());
-                                    if (wxcmsAccountShopQrcode != null) {
-                                        //4.把拿到的qrcode_param保存到qrcode_fans表
-                                        saveToQrcodeFans(fromUserName,wxcmsAccountShopQrcode.getQrcodeParam(),toUserName);
-                                    }else {
-                                        logger.debug("店铺不存在,参数shopId:"+wxcmsAccountAgentShopDb.getShopid());
-                                    }
-
-                                }else {
-                                    //代理商店铺为空，则默认把粉丝保存到亚太天能店铺二维码
-                                    WxcmsAccountShopQrcode wxcmsAccountShopQrcode = WxcmsAccountShopQrcode.dao.findFirst(Db.getSql("admin.wxcmsAccountShopQrcode.getQrcodeParamByShopId")
-                                            ,1);
-                                    saveToQrcodeFans(fromUserName,wxcmsAccountShopQrcode.getQrcodeParam(),toUserName);
-                                }
-
+                            List<Record> recordList = Db.find(Db.getSqlPara("admin.wxcmsAccount.getNewQrcode", Kv.by("search",eventKey)));
+                            if (recordList != null && recordList.get(0) != null ) {
+                                saveToQrcodeFans(fromUserName,recordList.get(0).getStr("shop_qrcode_param"),toUserName);
                             }else {
                                 logger.debug("代理商不存在,参数eventKey:"+eventKey);
                             }
-
                         }else {
                             //说明是新码，则直接保存到qrcode_fans表
                             saveToQrcodeFans(fromUserName,eventKey,toUserName);
@@ -121,6 +102,11 @@ public class SubscribeHandler extends AbstractHandler {
 
                         }
 
+                    }else{
+                        //代理商店铺为空，则默认把粉丝保存到亚太天能店铺二维码
+                        WxcmsAccountShopQrcode wxcmsAccountShopQrcode = WxcmsAccountShopQrcode.dao.findFirst(Db.getSql("admin.wxcmsAccountShopQrcode.getQrcodeParamByShopId")
+                                ,1);
+                        saveToQrcodeFans(fromUserName,wxcmsAccountShopQrcode.getQrcodeParam(),toUserName);
                     }
 
                 }
