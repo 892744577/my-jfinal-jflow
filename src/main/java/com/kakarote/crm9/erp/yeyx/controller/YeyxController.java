@@ -55,6 +55,14 @@ public class YeyxController extends Controller {
             hrGongdanUpdate.setServiceNo(hrGongdan.getServiceNo());
             hrGongdanUpdate.update();
             renderJson(R.ok().put("message", "成功"));
+
+            //记录日志
+            HrGongdanZmnLog hrGongdanZmnLog = new HrGongdanZmnLog();
+            hrGongdanZmnLog.setFuncId("ReSendOrder");
+            hrGongdanZmnLog.setThirdOrderId("009-" + hrGongdanRequest.getOid()+"-" + hrGongdan.getServiceNo());
+            hrGongdanZmnLog.setOrderId(orderId);
+            hrGongdanZmnLog.setOptTime(new Date().getTime()/1000);
+            hrGongdanZmnLog.save();
         }else {
             Log.DebugWriteInfo("==============>调用新增订单接口失败");
             renderJson(R.ok().put("code", 500).put("message", "result"));
