@@ -49,8 +49,8 @@ public class WxMpConfiguration {
         WxMpProperties.MpConfig config1 = new WxMpProperties.MpConfig();
         config1.setAppId(SystemConfig.getCS_AppSettings().get("MP.APPID").toString());
         config1.setSecret(SystemConfig.getCS_AppSettings().get("MP.APPSECRET").toString());
-        config1.setSecret(SystemConfig.getCS_AppSettings().get("MP.TOKEN").toString());
-        config1.setSecret(SystemConfig.getCS_AppSettings().get("MP.EncodingAESKey").toString());
+        config1.setToken(SystemConfig.getCS_AppSettings().get("MP.TOKEN").toString());
+        config1.setAesKey(SystemConfig.getCS_AppSettings().get("MP.EncodingAESKey").toString());
         List<WxMpProperties.MpConfig> configs = new ArrayList<WxMpProperties.MpConfig>();
         configs.add(config1);
 
@@ -64,7 +64,8 @@ public class WxMpConfiguration {
                 WxMpDefaultConfigImpl configStorage = new WxMpDefaultConfigImpl();
                 configStorage.setAppId(a.getAppId());
                 configStorage.setSecret(a.getSecret());
-                configStorage.setToken(MpUtil.getAccessTokenByInterface().getAccessToken());
+                configStorage.setAccessToken(MpUtil.getAccessTokenByInterface().getAccessToken());
+                configStorage.setToken(a.getToken());
                 configStorage.setAesKey(a.getAesKey());
                 return configStorage;
             }).collect(Collectors.toMap(WxMpDefaultConfigImpl::getAppId, a -> a, (o, n) -> o)));
