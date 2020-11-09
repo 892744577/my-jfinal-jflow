@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
@@ -63,5 +64,18 @@ public class MpService {
             e.getError().getJson();
         }
         return  wxMpUser;
+    }
+    /**
+     * 生成永久带参数二维码
+     */
+    public WxMpQrCodeTicket qrCodeCreateLastTicket(String scene){
+        WxMpService wxMpService = this.wxMpConfiguration.wxMpService();
+        WxMpQrCodeTicket ticket = new WxMpQrCodeTicket();
+        try {
+            ticket = wxMpService.getQrcodeService().qrCodeCreateLastTicket(scene);
+        } catch (WxErrorException e) {
+            log.info(e.getError().getJson());
+        }
+        return ticket;
     }
 }

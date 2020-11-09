@@ -92,4 +92,12 @@ public class MpController extends Controller {
     public void getUserData(@Para("") MpUserInfoReq mpUserInfoReq){
         renderJson(R.ok().put("subscribe",mpService.userInfo(mpUserInfoReq).getSubscribe()));
     }
+
+    /**
+     * 生成永久带参数二维码
+     * @param scence
+     */
+    public void qrCodeCreateLastTicket(String scence) {
+        renderJson(mpService.qrCodeCreateLastTicket(scence));
+    }
 }
