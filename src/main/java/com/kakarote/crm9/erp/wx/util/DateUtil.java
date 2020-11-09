@@ -399,6 +399,17 @@ public class DateUtil {
         }
     }
 
+    public static String timestampToDateStr(String str_num) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        if (str_num.length() == 13) {
+            String date = format.format(new Date(Long.parseLong(str_num)));
+            return date;
+        } else {
+            String date = format.format(new Date(Integer.parseInt(str_num) * 1000L));
+            return date;
+        }
+    }
+
     public static void main(String[] args) throws Exception{
 
     	String start="2018-01-04";
