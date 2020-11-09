@@ -11,6 +11,9 @@ import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 
 import java.util.List;
 
+/**
+ * 粉丝管理
+ */
 public class WxCmsController extends Controller {
     @Inject
     private WxMpConfiguration wxMpConfiguration;
