@@ -53,7 +53,7 @@ public class MpService {
         return "ok";
     }
     /**
-     * 获取是否关注公众号
+     * 获取用户基本信息，非auth2.0
      */
     public WxMpUser userInfo(MpUserInfoReq mpUserInfoReq){
         WxMpService wxMpService = this.wxMpConfiguration.wxMpService();
