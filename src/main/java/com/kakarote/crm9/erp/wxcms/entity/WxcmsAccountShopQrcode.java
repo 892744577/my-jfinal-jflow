@@ -1,6 +1,5 @@
 package com.kakarote.crm9.erp.wxcms.entity;
 
-
 import com.kakarote.crm9.erp.wxcms.entity.base.BaseWxcmsAccountShopQrcode;
 
 /**

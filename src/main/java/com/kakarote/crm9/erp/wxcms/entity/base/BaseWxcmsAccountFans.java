@@ -1,4 +1,4 @@
-package com.kakarote.crm9.erp.admin.entity.base;
+package com.kakarote.crm9.erp.wxcms.entity.base;
 
 import com.jfinal.plugin.activerecord.IBean;
 import com.jfinal.plugin.activerecord.Model;
