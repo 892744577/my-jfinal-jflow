@@ -2,13 +2,14 @@ package com.kakarote.crm9.erp.wx.mphandler;
 
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Aop;
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
 import com.kakarote.crm9.erp.wx.mpbuilder.TextBuilder;
+import com.kakarote.crm9.erp.wx.service.HandlerService;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountFans;
-import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountQrcodeFans;
 import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountShopQrcode;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -27,6 +28,8 @@ import java.util.Map;
  * @author Binary Wang(https://github.com/binarywang)
  */
 public class SubscribeHandler extends AbstractHandler {
+    @Inject
+    private HandlerService handlerService;
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage,
@@ -57,13 +60,13 @@ public class SubscribeHandler extends AbstractHandler {
                             //说明新码表里面不存在，则是旧码，用旧码去换取新码保存
                             List<Record> recordList = Db.find(Db.getSqlPara("admin.wxcmsAccount.getNewQrcode", Kv.by("search",eventKey)));
                             if (recordList != null && recordList.get(0) != null ) {
-                                saveToQrcodeFans(fromUserName,recordList.get(0).getStr("shop_qrcode_param"),toUserName);
+                                handlerService.saveToQrcodeFans(fromUserName,recordList.get(0).getStr("shop_qrcode_param"),toUserName);
                             }else {
                                 logger.debug("代理商不存在,参数eventKey:"+eventKey);
                             }
                         }else {
                             //说明是新码，则直接保存到qrcode_fans表
-                            saveToQrcodeFans(fromUserName,eventKey,toUserName);
+                            handlerService.saveToQrcodeFans(fromUserName,eventKey,toUserName);
                         }
 
                         //新关注用户保存到wxcms_account_fans表,先判断openId是否存在表中
@@ -107,7 +110,7 @@ public class SubscribeHandler extends AbstractHandler {
                         //代理商店铺为空，则默认把粉丝保存到亚太天能店铺二维码
                         WxcmsAccountShopQrcode wxcmsAccountShopQrcode = WxcmsAccountShopQrcode.dao.findFirst(Db.getSql("admin.wxcmsAccountShopQrcode.getQrcodeParamByShopId")
                                 ,1);
-                        saveToQrcodeFans(fromUserName,wxcmsAccountShopQrcode.getQrcodeParam(),toUserName);
+                        handlerService.saveToQrcodeFans(fromUserName,wxcmsAccountShopQrcode.getQrcodeParam(),toUserName);
                     }
 
                 }
@@ -147,54 +150,6 @@ public class SubscribeHandler extends AbstractHandler {
         throws Exception {
         //TODO
         return null;
-    }
-
-    /*
-     * @Description //保存到qrcode_fans表
-     * @Author wangkaida
-     * @Date 11:58 2020/11/9
-     * @Param [fromUserName, eventKey, toUserName]
-     * @return boolean
-     **/
-    private boolean saveToQrcodeFans(String fromUserName,String eventKey,String toUserName){
-        WxcmsAccountQrcodeFans wxcmsAccountQrcodeFansDb = WxcmsAccountQrcodeFans.dao.findFirst(Db.getSql("admin.wxcmsAccountQrcodeFans.getFansByFromUserName")
-                ,fromUserName);
-
-        WxcmsAccountQrcodeFans wxcmsAccountQrcodeFans = WxcmsAccountQrcodeFans.dao.findFirst(Db.getSql("admin.wxcmsAccountQrcodeFans.getFansByQrcodeParam")
-                ,fromUserName,eventKey);
-
-        if (wxcmsAccountQrcodeFansDb != null) {
-            if (wxcmsAccountQrcodeFans != null) {
-                logger.debug("用户"+fromUserName+"已经关注过亚太天能公众号,参数:"+eventKey);
-            }else {
-                //更新到表qrcode_fans
-                if (StringUtils.isNotBlank(eventKey)) {
-                    WxcmsAccountQrcodeFans wxcmsAccountQrcodeFansUpdate = new WxcmsAccountQrcodeFans();
-                    wxcmsAccountQrcodeFansUpdate.setId(wxcmsAccountQrcodeFansDb.getId());
-                    wxcmsAccountQrcodeFansUpdate.setEventKey(eventKey);
-                    wxcmsAccountQrcodeFansUpdate.update();
-
-                    //进行代理商的新增关注粉丝数量信息推送
-//                                        String tmpResult = sendTemplateMessageToAgent(agentId);
-//                                        logger.debug("进行代理商的新增关注粉丝数量信息推送结果:"+tmpResult);
-                }
-            }
-        }else {
-            //保存到表qrcode_fans
-            if (StringUtils.isNotBlank(eventKey)) {
-                WxcmsAccountQrcodeFans wxcmsAccountQrcodeFansSave = new WxcmsAccountQrcodeFans();
-                wxcmsAccountQrcodeFansSave.setFromuserName(fromUserName);
-                wxcmsAccountQrcodeFansSave.setEventKey(eventKey);
-                wxcmsAccountQrcodeFansSave.setTouserName(toUserName);
-                wxcmsAccountQrcodeFansSave.setCreateTime(new Date());
-                Boolean flag = wxcmsAccountQrcodeFansSave.save();
-
-                //进行代理商的新增关注粉丝数量信息推送
-//                                    String tmpResult = sendTemplateMessageToAgent(agentId);
-//                                    logger.debug("进行代理商的新增关注粉丝数量信息推送结果:"+tmpResult);
-            }
-        }
-        return true;
     }
 
 }
