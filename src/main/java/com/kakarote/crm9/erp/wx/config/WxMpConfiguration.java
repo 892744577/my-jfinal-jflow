@@ -2,6 +2,7 @@ package com.kakarote.crm9.erp.wx.config;
 
 
 import BP.Difference.SystemConfig;
+import com.jfinal.aop.Inject;
 import com.kakarote.crm9.erp.wx.mphandler.*;
 import com.kakarote.crm9.erp.wx.util.MpUtil;
 import lombok.AllArgsConstructor;
@@ -33,15 +34,25 @@ import static me.chanjar.weixin.mp.constant.WxMpEventConstants.POI_CHECK_NOTIFY;
 @NoArgsConstructor
 @Data
 public class WxMpConfiguration {
+    @Inject
     private  LogHandler logHandler;
+    @Inject
     private  NullHandler nullHandler;
+    @Inject
     private  KfSessionHandler kfSessionHandler;
+    @Inject
     private  StoreCheckNotifyHandler storeCheckNotifyHandler;
+    @Inject
     private  LocationHandler locationHandler;
+    @Inject
     private  MenuHandler menuHandler;
+    @Inject
     private  MsgHandler msgHandler;
+    @Inject
     private  UnsubscribeHandler unsubscribeHandler;
+    @Inject
     private  SubscribeHandler subscribeHandler;
+    @Inject
     private  ScanHandler scanHandler;
 
     public WxMpService wxMpService() {

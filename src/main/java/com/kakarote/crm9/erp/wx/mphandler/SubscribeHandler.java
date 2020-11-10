@@ -1,5 +1,6 @@
 package com.kakarote.crm9.erp.wx.mphandler;
 
+import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Aop;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
@@ -32,7 +33,7 @@ public class SubscribeHandler extends AbstractHandler {
                                     Map<String, Object> context, WxMpService weixinService,
                                     WxSessionManager sessionManager) throws WxErrorException {
 
-        this.logger.info("新关注用户 OPENID: " + wxMessage.getFromUser());
+        this.logger.info("新关注用户: " + JSON.toJSONString(wxMessage));
 
         // 获取微信用户基本信息
         try {

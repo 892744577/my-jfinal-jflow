@@ -8,13 +8,23 @@ import com.kakarote.crm9.erp.wx.service.MpService;
 import com.kakarote.crm9.erp.wx.util.MpUtil;
 import com.kakarote.crm9.erp.wx.vo.MpMsgSendReq;
 import com.kakarote.crm9.erp.wx.vo.MpUserInfoReq;
+import com.kakarote.crm9.erp.wx.vo.ServerHandlerRequest;
 import com.kakarote.crm9.utils.R;
+import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
+import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import me.chanjar.weixin.mp.bean.result.WxMpOAuth2AccessToken;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
+import me.chanjar.weixin.mp.config.WxMpConfigStorage;
 import org.apache.commons.lang3.StringUtils;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+
+@Slf4j
 public class MpController extends Controller {
 
     @Inject
@@ -99,5 +109,61 @@ public class MpController extends Controller {
      */
     public void qrCodeCreateLastTicket(String scence) {
         renderJson(mpService.qrCodeCreateLastTicket(scence));
+    }
+
+    /**
+     * 消息推送
+     */
+    public void handler(@Para("") ServerHandlerRequest serverHandlerRequest) throws IOException {
+        HttpServletRequest request = this.getRequest();
+        //微信参数
+        WxMpService wxMpService = wxMpConfiguration.wxMpService();
+        WxMpMessageRouter wxMpMessageRouter = wxMpConfiguration.messageRouter(wxMpService);
+        WxMpConfigStorage wxMpConfigStorage = wxMpService.getWxMpConfigStorage();
+        //for test
+        System.out.println("开始执行验证方法。");
+        String signature = serverHandlerRequest.getSignature();
+        // 时间戳
+        String timestamp = serverHandlerRequest.getTimestamp();
+        // 随机数
+        String nonce = serverHandlerRequest.getNonce();
+        // 通过检验signature对请求进行校验，若校验成功则原样返回echostr，表示接入成功，否则接入失败
+        //1、非法请求
+        if (!wxMpService.checkSignature(timestamp, nonce,signature)) {
+            renderJson();
+        }
+
+        //2、说明是一个仅仅用来验证的请求，回显echostr
+        String echostr = serverHandlerRequest.getEchostr();
+        if (StringUtils.isNotBlank(echostr)) {
+            renderText(echostr);
+        }
+
+        String encryptType = StringUtils.isBlank(serverHandlerRequest.getEncrypt_type()) ?
+                "raw" :
+                serverHandlerRequest.getEncrypt_type();
+
+        String raw = getRawData();
+        log.info("接收消息raw："+raw);
+        if ("raw".equals(encryptType) && StringUtils.isNotEmpty(raw)) {
+            // 明文传输的消息
+            WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(raw);
+            WxMpXmlOutMessage outMessage = wxMpMessageRouter.route(inMessage);
+            if (outMessage!=null) {
+                renderText(outMessage.toXml());
+            }else{
+                renderText("");
+            }
+        }
+
+        if ("aes".equals(encryptType)) {
+            // 是aes加密的消息
+            String msgSignature = request.getParameter("msg_signature");
+            WxMpXmlMessage inMessage = WxMpXmlMessage.fromEncryptedXml(request.getInputStream(), wxMpConfigStorage, timestamp, nonce, msgSignature);
+            WxMpXmlOutMessage outMessage = wxMpMessageRouter.route(inMessage);
+            if (StringUtils.isNotBlank(outMessage.toEncryptedXml(wxMpConfigStorage))) {
+                renderText(outMessage.toEncryptedXml(wxMpConfigStorage));
+            }
+        }
     }
 }
