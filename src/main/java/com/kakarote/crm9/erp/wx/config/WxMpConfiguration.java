@@ -8,6 +8,7 @@ import com.kakarote.crm9.erp.wx.util.MpUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.mp.api.WxMpMessageRouter;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.api.impl.WxMpServiceImpl;
@@ -33,7 +34,10 @@ import static me.chanjar.weixin.mp.constant.WxMpEventConstants.POI_CHECK_NOTIFY;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Slf4j
 public class WxMpConfiguration {
+    private static WxMpService service;
+    private static WxMpMessageRouter newRouter;
     @Inject
     private  LogHandler logHandler;
     @Inject
@@ -55,8 +59,12 @@ public class WxMpConfiguration {
     @Inject
     private  ScanHandler scanHandler;
 
-    public WxMpService wxMpService() {
-
+    public synchronized WxMpService wxMpService() {
+        //单例模式
+        if(this.newRouter!=null){
+            log.info("service不为空，直接返回");
+            return this.service;
+        }
         WxMpProperties.MpConfig config1 = new WxMpProperties.MpConfig();
         config1.setAppId(SystemConfig.getCS_AppSettings().get("MP.APPID").toString());
         config1.setSecret(SystemConfig.getCS_AppSettings().get("MP.APPSECRET").toString());
@@ -83,7 +91,12 @@ public class WxMpConfiguration {
         return service;
     }
 
-    public WxMpMessageRouter messageRouter(WxMpService wxMpService) {
+    public synchronized WxMpMessageRouter messageRouter(WxMpService wxMpService) {
+        //单例模式
+        if(this.newRouter!=null){
+            log.info("newRouter不为空，直接返回");
+            return this.newRouter;
+        }
         final WxMpMessageRouter newRouter = new WxMpMessageRouter(wxMpService);
 
         // 记录所有事件的日志 （异步执行）
