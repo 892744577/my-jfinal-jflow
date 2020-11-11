@@ -1,5 +1,6 @@
 package com.kakarote.crm9.erp.wx.mphandler;
 
+import com.jfinal.plugin.activerecord.Db;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
@@ -20,7 +21,8 @@ public class UnsubscribeHandler extends AbstractHandler {
                                     WxSessionManager sessionManager) {
         String openId = wxMessage.getFromUser();
         this.logger.info("取消关注用户 OPENID: " + openId);
-        // TODO 可以更新本地数据库为取消关注状态
+        //add by wangkaida 删除account_fans表里面对应openId记录
+        Db.delete(Db.getSql("admin.wxcmsAccountFans.delAccountFansByOpenId"), openId);
         return null;
     }
 

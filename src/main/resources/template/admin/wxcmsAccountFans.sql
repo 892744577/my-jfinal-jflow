@@ -9,4 +9,7 @@
       or a.district LIKE concat('%',#para(search),'%') or a.nick_name like CONCAT('%',#para(search),'%'))
     #end
   #end
+  #sql ("delAccountFansByOpenId")
+    delete FROM wxcms_account_fans where open_id = ?
+  #end
 #end
