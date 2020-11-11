@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
+import com.jfinal.plugin.activerecord.SqlPara;
 import com.kakarote.crm9.erp.wx.service.HandlerService;
 import com.kakarote.crm9.erp.wx.util.BaiduMapUtils;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
@@ -36,7 +37,7 @@ public class LocationHandler extends AbstractHandler {
             wxMessage.getLatitude(), wxMessage.getLongitude(), String.valueOf(wxMessage.getPrecision()));
 
         //add by wangkaida
-        logger.debug("进入上报地理位置事件:"+wxMessage.toString());
+        logger.info("进入上报地理位置事件:"+wxMessage.toString());
         String toUserName = wxMessage.getToUser(); //开发者微信号
         String fromUserName = wxMessage.getFromUser(); //发送方帐号（一个OpenID）
         String createTime = DateUtil.timestampToDateStr(String.valueOf(wxMessage.getCreateTime())); //消息创建时间 （整型）
@@ -48,7 +49,7 @@ public class LocationHandler extends AbstractHandler {
 
         //亚太天能公众号
         if ("gh_9594312e8ff1".equals(toUserName)) {
-            logger.debug(fromUserName+"进入亚太天能公众号,上报地理位置");
+            logger.info(fromUserName+"进入亚太天能公众号,上报地理位置");
             String formatted_address = "";
             String country = "";
             String province = "";
@@ -115,25 +116,25 @@ public class LocationHandler extends AbstractHandler {
                             district = districtStr;
                         }
                         street = jsonObjDetail.getString("street");
-                        logger.debug("formatted_address:"+formatted_address+"country:"+country+"province:"+province+"city:"+city+"district:"+district+"street:"+street);
+                        logger.info("formatted_address:"+formatted_address+"country:"+country+"province:"+province+"city:"+city+"district:"+district+"street:"+street);
                     }else {
                         //调用通过经度纬度获取详细地址信息失败
-                        logger.debug("调用通过经度纬度获取详细地址信息失败");
+                        logger.info("调用通过经度纬度获取详细地址信息失败");
                         return null;
                     }
                 }else {
                     //调用把微信获取到的经纬度转变为百度的经纬度失败
-                    logger.debug("调用把微信获取到的经纬度转变为百度的经纬度失败");
+                    logger.info("调用把微信获取到的经纬度转变为百度的经纬度失败");
                     return null;
                 }
             }
 
-            logger.debug("toUserName:"+toUserName+","+"fromUserName:"+fromUserName+","+"createTime:"+createTime+","+"msgType:"+msgType+","+"event:"+event+","+"latitude:"+latitude+","+"longitude:"+longitude+","+"precision:"+precision);
+            logger.info("toUserName:"+toUserName+","+"fromUserName:"+fromUserName+","+"createTime:"+createTime+","+"msgType:"+msgType+","+"event:"+event+","+"latitude:"+latitude+","+"longitude:"+longitude+","+"precision:"+precision);
             //已经通过扫码关注店铺店铺的用户不进行地理位置划分
             WxcmsAccountQrcodeFans wxcmsAccountQrcodeFansDb = WxcmsAccountQrcodeFans.dao.findFirst(Db.getSql("admin.wxcmsAccountQrcodeFans.getFansByFromUserName")
                     ,fromUserName);
             if (wxcmsAccountQrcodeFansDb != null) {
-                logger.debug("用户"+fromUserName+"已经通过二维码参数划分给店铺,店铺二维码参数:"+wxcmsAccountQrcodeFansDb.getEventKey());
+                logger.info("用户"+fromUserName+"已经通过二维码参数划分给店铺,店铺二维码参数:"+wxcmsAccountQrcodeFansDb.getEventKey());
             }else {
                     //用户未划分给店铺,根据区域进行店铺划分
                     //根据区域把粉丝划分给对应区域粉丝最多的店铺
@@ -142,7 +143,9 @@ public class LocationHandler extends AbstractHandler {
                     List<WxcmsAccountShop> shopCityList = null;
                     List<WxcmsAccountShop> shopProvinceList = null;
                     if (StringUtils.isNotBlank(district)) {
-                        shopDistrictList = WxcmsAccountShop.dao.find(Db.getSqlPara("admin.wxcmsAccountShop.getAccountShopByAddress", Kv.by("province",province).set("city",city).set("district",district)));
+                        Kv kv = Kv.by("province",province).set("city",city).set("district",district);
+                        SqlPara sqlPara = Db.getSqlPara("admin.wxcmsAccountShop.getAccountShopByAddress", kv);
+                        shopDistrictList = WxcmsAccountShop.dao.find(sqlPara);
                     }
                     Long shopId = 0L;
                     if (shopDistrictList.size() > 0) {
@@ -154,7 +157,7 @@ public class LocationHandler extends AbstractHandler {
                         } else {
                             //区下面有多个店铺
                             for (WxcmsAccountShop accountShop : shopDistrictList) {
-                                logger.debug("区下面有店铺:"+accountShop.getId());
+                                logger.info("区下面有店铺:"+accountShop.getId());
                                 //计算该店铺旗下的粉丝数量
                                 List<WxcmsAccountQrcodeFans> qrcodeFansList = WxcmsAccountQrcodeFans.dao.find(Db.getSql("admin.wxcmsAccountQrcodeFans.getFansByShopId")
                                         ,accountShop.getId());
@@ -164,7 +167,7 @@ public class LocationHandler extends AbstractHandler {
                             //找到粉丝数目最多的店铺
                             shopId = getMaxFansShop(treeMap);
                         }
-                        logger.debug("粉丝数目最多的店铺Id:"+shopId);
+                        logger.info("粉丝数目最多的店铺Id:"+shopId);
                         //把粉丝划分到对应区域的店铺
                         //查询对应店铺的二维码参数
                         //把信息保存到qrcode_fans表,进行划分
@@ -183,7 +186,7 @@ public class LocationHandler extends AbstractHandler {
                             } else {
                                 //市下面有多个店铺
                                 for (WxcmsAccountShop accountShop : shopCityList) {
-                                    logger.debug("市下面有店铺:"+accountShop.getId());
+                                    logger.info("市下面有店铺:"+accountShop.getId());
                                     //计算该店铺旗下的粉丝数量
                                     List<WxcmsAccountQrcodeFans> qrcodeFansList = WxcmsAccountQrcodeFans.dao.find(Db.getSql("admin.wxcmsAccountQrcodeFans.getFansByShopId")
                                             ,accountShop.getId());
@@ -193,7 +196,7 @@ public class LocationHandler extends AbstractHandler {
                                 //找到粉丝数目最多的店铺
                                 shopId = getMaxFansShop(treeMap);
                             }
-                            logger.debug("粉丝数目最多的店铺Id:"+shopId);
+                            logger.info("粉丝数目最多的店铺Id:"+shopId);
                             //把粉丝划分到对应区域的店铺
                             //查询对应店铺的二维码参数
                             //把信息保存到qrcode_fans表,进行划分
@@ -212,7 +215,7 @@ public class LocationHandler extends AbstractHandler {
                                 } else {
                                     //省下面有多个店铺
                                     for (WxcmsAccountShop accountShop : shopProvinceList) {
-                                        logger.debug("省下面有店铺:"+accountShop.getId());
+                                        logger.info("省下面有店铺:"+accountShop.getId());
                                         //计算该店铺旗下的粉丝数量
                                         List<WxcmsAccountQrcodeFans> qrcodeFansList = WxcmsAccountQrcodeFans.dao.find(Db.getSql("admin.wxcmsAccountQrcodeFans.getFansByShopId")
                                                 ,accountShop.getId());
@@ -222,7 +225,7 @@ public class LocationHandler extends AbstractHandler {
                                     //找到粉丝数目最多的店铺
                                     shopId = getMaxFansShop(treeMap);
                                 }
-                                logger.debug("粉丝数目最多的店铺Id:"+shopId);
+                                logger.info("粉丝数目最多的店铺Id:"+shopId);
                                 //把粉丝划分到对应区域的店铺
                                 //查询对应店铺的二维码参数
                                 //把信息保存到qrcode_fans表,进行划分
