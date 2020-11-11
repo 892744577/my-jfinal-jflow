@@ -39,8 +39,7 @@ public class SubscribeHandler extends AbstractHandler {
 
         // 获取微信用户基本信息
         try {
-            WxMpUser wxMpUser = weixinService.getUserService()
-                .userInfo(wxMessage.getFromUser(), null);
+            WxMpUser wxMpUser = weixinService.getUserService().userInfo(wxMessage.getFromUser(), null);
             if (wxMpUser != null) {
                 //add by wangkaida 用户关注时调用的方法
                 String eventKey = wxMessage.getEventKey();
@@ -54,30 +53,30 @@ public class SubscribeHandler extends AbstractHandler {
                     logger.info("用户"+fromUserName+"已经关注过亚太天能公众号");
                 }else {
                     //通过openId获取微信用户的信息
-                        logger.info("获取用户信息接口返回结果：" + wxMpUser.toString());
-                        fans = new WxcmsAccountFans();
-                        fans.setOpenId(wxMpUser.getOpenId());// 用户的标识
-                        fans.setSubscribeStatus(wxMpUser.getSubscribe()?1:0);// 关注状态（1是关注，0是未关注），未关注时获取不到其余信息
-                        fans.setSubscribeTime(DateUtil.timestampToDateStr(String.valueOf(wxMpUser.getSubscribeTime())));// 用户关注时间
-                        try {
-                            String nickname = wxMpUser.getNickname();
-                            fans.setNickName(nickname.getBytes("UTF-8"));
-                        } catch (UnsupportedEncodingException e) {
-                            e.printStackTrace();
-                        }
-                        fans.setGender(wxMpUser.getSex()); // 用户的性别（1是男性，2是女性，0是未知）
-                        fans.setLanguage(wxMpUser.getLanguage());// 用户的语言，简体中文为zh_CN
-                        fans.setCountry(wxMpUser.getCountry());// 用户所在国家
-                        fans.setProvince(wxMpUser.getProvince());// 用户所在省份
-                        fans.setCity(wxMpUser.getCity());// 用户所在城市
-                        fans.setHeadImgUrl(wxMpUser.getHeadImgUrl());// 用户头像
-                        fans.setRemark(wxMpUser.getRemark());
-                        fans.setStatus(1);
-                        fans.setCreateTime(new Date());
-                        // 设置公众号
-                        fans.setAccount("gh_9594312e8ff1");
-                        //保存数据到wxcms_account_fans表
-                        fans.save();
+                    logger.info("获取用户信息接口返回结果：" + wxMpUser.toString());
+                    fans = new WxcmsAccountFans();
+                    fans.setOpenId(wxMpUser.getOpenId());// 用户的标识
+                    fans.setSubscribeStatus(wxMpUser.getSubscribe()?1:0);// 关注状态（1是关注，0是未关注），未关注时获取不到其余信息
+                    fans.setSubscribeTime(DateUtil.timestampToDateStr(String.valueOf(wxMpUser.getSubscribeTime())));// 用户关注时间
+                    try {
+                        String nickname = wxMpUser.getNickname();
+                        fans.setNickName(nickname.getBytes("UTF-8"));
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+                    fans.setGender(wxMpUser.getSex()); // 用户的性别（1是男性，2是女性，0是未知）
+                    fans.setLanguage(wxMpUser.getLanguage());// 用户的语言，简体中文为zh_CN
+                    fans.setCountry(wxMpUser.getCountry());// 用户所在国家
+                    fans.setProvince(wxMpUser.getProvince());// 用户所在省份
+                    fans.setCity(wxMpUser.getCity());// 用户所在城市
+                    fans.setHeadImgUrl(wxMpUser.getHeadImgUrl());// 用户头像
+                    fans.setRemark(wxMpUser.getRemark());
+                    fans.setStatus(1);
+                    fans.setCreateTime(new Date());
+                    // 设置公众号
+                    fans.setAccount("gh_9594312e8ff1");
+                    //保存数据到wxcms_account_fans表
+                    fans.save();
                 }
 
                 //2、关注记录码
