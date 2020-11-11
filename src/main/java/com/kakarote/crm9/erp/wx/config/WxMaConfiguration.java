@@ -1,6 +1,5 @@
 package com.kakarote.crm9.erp.wx.config;
 
-import BP.Difference.SystemConfig;
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.api.impl.WxMaServiceImpl;
 import cn.binarywang.wx.miniapp.bean.WxMaKefuMessage;
@@ -50,8 +49,8 @@ public class WxMaConfiguration {
      */
     public void initProperties(){
         WxMaProperties.Config config1 = new WxMaProperties.Config();
-        config1.setAppid(SystemConfig.getCS_AppSettings().get("MA.APPID").toString());
-        config1.setSecret(SystemConfig.getCS_AppSettings().get("MA.APPSECRET").toString());
+        config1.setAppid(WxMaAppIdEmun.ma0.getCode());
+        config1.setSecret(WxMaAppIdEmun.ma0.getScret());
         List<WxMaProperties.Config> configs = new ArrayList<WxMaProperties.Config>();
         configs.add(config1);
         this.properties.setConfigs(configs);

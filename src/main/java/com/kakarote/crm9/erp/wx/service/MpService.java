@@ -24,8 +24,6 @@ public class MpService {
 
     @Getter
     private String appid = SystemConfig.getCS_AppSettings().get("MP.APPID").toString();
-    @Getter
-    private String maAppid = SystemConfig.getCS_AppSettings().get("MA.APPID").toString();
 
     /**
      * 发送公众号模板消息
@@ -40,7 +38,7 @@ public class MpService {
         wxMpTemplateMessage.setTemplateId(mpMsgSendReq.getTemplate_id());
 
         WxMpTemplateMessage.MiniProgram miniProgram = new WxMpTemplateMessage.MiniProgram();
-        miniProgram.setAppid(this.maAppid);
+        miniProgram.setAppid(mpMsgSendReq.getMaAppId());
         miniProgram.setPagePath(mpMsgSendReq.getPage());
         wxMpTemplateMessage.setMiniProgram(miniProgram);
         List<WxMpTemplateData> ja = JSONArray.parseArray(mpMsgSendReq.getData(), WxMpTemplateData.class);

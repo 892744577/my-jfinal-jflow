@@ -10,6 +10,7 @@ import com.jfinal.aop.Aop;
 import com.jfinal.plugin.activerecord.Db;
 import com.kakarote.crm9.erp.admin.entity.PortEmp;
 import com.kakarote.crm9.erp.admin.service.PortEmpService;
+import com.kakarote.crm9.erp.wx.config.WxMaAppIdEmun;
 import com.kakarote.crm9.erp.wx.service.MpService;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.kakarote.crm9.erp.wx.vo.MpMsgSendReq;
@@ -311,6 +312,7 @@ public class F009FlowEvent extends FlowEventBase {
                     //进行信息推送
                     MpMsgSendReq mpReq = new MpMsgSendReq();
                     mpReq.setTouser(openId);
+                    mpReq.setMaAppId(WxMaAppIdEmun.ma0.getCode());
                     mpReq.setTemplate_id("XTmM0MzNMV-9ZKjPh4AFRwOgrGFM1nnFDGsLoS-erA0");
                     mpReq.setPage("pages/index/index");
 
