@@ -2,10 +2,14 @@ package com.kakarote.crm9.erp.wxcms.controller;
 
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
+import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
 import com.kakarote.crm9.erp.wx.config.WxMpConfiguration;
 import com.kakarote.crm9.erp.wx.service.MpService;
 import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountShop;
 import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountShopQrcode;
+import com.kakarote.crm9.erp.wxcms.service.WxcmsAccountAgentService;
+import com.kakarote.crm9.erp.wxcms.service.WxcmsAccountFansService;
+import com.kakarote.crm9.erp.wxcms.service.WxcmsAccountShopService;
 import com.kakarote.crm9.utils.R;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 
@@ -20,6 +24,12 @@ public class WxCmsController extends Controller {
 
     @Inject
     private MpService mpService;
+    @Inject
+    private WxcmsAccountAgentService wxcmsAccountAgentService;
+    @Inject
+    private WxcmsAccountShopService wxcmsAccountShopService;
+    @Inject
+    private WxcmsAccountFansService wxcmsAccountFansService;
     /**
      * 批量生成店铺带参数二维码
      * @param scence
@@ -44,19 +54,19 @@ public class WxCmsController extends Controller {
     /**
      * 查询代理商、门店、粉丝
      */
-    public void getAgents(String scence) {
-
+    public void getAgents(BasePageRequest basePageRequest) {
+        renderJson(R.ok().put("data",wxcmsAccountAgentService.queryPageList(basePageRequest)));
     }
     /**
      * 查询代理商、门店、粉丝
      */
-    public void getShops(String scence) {
-
+    public void getShops(BasePageRequest basePageRequest) {
+        renderJson(R.ok().put("data",wxcmsAccountShopService.queryPageList(basePageRequest)));
     }
     /**
      * 查询代理商、门店、粉丝
      */
-    public void getFans(String scence) {
-
+    public void getFans(BasePageRequest basePageRequest) {
+        renderJson(R.ok().put("data",wxcmsAccountFansService.queryPageList(basePageRequest)));
     }
 }
