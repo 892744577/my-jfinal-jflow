@@ -193,12 +193,36 @@ public abstract class BaseWxcmsAccountShop<M extends BaseWxcmsAccountShop<M>> ex
 		return getStr("shopNo");
 	}
 
+	public void setAgentNo(String agentNo) {
+		set("agentNo", agentNo);
+	}
+	
+	public String getAgentNo() {
+		return getStr("agentNo");
+	}
+
 	public void setOperatingStatus(Integer operatingStatus) {
 		set("operatingStatus", operatingStatus);
 	}
 	
 	public Integer getOperatingStatus() {
 		return getInt("operatingStatus");
+	}
+
+	public void setStore(Integer store) {
+		set("store", store);
+	}
+	
+	public Integer getStore() {
+		return getInt("store");
+	}
+
+	public void setIsValid(Integer isValid) {
+		set("is_valid", isValid);
+	}
+	
+	public Integer getIsValid() {
+		return getInt("is_valid");
 	}
 
 }
