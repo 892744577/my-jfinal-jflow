@@ -49,11 +49,16 @@ public class HandlerService {
                 wxcmsAccountQrcodeFansSave.setCreateTime(new Date());
                 Boolean flag = wxcmsAccountQrcodeFansSave.save();
 
-                //进行代理商的新增关注粉丝数量信息推送
-//                                    String tmpResult = sendTemplateMessageToAgent(agentId);
-//                                    logger.debug("进行代理商的新增关注粉丝数量信息推送结果:"+tmpResult);
+//              进行代理商的新增关注粉丝数量信息推送
+                String tmpResult = sendTemplateMessageToAgent();
+                log.debug("进行代理商的新增关注粉丝数量信息推送结果:"+tmpResult);
             }
         }
         return true;
+    }
+
+    public String sendTemplateMessageToAgent(){
+
+        return null;
     }
 }
