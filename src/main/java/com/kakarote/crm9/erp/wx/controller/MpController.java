@@ -144,7 +144,6 @@ public class MpController extends Controller {
                 serverHandlerRequest.getEncrypt_type();
 
         String raw = getRawData();
-        log.info("接收消息raw："+raw);
         if ("raw".equals(encryptType) && StringUtils.isNotEmpty(raw)) {
             // 明文传输的消息
             WxMpXmlMessage inMessage = WxMpXmlMessage.fromXml(raw);
