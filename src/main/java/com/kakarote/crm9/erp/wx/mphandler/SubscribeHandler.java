@@ -1,7 +1,6 @@
 package com.kakarote.crm9.erp.wx.mphandler;
 
 import com.alibaba.fastjson.JSON;
-import com.jfinal.aop.Aop;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
@@ -40,17 +39,50 @@ public class SubscribeHandler extends AbstractHandler {
 
         // 获取微信用户基本信息
         try {
-            WxMpUser userWxInfo = weixinService.getUserService()
+            WxMpUser wxMpUser = weixinService.getUserService()
                 .userInfo(wxMessage.getFromUser(), null);
-            if (userWxInfo != null) {
+            if (wxMpUser != null) {
                 //add by wangkaida 用户关注时调用的方法
                 String eventKey = wxMessage.getEventKey();
                 String toUserName = wxMessage.getToUser();
                 String fromUserName = wxMessage.getFromUser();
 
-                //亚太天能公众号
+                //1、新关注用户保存到wxcms_account_fans表,先判断openId是否存在表中
+                WxcmsAccountFans fans = WxcmsAccountFans.dao.findFirst(Db.getSql("admin.wxcmsAccountFans.getAccountFansByOpenId")
+                        ,fromUserName);
+                if (fans != null) {
+                    logger.info("用户"+fromUserName+"已经关注过亚太天能公众号");
+                }else {
+                    //通过openId获取微信用户的信息
+                        logger.info("获取用户信息接口返回结果：" + wxMpUser.toString());
+                        fans = new WxcmsAccountFans();
+                        fans.setOpenId(wxMpUser.getOpenId());// 用户的标识
+                        fans.setSubscribeStatus(wxMpUser.getSubscribe()?1:0);// 关注状态（1是关注，0是未关注），未关注时获取不到其余信息
+                        fans.setSubscribeTime(DateUtil.timestampToDateStr(String.valueOf(wxMpUser.getSubscribeTime())));// 用户关注时间
+                        try {
+                            String nickname = wxMpUser.getNickname();
+                            fans.setNickName(nickname.getBytes("UTF-8"));
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+                        fans.setGender(wxMpUser.getSex()); // 用户的性别（1是男性，2是女性，0是未知）
+                        fans.setLanguage(wxMpUser.getLanguage());// 用户的语言，简体中文为zh_CN
+                        fans.setCountry(wxMpUser.getCountry());// 用户所在国家
+                        fans.setProvince(wxMpUser.getProvince());// 用户所在省份
+                        fans.setCity(wxMpUser.getCity());// 用户所在城市
+                        fans.setHeadImgUrl(wxMpUser.getHeadImgUrl());// 用户头像
+                        fans.setRemark(wxMpUser.getRemark());
+                        fans.setStatus(1);
+                        fans.setCreateTime(new Date());
+                        // 设置公众号
+                        fans.setAccount("gh_9594312e8ff1");
+                        //保存数据到wxcms_account_fans表
+                        fans.save();
+                }
+
+                //2、关注记录码
                 if ("gh_9594312e8ff1".equals(toUserName)) {
-                    logger.debug(fromUserName+"关注亚太天能公众号");
+                    logger.info(fromUserName+"关注亚太天能公众号");
                     eventKey = eventKey.substring(eventKey.lastIndexOf("_")+1);
                     if (StringUtils.isNotBlank(eventKey)){
                         //判断是新码还是旧码，新码直接保存到qrcode_fans表
@@ -60,61 +92,23 @@ public class SubscribeHandler extends AbstractHandler {
                             //说明新码表里面不存在，则是旧码，用旧码去换取新码保存
                             List<Record> recordList = Db.find(Db.getSqlPara("admin.wxcmsAccount.getNewQrcode", Kv.by("search",eventKey)));
                             if (recordList != null && recordList.get(0) != null ) {
+                                //旧码换新码成功
                                 handlerService.saveToQrcodeFans(fromUserName,recordList.get(0).getStr("shop_qrcode_param"),toUserName);
                             }else {
-                                logger.debug("代理商不存在,参数eventKey:"+eventKey);
+                                //旧码换新码失败
+                                handlerService.saveToQrcodeFans(fromUserName,eventKey,toUserName);
                             }
                         }else {
                             //说明是新码，则直接保存到qrcode_fans表
                             handlerService.saveToQrcodeFans(fromUserName,eventKey,toUserName);
                         }
-
-                        //新关注用户保存到wxcms_account_fans表,先判断openId是否存在表中
-                        WxcmsAccountFans fans = WxcmsAccountFans.dao.findFirst(Db.getSql("admin.wxcmsAccountFans.getAccountFansByOpenId")
-                                ,fromUserName);
-                        if (fans != null) {
-                            logger.debug("用户"+fromUserName+"已经关注过亚太天能公众号");
-                        }else {
-                            //通过openId获取微信用户的信息
-                            WxMpUser wxMpUser = Aop.get(WxMpService.class).getUserService().userInfo(fromUserName);
-                            if (null != wxMpUser) {
-                                logger.debug("获取用户信息接口返回结果：" + wxMpUser.toString());
-                                fans = new WxcmsAccountFans();
-                                fans.setOpenId(wxMpUser.getOpenId());// 用户的标识
-                                fans.setSubscribeStatus(wxMpUser.getSubscribe()?1:0);// 关注状态（1是关注，0是未关注），未关注时获取不到其余信息
-                                fans.setSubscribeTime(DateUtil.timestampToDateStr(String.valueOf(wxMpUser.getSubscribeTime())));// 用户关注时间
-                                try {
-                                    String nickname = wxMpUser.getNickname();
-                                    fans.setNickName(nickname.getBytes("UTF-8"));
-                                } catch (UnsupportedEncodingException e) {
-                                    e.printStackTrace();
-                                }
-                                fans.setGender(wxMpUser.getSex()); // 用户的性别（1是男性，2是女性，0是未知）
-                                fans.setLanguage(wxMpUser.getLanguage());// 用户的语言，简体中文为zh_CN
-                                fans.setCountry(wxMpUser.getCountry());// 用户所在国家
-                                fans.setProvince(wxMpUser.getProvince());// 用户所在省份
-                                fans.setCity(wxMpUser.getCity());// 用户所在城市
-                                fans.setHeadImgUrl(wxMpUser.getHeadImgUrl());// 用户头像
-                                fans.setRemark(wxMpUser.getRemark());
-                                fans.setStatus(1);
-                                fans.setCreateTime(new Date());
-                                // 设置公众号
-                                fans.setAccount("gh_9594312e8ff1");
-                                //保存数据到wxcms_account_fans表
-                                fans.save();
-                            }
-
-                        }
-
                     }else{
                         //代理商店铺为空，则默认把粉丝保存到亚太天能店铺二维码
                         WxcmsAccountShopQrcode wxcmsAccountShopQrcode = WxcmsAccountShopQrcode.dao.findFirst(Db.getSql("admin.wxcmsAccountShopQrcode.getQrcodeParamByShopId")
                                 ,1);
                         handlerService.saveToQrcodeFans(fromUserName,wxcmsAccountShopQrcode.getQrcodeParam(),toUserName);
                     }
-
                 }
-
             }
         } catch (WxErrorException e) {
             if (e.getError().getErrorCode() == 48001) {
