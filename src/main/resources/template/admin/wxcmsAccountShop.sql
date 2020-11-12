@@ -12,10 +12,13 @@
     #end
   #end
   #sql ("queryPageList")
-    SELECT a.* FROM wxcms_account_shop a where 1=1
+    SELECT a.*,b.qrcode_param,b.qrcode_url FROM wxcms_account_shop a
+    left join wxcms_account_shop_qrcode b on a.id=b.shop_id
+    where 1=1
     #if(search)
       and (a.province LIKE concat('%',#para(search),'%') or a.city LIKE concat('%',#para(search),'%')
       or a.district LIKE concat('%',#para(search),'%') or a.shopNo like CONCAT('%',#para(search),'%'))
     #end
+    order by a.shopNo desc
   #end
 #end
