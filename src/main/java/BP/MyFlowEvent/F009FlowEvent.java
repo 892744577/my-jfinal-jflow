@@ -78,7 +78,8 @@ public class F009FlowEvent extends FlowEventBase {
                     String dateTime = DateUtil.changeDateTOStr2(new Date());
                     int totalNum = Db.queryInt("select IFNULL(MAX(SUBSTRING(serviceNo,-4)) + 1,0) from hr_gongdan t where DATE_FORMAT(t.rdt,'%Y%m%d') ="+ dateTime );
                     String serialNum = (new DecimalFormat("0000")).format(totalNum);//流水号格式化
-                    serviceNo = serviceSystem + serviceSegmentation + serviceType + dateTime + serialNum; //服务单编号
+                    String random = (new DecimalFormat("00")).format((System.currentTimeMillis()%100));//毫秒数的后两位当随机数
+                    serviceNo = serviceSystem + serviceSegmentation + serviceType + dateTime + random + serialNum; //服务单编号
                     row.SetValByKey("serviceNo",serviceNo);
                     Log.DebugWriteInfo("==============>调用新增订单生成serviceNo:" + serviceNo);
                 }

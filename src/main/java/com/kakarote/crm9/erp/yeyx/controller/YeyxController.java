@@ -159,7 +159,8 @@ public class YeyxController extends Controller {
         String STR_FORMAT = "0000";
         DecimalFormat df = new DecimalFormat(STR_FORMAT);
         String serialNum = df.format(totalNum); //流水号
-        String serviceNo = serviceSystem  + serviceSegmentation + serviceType + dateTime + serialNum; //服务单编号
+        String random = (new DecimalFormat("00")).format((System.currentTimeMillis()%100));//毫秒数的后两位当随机数
+        String serviceNo = serviceSystem  + serviceSegmentation + serviceType + dateTime + random + serialNum; //服务单编号
         return serviceNo;
     }
 
