@@ -11,6 +11,7 @@ import com.kakarote.crm9.erp.wxcms.service.WxcmsAccountAgentService;
 import com.kakarote.crm9.erp.wxcms.service.WxcmsAccountFansService;
 import com.kakarote.crm9.erp.wxcms.service.WxcmsAccountShopService;
 import com.kakarote.crm9.utils.R;
+import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.List;
 /**
  * 粉丝管理
  */
+@Slf4j
 public class WxCmsController extends Controller {
     @Inject
     private WxMpConfiguration wxMpConfiguration;
@@ -52,19 +54,29 @@ public class WxCmsController extends Controller {
     }
 
     /**
-     * 查询代理商、门店、粉丝
+     * 查询代理商
      */
     public void getAgents(BasePageRequest basePageRequest) {
         renderJson(R.ok().put("data",wxcmsAccountAgentService.queryPageList(basePageRequest)));
     }
     /**
-     * 查询代理商、门店、粉丝
+     * 增删查改门店
      */
     public void getShops(BasePageRequest basePageRequest) {
         renderJson(R.ok().put("data",wxcmsAccountShopService.queryPageList(basePageRequest)));
     }
+    public void addShops() {
+        log.info("=======保存门店记录");
+        WxcmsAccountShop wxcmsAccountShop = getModel(WxcmsAccountShop.class,"",true);
+        renderJson(R.ok().put("data",wxcmsAccountShopService.add(wxcmsAccountShop)));
+    }
+    public void updateShops() {
+        log.info("=======修改门店记录");
+        WxcmsAccountShop wxcmsAccountShop = getModel(WxcmsAccountShop.class,"",true);
+        renderJson(R.ok().put("data",wxcmsAccountShopService.update(wxcmsAccountShop)));
+    }
     /**
-     * 查询代理商、门店、粉丝
+     * 查询粉丝
      */
     public void getFans(BasePageRequest basePageRequest) {
         renderJson(R.ok().put("data",wxcmsAccountFansService.queryPageList(basePageRequest)));

@@ -102,12 +102,14 @@ public class SubscribeHandler extends AbstractHandler {
                             //新码直接保存
                             handlerService.saveToQrcodeFans(fromUserName,eventKey,toUserName);
                         }
-                    }else{
-                        //代理商店铺为空，则默认把粉丝保存到亚太天能店铺二维码
+                    }/*
+                    //若不是扫码进来，使用地理位置上报来确定新码，所以码先设置为空
+                    else{
+                        //eventkey为空，挂到亚太天能
                         WxcmsAccountShopQrcode wxcmsAccountShopQrcode = WxcmsAccountShopQrcode.dao.findFirst(Db.getSql("admin.wxcmsAccountShopQrcode.getQrcodeParamByShopId")
                                 ,1);
                         handlerService.saveToQrcodeFans(fromUserName,wxcmsAccountShopQrcode.getQrcodeParam(),toUserName);
-                    }
+                    }*/
                 }
             }
         } catch (WxErrorException e) {

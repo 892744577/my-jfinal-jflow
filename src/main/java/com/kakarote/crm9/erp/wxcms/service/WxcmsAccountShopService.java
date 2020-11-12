@@ -1,12 +1,24 @@
 package com.kakarote.crm9.erp.wxcms.service;
 
+import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
 import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
+import com.kakarote.crm9.erp.wx.service.MpService;
+import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountShop;
+import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountShopQrcode;
+import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 
+import java.util.Date;
+
+@Slf4j
 public class WxcmsAccountShopService {
+
+    @Inject
+    private MpService mMpService;
 
     /**
      * @author tmr
@@ -22,5 +34,28 @@ public class WxcmsAccountShopService {
                 basePageRequest.getLimit(),
                 Db.getSqlPara("admin.wxcmsAccountShop.queryPageList",kv)
         );
+    }
+
+    /**
+     * 新增门店
+     * @param wxcmsAccountShop
+     * @return
+     */
+    public boolean add(WxcmsAccountShop wxcmsAccountShop) {
+        WxMpQrCodeTicket wxMpQrCodeTicket= mMpService.qrCodeCreateLastTicket(wxcmsAccountShop.getShopNo());
+        boolean flag = wxcmsAccountShop.save();
+        if(flag == true && wxMpQrCodeTicket!=null ){
+            WxcmsAccountShopQrcode wxcmsAccountShopQrcode = new WxcmsAccountShopQrcode();
+            wxcmsAccountShopQrcode.setShopId(wxcmsAccountShop.getId());
+            wxcmsAccountShopQrcode.setQrcodeParam(wxMpQrCodeTicket.getTicket());
+            wxcmsAccountShopQrcode.setQrcodeUrl(wxMpQrCodeTicket.getUrl());
+            wxcmsAccountShopQrcode.setCreateTime(new Date());
+            wxcmsAccountShopQrcode.save();
+        }
+        return flag;
+    }
+
+    public boolean update(WxcmsAccountShop wxcmsAccountShop) {
+        return wxcmsAccountShop.update();
     }
 }
