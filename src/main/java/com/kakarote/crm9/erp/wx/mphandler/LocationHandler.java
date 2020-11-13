@@ -134,107 +134,14 @@ public class LocationHandler extends AbstractHandler {
             WxcmsAccountQrcodeFans wxcmsAccountQrcodeFansDb = WxcmsAccountQrcodeFans.dao.findFirst(Db.getSql("admin.wxcmsAccountQrcodeFans.getFansByFromUserName")
                     ,fromUserName);
             if (wxcmsAccountQrcodeFansDb != null) {
-                logger.info("用户"+fromUserName+"已经通过二维码参数划分给店铺,店铺二维码参数:"+wxcmsAccountQrcodeFansDb.getEventKey());
+                //判断eventKey是否为空，如果为空则根据地理位置进行划分，更新该记录eventKey的值
+                if (StringUtils.isBlank(wxcmsAccountQrcodeFansDb.getEventKey())) {
+                    saveToQrcodeFansByAddress(province,city,district,fromUserName,toUserName);
+                }else {
+                    logger.info("用户"+fromUserName+"已经通过二维码参数划分给店铺,店铺二维码参数:"+wxcmsAccountQrcodeFansDb.getEventKey());
+                }
             }else {
-                    //用户未划分给店铺,根据区域进行店铺划分
-                    //根据区域把粉丝划分给对应区域粉丝最多的店铺
-                    //先判断省市区的店铺匹配情况
-                    List<WxcmsAccountShop> shopDistrictList = null;
-                    List<WxcmsAccountShop> shopCityList = null;
-                    List<WxcmsAccountShop> shopProvinceList = null;
-                    if (StringUtils.isNotBlank(district)) {
-                        Kv kv = Kv.by("province",province).set("city",city).set("district",district);
-                        SqlPara sqlPara = Db.getSqlPara("admin.wxcmsAccountShop.getAccountShopByAddress", kv);
-                        shopDistrictList = WxcmsAccountShop.dao.find(sqlPara);
-                    }
-                    Long shopId = 0L;
-                    if (shopDistrictList.size() > 0) {
-                        Map<Long, Integer> treeMap = new TreeMap<>();// 用TreeMap储存
-                        //区下面有店铺
-                        if (shopDistrictList.size() == 1) {
-                            //区下面只有一个店铺
-                            shopId = shopDistrictList.get(0).getId();
-                        } else {
-                            //区下面有多个店铺
-                            for (WxcmsAccountShop accountShop : shopDistrictList) {
-                                logger.info("区下面有店铺:"+accountShop.getId());
-                                //计算该店铺旗下的粉丝数量
-                                List<WxcmsAccountQrcodeFans> qrcodeFansList = WxcmsAccountQrcodeFans.dao.find(Db.getSql("admin.wxcmsAccountQrcodeFans.getFansByShopId")
-                                        ,accountShop.getId());
-                                int fansCount = qrcodeFansList.size();
-                                treeMap.put(accountShop.getId(), fansCount);
-                            }
-                            //找到粉丝数目最多的店铺
-                            shopId = getMaxFansShop(treeMap);
-                        }
-                        logger.info("粉丝数目最多的店铺Id:"+shopId);
-                        //把粉丝划分到对应区域的店铺
-                        //查询对应店铺的二维码参数
-                        //把信息保存到qrcode_fans表,进行划分
-                        WxcmsAccountShopQrcode wxcmsAccountShopQrcode = WxcmsAccountShopQrcode.dao.findFirst(Db.getSql("admin.wxcmsAccountShopQrcode.getQrcodeParamByShopId")
-                                ,shopId);
-                        handlerService.saveToQrcodeFans(fromUserName,wxcmsAccountShopQrcode.getQrcodeParam(),toUserName);
-                    } else {
-                        //区下面无店铺
-                        shopCityList = WxcmsAccountShop.dao.find(Db.getSqlPara("admin.wxcmsAccountShop.getAccountShopByAddress", Kv.by("province",province).set("city",city)));
-                        if (shopCityList.size() > 0) {
-                            Map<Long, Integer> treeMap = new TreeMap<>();// 用TreeMap储存
-                            //市下面有店铺
-                            if (shopCityList.size() == 1) {
-                                //市下面只有一个店铺
-                                shopId = shopCityList.get(0).getId();
-                            } else {
-                                //市下面有多个店铺
-                                for (WxcmsAccountShop accountShop : shopCityList) {
-                                    logger.info("市下面有店铺:"+accountShop.getId());
-                                    //计算该店铺旗下的粉丝数量
-                                    List<WxcmsAccountQrcodeFans> qrcodeFansList = WxcmsAccountQrcodeFans.dao.find(Db.getSql("admin.wxcmsAccountQrcodeFans.getFansByShopId")
-                                            ,accountShop.getId());
-                                    int fansCount = qrcodeFansList.size();
-                                    treeMap.put(accountShop.getId(), fansCount);
-                                }
-                                //找到粉丝数目最多的店铺
-                                shopId = getMaxFansShop(treeMap);
-                            }
-                            logger.info("粉丝数目最多的店铺Id:"+shopId);
-                            //把粉丝划分到对应区域的店铺
-                            //查询对应店铺的二维码参数
-                            //把信息保存到qrcode_fans表,进行划分
-                            WxcmsAccountShopQrcode wxcmsAccountShopQrcode = WxcmsAccountShopQrcode.dao.findFirst(Db.getSql("admin.wxcmsAccountShopQrcode.getQrcodeParamByShopId")
-                                    ,shopId);
-                            handlerService.saveToQrcodeFans(fromUserName,wxcmsAccountShopQrcode.getQrcodeParam(),toUserName);
-                        }else {
-                            //市下面无店铺
-                            shopProvinceList = WxcmsAccountShop.dao.find(Db.getSqlPara("admin.wxcmsAccountShop.getAccountShopByAddress", Kv.by("province",province)));
-                            if (shopProvinceList.size() > 0) {
-                                Map<Long, Integer> treeMap = new TreeMap<>();// 用TreeMap储存
-                                //省下面有店铺
-                                if (shopProvinceList.size() == 1) {
-                                    //省下面只有一个店铺
-                                    shopId = shopProvinceList.get(0).getId();
-                                } else {
-                                    //省下面有多个店铺
-                                    for (WxcmsAccountShop accountShop : shopProvinceList) {
-                                        logger.info("省下面有店铺:"+accountShop.getId());
-                                        //计算该店铺旗下的粉丝数量
-                                        List<WxcmsAccountQrcodeFans> qrcodeFansList = WxcmsAccountQrcodeFans.dao.find(Db.getSql("admin.wxcmsAccountQrcodeFans.getFansByShopId")
-                                                ,accountShop.getId());
-                                        int fansCount = qrcodeFansList.size();
-                                        treeMap.put(accountShop.getId(), fansCount);
-                                    }
-                                    //找到粉丝数目最多的店铺
-                                    shopId = getMaxFansShop(treeMap);
-                                }
-                                logger.info("粉丝数目最多的店铺Id:"+shopId);
-                                //把粉丝划分到对应区域的店铺
-                                //查询对应店铺的二维码参数
-                                //把信息保存到qrcode_fans表,进行划分
-                                WxcmsAccountShopQrcode wxcmsAccountShopQrcode = WxcmsAccountShopQrcode.dao.findFirst(Db.getSql("admin.wxcmsAccountShopQrcode.getQrcodeParamByShopId")
-                                        ,shopId);
-                                handlerService.saveToQrcodeFans(fromUserName,wxcmsAccountShopQrcode.getQrcodeParam(),toUserName);
-                            }
-                        }
-                    }
+                saveToQrcodeFansByAddress(province,city,district,fromUserName,toUserName);
             }
         }
         return null;
@@ -252,6 +159,116 @@ public class LocationHandler extends AbstractHandler {
         // 2：调用Collections.sort(list,comparator)方法把Entry-list排序
         Collections.sort(entrys, new MyComparator());
         return entrys.get(0).getKey();
+    }
+
+    /*
+     * @Description //根据地理位置进行粉丝划分
+     * @Author wangkaida
+     * @Date 10:38 2020/11/13
+     * @Param [province, city, district, fromUserName, toUserName]
+     * @return boolean
+     **/
+    private boolean saveToQrcodeFansByAddress(String province,String city,String district,String fromUserName,String toUserName){
+        //用户未划分给店铺,根据区域进行店铺划分
+        //根据区域把粉丝划分给对应区域粉丝最多的店铺
+        //先判断省市区的店铺匹配情况
+        List<WxcmsAccountShop> shopDistrictList = null;
+        List<WxcmsAccountShop> shopCityList = null;
+        List<WxcmsAccountShop> shopProvinceList = null;
+        if (StringUtils.isNotBlank(district)) {
+            Kv kv = Kv.by("province",province).set("city",city).set("district",district);
+            SqlPara sqlPara = Db.getSqlPara("admin.wxcmsAccountShop.getAccountShopByAddress", kv);
+            shopDistrictList = WxcmsAccountShop.dao.find(sqlPara);
+        }
+        Long shopId = 0L;
+        if (shopDistrictList.size() > 0) {
+            Map<Long, Integer> treeMap = new TreeMap<>();// 用TreeMap储存
+            //区下面有店铺
+            if (shopDistrictList.size() == 1) {
+                //区下面只有一个店铺
+                shopId = shopDistrictList.get(0).getId();
+            } else {
+                //区下面有多个店铺
+                for (WxcmsAccountShop accountShop : shopDistrictList) {
+                    logger.info("区下面有店铺:"+accountShop.getId());
+                    //计算该店铺旗下的粉丝数量
+                    List<WxcmsAccountQrcodeFans> qrcodeFansList = WxcmsAccountQrcodeFans.dao.find(Db.getSql("admin.wxcmsAccountQrcodeFans.getFansByShopId")
+                            ,accountShop.getId());
+                    int fansCount = qrcodeFansList.size();
+                    treeMap.put(accountShop.getId(), fansCount);
+                }
+                //找到粉丝数目最多的店铺
+                shopId = getMaxFansShop(treeMap);
+            }
+            logger.info("粉丝数目最多的店铺Id:"+shopId);
+            //把粉丝划分到对应区域的店铺
+            //查询对应店铺的二维码参数
+            //把信息保存到qrcode_fans表,进行划分
+            WxcmsAccountShopQrcode wxcmsAccountShopQrcode = WxcmsAccountShopQrcode.dao.findFirst(Db.getSql("admin.wxcmsAccountShopQrcode.getQrcodeParamByShopId")
+                    ,shopId);
+            handlerService.saveToQrcodeFans(fromUserName,wxcmsAccountShopQrcode.getQrcodeParam(),toUserName);
+        } else {
+            //区下面无店铺
+            shopCityList = WxcmsAccountShop.dao.find(Db.getSqlPara("admin.wxcmsAccountShop.getAccountShopByAddress", Kv.by("province",province).set("city",city)));
+            if (shopCityList.size() > 0) {
+                Map<Long, Integer> treeMap = new TreeMap<>();// 用TreeMap储存
+                //市下面有店铺
+                if (shopCityList.size() == 1) {
+                    //市下面只有一个店铺
+                    shopId = shopCityList.get(0).getId();
+                } else {
+                    //市下面有多个店铺
+                    for (WxcmsAccountShop accountShop : shopCityList) {
+                        logger.info("市下面有店铺:"+accountShop.getId());
+                        //计算该店铺旗下的粉丝数量
+                        List<WxcmsAccountQrcodeFans> qrcodeFansList = WxcmsAccountQrcodeFans.dao.find(Db.getSql("admin.wxcmsAccountQrcodeFans.getFansByShopId")
+                                ,accountShop.getId());
+                        int fansCount = qrcodeFansList.size();
+                        treeMap.put(accountShop.getId(), fansCount);
+                    }
+                    //找到粉丝数目最多的店铺
+                    shopId = getMaxFansShop(treeMap);
+                }
+                logger.info("粉丝数目最多的店铺Id:"+shopId);
+                //把粉丝划分到对应区域的店铺
+                //查询对应店铺的二维码参数
+                //把信息保存到qrcode_fans表,进行划分
+                WxcmsAccountShopQrcode wxcmsAccountShopQrcode = WxcmsAccountShopQrcode.dao.findFirst(Db.getSql("admin.wxcmsAccountShopQrcode.getQrcodeParamByShopId")
+                        ,shopId);
+                handlerService.saveToQrcodeFans(fromUserName,wxcmsAccountShopQrcode.getQrcodeParam(),toUserName);
+            }else {
+                //市下面无店铺
+                shopProvinceList = WxcmsAccountShop.dao.find(Db.getSqlPara("admin.wxcmsAccountShop.getAccountShopByAddress", Kv.by("province",province)));
+                if (shopProvinceList.size() > 0) {
+                    Map<Long, Integer> treeMap = new TreeMap<>();// 用TreeMap储存
+                    //省下面有店铺
+                    if (shopProvinceList.size() == 1) {
+                        //省下面只有一个店铺
+                        shopId = shopProvinceList.get(0).getId();
+                    } else {
+                        //省下面有多个店铺
+                        for (WxcmsAccountShop accountShop : shopProvinceList) {
+                            logger.info("省下面有店铺:"+accountShop.getId());
+                            //计算该店铺旗下的粉丝数量
+                            List<WxcmsAccountQrcodeFans> qrcodeFansList = WxcmsAccountQrcodeFans.dao.find(Db.getSql("admin.wxcmsAccountQrcodeFans.getFansByShopId")
+                                    ,accountShop.getId());
+                            int fansCount = qrcodeFansList.size();
+                            treeMap.put(accountShop.getId(), fansCount);
+                        }
+                        //找到粉丝数目最多的店铺
+                        shopId = getMaxFansShop(treeMap);
+                    }
+                    logger.info("粉丝数目最多的店铺Id:"+shopId);
+                    //把粉丝划分到对应区域的店铺
+                    //查询对应店铺的二维码参数
+                    //把信息保存到qrcode_fans表,进行划分
+                    WxcmsAccountShopQrcode wxcmsAccountShopQrcode = WxcmsAccountShopQrcode.dao.findFirst(Db.getSql("admin.wxcmsAccountShopQrcode.getQrcodeParamByShopId")
+                            ,shopId);
+                    handlerService.saveToQrcodeFans(fromUserName,wxcmsAccountShopQrcode.getQrcodeParam(),toUserName);
+                }
+            }
+        }
+        return true;
     }
 
 }
