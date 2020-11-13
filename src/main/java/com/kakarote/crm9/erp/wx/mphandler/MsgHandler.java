@@ -1,6 +1,5 @@
 package com.kakarote.crm9.erp.wx.mphandler;
 
-import com.kakarote.crm9.erp.wx.mpbuilder.TextBuilder;
 import com.kakarote.crm9.erp.wx.util.JsonUtils;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
@@ -43,8 +42,8 @@ public class MsgHandler extends AbstractHandler {
         //TODO 组装回复消息
         String content = "收到信息内容：" + JsonUtils.toJson(wxMessage);
 
-        return new TextBuilder().build(content, wxMessage, weixinService);
-
+        //return new TextBuilder().build(content, wxMessage, weixinService);
+        return null;
     }
 
 }
