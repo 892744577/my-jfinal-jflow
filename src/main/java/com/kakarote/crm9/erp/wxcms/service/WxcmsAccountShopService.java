@@ -12,6 +12,7 @@ import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountShopQrcode;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 
+import java.text.DecimalFormat;
 import java.util.Date;
 
 @Slf4j
@@ -42,8 +43,10 @@ public class WxcmsAccountShopService {
      * @return
      */
     public boolean add(WxcmsAccountShop wxcmsAccountShop) {
-        WxMpQrCodeTicket wxMpQrCodeTicket= mMpService.qrCodeCreateLastTicket(wxcmsAccountShop.getShopNo());
         boolean flag = wxcmsAccountShop.save();
+        wxcmsAccountShop.setShopNo("NO.T"+(new DecimalFormat("0000")).format(wxcmsAccountShop.getId()));
+        wxcmsAccountShop.update();
+        WxMpQrCodeTicket wxMpQrCodeTicket= mMpService.qrCodeCreateLastTicket(wxcmsAccountShop.getShopNo());
         if(flag == true && wxMpQrCodeTicket!=null ){
             WxcmsAccountShopQrcode wxcmsAccountShopQrcode = new WxcmsAccountShopQrcode();
             wxcmsAccountShopQrcode.setShopId(wxcmsAccountShop.getId());
