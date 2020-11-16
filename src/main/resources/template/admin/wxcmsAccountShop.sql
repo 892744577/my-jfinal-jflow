@@ -17,7 +17,8 @@
     where 1=1
     #if(search)
       and (a.province LIKE concat('%',#para(search),'%') or a.city LIKE concat('%',#para(search),'%')
-      or a.district LIKE concat('%',#para(search),'%') or a.shopNo like CONCAT('%',#para(search),'%'))
+      or a.district LIKE concat('%',#para(search),'%') or a.shopNo like CONCAT('%',#para(search),'%')
+      or a.agentNo like CONCAT('%',#para(search),'%'))
     #end
     order by a.shopNo desc
   #end
