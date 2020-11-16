@@ -90,7 +90,7 @@ public class SubscribeHandler extends AbstractHandler {
                         if (wxcmsAccountShopQrcodeDb == null) {
                             //说明新码表里面不存在，则是旧码，用旧码去换取新码保存
                             List<Record> recordList = Db.find(Db.getSqlPara("admin.wxcmsAccount.getNewQrcode", Kv.by("search",eventKey)));
-                            if (recordList != null && recordList.get(0) != null
+                            if (recordList != null && recordList.size() > 0 && recordList.get(0) != null
                                     && recordList.get(0).getStr("shop_qrcode_param") != null) {
                                 //旧码换新码成功
                                 handlerService.saveToQrcodeFans(fromUserName,recordList.get(0).getStr("shop_qrcode_param"),toUserName);
