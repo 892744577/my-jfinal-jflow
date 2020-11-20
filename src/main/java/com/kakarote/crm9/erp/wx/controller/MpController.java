@@ -86,7 +86,7 @@ public class MpController extends Controller {
     }
 
     /**
-     * 公众号发送模板消息
+     * 公众号发送模板消息--ma1
      */
     public void send(@Para("") MpMsgSendReq mpMsgSendReq){
         String result = mpService.send(mpMsgSendReq);
@@ -112,7 +112,7 @@ public class MpController extends Controller {
     }
 
     /**
-     * 消息推送
+     * 接收服务器消息推送
      */
     public void handler(@Para("") ServerHandlerRequest serverHandlerRequest) throws IOException {
         HttpServletRequest request = this.getRequest();

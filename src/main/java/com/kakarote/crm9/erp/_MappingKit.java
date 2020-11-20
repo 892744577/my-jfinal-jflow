@@ -107,6 +107,8 @@ public class _MappingKit {
 		arp.addMapping("wxcms_account_qrcode_fans", "id", WxcmsAccountQrcodeFans.class);
 		arp.addMapping("wxcms_account_shop", "id", WxcmsAccountShop.class);
 		arp.addMapping("wxcms_account_shop_qrcode", "id", WxcmsAccountShopQrcode.class);
+		arp.addMapping("wxcms_activity_coupon", "id", WxcmsActivityCoupon.class);
+		arp.addMapping("wxcms_activity_coupon_record", "coupon_id,open_id", WxcmsActivityCouponRecord.class);
 	}
 }
 

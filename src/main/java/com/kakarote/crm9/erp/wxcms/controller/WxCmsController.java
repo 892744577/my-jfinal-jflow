@@ -2,12 +2,14 @@ package com.kakarote.crm9.erp.wxcms.controller;
 
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
+import com.jfinal.core.paragetter.Para;
 import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
-import com.kakarote.crm9.erp.wx.config.WxMpConfiguration;
-import com.kakarote.crm9.erp.wx.service.MpService;
+import com.kakarote.crm9.erp.wx.vo.MatrialReq;
+import com.kakarote.crm9.erp.wx.vo.WxMpMaterialReq;
 import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountShop;
 import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountShopQrcode;
 import com.kakarote.crm9.erp.wxcms.service.WxcmsAccountAgentService;
+import com.kakarote.crm9.erp.wxcms.service.WxcmsAccountCouponService;
 import com.kakarote.crm9.erp.wxcms.service.WxcmsAccountFansService;
 import com.kakarote.crm9.erp.wxcms.service.WxcmsAccountShopService;
 import com.kakarote.crm9.utils.R;
@@ -22,16 +24,13 @@ import java.util.List;
 @Slf4j
 public class WxCmsController extends Controller {
     @Inject
-    private WxMpConfiguration wxMpConfiguration;
-
-    @Inject
-    private MpService mpService;
-    @Inject
     private WxcmsAccountAgentService wxcmsAccountAgentService;
     @Inject
     private WxcmsAccountShopService wxcmsAccountShopService;
     @Inject
     private WxcmsAccountFansService wxcmsAccountFansService;
+    @Inject
+    private WxcmsAccountCouponService wxcmsAccountCouponService;
     /**
      * 批量生成店铺带参数二维码
      * @param scence
@@ -42,7 +41,7 @@ public class WxCmsController extends Controller {
         for(int i=0;i<list.size();i++){
             WxcmsAccountShop wxcmsAccountShop = list.get(i);
             String shopNo = wxcmsAccountShop.getShopNo();
-            WxMpQrCodeTicket wxMpQrCodeTicket = mpService.qrCodeCreateLastTicket(shopNo);
+            WxMpQrCodeTicket wxMpQrCodeTicket = wxcmsAccountFansService.createLastTicket(shopNo);
             //2、批量生成参数二维码并插入表shop_qrcode
             WxcmsAccountShopQrcode wxcmsAccountShopQrcode = new WxcmsAccountShopQrcode();
             wxcmsAccountShopQrcode.setShopId(wxcmsAccountShop.getId());
@@ -80,5 +79,18 @@ public class WxCmsController extends Controller {
      */
     public void getFans(BasePageRequest basePageRequest) {
         renderJson(R.ok().put("data",wxcmsAccountFansService.queryPageList(basePageRequest)));
+    }
+
+    /**
+     * 获取多媒体数据
+     */
+    public void getMedia(@Para("") MatrialReq matrialReq){
+        renderJson(R.ok().put("data",wxcmsAccountCouponService.getMedia(matrialReq.getI(),matrialReq.getJ())));;
+    }
+    /**
+     * 上传多媒体数据
+     */
+    public void uploadMedia(@Para("") WxMpMaterialReq wxMpMaterialReq){
+        renderJson(R.ok().put("data",wxcmsAccountCouponService.uploadMedia(wxMpMaterialReq.getName(),getFile().getFile())));
     }
 }

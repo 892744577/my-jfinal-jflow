@@ -10,11 +10,15 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.material.WxMpMaterial;
+import me.chanjar.weixin.mp.bean.material.WxMpMaterialFileBatchGetResult;
+import me.chanjar.weixin.mp.bean.material.WxMpMaterialUploadResult;
 import me.chanjar.weixin.mp.bean.result.WxMpQrCodeTicket;
 import me.chanjar.weixin.mp.bean.result.WxMpUser;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateData;
 import me.chanjar.weixin.mp.bean.template.WxMpTemplateMessage;
 
+import java.io.File;
 import java.util.List;
 
 @Slf4j
@@ -75,5 +79,37 @@ public class MpService {
             log.info(e.getError().getJson());
         }
         return ticket;
+    }
+
+    /**
+     * 获取多媒体参数
+     */
+    public WxMpMaterialFileBatchGetResult getMedia(int i,int j) {
+        WxMpService wxMpService = this.wxMpConfiguration.wxMpService();
+        WxMpMaterialFileBatchGetResult wxMpMaterialFileBatchGetResult = new WxMpMaterialFileBatchGetResult();
+        try {
+            wxMpMaterialFileBatchGetResult = wxMpService.getMaterialService().materialFileBatchGet("image",i,j);
+        } catch (WxErrorException e) {
+            log.info(e.getError().getJson());
+        }
+        return wxMpMaterialFileBatchGetResult;
+    }
+
+    /**
+     * 上传图片
+     * @return
+     */
+    public WxMpMaterialUploadResult uploadMedia(String name,File file) {
+        WxMpService wxMpService = this.wxMpConfiguration.wxMpService();
+        WxMpMaterialUploadResult wxMpMaterialUploadResult = new WxMpMaterialUploadResult();
+        try {
+            WxMpMaterial wxMpMaterial = new WxMpMaterial();
+            wxMpMaterial.setName(name);
+            wxMpMaterial.setFile(file);
+            wxMpMaterialUploadResult = wxMpService.getMaterialService().materialFileUpload("image",wxMpMaterial);
+        } catch (WxErrorException e) {
+            log.info(e.getError().getJson());
+        }
+        return wxMpMaterialUploadResult;
     }
 }
