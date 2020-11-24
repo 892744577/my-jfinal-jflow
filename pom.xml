@@ -578,9 +578,9 @@
 
         <!--websocket start-->
         <dependency>
-            <groupId>javax.websocket</groupId>
-            <artifactId>javax.websocket-api</artifactId>
-            <version>1.1</version>
+            <groupId>io.undertow</groupId>
+            <artifactId>undertow-websockets-jsr</artifactId>
+            <version>2.2.2.Final</version>
         </dependency>
         <!--websocket end-->
     </dependencies>

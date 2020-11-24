@@ -10,6 +10,8 @@ public class Application {
         UndertowConfig config=new UndertowConfig(JfinalConfig.class,"config/undertow.txt");
         config.setResourcePath("src/main/webapp,webapp,h5,"+ BaseConstant.UPLOAD_PATH + ","+BaseConstant.UPLOAD_PATH_GDCX+","+BaseConstant.UPLOAD_PATH_HD);
         config.setServerName(BaseConstant.NAME);
-        UndertowServer.create(config).start();
+        UndertowServer.create(config).configWeb(builder -> {
+            builder.addWebSocketEndpoint("com.kakarote.crm9.erp.websocket.controller.WebSocketController");
+        }).start();
     }
 }
