@@ -13,7 +13,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 @Slf4j
-@ServerEndpoint(value="/websocket.ws/{userId}")
+@ServerEndpoint(value="/{userId}/websocket.ws")
 public class WebSocketController extends Controller{
 
     private static final Map<String, Session> userSocketSessionMap;
@@ -65,6 +65,7 @@ public class WebSocketController extends Controller{
     @OnOpen
     public void onOpen(Session session, @PathParam("userId") String userId, EndpointConfig config) throws Exception{
         if(StringUtils.isNotBlank(userId)) {
+            log.info("WebSocket:用户"+userId+"建立连接");
             userSocketSessionMap.put(userId,session);
             sendMsg(null,userId, "连接已建立");
         }else{
