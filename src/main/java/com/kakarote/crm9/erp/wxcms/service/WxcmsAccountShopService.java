@@ -28,7 +28,9 @@ public class WxcmsAccountShopService {
     public Page<Record> queryPageList(BasePageRequest basePageRequest) {
         //查询条件
         String search = basePageRequest.getJsonObject().getString("search");
+        String id = basePageRequest.getJsonObject().getString("id");
         Kv kv = Kv.by("search",search);
+        kv = kv.set("id",id);
 
         return Db.paginate(
                 basePageRequest.getPage(),
