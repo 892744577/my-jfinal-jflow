@@ -32,14 +32,14 @@ public class SubscribeHandler extends AbstractHandler {
 
     @Override
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage,
-                                    Map<String, Object> context, WxMpService weixinService,
+                                    Map<String, Object> context, WxMpService wxMpService,
                                     WxSessionManager sessionManager) throws WxErrorException {
 
         this.logger.info("新关注用户: " + JSON.toJSONString(wxMessage));
 
         // 获取微信用户基本信息
         try {
-            WxMpUser wxMpUser = weixinService.getUserService().userInfo(wxMessage.getFromUser(), null);
+            WxMpUser wxMpUser = wxMpService.getUserService().userInfo(wxMessage.getFromUser(), null);
             if (wxMpUser != null) {
                 //add by wangkaida 用户关注时调用的方法
                 String eventKey = wxMessage.getEventKey();
@@ -131,7 +131,7 @@ public class SubscribeHandler extends AbstractHandler {
         }
 
         try {
-            return new TextBuilder().build("感谢关注", wxMessage, weixinService);
+            return new TextBuilder().build("感谢关注", wxMessage, wxMpService);
         } catch (Exception e) {
             this.logger.error(e.getMessage(), e);
         }

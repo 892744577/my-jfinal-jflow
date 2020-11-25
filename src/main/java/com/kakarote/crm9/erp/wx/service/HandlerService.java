@@ -1,14 +1,25 @@
 package com.kakarote.crm9.erp.wx.service;
 
+import com.alibaba.fastjson.JSON;
 import com.jfinal.plugin.activerecord.Db;
+import com.kakarote.crm9.erp.wx.mpbuilder.ImageBuilder;
 import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountQrcodeFans;
+import com.kakarote.crm9.erp.wxcms.entity.WxcmsActivityCoupon;
+import com.kakarote.crm9.erp.wxcms.entity.WxcmsActivityCouponRecord;
 import lombok.extern.slf4j.Slf4j;
+import me.chanjar.weixin.mp.api.WxMpService;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutImageMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
+import java.util.List;
 
 @Slf4j
 public class HandlerService {
+
+    //region 业务1：划分粉丝到店二维码
     /*
      * @Description //保存到qrcode_fans表
      * @Author wangkaida
@@ -60,5 +71,53 @@ public class HandlerService {
     public String sendTemplateMessageToAgent(){
 
         return null;
+    }
+    //endregion
+
+    //*****************************************************************************
+
+    //#region 业务2：卡券信息推送
+
+    /**
+     *
+     * @param wxMessage
+     * @param wxMpService
+     * @return
+     */
+    public WxMpXmlOutMessage getWxMpXmlOutMessage(WxMpXmlMessage wxMessage, WxMpService wxMpService){
+        //1、组装卡券信息
+        List<WxcmsActivityCoupon> list = WxcmsActivityCoupon.dao.find(Db.getSql("admin.wxcmsActivityCoupon.getActivityCouponFirst"));
+        WxMpXmlOutMessage wxMpXmlOutMessage = null;
+        WxcmsActivityCoupon wxcmsActivityCoupon = null;
+        if(list!=null && list.size()>0){
+            wxcmsActivityCoupon = list.get(0);
+            wxMpXmlOutMessage = new ImageBuilder().build(wxcmsActivityCoupon.getMediaId(),wxMessage,wxMpService);
+            log.info("组装卡券数据："+ JSON.toJSONString(wxMpXmlOutMessage));
+        }
+        return wxMpXmlOutMessage;
+    }
+
+    /**
+     * 判断返回什么
+     * @return
+     */
+    public WxMpXmlOutMessage outMessage(WxMpXmlOutMessage wxMpXmlOutMessage) {
+        if(wxMpXmlOutMessage!=null){
+            WxMpXmlOutImageMessage wxMpXmlOutImageMessage = (WxMpXmlOutImageMessage)wxMpXmlOutMessage;
+            int count = Db.queryInt(Db.getSql("admin.wxcmsActivityCouponRecord.getActivityCouponSendRecord"), wxMpXmlOutImageMessage.getMediaId(),wxMpXmlOutMessage.getToUserName());
+            log.info("返回优惠券发送记录："+count);
+            if(count>0){
+                return null;
+            }else{
+                WxcmsActivityCouponRecord wxcmsActivityCouponRecord = new WxcmsActivityCouponRecord();
+                wxcmsActivityCouponRecord.setCouponId(wxMpXmlOutImageMessage.getMediaId());
+                wxcmsActivityCouponRecord.setOpenId(wxMpXmlOutMessage.getToUserName());
+                wxcmsActivityCouponRecord.save();
+                log.info("保存发送记录："+JSON.toJSONString(wxcmsActivityCouponRecord));
+                return wxMpXmlOutMessage;
+            }
+        }else{
+            return null;
+        }
     }
 }
