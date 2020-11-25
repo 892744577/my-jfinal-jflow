@@ -1,18 +1,18 @@
 package com.kakarote.crm9.erp.wx.mphandler;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.SqlPara;
-import com.kakarote.crm9.erp.wx.mpbuilder.ImageBuilder;
 import com.kakarote.crm9.erp.wx.service.HandlerService;
 import com.kakarote.crm9.erp.wx.util.BaiduMapUtils;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.kakarote.crm9.erp.wx.util.MyComparator;
-import com.kakarote.crm9.erp.wxcms.entity.*;
+import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountQrcodeFans;
+import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountShop;
+import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountShopQrcode;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
@@ -32,15 +32,8 @@ public class LocationHandler extends AbstractHandler {
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage,
                                     Map<String, Object> context, WxMpService wxMpService,
                                     WxSessionManager sessionManager) {
-        //进入公众号进行优惠券、活动推送
-        List<WxcmsActivityCoupon> list = WxcmsActivityCoupon.dao.find(Db.getSql("admin.wxcmsActivityCoupon.getActivityCouponFirst"));
-        WxMpXmlOutMessage wxMpXmlOutMessage = null;
-        WxcmsActivityCoupon wxcmsActivityCoupon = null;
-        if(list!=null && list.size()>0){
-            wxcmsActivityCoupon = list.get(0);
-            wxMpXmlOutMessage = new ImageBuilder().build(wxcmsActivityCoupon.getMediaId(),wxMessage,wxMpService);
-            logger.info("组装卡券数据："+ JSON.toJSONString(wxMpXmlOutMessage));
-        }
+        //组装卡券数据
+        WxMpXmlOutMessage wxMpXmlOutMessage = handlerService.getWxMpXmlOutMessage(wxMessage,wxMpService);
 
         //上报地理位置事件
         this.logger.info("上报地理位置，纬度 : {}，经度 : {}，精度 : {}",
@@ -130,12 +123,12 @@ public class LocationHandler extends AbstractHandler {
                     }else {
                         //调用通过经度纬度获取详细地址信息失败
                         logger.info("调用通过经度纬度获取详细地址信息失败");
-                        return outMessage(wxMpXmlOutMessage,wxcmsActivityCoupon);
+                        return handlerService.outMessage(wxMpXmlOutMessage);
                     }
                 }else {
                     //调用把微信获取到的经纬度转变为百度的经纬度失败
                     logger.info("调用把微信获取到的经纬度转变为百度的经纬度失败");
-                    return outMessage(wxMpXmlOutMessage,wxcmsActivityCoupon);
+                    return handlerService.outMessage(wxMpXmlOutMessage);
                 }
             }
 
@@ -154,30 +147,7 @@ public class LocationHandler extends AbstractHandler {
                 saveToQrcodeFansByAddress(province,city,district,fromUserName,toUserName);
             }
         }
-        return outMessage(wxMpXmlOutMessage,wxcmsActivityCoupon);
-    }
-
-    /**
-     * 判断返回什么
-     * @return
-     */
-    private WxMpXmlOutMessage outMessage(WxMpXmlOutMessage wxMpXmlOutMessage,WxcmsActivityCoupon wxcmsActivityCoupon) {
-        if(wxcmsActivityCoupon!=null && wxcmsActivityCoupon.getMediaId()!=null){
-            int count = Db.queryInt(Db.getSql("admin.wxcmsActivityCouponRecord.getActivityCouponSendRecord"), wxcmsActivityCoupon.getMediaId(),wxMpXmlOutMessage.getToUserName());
-            logger.info("返回优惠券发送记录："+count);
-            if(count>0){
-                return null;
-            }else{
-                WxcmsActivityCouponRecord wxcmsActivityCouponRecord = new WxcmsActivityCouponRecord();
-                wxcmsActivityCouponRecord.setCouponId(wxcmsActivityCoupon.getMediaId());
-                wxcmsActivityCouponRecord.setOpenId(wxMpXmlOutMessage.getToUserName());
-                wxcmsActivityCouponRecord.save();
-                logger.info("保存发送记录："+JSON.toJSONString(wxcmsActivityCouponRecord));
-                return wxMpXmlOutMessage;
-            }
-        }else{
-            return null;
-        }
+        return handlerService.outMessage(wxMpXmlOutMessage);
     }
 
     /**
