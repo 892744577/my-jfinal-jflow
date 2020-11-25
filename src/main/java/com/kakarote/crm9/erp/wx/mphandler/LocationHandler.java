@@ -16,7 +16,6 @@ import com.kakarote.crm9.erp.wxcms.entity.*;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
-import me.chanjar.weixin.mp.bean.message.WxMpXmlOutImageMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.apache.commons.lang3.StringUtils;
 
@@ -36,8 +35,9 @@ public class LocationHandler extends AbstractHandler {
         //进入公众号进行优惠券、活动推送
         List<WxcmsActivityCoupon> list = WxcmsActivityCoupon.dao.find(Db.getSql("admin.wxcmsActivityCoupon.getActivityCouponFirst"));
         WxMpXmlOutMessage wxMpXmlOutMessage = null;
+        WxcmsActivityCoupon wxcmsActivityCoupon = null;
         if(list!=null && list.size()>0){
-            WxcmsActivityCoupon wxcmsActivityCoupon = list.get(0);
+            wxcmsActivityCoupon = list.get(0);
             wxMpXmlOutMessage = new ImageBuilder().build(wxcmsActivityCoupon.getMediaId(),wxMessage,wxMpService);
             logger.info("组装卡券数据："+ JSON.toJSONString(wxMpXmlOutMessage));
         }
@@ -130,12 +130,12 @@ public class LocationHandler extends AbstractHandler {
                     }else {
                         //调用通过经度纬度获取详细地址信息失败
                         logger.info("调用通过经度纬度获取详细地址信息失败");
-                        return wxMpXmlOutMessage(wxMpXmlOutMessage);
+                        return outMessage(wxMpXmlOutMessage,wxcmsActivityCoupon);
                     }
                 }else {
                     //调用把微信获取到的经纬度转变为百度的经纬度失败
                     logger.info("调用把微信获取到的经纬度转变为百度的经纬度失败");
-                    return wxMpXmlOutMessage(wxMpXmlOutMessage);
+                    return outMessage(wxMpXmlOutMessage,wxcmsActivityCoupon);
                 }
             }
 
@@ -154,26 +154,25 @@ public class LocationHandler extends AbstractHandler {
                 saveToQrcodeFansByAddress(province,city,district,fromUserName,toUserName);
             }
         }
-        return wxMpXmlOutMessage(wxMpXmlOutMessage);
+        return outMessage(wxMpXmlOutMessage,wxcmsActivityCoupon);
     }
 
     /**
      * 判断返回什么
      * @return
      */
-    private WxMpXmlOutMessage wxMpXmlOutMessage(WxMpXmlOutMessage wxMpXmlOutMessage) {
-        if(wxMpXmlOutMessage!=null && ((WxMpXmlOutImageMessage)wxMpXmlOutMessage).getMediaId()!=null){
-            WxMpXmlOutImageMessage wxMpXmlOutImageMessage = (WxMpXmlOutImageMessage)wxMpXmlOutMessage;
-            List<WxcmsActivityCouponRecord> list= WxcmsActivityCouponRecord.dao.find(Db.getSqlPara("admin.wxcmsActivityCouponRecord.getActivityCouponSendRecord",
-                    Kv.by("coupon_id",wxMpXmlOutImageMessage.getMediaId())
-                            .set("open_id",wxMpXmlOutMessage.getToUserName())));
-            if(list!=null && list.size()>0){
+    private WxMpXmlOutMessage outMessage(WxMpXmlOutMessage wxMpXmlOutMessage,WxcmsActivityCoupon wxcmsActivityCoupon) {
+        if(wxcmsActivityCoupon!=null && wxcmsActivityCoupon.getMediaId()!=null){
+            int count = Db.queryInt(Db.getSql("admin.wxcmsActivityCouponRecord.getActivityCouponSendRecord"), wxcmsActivityCoupon.getMediaId(),wxMpXmlOutMessage.getToUserName());
+            logger.info("返回优惠券发送记录："+count);
+            if(count>0){
                 return null;
             }else{
                 WxcmsActivityCouponRecord wxcmsActivityCouponRecord = new WxcmsActivityCouponRecord();
-                wxcmsActivityCouponRecord.setCouponId(wxMpXmlOutImageMessage.getMediaId());
+                wxcmsActivityCouponRecord.setCouponId(wxcmsActivityCoupon.getMediaId());
                 wxcmsActivityCouponRecord.setOpenId(wxMpXmlOutMessage.getToUserName());
                 wxcmsActivityCouponRecord.save();
+                logger.info("保存发送记录："+JSON.toJSONString(wxcmsActivityCouponRecord));
                 return wxMpXmlOutMessage;
             }
         }else{
