@@ -9,12 +9,12 @@ import com.jfinal.plugin.activerecord.Model;
 @SuppressWarnings("serial")
 public abstract class BaseWxcmsActivityCouponRecord<M extends BaseWxcmsActivityCouponRecord<M>> extends Model<M> implements IBean {
 
-	public void setCouponId(Integer couponId) {
+	public void setCouponId(String couponId) {
 		set("coupon_id", couponId);
 	}
 	
-	public Integer getCouponId() {
-		return getInt("coupon_id");
+	public String getCouponId() {
+		return getStr("coupon_id");
 	}
 
 	public void setOpenId(String openId) {

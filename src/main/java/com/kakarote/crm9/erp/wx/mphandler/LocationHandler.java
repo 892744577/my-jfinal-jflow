@@ -1,21 +1,22 @@
 package com.kakarote.crm9.erp.wx.mphandler;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.SqlPara;
+import com.kakarote.crm9.erp.wx.mpbuilder.ImageBuilder;
 import com.kakarote.crm9.erp.wx.service.HandlerService;
 import com.kakarote.crm9.erp.wx.util.BaiduMapUtils;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.kakarote.crm9.erp.wx.util.MyComparator;
-import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountQrcodeFans;
-import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountShop;
-import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountShopQrcode;
+import com.kakarote.crm9.erp.wxcms.entity.*;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
+import me.chanjar.weixin.mp.bean.message.WxMpXmlOutImageMessage;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlOutMessage;
 import org.apache.commons.lang3.StringUtils;
 
@@ -32,6 +33,15 @@ public class LocationHandler extends AbstractHandler {
     public WxMpXmlOutMessage handle(WxMpXmlMessage wxMessage,
                                     Map<String, Object> context, WxMpService wxMpService,
                                     WxSessionManager sessionManager) {
+        //进入公众号进行优惠券、活动推送
+        List<WxcmsActivityCoupon> list = WxcmsActivityCoupon.dao.find(Db.getSql("admin.wxcmsActivityCoupon.getActivityCouponFirst"));
+        WxMpXmlOutMessage wxMpXmlOutMessage = null;
+        if(list!=null && list.size()>0){
+            WxcmsActivityCoupon wxcmsActivityCoupon = list.get(0);
+            wxMpXmlOutMessage = new ImageBuilder().build(wxcmsActivityCoupon.getMediaId(),wxMessage,wxMpService);
+            logger.info("组装卡券数据："+ JSON.toJSONString(wxMpXmlOutMessage));
+        }
+
         //上报地理位置事件
         this.logger.info("上报地理位置，纬度 : {}，经度 : {}，精度 : {}",
             wxMessage.getLatitude(), wxMessage.getLongitude(), String.valueOf(wxMessage.getPrecision()));
@@ -120,12 +130,12 @@ public class LocationHandler extends AbstractHandler {
                     }else {
                         //调用通过经度纬度获取详细地址信息失败
                         logger.info("调用通过经度纬度获取详细地址信息失败");
-                        return null;
+                        return wxMpXmlOutMessage(wxMpXmlOutMessage);
                     }
                 }else {
                     //调用把微信获取到的经纬度转变为百度的经纬度失败
                     logger.info("调用把微信获取到的经纬度转变为百度的经纬度失败");
-                    return null;
+                    return wxMpXmlOutMessage(wxMpXmlOutMessage);
                 }
             }
 
@@ -144,7 +154,31 @@ public class LocationHandler extends AbstractHandler {
                 saveToQrcodeFansByAddress(province,city,district,fromUserName,toUserName);
             }
         }
-        return null;
+        return wxMpXmlOutMessage(wxMpXmlOutMessage);
+    }
+
+    /**
+     * 判断返回什么
+     * @return
+     */
+    private WxMpXmlOutMessage wxMpXmlOutMessage(WxMpXmlOutMessage wxMpXmlOutMessage) {
+        if(wxMpXmlOutMessage!=null && ((WxMpXmlOutImageMessage)wxMpXmlOutMessage).getMediaId()!=null){
+            WxMpXmlOutImageMessage wxMpXmlOutImageMessage = (WxMpXmlOutImageMessage)wxMpXmlOutMessage;
+            List<WxcmsActivityCouponRecord> list= WxcmsActivityCouponRecord.dao.find(Db.getSqlPara("admin.wxcmsActivityCouponRecord.getActivityCouponSendRecord",
+                    Kv.by("coupon_id",wxMpXmlOutImageMessage.getMediaId())
+                            .set("open_id",wxMpXmlOutMessage.getToUserName())));
+            if(list!=null && list.size()>0){
+                return null;
+            }else{
+                WxcmsActivityCouponRecord wxcmsActivityCouponRecord = new WxcmsActivityCouponRecord();
+                wxcmsActivityCouponRecord.setCouponId(wxMpXmlOutImageMessage.getMediaId());
+                wxcmsActivityCouponRecord.setOpenId(wxMpXmlOutMessage.getToUserName());
+                wxcmsActivityCouponRecord.save();
+                return wxMpXmlOutMessage;
+            }
+        }else{
+            return null;
+        }
     }
 
     /**
@@ -181,7 +215,7 @@ public class LocationHandler extends AbstractHandler {
             shopDistrictList = WxcmsAccountShop.dao.find(sqlPara);
         }
         Long shopId = 0L;
-        if (shopDistrictList.size() > 0) {
+        if (shopDistrictList!=null && shopDistrictList.size() > 0) {
             Map<Long, Integer> treeMap = new TreeMap<>();// 用TreeMap储存
             //区下面有店铺
             if (shopDistrictList.size() == 1) {
@@ -210,7 +244,7 @@ public class LocationHandler extends AbstractHandler {
         } else {
             //区下面无店铺
             shopCityList = WxcmsAccountShop.dao.find(Db.getSqlPara("admin.wxcmsAccountShop.getAccountShopByAddress", Kv.by("province",province).set("city",city)));
-            if (shopCityList.size() > 0) {
+            if (shopCityList != null && shopCityList.size() > 0) {
                 Map<Long, Integer> treeMap = new TreeMap<>();// 用TreeMap储存
                 //市下面有店铺
                 if (shopCityList.size() == 1) {
@@ -239,7 +273,7 @@ public class LocationHandler extends AbstractHandler {
             }else {
                 //市下面无店铺
                 shopProvinceList = WxcmsAccountShop.dao.find(Db.getSqlPara("admin.wxcmsAccountShop.getAccountShopByAddress", Kv.by("province",province)));
-                if (shopProvinceList.size() > 0) {
+                if (shopProvinceList != null && shopProvinceList.size() > 0) {
                     Map<Long, Integer> treeMap = new TreeMap<>();// 用TreeMap储存
                     //省下面有店铺
                     if (shopProvinceList.size() == 1) {

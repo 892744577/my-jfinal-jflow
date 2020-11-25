@@ -20,6 +20,9 @@
       or a.district LIKE concat('%',#para(search),'%') or a.shopNo like CONCAT('%',#para(search),'%')
       or a.agentNo like CONCAT('%',#para(search),'%'))
     #end
+    #if(id)
+      and a.id = #para(id)
+    #end
     order by a.shopNo desc
   #end
 #end
