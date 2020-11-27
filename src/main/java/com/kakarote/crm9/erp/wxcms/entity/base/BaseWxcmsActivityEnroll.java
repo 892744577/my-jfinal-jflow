@@ -41,6 +41,14 @@ public abstract class BaseWxcmsActivityEnroll<M extends BaseWxcmsActivityEnroll<
 		return getStr("name");
 	}
 
+	public void setMobile(String mobile) {
+		set("mobile", mobile);
+	}
+
+	public String getMobile() {
+		return getStr("mobile");
+	}
+
 	public void setAddress(String address) {
 		set("address", address);
 	}

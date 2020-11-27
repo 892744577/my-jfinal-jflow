@@ -28,6 +28,13 @@ public class WxCmsPrizeController extends Controller {
         renderJson(R.ok().put("data",wxcmsActivityEnrollService.add(wxcmsActivityEnroll)));
     }
     /**
+     * 记录寄送信息
+     */
+    public void getEnroll() {
+        WxcmsActivityEnroll wxcmsActivityEnroll = getModel(WxcmsActivityEnroll.class,"",true);
+        renderJson(R.ok().put("data",wxcmsActivityEnrollService.getEnroll(wxcmsActivityEnroll)));
+    }
+    /**
      * 记录抽奖
      */
     public void addLottery() {
