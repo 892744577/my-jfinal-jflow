@@ -5,7 +5,6 @@ import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
-import com.kakarote.crm9.erp.wx.mpbuilder.TextBuilder;
 import com.kakarote.crm9.erp.wx.service.HandlerService;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountFans;
@@ -36,6 +35,8 @@ public class SubscribeHandler extends AbstractHandler {
                                     WxSessionManager sessionManager) throws WxErrorException {
 
         this.logger.info("新关注用户: " + JSON.toJSONString(wxMessage));
+        //组装卡券数据
+        WxMpXmlOutMessage wxMpXmlOutMessage = handlerService.getWxMpXmlOutMessage(wxMessage,wxMpService);
 
         // 获取微信用户基本信息
         try {
@@ -131,7 +132,7 @@ public class SubscribeHandler extends AbstractHandler {
         }
 
         try {
-            return new TextBuilder().build("感谢关注", wxMessage, wxMpService);
+            return handlerService.outMessage(wxMpXmlOutMessage);
         } catch (Exception e) {
             this.logger.error(e.getMessage(), e);
         }
