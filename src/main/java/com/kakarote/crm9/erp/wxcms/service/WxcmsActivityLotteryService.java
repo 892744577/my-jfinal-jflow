@@ -26,4 +26,12 @@ public class WxcmsActivityLotteryService {
                 wxcmsActivityLottery.getOpenId()
         );
     }
+
+    public Object queryWinner(WxcmsActivityLottery wxcmsActivityLottery) {
+        return WxcmsActivityLottery.dao.find(
+                Db.getSqlPara("admin.wxcmsActivityLottery.getActivityLotteryByWinner").getSql(),
+                wxcmsActivityLottery.getAcId(),
+                1
+        );
+    }
 }

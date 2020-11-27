@@ -43,4 +43,12 @@ public class WxCmsPrizeController extends Controller {
         renderJson(R.ok().put("data",wxcmsActivityLotteryService.query(wxcmsActivityLottery)));
     }
 
+    /**
+     * 根据acid查询中奖记录
+     */
+    public void queryLotteryWinner() {
+        WxcmsActivityLottery wxcmsActivityLottery = getModel(WxcmsActivityLottery.class,"",true);
+        renderJson(R.ok().put("data",wxcmsActivityLotteryService.queryWinner(wxcmsActivityLottery)));
+    }
+
 }
