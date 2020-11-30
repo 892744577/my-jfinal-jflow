@@ -28,11 +28,7 @@ public class FbtService {
     @Getter
     private String signKey = SystemConfig.getCS_AppSettings().get("FBT.signKey").toString();
 
-    public boolean createDept(DeptReq deptReq) throws Exception {
-        //沙箱环境
-        String deptInfoUrl = "https://open-plus-test.fenbeijinfu.com/openapi/func/department/create";
-        //生产环境
-        //String deptInfoUrl = "https://open-plus.fenbeitong.com/openapi/func/department/create";
+    public boolean createDeptOrEmp(DeptReq deptReq,String deptInfoUrl) throws Exception {
 
         String accessToken = deptReq.getAccessToken();
 

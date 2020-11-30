@@ -43,12 +43,61 @@ public class FbtController extends Controller {
             return;
         }
 
-        boolean result = fbtService.createDept(deptReq);
+        //沙箱环境
+        String deptInfoUrl = "https://open-plus-test.fenbeijinfu.com/openapi/func/department/create";
+        //生产环境
+        //String deptInfoUrl = "https://open-plus.fenbeitong.com/openapi/func/department/create";
+
+        boolean result = fbtService.createDeptOrEmp(deptReq,deptInfoUrl);
 
         if (result) {
             renderJson(R.ok().put("code","000000"));
         }else {
             renderJson(R.error("调用添加部门接口出错!").put("code","000004"));
+        }
+
+    }
+    
+    /*
+     * @Description //添加员工接口
+     * @Author wangkaida
+     * @Date 16:19 2020/11/30
+     * @Param [deptReq]
+     * @return void
+     **/
+    public void createEmployee(@Para("") DeptReq deptReq) throws Exception {
+
+        if(StrUtil.isEmpty(deptReq.getEmployee_id())){
+            renderJson(R.error("操作人id不能为空!").put("code","000001"));
+            return;
+        }
+
+        if(StrUtil.isEmpty(deptReq.getEmployee_type())){
+            renderJson(R.error("操作人类型不能为空!").put("code","000002"));
+            return;
+        }
+
+        if(StrUtil.isEmpty(deptReq.getData())){
+            renderJson(R.error("请求数据data不能为空!").put("code","000003"));
+            return;
+        }
+
+        if(StrUtil.isEmpty(deptReq.getAccessToken())){
+            renderJson(R.error("AccessToken不能为空!").put("code","000006"));
+            return;
+        }
+
+        //沙箱环境
+        String empInfoUrl = "https://open-plus-test.fenbeijinfu.com/openapi/func/employee/create";
+        //生产环境
+        //String empInfoUrl = "https://open-plus.fenbeitong.com/openapi/func/employee/create";
+
+        boolean result = fbtService.createDeptOrEmp(deptReq,empInfoUrl);
+
+        if (result) {
+            renderJson(R.ok().put("code","000000"));
+        }else {
+            renderJson(R.error("调用添加员工接口出错!").put("code","000004"));
         }
 
     }
