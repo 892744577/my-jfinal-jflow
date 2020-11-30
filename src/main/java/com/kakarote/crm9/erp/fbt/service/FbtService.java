@@ -34,7 +34,7 @@ public class FbtService {
         //生产环境
         //String deptInfoUrl = "https://open-plus.fenbeitong.com/openapi/func/department/create";
 
-        String accessToken = getAccessToken();
+        String accessToken = deptReq.getAccessToken();
 
         if (StringUtils.isNotBlank(accessToken)) {
             long timestamp = System.currentTimeMillis();
@@ -49,16 +49,19 @@ public class FbtService {
             currentDeptInfoPrama.put("sign", sign);
             currentDeptInfoPrama.put("data", deptReq.getData());
             String deptReturn = tokenService.gatewayRequest(deptInfoUrl, currentDeptInfoPrama);
-            JSONObject deptResult = JSONObject.parseObject(deptReturn);
-            if(deptResult.getInteger("code") == 0
-                    && "success".equals(deptResult.getString("msg"))){
-                return true;
+            if (deptReturn != null) {
+                JSONObject deptResult = JSONObject.parseObject(deptReturn);
+                if(deptResult.getInteger("code") == 0
+                        && "success".equals(deptResult.getString("msg"))){
+                    return true;
+                }
             }
+
         }
         return false;
     }
 
-    private String getAccessToken() throws Exception {
+    public String getAccessToken() throws Exception {
         //沙箱环境
         String tokenUrl = "https://open-plus-test.fenbeijinfu.com/open/api/auth/v1/dispense";
         //生产环境

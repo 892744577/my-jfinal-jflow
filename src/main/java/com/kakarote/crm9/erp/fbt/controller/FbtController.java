@@ -8,6 +8,7 @@ import com.kakarote.crm9.erp.fbt.service.FbtService;
 import com.kakarote.crm9.erp.fbt.vo.DeptReq;
 import com.kakarote.crm9.utils.R;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 
 @Slf4j
 public class FbtController extends Controller {
@@ -37,12 +38,34 @@ public class FbtController extends Controller {
             return;
         }
 
+        if(StrUtil.isEmpty(deptReq.getAccessToken())){
+            renderJson(R.error("AccessToken不能为空!").put("code","000006"));
+            return;
+        }
+
         boolean result = fbtService.createDept(deptReq);
 
         if (result) {
             renderJson(R.ok().put("code","000000"));
         }else {
             renderJson(R.error("调用添加部门接口出错!").put("code","000004"));
+        }
+
+    }
+
+    /*
+     * @Description //获取AccessToken接口
+     * @Author wangkaida
+     * @Date 15:45 2020/11/30
+     **/
+    public void getAccessToken() throws Exception {
+
+        String result = fbtService.getAccessToken();
+
+        if (StringUtils.isNotBlank(result)) {
+            renderJson(R.ok().put("data",result).put("code","000000"));
+        }else {
+            renderJson(R.error("调用获取AccessToken接口出错!").put("code","000005"));
         }
 
     }
