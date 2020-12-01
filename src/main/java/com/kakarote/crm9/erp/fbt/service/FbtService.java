@@ -69,9 +69,11 @@ public class FbtService {
         String tokenReturn = tokenService.gatewayRequest(tokenUrl, currentDeptInfoPrama);
 
         JSONObject tokenResult = JSONObject.parseObject(tokenReturn);
-        if(tokenResult.getInteger("code") == 0
-          && tokenResult.getJSONObject("data") !=null){
-            return tokenResult.getJSONObject("data").getString("access_token");
+        if (tokenResult != null) {
+            if(tokenResult.getInteger("code") == 0
+                    && tokenResult.getJSONObject("data") !=null){
+                return tokenResult.getJSONObject("data").getString("access_token");
+            }
         }
         return null;
     }
