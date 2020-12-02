@@ -103,6 +103,50 @@ public class FbtController extends Controller {
     }
 
     /*
+     * @Description //更新员工接口
+     * @Author wangkaida
+     * @Date 9:53 2020/12/2
+     * @Param [deptReq]
+     * @return void
+     **/
+    public void updateEmployee(@Para("") DeptReq deptReq) throws Exception {
+
+        if(StrUtil.isEmpty(deptReq.getEmployee_id())){
+            renderJson(R.error("操作人id不能为空!").put("code","000001"));
+            return;
+        }
+
+        if(StrUtil.isEmpty(deptReq.getEmployee_type())){
+            renderJson(R.error("操作人类型不能为空!").put("code","000002"));
+            return;
+        }
+
+        if(StrUtil.isEmpty(deptReq.getData())){
+            renderJson(R.error("请求数据data不能为空!").put("code","000003"));
+            return;
+        }
+
+        if(StrUtil.isEmpty(deptReq.getAccessToken())){
+            renderJson(R.error("AccessToken不能为空!").put("code","000006"));
+            return;
+        }
+
+        //沙箱环境
+        String empInfoUrl = "https://open-plus-test.fenbeijinfu.com/openapi/func/employee/update";
+        //生产环境
+        //String empInfoUrl = "https://open-plus.fenbeitong.com/openapi/func/employee/update";
+
+        boolean result = fbtService.createDeptOrEmp(deptReq,empInfoUrl);
+
+        if (result) {
+            renderJson(R.ok().put("code","000000"));
+        }else {
+            renderJson(R.error("调用更新员工接口出错!").put("code","000004"));
+        }
+
+    }
+
+    /*
      * @Description //获取AccessToken接口
      * @Author wangkaida
      * @Date 15:45 2020/11/30
