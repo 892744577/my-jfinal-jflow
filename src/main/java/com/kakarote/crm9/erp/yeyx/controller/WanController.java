@@ -111,7 +111,7 @@ public class WanController extends Controller {
             JSONObject dataJSONObject= JSONObject.parseObject(data);
             try {
                 log.info("==================当前登陆人："+ WebUser.getNo());
-                if(WebUser.getNo()!=""){
+                if(StringUtils.isNotEmpty(WebUser.getNo())){
 
                 }else{
                     WebUser.SignInOfGenerAuth(new Emp("WSFHuangQiang"), "WSFHuangQiang");
