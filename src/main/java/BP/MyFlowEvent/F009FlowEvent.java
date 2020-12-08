@@ -18,6 +18,7 @@ import com.kakarote.crm9.erp.yeyx.entity.HrGongdan;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanBook;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanRepair;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanZmnLog;
+import com.kakarote.crm9.erp.yeyx.service.SabService;
 import com.kakarote.crm9.erp.yeyx.service.WanService;
 import com.kakarote.crm9.erp.yeyx.service.YeyxService;
 
@@ -99,7 +100,7 @@ public class F009FlowEvent extends FlowEventBase {
                     }
                 }
                 //1.3若系统是YX
-               if("YX".equals(serviceSystem)){
+                if("YX".equals(serviceSystem)){
                     Map currentPrama = new HashMap();
                     Map currentJson= new HashMap();
 
@@ -180,7 +181,8 @@ public class F009FlowEvent extends FlowEventBase {
                    this.HisEn.Update();
                    Log.DebugWriteInfo("==============>调用新增订单更新服务单信息");
 
-               }else if ("WSF".equals(serviceSystem)) {
+               }
+                else if ("WSF".equals(serviceSystem)) {
                    WanService wanService = Aop.get(WanService.class);
 
                    //add by wangkaidda 调用万师傅下单接口
@@ -280,8 +282,43 @@ public class F009FlowEvent extends FlowEventBase {
                    String result = wanService.gatewayRequestJson(wanService.getPath() + "/order/batchCreateAsync", reqJsonStr);
                    Log.DebugWriteInfo("==============>调用新增订单接口返回结果:" + result);
                }
-               this.HisEn.Update();
-               Log.DebugWriteInfo("==============>服务商更新服务单信息");
+                //1.4若系统是SAB
+                else if("SAB".equals(serviceSystem)){
+                    SabService sabService = Aop.get(SabService.class);
+                    List projectList = new ArrayList();
+                    Map projectList1 = new HashMap();
+                    if(!StringUtils.isEmpty(this.getSysPara().get("contactName")))
+                        projectList1.put("Name",this.getSysPara().get("contactName").toString());
+                    if(!StringUtils.isEmpty(this.getSysPara().get("telephone")))
+                        projectList1.put("Mobile", this.getSysPara().get("telephone").toString()); //用户手机号码
+                    projectList1.put("OrderNo",this.getSysPara().get("FK_Flow") + "-" + this.getSysPara().get("OID")+"-" + serviceNo); //工单编号
+                    projectList1.put("IsAfterService","2"); //7天服保：0；90天服保：1；365天服保：2
+                    projectList1.put("PayType", "04"); //账期：04
+                    projectList1.put("LockType", "1"); //安装类型：1家居智能锁2酒店智能锁
+                    /*AZ0054	单门安装	国标锁体，含开面板孔和锁体定位柱孔、 不含锁体槽费
+                    AZ0055	双门安装	真假锁、国标锁体，含开面板孔和锁体定位柱孔、 不含锁体槽*/
+                    projectList1.put("InstallEnv", "AZ0054");
+                    projectList1.put("Count", this.getSysPara().get("productCount").toString()); //数量
+                    projectList1.put("BrandName", "亚太天能"); //用户手机号码
+                    projectList1.put("address", this.getSysPara().get("smcProvinceIdT").toString()
+                            + this.getSysPara().get("smcCityIdT").toString()
+                            + this.getSysPara().get("smcDistrictIdT").toString()
+                            + this.getSysPara().get("address").toString()); //详细地址
+                    projectList1.put("Remark",this.getSysPara().get("remark").toString());
+                    projectList.add(projectList1);
+                    String reqJsonStr = sabService.getJsonData(projectList);
+                    Log.DebugWriteInfo("==============>调用新增订单接口发送参数:" + reqJsonStr);
+                    String result = sabService.gatewayRequestJson(sabService.getPath() + "/ApiSABProject/DispatchProject", reqJsonStr);
+                    Log.DebugWriteInfo("==============>调用新增订单接口返回结果:" + result);
+                    JSONObject objectResult = JSONObject.parseObject(result);
+                    if(objectResult.getInteger("ErrorCode") == 0 && objectResult.getJSONArray("Data").size()>0){
+                        String ShowCode = objectResult.getJSONArray("Data").getJSONObject(0).getString("ShowCode");
+                        Log.DebugWriteInfo("==============>调用新增订单接口成功,返回orderId:"+ShowCode);
+                        row.SetValByKey("orderId",ShowCode);
+                    }
+                }
+                this.HisEn.Update();
+                Log.DebugWriteInfo("==============>服务商更新服务单信息");
             }
             //发送公众号信息
             sendMpMsg(serviceSystem,nextNodeID,nextNodeName);
