@@ -130,13 +130,14 @@ public class HrGongDanController extends Controller {
         //发送通知
         //获取售后客服的微信公众号openId
         List<PortEmp> portEmpList = PortEmp.dao.find(Db.getSql("admin.portEmp.queryAfterSalePortEmpList"));
-        if (portEmpList.size() > 0) {
+        boolean successOrNot = hrGongdanRepair.save();
+        if (portEmpList.size() > 0 && successOrNot==true) {
             sendMpMsg(portEmpList,hrGongdanRepair);
             //推送企业微信信息
             sendCpRepair(portEmpList,hrGongdanRepair);
         }
+        renderJson(R.ok().put("result",successOrNot).put("data",hrGongdanRepair));
 
-        renderJson(R.ok().put("result",hrGongdanRepair.save()).put("data",hrGongdanRepair));
     }
 
     /**
