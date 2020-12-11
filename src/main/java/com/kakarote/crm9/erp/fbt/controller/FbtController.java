@@ -44,9 +44,9 @@ public class FbtController extends Controller {
         }
 
         //沙箱环境
-        String deptInfoUrl = "https://open-plus-test.fenbeijinfu.com/openapi/func/department/create";
+//        String deptInfoUrl = "https://open-plus-test.fenbeijinfu.com/openapi/func/department/create";
         //生产环境
-        //String deptInfoUrl = "https://open-plus.fenbeitong.com/openapi/func/department/create";
+        String deptInfoUrl = "https://open-plus.fenbeitong.com/openapi/func/department/create";
 
         boolean result = fbtService.createDeptOrEmp(deptReq,deptInfoUrl);
 
@@ -88,9 +88,9 @@ public class FbtController extends Controller {
         }
 
         //沙箱环境
-        String empInfoUrl = "https://open-plus-test.fenbeijinfu.com/openapi/func/employee/create";
+//        String empInfoUrl = "https://open-plus-test.fenbeijinfu.com/openapi/func/employee/create";
         //生产环境
-        //String empInfoUrl = "https://open-plus.fenbeitong.com/openapi/func/employee/create";
+        String empInfoUrl = "https://open-plus.fenbeitong.com/openapi/func/employee/create";
 
         boolean result = fbtService.createDeptOrEmp(deptReq,empInfoUrl);
 
@@ -132,9 +132,9 @@ public class FbtController extends Controller {
         }
 
         //沙箱环境
-        String empInfoUrl = "https://open-plus-test.fenbeijinfu.com/openapi/func/employee/update";
+//        String empInfoUrl = "https://open-plus-test.fenbeijinfu.com/openapi/func/employee/update";
         //生产环境
-        //String empInfoUrl = "https://open-plus.fenbeitong.com/openapi/func/employee/update";
+        String empInfoUrl = "https://open-plus.fenbeitong.com/openapi/func/employee/update";
 
         boolean result = fbtService.createDeptOrEmp(deptReq,empInfoUrl);
 

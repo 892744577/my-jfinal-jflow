@@ -59,9 +59,9 @@ public class FbtService {
 
     public String getAccessToken() throws Exception {
         //沙箱环境
-        String tokenUrl = "https://open-plus-test.fenbeijinfu.com/open/api/auth/v1/dispense";
+//        String tokenUrl = "https://open-plus-test.fenbeijinfu.com/open/api/auth/v1/dispense";
         //生产环境
-        //String tokenUrl = "https://open-plus.fenbeitong.com/open/api/auth/v1/dispense";
+        String tokenUrl = "https://open-plus.fenbeitong.com/open/api/auth/v1/dispense";
 
         Map currentDeptInfoPrama = new HashMap();
         currentDeptInfoPrama.put("app_id", appId);
