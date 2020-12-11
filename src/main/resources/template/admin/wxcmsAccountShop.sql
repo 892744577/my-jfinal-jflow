@@ -12,7 +12,7 @@
     #end
   #end
   #sql ("queryPageList")
-    SELECT a.*,b.qrcode_param,b.qrcode_url FROM wxcms_account_shop a
+    SELECT a.*,b.qrcode_param,b.qrcode_url,(SELECT COUNT(*) FROM wxcms_account_qrcode_fans c WHERE c.event_key = b.qrcode_param) num FROM wxcms_account_shop a
     left join wxcms_account_shop_qrcode b on a.id=b.shop_id
     where 1=1
     #if(search)
