@@ -61,15 +61,10 @@ public class FbtService {
     }
 
     public String getAccessToken() throws Exception {
-        //沙箱环境
-//        String tokenUrl = "https://open-plus-test.fenbeijinfu.com/open/api/auth/v1/dispense";
-        //生产环境
-        String tokenUrl = "https://open-plus.fenbeitong.com/open/api/auth/v1/dispense";
-
         Map currentDeptInfoPrama = new HashMap();
         currentDeptInfoPrama.put("app_id", appId);
         currentDeptInfoPrama.put("app_key", appKey);
-        String tokenReturn = tokenService.gatewayRequest(tokenUrl, currentDeptInfoPrama);
+        String tokenReturn = tokenService.gatewayRequest(path+"/open/api/auth/v1/dispense", currentDeptInfoPrama);
 
         JSONObject tokenResult = JSONObject.parseObject(tokenReturn);
         if (tokenResult != null) {

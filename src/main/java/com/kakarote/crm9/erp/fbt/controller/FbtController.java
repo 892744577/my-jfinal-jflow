@@ -44,7 +44,7 @@ public class FbtController extends Controller {
         }
 
         boolean result = fbtService.createDeptOrEmp(deptReq,
-                fbtService.getPath()+"/func/department/create");
+                fbtService.getPath()+"/openapi/func/department/create");
 
         if (result) {
             renderJson(R.ok().put("code","000000"));
@@ -83,12 +83,8 @@ public class FbtController extends Controller {
             return;
         }
 
-        //沙箱环境
-//        String empInfoUrl = "https://open-plus-test.fenbeijinfu.com/openapi/func/employee/create";
-        //生产环境
-        String empInfoUrl = "https://open-plus.fenbeitong.com/openapi/func/employee/create";
-
-        boolean result = fbtService.createDeptOrEmp(deptReq,empInfoUrl);
+        boolean result = fbtService.createDeptOrEmp(deptReq,
+                fbtService.getPath()+"/openapi/func/employee/create");
 
         if (result) {
             renderJson(R.ok().put("code","000000"));
@@ -127,12 +123,8 @@ public class FbtController extends Controller {
             return;
         }
 
-        //沙箱环境
-//        String empInfoUrl = "https://open-plus-test.fenbeijinfu.com/openapi/func/employee/update";
-        //生产环境
-        String empInfoUrl = "https://open-plus.fenbeitong.com/openapi/func/employee/update";
-
-        boolean result = fbtService.createDeptOrEmp(deptReq,empInfoUrl);
+        boolean result = fbtService.createDeptOrEmp(deptReq,
+                fbtService.getPath()+"/openapi/func/employee/update");
 
         if (result) {
             renderJson(R.ok().put("code","000000"));
