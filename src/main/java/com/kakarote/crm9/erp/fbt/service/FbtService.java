@@ -28,6 +28,9 @@ public class FbtService {
     @Getter
     private String signKey = SystemConfig.getCS_AppSettings().get("FBT.signKey").toString();
 
+    @Getter
+    private String path = SystemConfig.getCS_AppSettings().get("FBT.path").toString();
+
     public boolean createDeptOrEmp(DeptReq deptReq,String deptInfoUrl) throws Exception {
 
         String accessToken = deptReq.getAccessToken();

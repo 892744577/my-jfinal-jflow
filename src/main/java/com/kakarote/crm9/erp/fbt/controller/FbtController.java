@@ -43,12 +43,8 @@ public class FbtController extends Controller {
             return;
         }
 
-        //沙箱环境
-//        String deptInfoUrl = "https://open-plus-test.fenbeijinfu.com/openapi/func/department/create";
-        //生产环境
-        String deptInfoUrl = "https://open-plus.fenbeitong.com/openapi/func/department/create";
-
-        boolean result = fbtService.createDeptOrEmp(deptReq,deptInfoUrl);
+        boolean result = fbtService.createDeptOrEmp(deptReq,
+                fbtService.getPath()+"/func/department/create");
 
         if (result) {
             renderJson(R.ok().put("code","000000"));
