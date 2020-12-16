@@ -1,10 +1,10 @@
 package com.kakarote.crm9.erp.wx.controller;
 
-import BP.Difference.SystemConfig;
 import cn.binarywang.wx.miniapp.api.WxMaService;
 import cn.binarywang.wx.miniapp.bean.WxMaJscode2SessionResult;
 import com.jfinal.core.Controller;
 import com.jfinal.core.paragetter.Para;
+import com.kakarote.crm9.erp.wx.config.WxMaAppIdEmun;
 import com.kakarote.crm9.erp.wx.config.WxMaConfiguration;
 import com.kakarote.crm9.erp.wx.util.MaUtil;
 import com.kakarote.crm9.erp.wx.vo.MaReq;
@@ -14,7 +14,6 @@ import org.apache.commons.lang3.StringUtils;
 
 public class MiniappController extends Controller {
 
-    private String appid = SystemConfig.getCS_AppSettings().get("MA.APPID").toString();
 
     public void jscode2session(@Para("code") String code){
 
@@ -22,7 +21,7 @@ public class MiniappController extends Controller {
             renderJson(R.error("code不能为空!").put("code","000006"));
             return;
         }
-        final WxMaService wxService = WxMaConfiguration.getMaService(this.appid);
+        final WxMaService wxService = WxMaConfiguration.getMaService(WxMaAppIdEmun.ma0.getCode());
 
         try {
             WxMaJscode2SessionResult session = wxService.getUserService().getSessionInfo(code);
@@ -46,7 +45,7 @@ public class MiniappController extends Controller {
             renderJson(R.error("小程序openId不能为空!").put("code","000010"));
             return;
         }
-        final WxMaService wxService = WxMaConfiguration.getMaService(this.appid);
+        final WxMaService wxService = WxMaConfiguration.getMaService(WxMaAppIdEmun.ma0.getCode());
 
         try {
             String scene = "t=as&id="+wxAppOpenId;
