@@ -22,6 +22,7 @@ import com.kakarote.crm9.erp.yeyx.service.SabService;
 import com.kakarote.crm9.erp.yeyx.service.WanService;
 import com.kakarote.crm9.erp.yeyx.service.YeyxService;
 
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
 
@@ -139,8 +140,14 @@ public class F009FlowEvent extends FlowEventBase {
                         currentJson.put("sourceData", this.getSysPara().get("orderDiscountSourceData").toString()); //订单优惠快照
                     if(!StringUtils.isEmpty(this.getSysPara().get("orderDiscountRemark")))
                         currentJson.put("remark", this.getSysPara().get("orderDiscountRemark").toString()); //优惠备注
-                    if(!StringUtils.isEmpty(this.getSysPara().get("remark")))
-                        currentPrama.put("remark", this.getSysPara().get("remark").toString()); //服务单备注
+                    if(!StringUtils.isEmpty(this.getSysPara().get("remark"))) {
+                        //BigDecimal servicePrice = new BigDecimal(this.getSysPara().get("servicePrice").toString());
+                        //BigDecimal productCount = new BigDecimal(this.getSysPara().get("productCount").toString());
+                        BigDecimal serviceExtraCharge = new BigDecimal(this.getSysPara().get("serviceExtraCharge").toString());
+                        //BigDecimal TotalFee = servicePrice.multiply(productCount).add(serviceExtraCharge);
+                        currentPrama.put("remark", this.getSysPara().get("remark").toString() +
+                                ",安装附加总费" + serviceExtraCharge + "元"); //服务单备注
+                    }
                     currentPrama.put("orderDiscount", currentJson);
                     currentPrama.put("thirdOrderId", this.getSysPara().get("FK_Flow") + "-" + this.getSysPara().get("OID")+"-" + serviceNo);
 
@@ -178,7 +185,6 @@ public class F009FlowEvent extends FlowEventBase {
                     }
                    //保存本系统服务单号、及第三方系统单号
                    this.HisEn.setRow(row);
-                   this.HisEn.Update();
                    Log.DebugWriteInfo("==============>调用新增订单更新服务单信息");
 
                }
