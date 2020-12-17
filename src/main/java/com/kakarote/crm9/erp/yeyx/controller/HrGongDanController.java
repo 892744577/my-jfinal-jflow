@@ -132,7 +132,8 @@ public class HrGongDanController extends Controller {
         List<PortEmp> portEmpList = PortEmp.dao.find(Db.getSql("admin.portEmp.queryAfterSalePortEmpList"));
         boolean successOrNot = hrGongdanRepair.save();
         if (portEmpList.size() > 0 && successOrNot==true) {
-            sendMpMsg(portEmpList,hrGongdanRepair);
+            //注销公众号推送
+            //sendMpMsg(portEmpList,hrGongdanRepair);
             //推送企业微信信息
             sendCpRepair(portEmpList,hrGongdanRepair);
         }
@@ -521,7 +522,7 @@ public class HrGongDanController extends Controller {
             sendContent = title + "\n联系人:"+hrGongdanBookRequest.getContact() + "\n联系电话:"+hrGongdanBookRequest.getPhone() + "\n地址:"+hrGongdanBookRequest.getAddress() + "\n预约描述:"+hrGongdanBookRequest.getRemark();
         }
         if (hrGongdanFjf != null) {
-            redirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+WxCpAgentIdEmun.corpId+"&redirect_uri=http%3A%2F%2Fapp.aptenon.com%2Fcrm%2FcrmAdmin%2Findex.html%3Ftype%3DappointQuery%23%2Fwx%2FwxWorkAuthPage&response_type=code&scope=snsapi_base&state=#wechat_redirect";
+            redirectUrl = "https://open.weixin.qq.com/connect/oauth2/authorize?appid="+WxCpAgentIdEmun.corpId+"&redirect_uri=http%3A%2F%2Fapp.aptenon.com%2Fcrm%2FcrmAdmin%2Findex.html%3Ftype%3DsurchargeAudit%23%2Fwx%2FwxWorkAuthPage&response_type=code&scope=snsapi_base&state=#wechat_redirect";
             title = "你有新的附加费反馈单! <a href=\""+redirectUrl+"\">"+hrGongdanFjf.getOrderNumber()+"</a>";
             sendContent = title + "\n工单单号:"+hrGongdanFjf.getServiceNo() + "\n附加费用(元):"+hrGongdanFjf.getFjf() + "\n申请修改原因:"+hrGongdanFjf.getRemark();
         }
