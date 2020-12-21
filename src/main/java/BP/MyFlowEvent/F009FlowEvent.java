@@ -14,18 +14,17 @@ import com.kakarote.crm9.erp.wx.config.WxMaAppIdEmun;
 import com.kakarote.crm9.erp.wx.service.MpService;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.kakarote.crm9.erp.wx.vo.MpMsgSendReq;
-import com.kakarote.crm9.erp.yeyx.entity.HrGongdan;
-import com.kakarote.crm9.erp.yeyx.entity.HrGongdanBook;
-import com.kakarote.crm9.erp.yeyx.entity.HrGongdanRepair;
-import com.kakarote.crm9.erp.yeyx.entity.HrGongdanZmnLog;
+import com.kakarote.crm9.erp.yeyx.entity.*;
 import com.kakarote.crm9.erp.yeyx.service.SabService;
 import com.kakarote.crm9.erp.yeyx.service.WanService;
 import com.kakarote.crm9.erp.yeyx.service.YeyxService;
+import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.*;
 
+@Slf4j
 public class F009FlowEvent extends FlowEventBase {
     @Override
     public String getFlowMark() {
@@ -59,11 +58,11 @@ public class F009FlowEvent extends FlowEventBase {
                                     "KP".equals(this.getSysPara().get("serviceSegmentation").toString())
                     )
             ){
-                Log.DebugWriteInfo("==============>调用新增订单生成serviceSp开始");
+                log.info("==============>调用新增订单生成serviceSp开始");
                 HrGongdan hrGongdan = HrGongdan.dao.findById(this.getSysPara().get("OID").toString());
                 hrGongdan.setServiceSp("1");
                 hrGongdan.update();
-                Log.DebugWriteInfo("==============>调用新增订单生成serviceSp结束");
+                log.info("==============>调用新增订单生成serviceSp结束");
             }
 
             String serviceSystem = this.getSysPara().get("serviceSystem") == null ? "": this.getSysPara().get("serviceSystem").toString(); //服务单第三方系统
@@ -83,7 +82,7 @@ public class F009FlowEvent extends FlowEventBase {
                     String random = (new DecimalFormat("00")).format((System.currentTimeMillis()%100));//毫秒数的后两位当随机数
                     serviceNo = serviceSystem + serviceSegmentation + serviceType + dateTime + random + serialNum; //服务单编号
                     row.SetValByKey("serviceNo",serviceNo);
-                    Log.DebugWriteInfo("==============>调用新增订单生成serviceNo:" + serviceNo);
+                    log.info("==============>调用新增订单生成serviceNo:" + serviceNo);
                 }
                 //1.2若是预约单或报修单将旧单改为已生成工单
                 if(this.getSysPara().get("preServiceNo") != null){
@@ -164,13 +163,13 @@ public class F009FlowEvent extends FlowEventBase {
                     param.put("version","1");
                     param.put("timestamp",String.valueOf(timestamp));
                     param.put("jsonData",jsonStr);
-                    Log.DebugWriteInfo("==============>调用新增订单接口发送参数:" + JSONObject.toJSONString(param));
+                    log.info("==============>调用新增订单接口发送参数:" + JSONObject.toJSONString(param));
                     String result = yeyxService.gatewayRequest(yeyxService.getPath() + "/createOrder", param);
-                    Log.DebugWriteInfo("==============>调用新增订单接口返回结果:" + result);
+                    log.info("==============>调用新增订单接口返回结果:" + result);
                     JSONObject objectResult = JSONObject.parseObject(result);
                     if(objectResult.getInteger("status") == 200 && objectResult.getJSONObject("data") !=null){
                         String orderId = objectResult.getJSONObject("data").getString("orderId");
-                        Log.DebugWriteInfo("==============>调用新增订单接口成功,返回orderId:"+orderId);
+                        log.info("==============>调用新增订单接口成功,返回orderId:"+orderId);
                         row.SetValByKey("orderId",orderId);
                         //记录日志
                         HrGongdanZmnLog hrGongdanZmnLog = new HrGongdanZmnLog();
@@ -180,12 +179,12 @@ public class F009FlowEvent extends FlowEventBase {
                         hrGongdanZmnLog.setOptTime(new Date().getTime()/1000);
                         hrGongdanZmnLog.save();
                     }else {
-                        Log.DebugWriteInfo("==============>调用新增订单接口失败");
+                        log.info("==============>调用新增订单接口失败");
                         return result;
                     }
                    //保存本系统服务单号、及第三方系统单号
                    this.HisEn.setRow(row);
-                   Log.DebugWriteInfo("==============>调用新增订单更新服务单信息");
+                   log.info("==============>调用新增订单更新服务单信息");
 
                }
                 else if ("WSF".equals(serviceSystem)) {
@@ -283,10 +282,10 @@ public class F009FlowEvent extends FlowEventBase {
                    String reqJsonStr = wanService.getJsonData(jsonStr);
 
                    //调用新增订单接口
-                   Log.DebugWriteInfo("==============>调用新增订单接口发送参数:" + jsonStr);
-                   Log.DebugWriteInfo("==============>调用新增订单接口发送参数:" + reqJsonStr);
+                   log.info("==============>调用新增订单接口发送参数:" + jsonStr);
+                   log.info("==============>调用新增订单接口发送参数:" + reqJsonStr);
                    String result = wanService.gatewayRequestJson(wanService.getPath() + "/order/batchCreateAsync", reqJsonStr);
-                   Log.DebugWriteInfo("==============>调用新增订单接口返回结果:" + result);
+                   log.info("==============>调用新增订单接口返回结果:" + result);
                }
                 //1.4若系统是SAB
                 else if("SAB".equals(serviceSystem)){
@@ -313,18 +312,24 @@ public class F009FlowEvent extends FlowEventBase {
                     projectList1.put("Remark",this.getSysPara().get("remark").toString());
                     projectList.add(projectList1);
                     String reqJsonStr = sabService.getJsonData(projectList);
-                    Log.DebugWriteInfo("==============>调用新增订单接口发送参数:" + reqJsonStr);
+                    log.info("==============>调用新增订单接口发送参数:" + reqJsonStr);
                     String result = sabService.gatewayRequestJson(sabService.getPath() + "/ApiSABProject/DispatchProject", reqJsonStr);
-                    Log.DebugWriteInfo("==============>调用新增订单接口返回结果:" + result);
+                    log.info("==============>调用新增订单接口返回结果:" + result);
                     JSONObject objectResult = JSONObject.parseObject(result);
                     if(objectResult.getInteger("ErrorCode") == 0 && objectResult.getJSONArray("Data").size()>0){
                         String ShowCode = objectResult.getJSONArray("Data").getJSONObject(0).getString("ShowCode");
-                        Log.DebugWriteInfo("==============>调用新增订单接口成功,返回orderId:"+ShowCode);
+                        log.info("==============>调用新增订单接口成功,返回orderId:"+ShowCode);
                         row.SetValByKey("orderId",ShowCode);
+                        //录入记录
+                        HrGongdanSabLog hrGongdanSabLog = new HrGongdanSabLog();
+                        hrGongdanSabLog.setFuncId("createOrder");
+                        hrGongdanSabLog.setThirdOrderId(this.getSysPara().get("FK_Flow") + "-" + this.getSysPara().get("OID")+"-" + serviceNo);
+                        hrGongdanSabLog.setOrderId(ShowCode);
+                        hrGongdanSabLog.setOptTime(new Date().getTime()/1000);
                     }
                 }
                 this.HisEn.Update();
-                Log.DebugWriteInfo("==============>服务商更新服务单信息");
+                log.info("==============>服务商更新服务单信息");
             }
             //发送公众号信息
             sendMpMsg(serviceSystem,nextNodeID,nextNodeName);

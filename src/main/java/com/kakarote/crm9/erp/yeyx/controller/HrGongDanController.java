@@ -1,6 +1,5 @@
 package com.kakarote.crm9.erp.yeyx.controller;
 
-import BP.DA.Log;
 import BP.Tools.StringUtils;
 import BP.Web.WebUser;
 import cn.hutool.core.util.StrUtil;
@@ -60,6 +59,8 @@ public class HrGongDanController extends Controller {
     private HrGongdanZmnLogService hrGongdanZmnLogService;
     @Inject
     private HrGongdanWsfLogService hrGongdanWsfLogService;
+    @Inject
+    private HrGongdanSabLogService hrGongdanSabLogService;
     @Inject
     private TokenService tokenService;
     @Inject
@@ -186,7 +187,7 @@ public class HrGongDanController extends Controller {
 
     /**
      * @author tmr
-     * 查询啄木鸟接口记录
+     * 查询啄木鸟接口日志记录
      */
     public void queryPageZmnLog(BasePageRequest basePageRequest) {
         renderJson(R.ok().put("data",hrGongdanZmnLogService.queryPageList(basePageRequest)));
@@ -194,10 +195,17 @@ public class HrGongDanController extends Controller {
 
     /**
      * @author tmr
-     * 查询啄木鸟接口记录
+     * 查询万师傅接口日志记录
      */
     public void queryPageWsfLog(BasePageRequest basePageRequest) {
         renderJson(R.ok().put("data",hrGongdanWsfLogService.queryPageList(basePageRequest)));
+    }
+    /**
+     * @author tmr
+     * 查询锁安帮接口日志记录
+     */
+    public void queryPageSabLog(BasePageRequest basePageRequest) {
+        renderJson(R.ok().put("data",hrGongdanSabLogService.queryPageList(basePageRequest)));
     }
 
     /**
@@ -251,7 +259,7 @@ public class HrGongDanController extends Controller {
 
     /**
      * @author tmr
-     * 分页工单查询数据 -- 啄木鸟
+     * 分页工单查询数据 -- 万师傅
      */
     public void queryPageListWSFServiceSystem(BasePageRequest basePageRequest) throws Exception{
         basePageRequest.setJsonObject(basePageRequest.getJsonObject().fluentPut("serviceSystem", "WSF"));
@@ -448,10 +456,10 @@ public class HrGongDanController extends Controller {
                 jsonArray.add(new JSONObject().fluentPut("name","remark").fluentPut("value",hrGongdanRepairRequest.getRemark()));
 
                 mpReq.setData(jsonArray.toJSONString());
-                Log.DebugWriteInfo("=====================发送通知请求参数："+jsonArray.toJSONString());
+                log.info("=====================发送通知请求参数："+jsonArray.toJSONString());
                 Aop.get(MpService.class).send(mpReq);
             }else {
-                Log.DebugWriteInfo("进行小程序信息推送获取到的员工小程序openId为空!"+acceptor);
+                log.info("进行小程序信息推送获取到的员工小程序openId为空!"+acceptor);
             }
         }
     }

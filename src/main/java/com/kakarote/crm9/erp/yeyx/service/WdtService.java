@@ -2,12 +2,16 @@ package com.kakarote.crm9.erp.yeyx.service;
 
 import BP.Difference.SystemConfig;
 import com.alibaba.fastjson.JSON;
+import com.kakarote.crm9.common.util.EncodeUtil;
 import com.kakarote.crm9.common.util.HttpHelper;
+import com.kakarote.crm9.erp.wx.util.DateUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.log4j.Logger;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -24,10 +28,19 @@ public class WdtService {
     @Getter
     private String appkey = SystemConfig.getCS_AppSettings().get("WDT.appkey").toString();
     @Getter
+    private String qmAppkey = SystemConfig.getCS_AppSettings().get("WDT.qm.appkey").toString();
+    @Getter
     private String appsecret = SystemConfig.getCS_AppSettings().get("WDT.appsecret").toString();
     @Getter
-    private String path = SystemConfig.getCS_AppSettings().get("WDT.path").toString();
+    private String session = SystemConfig.getCS_AppSettings().get("WDT.session").toString();
 
+    /**
+     * 获取参数的json字符串
+     * @param start_time
+     * @param end_time
+     * @param moreMapData
+     * @return
+     */
     public String getJsonData(String start_time,String end_time,Map moreMapData) {
 
         try {
@@ -58,13 +71,59 @@ public class WdtService {
         return "";
     }
 
-    //字典排序
-    public List listSort(List strList){
-        Collections.sort(strList, new SpellComparator());
-        for (int i = 0; i < strList.size(); i++) {
-            System.out.println(strList.get(i));
+    /**
+     * 奇门获取订单数据
+     * @param moreMapData
+     * @return
+     */
+    public Map getQmJsonData(Map moreMapData) {
+        Map map = new HashMap();
+        try {
+            map.put("app_key",this.qmAppkey);
+            map.put("method","taobao.crm.order.detail.get");
+            map.put("target_app_key", this.appkey);
+
+            map.put("session", this.session);
+            map.put("timestamp", DateUtil.changeDateTOStr(new Date()));
+            map.put("format", "json");
+            map.put("v", "2.0");
+
+            //业务参数
+//            map.put("start_time", moreMapData.get("start_time"));
+//            map.put("end_time", moreMapData.get("end_time"));
+            map.put("page_no", "0");
+            map.put("page_size","500");
+            map.putAll(moreMapData);
+            map.put("sign", this.getSign(map));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return strList;
+        return map;
+    }
+
+    //获取签名
+    public String getSign(Map params){
+        // 第一步：检查参数是否已经排序
+        String[] keys = (String[]) params.keySet().toArray(new String[0]);
+        Arrays.sort(keys);
+
+        // 第二步：把所有参数名和参数值串在一起
+        StringBuilder query = new StringBuilder();
+        query.append(this.appsecret);
+        for (String key : keys) {
+            String value = (String) params.get(key);
+            query.append(key).append(value);
+
+        }
+        // 第三步：使用MD5加密
+        byte[] bytes = new byte[0];
+        query.append(this.appsecret);
+        try {
+            bytes = EncodeUtil.getMD5(query.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new String(bytes);
 
     }
 
@@ -90,46 +149,5 @@ public class WdtService {
     public String gatewayRequest(String url, Map parm) throws Exception {
         Map headers = new HashMap(1); headers.put("Content-Type", APPLICATION_X_WWW_FORM_URLENCODED);
         return HttpHelper.post(headers, parm, url, timeoutMillis);
-    }
-
-    /*public static void main(String[] args) {
-        long timestamp = System.currentTimeMillis()/1000 ;
-        System.out.println(timestamp );
-        Map map = new LinkedHashMap();
-        map.put("cityId",110100);
-        map.put("latitude",40.014708);
-        map.put("longitude",116.358663);
-        map.put("productCount",1);
-        map.put("productId",10271);
-        //java对象变成json对象
-        net.sf.json.JSONObject jsonObject= net.sf.json.JSONObject.fromObject(map);
-
-        //json对象转换成json字符串
-        String jsonStr=jsonObject.toString();
-        jsonStr="{\"factory\":2,\"reworkId\":\"\",\"address\":\"1231\",\"facInWarranty\":0,\"gender\":\"\",\"productId\":10254,\"contactName\":\"33132\",\"telephone\":\"13580573264\",\"remark\":\"23123\",\"cityId\":0,\"type\":\"1\",\"productCount\":0,\"dutyTime\":\"2020-06-17 13:39:00.0\",\"facProductId\":\"12046\",\"street\":\"1231\",\"orderDiscount\":{\"amount\":0,\"remark\":\"\",\"sourceData\":\"\"},\"thirdOrderId\":\"YXSA202006170013\"}";
-        YeyxService yeyxService = new YeyxService();
-        System.out.println(yeyxService.getMd5("34077","0e39fd66fa4b4b239a1c240815103dbf",jsonStr,timestamp,"1" ));
-    }*/
-}
-
-/**
- * 汉字拼音排序比较器
- */
-class SpellComparator implements Comparator {
-
-    private static Logger log = Logger.getLogger(SpellComparator.class.getClass());
-
-
-    public int compare(Object o1, Object o2) {
-        try {
-            // 取得比较对象的汉字编码，并将其转换成字符串
-            String s1 = new String(o1.toString().getBytes("UTF-8"), "ASCII");
-            String s2 = new String(o2.toString().getBytes("UTF-8"), "ASCII");
-            // 运用String类的 compareTo（）方法对两对象进行比较
-            return s1.compareTo(s2);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return 0;
     }
 }
