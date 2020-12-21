@@ -80,6 +80,7 @@ public class SabController extends Controller {
                             jsonObject.getString("thirdOrderId"),
                             jsonObject.getString("ShowCode"),
                             (new Date()).getTime());
+                    hrGongdanSabLog.setCancelRemark(jsonObject.getString("Reason"));
                     hrGongdanSabLog.save();
                 }
             } catch (Exception e) {
