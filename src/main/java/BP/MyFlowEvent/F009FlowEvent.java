@@ -229,24 +229,11 @@ public class F009FlowEvent extends FlowEventBase {
                    Map goodsList1 = new HashMap();
 
                    //客户图片信息+商品图片信息
-                   String goodsImgUrl = "";
-                   String ath_customerAccessories = this.getSysPara().get("ath_customerAccessories").toString();
-                   if(!StringUtils.isEmpty(ath_customerAccessories)) {
-                       //只允许图片格式发送
-                       String [] goodImg = ath_customerAccessories.split(",");
-                       for(String temp : goodImg){
-                           if(temp.contains(".jpg") ||
-                                   temp.contains(".png")){
-                               goodsImgUrl = goodsImgUrl + temp + ",";
-                           }
-                       }
-                       goodsImgUrl = goodsImgUrl.replace("\\","/");
-                   }
                    JSONObject productOneT = JSONObject.parseObject(this.getSysPara().get("productOneT").toString());
                    if(!StringUtils.isEmpty(productOneT) && !StringUtils.isEmpty(productOneT.get("listPicUrl")))
-                       goodsList1.put("goodsImgUrl", goodsImgUrl+productOneT.get("listPicUrl"));
+                       goodsList1.put("goodsImgUrl", this.getCustomerImages()+productOneT.get("listPicUrl"));
                    else
-                       goodsList1.put("goodsImgUrl", goodsImgUrl+"http://pic1.nipic.com/2008-08-14/2008814183939909_2.jpg");
+                       goodsList1.put("goodsImgUrl", this.getCustomerImages()+"http://pic1.nipic.com/2008-08-14/2008814183939909_2.jpg");
                     //商品信息
                    if("12122".equals(this.getSysPara().get("facProductId").toString())){
                        currentPrama.put("serveCategory", 17); //服务单，晾衣架
@@ -302,7 +289,12 @@ public class F009FlowEvent extends FlowEventBase {
                     projectList1.put("LockType", "1"); //安装类型：1家居智能锁2酒店智能锁
                     /*AZ0054	单门安装	国标锁体，含开面板孔和锁体定位柱孔、 不含锁体槽费
                     AZ0055	双门安装	真假锁、国标锁体，含开面板孔和锁体定位柱孔、 不含锁体槽*/
-                    projectList1.put("InstallEnv", "AZ0054");
+                    if("DS".equals(this.getSysPara().get("serviceSegmentation").toString())){
+                        projectList1.put("InstallEnv", "AZ0054");
+                    }else if("SS".equals(this.getSysPara().get("serviceSegmentation").toString())){
+                        projectList1.put("InstallEnv", "AZ0055");
+                    }
+
                     projectList1.put("Count", this.getSysPara().get("productCount").toString()); //数量
                     projectList1.put("BrandName", "亚太天能"); //用户手机号码
                     projectList1.put("address", this.getSysPara().get("smcProvinceIdT").toString()
@@ -310,6 +302,13 @@ public class F009FlowEvent extends FlowEventBase {
                             + this.getSysPara().get("smcDistrictIdT").toString()
                             + this.getSysPara().get("address").toString()); //详细地址
                     projectList1.put("Remark",this.getSysPara().get("remark").toString());
+
+                    //获取图片
+                    JSONObject productOneT = JSONObject.parseObject(this.getSysPara().get("productOneT").toString());
+                    if(!StringUtils.isEmpty(productOneT) && !StringUtils.isEmpty(productOneT.get("listPicUrl")))
+                        projectList1.put("Images", this.getCustomerImages()+productOneT.get("listPicUrl"));
+                    else
+                        projectList1.put("Images", "");
                     projectList.add(projectList1);
                     String reqJsonStr = sabService.getJsonData(projectList);
                     log.info("==============>调用新增订单接口发送参数:" + reqJsonStr);
@@ -320,6 +319,7 @@ public class F009FlowEvent extends FlowEventBase {
                         String ShowCode = objectResult.getJSONArray("Data").getJSONObject(0).getString("ShowCode");
                         log.info("==============>调用新增订单接口成功,返回orderId:"+ShowCode);
                         row.SetValByKey("orderId",ShowCode);
+                        this.HisEn.setRow(row);
                         //录入记录
                         HrGongdanSabLog hrGongdanSabLog = new HrGongdanSabLog();
                         hrGongdanSabLog.setFuncId("createOrder");
@@ -383,6 +383,27 @@ public class F009FlowEvent extends FlowEventBase {
                 Log.DebugWriteInfo("进行小程序信息推送获取到的员工信息为空!"+acceptor);
             }
         }
+    }
+
+    /**
+     *获取客户图片
+     * @return
+     */
+    public String getCustomerImages(){
+        String goodsImgUrl = "";
+        String ath_customerAccessories = this.getSysPara().get("ath_customerAccessories").toString();
+        if(!StringUtils.isEmpty(ath_customerAccessories)) {
+            //只允许图片格式发送
+            String [] goodImg = ath_customerAccessories.split(",");
+            for(String temp : goodImg){
+                if(temp.contains(".jpg") ||
+                        temp.contains(".png")){
+                    goodsImgUrl = goodsImgUrl + temp + ",";
+                }
+            }
+            goodsImgUrl = goodsImgUrl.replace("\\","/");
+        }
+        return goodsImgUrl;
     }
 
 }
