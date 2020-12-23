@@ -33,7 +33,7 @@ public class SabController extends Controller {
                 if (WebUser.getNo() != "") {
 
                 } else {
-                    WebUser.SignInOfGenerAuth(new Emp("PengHaiFeng"), "PengHaiFeng");
+                    WebUser.SignInOfGenerAuth(new Emp("YeXueWei"), "YeXueWei");
                 }
                 JSONObject jsonObject = JSONObject.parseObject(toDoRequest.getJsonData());
                 log.info("==================锁安帮推送参数："+ toDoRequest.getJsonData());
@@ -82,6 +82,7 @@ public class SabController extends Controller {
                             (new Date()).getTime());
                     hrGongdanSabLog.setCancelRemark(jsonObject.getString("Reason"));
                     hrGongdanSabLog.save();
+                    this.order_cancel(hrGongdanSabLog);
                 }
             } catch (Exception e) {
                 log.error("==================接收信息流转异常原因：", e);
@@ -117,6 +118,9 @@ public class SabController extends Controller {
         if(915 == gwf.getFK_Node()){
             //发送流程
             Hashtable myhtSend = new Hashtable();
+            if(StringUtils.isNotBlank(hrGongdanSabLog.getDutyTime())){
+                myhtSend.put("dutyTime", hrGongdanSabLog.getDutyTime());
+            }
             myhtSend.put("masterName", hrGongdanSabLog.getMasterName());
             myhtSend.put("masterPhone", hrGongdanSabLog.getMasterPhone());
             SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(
@@ -126,6 +130,9 @@ public class SabController extends Controller {
         }else{
             HrGongdan hrGongdan = new HrGongdan();
             hrGongdan.setOID(Integer.valueOf(hrGongdanSabLog.getThirdOrderId().split("-")[1]));
+            if(StringUtils.isNotBlank(hrGongdanSabLog.getDutyTime())){
+                hrGongdan.setDutyTime(hrGongdanSabLog.getDutyTime());
+            }
             hrGongdan.setMasterName(hrGongdanSabLog.getMasterName());
             hrGongdan.setMasterPhone(hrGongdanSabLog.getMasterPhone());
             hrGongdan.update();
@@ -190,6 +197,7 @@ public class SabController extends Controller {
     @NotAction
     public void order_cancel(HrGongdanSabLog hrGongdanSabLog) throws Exception{
         Hashtable myhtSend = new Hashtable();
+        myhtSend.put("cancelRemark", hrGongdanSabLog.getCancelRemark());
         SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork(
                 hrGongdanSabLog.getThirdOrderId().split("-")[0],
                 Long.parseLong(hrGongdanSabLog.getThirdOrderId().split("-")[1]),
