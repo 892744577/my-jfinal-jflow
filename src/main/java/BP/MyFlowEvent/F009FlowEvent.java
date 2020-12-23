@@ -297,18 +297,24 @@ public class F009FlowEvent extends FlowEventBase {
 
                     projectList1.put("Count", this.getSysPara().get("productCount").toString()); //数量
                     projectList1.put("BrandName", "亚太天能"); //用户手机号码
+                    //详细地址
                     projectList1.put("address", this.getSysPara().get("smcProvinceIdT").toString()
                             + this.getSysPara().get("smcCityIdT").toString()
                             + this.getSysPara().get("smcDistrictIdT").toString()
-                            + this.getSysPara().get("address").toString()); //详细地址
-                    projectList1.put("Remark",this.getSysPara().get("remark").toString());
-
+                            + this.getSysPara().get("address").toString());
                     //获取图片
                     JSONObject productOneT = JSONObject.parseObject(this.getSysPara().get("productOneT").toString());
                     if(!StringUtils.isEmpty(productOneT) && !StringUtils.isEmpty(productOneT.get("listPicUrl")))
                         projectList1.put("Images", this.getCustomerImages()+productOneT.get("listPicUrl"));
                     else
                         projectList1.put("Images", "");
+                    //产品名称、型号放到备注
+                    String goodsName = "";
+                    if(!StringUtils.isEmpty(productOneT) && !StringUtils.isEmpty(productOneT.get("name")))
+                        goodsName = productOneT.getString("name");
+                    //安装附加费
+                    BigDecimal serviceExtraCharge = new BigDecimal(this.getSysPara().get("serviceExtraCharge").toString());
+                    projectList1.put("Remark",this.getSysPara().get("remark").toString() + ",商品名称："+goodsName + ",安装附加总费" + serviceExtraCharge + "元");
                     projectList.add(projectList1);
                     String reqJsonStr = sabService.getJsonData(projectList);
                     log.info("==============>调用新增订单接口发送参数:" + reqJsonStr);
