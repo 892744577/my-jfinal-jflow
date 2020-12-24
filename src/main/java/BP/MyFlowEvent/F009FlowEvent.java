@@ -332,6 +332,7 @@ public class F009FlowEvent extends FlowEventBase {
                         hrGongdanSabLog.setThirdOrderId(this.getSysPara().get("FK_Flow") + "-" + this.getSysPara().get("OID")+"-" + serviceNo);
                         hrGongdanSabLog.setOrderId(ShowCode);
                         hrGongdanSabLog.setOptTime(new Date().getTime()/1000);
+                        hrGongdanSabLog.save();
                     }
                 }
                 this.HisEn.Update();
