@@ -1,5 +1,8 @@
 package com.landray.kmss.sys.organization.client;
 
+import com.alibaba.fastjson.JSON;
+import com.landray.kmss.sys.organization.webservice.out.ISysSynchroGetOrgWebService;
+import com.landray.kmss.sys.organization.webservice.out.SysSynchroGetOrgInfoContext;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
@@ -15,7 +18,7 @@ public class WebServiceClient {
 	 * 
 	 * @throws Exception
 	 */
-	/*public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 		WebServiceConfig cfg = WebServiceConfig.getInstance();
 
 		Object service = callService(cfg.getAddress(), cfg.getServiceClass());
@@ -29,7 +32,7 @@ public class WebServiceClient {
 		sysSynchroGetOrgInfoContext.setCount(1000);
 		System.out.println(JSON.toJSONString(isysSynchroGetOrgWebService.getUpdatedElements(sysSynchroGetOrgInfoContext)));
 
-	}*/
+	}
 	
 	/**
 	 * 调用服务，生成客户端的服务代理
