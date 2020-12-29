@@ -78,6 +78,11 @@ public class HrGongDanController extends Controller {
         HrGongdanBook hrGongdanBook = getModel(HrGongdanBook.class,"",true);
         String serialNum = (new DecimalFormat("00")).format(hrGongdanAppointService.getAppointByOrderNum());//流水号格式化
         hrGongdanBook.setOrderNumber("YY"+DateUtil.changeDateTOStr2(new Date())+ThreadLocalRandom.current().nextInt(10, 100)+serialNum);
+        String photos = "";
+        if(getFiles().size()>0){
+            photos = upload(getFiles()).stream().map(item->item.get(FileUploadUtil.ACCESS_PATH)).collect(Collectors.joining(";"));
+        }
+        hrGongdanBook.setPhoto(photos);
         hrGongdanBook.setCreateTime(new Date());
         //发送通知
         //获取售后客服的微信公众号openId
@@ -93,7 +98,14 @@ public class HrGongDanController extends Controller {
      */
     public void queryPageListAppoint(BasePageRequest basePageRequest) throws Exception  {
         log.info("=======预约单查询");
-        HrGongdanBook hrGongdanBook = getModel(HrGongdanBook.class,"",true);
+        renderJson(R.ok().put("data",hrGongdanAppointService.queryPageList(basePageRequest)));
+    }
+    /**
+     * 代理商-预约单查询
+     */
+    public void queryPageListAppointAgent(BasePageRequest basePageRequest) throws Exception  {
+        log.info("=======代理商预约单查询");
+        basePageRequest.setJsonObject(basePageRequest.getJsonObject().fluentPut("customerNo",WebUser.getFK_Dept()));
         renderJson(R.ok().put("data",hrGongdanAppointService.queryPageList(basePageRequest)));
     }
     /**

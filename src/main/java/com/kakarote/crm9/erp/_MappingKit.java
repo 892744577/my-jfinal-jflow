@@ -3,6 +3,9 @@ package com.kakarote.crm9.erp;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.kakarote.crm9.erp.admin.entity.*;
 import com.kakarote.crm9.erp.crm.entity.*;
+import com.kakarote.crm9.erp.jxc.entity.JxcOrder;
+import com.kakarote.crm9.erp.jxc.entity.JxcOrderDelivery;
+import com.kakarote.crm9.erp.jxc.entity.JxcOrderDeliveryCode;
 import com.kakarote.crm9.erp.oa.entity.*;
 import com.kakarote.crm9.erp.work.entity.*;
 import com.kakarote.crm9.erp.wxcms.entity.*;
@@ -78,8 +81,8 @@ public class _MappingKit {
 		arp.addMapping("hr_gongdan_area_relation", "id", HrGongdanAreaRelation.class);
 		arp.addMapping("hr_gongdan_book", "id", HrGongdanBook.class);
 		arp.addMapping("hr_gongdan_fjf", "id", HrGongdanFjf.class);
-		arp.addMapping("hr_gongdan_history", "id", HrGongdanBook.class);
-		arp.addMapping("hr_gongdan_history_wsf", "id", HrGongdanBook.class);
+		arp.addMapping("hr_gongdan_history", "id", HrGongdanHistory.class);
+		arp.addMapping("hr_gongdan_history_wsf", "id", HrGongdanHistoryWsf.class);
 		arp.addMapping("hr_gongdan_log", "id", HrGongdanLog.class);
 		arp.addMapping("hr_gongdan_repair", "id", HrGongdanRepair.class);
 		arp.addMapping("hr_gongdan_sab_log", "id", HrGongdanSabLog.class);
@@ -113,6 +116,11 @@ public class _MappingKit {
 
 		arp.addMapping("wxcms_activity_enroll", "id", WxcmsActivityEnroll.class);
 		arp.addMapping("wxcms_activity_lottery", "id", WxcmsActivityLottery.class);
+		arp.addMapping("wxcms_flu_code", "id", WxcmsFluCode.class);
+		//进销存
+		arp.addMapping("jxc_order", "id", JxcOrder.class);
+		arp.addMapping("jxc_order_delivery", "id", JxcOrderDelivery.class);
+		arp.addMapping("jxc_order_delivery_code", "id", JxcOrderDeliveryCode.class);
 	}
 }
 

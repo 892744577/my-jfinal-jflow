@@ -33,6 +33,12 @@ public class HrGongdanAppointService {
         String search = basePageRequest.getJsonObject().getString("search");
         Kv kv = Kv.by("search",search);
 
+        //代理商编号
+        String customerNo = basePageRequest.getJsonObject().getString("customerNo");
+        if(StringUtils.isNotEmpty(customerNo)){
+            kv.set("customerNo",customerNo);
+        }
+
         //open_id
         String open_id = basePageRequest.getJsonObject().getString("openId");
         if(StringUtils.isNotEmpty(open_id)){
