@@ -16,36 +16,39 @@ public class FbtController extends Controller {
     @Inject
     private FbtService fbtService;
 
+    public boolean check(DeptReq deptReq){
+        if(StrUtil.isEmpty(deptReq.getEmployee_id())){
+            renderJson(R.error("操作人id不能为空!").put("code","000001"));
+            return true;
+        }
+
+        if(StrUtil.isEmpty(deptReq.getEmployee_type())){
+            renderJson(R.error("操作人类型不能为空!").put("code","000002"));
+            return true;
+        }
+
+        if(StrUtil.isEmpty(deptReq.getData())){
+            renderJson(R.error("请求数据data不能为空!").put("code","000003"));
+            return true;
+        }
+
+        if(StrUtil.isEmpty(deptReq.getAccessToken())){
+            renderJson(R.error("AccessToken不能为空!").put("code","000006"));
+            return true;
+        }
+        return false;
+    }
+
     /*
      * @Description //添加部门接口
      * @Author wangkaida
      * @Date 10:18 2020/11/27
      **/
     public void createDept(@Para("") DeptReq deptReq) throws Exception {
-
-        if(StrUtil.isEmpty(deptReq.getEmployee_id())){
-            renderJson(R.error("操作人id不能为空!").put("code","000001"));
+        if(check(deptReq))
             return;
-        }
-
-        if(StrUtil.isEmpty(deptReq.getEmployee_type())){
-            renderJson(R.error("操作人类型不能为空!").put("code","000002"));
-            return;
-        }
-
-        if(StrUtil.isEmpty(deptReq.getData())){
-            renderJson(R.error("请求数据data不能为空!").put("code","000003"));
-            return;
-        }
-
-        if(StrUtil.isEmpty(deptReq.getAccessToken())){
-            renderJson(R.error("AccessToken不能为空!").put("code","000006"));
-            return;
-        }
-
         boolean result = fbtService.createDeptOrEmp(deptReq,
                 fbtService.getPath()+"/openapi/func/department/create");
-
         if (result) {
             renderJson(R.ok().put("code","000000"));
         }else {
@@ -62,27 +65,8 @@ public class FbtController extends Controller {
      * @return void
      **/
     public void createEmployee(@Para("") DeptReq deptReq) throws Exception {
-
-        if(StrUtil.isEmpty(deptReq.getEmployee_id())){
-            renderJson(R.error("操作人id不能为空!").put("code","000001"));
+        if(check(deptReq))
             return;
-        }
-
-        if(StrUtil.isEmpty(deptReq.getEmployee_type())){
-            renderJson(R.error("操作人类型不能为空!").put("code","000002"));
-            return;
-        }
-
-        if(StrUtil.isEmpty(deptReq.getData())){
-            renderJson(R.error("请求数据data不能为空!").put("code","000003"));
-            return;
-        }
-
-        if(StrUtil.isEmpty(deptReq.getAccessToken())){
-            renderJson(R.error("AccessToken不能为空!").put("code","000006"));
-            return;
-        }
-
         boolean result = fbtService.createDeptOrEmp(deptReq,
                 fbtService.getPath()+"/openapi/func/employee/create");
 
@@ -103,25 +87,7 @@ public class FbtController extends Controller {
      **/
     public void updateEmployee(@Para("") DeptReq deptReq) throws Exception {
 
-        if(StrUtil.isEmpty(deptReq.getEmployee_id())){
-            renderJson(R.error("操作人id不能为空!").put("code","000001"));
-            return;
-        }
 
-        if(StrUtil.isEmpty(deptReq.getEmployee_type())){
-            renderJson(R.error("操作人类型不能为空!").put("code","000002"));
-            return;
-        }
-
-        if(StrUtil.isEmpty(deptReq.getData())){
-            renderJson(R.error("请求数据data不能为空!").put("code","000003"));
-            return;
-        }
-
-        if(StrUtil.isEmpty(deptReq.getAccessToken())){
-            renderJson(R.error("AccessToken不能为空!").put("code","000006"));
-            return;
-        }
 
         boolean result = fbtService.createDeptOrEmp(deptReq,
                 fbtService.getPath()+"/openapi/func/employee/update");
@@ -150,5 +116,6 @@ public class FbtController extends Controller {
         }
 
     }
+
 
 }
