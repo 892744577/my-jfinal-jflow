@@ -293,6 +293,14 @@ public class F009FlowEvent extends FlowEventBase {
                         projectList1.put("InstallEnv", "AZ0054");
                     }else if("SS".equals(this.getSysPara().get("serviceSegmentation").toString())){
                         projectList1.put("InstallEnv", "AZ0055");
+                    }else if("GS".equals(this.getSysPara().get("serviceSegmentation").toString())){
+                        projectList1.put("InstallEnv", "WX0062");
+                    }else if("FGS".equals(this.getSysPara().get("serviceSegmentation").toString())){
+                        projectList1.put("InstallEnv", "WX0063");
+                    }else if("KP".equals(this.getSysPara().get("serviceSegmentation").toString())){
+                        projectList1.put("InstallEnv", "WX0064");
+                    }else if("KS".equals(this.getSysPara().get("serviceSegmentation").toString())){
+                        projectList1.put("InstallEnv", "WX0065");
                     }
 
                     projectList1.put("Count", this.getSysPara().get("productCount").toString()); //数量
@@ -315,6 +323,9 @@ public class F009FlowEvent extends FlowEventBase {
                     //安装附加费
                     BigDecimal serviceExtraCharge = new BigDecimal(this.getSysPara().get("serviceExtraCharge").toString());
                     projectList1.put("Remark",this.getSysPara().get("remark").toString() + ",商品名称："+goodsName + ",安装附加总费" + serviceExtraCharge + "元");
+                    //物流信息
+                    projectList1.put("LogisticsCode", this.getSysPara().get("trackingNumber").toString());
+
                     projectList.add(projectList1);
                     String reqJsonStr = sabService.getJsonData(projectList);
                     log.info("==============>调用新增订单接口发送参数:" + reqJsonStr);
