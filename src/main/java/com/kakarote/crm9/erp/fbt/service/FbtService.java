@@ -31,41 +31,86 @@ public class FbtService {
     @Getter
     private String path = SystemConfig.getCS_AppSettings().get("FBT.path").toString();
 
-    public boolean createDeptOrEmp(DeptReq deptReq,String deptInfoUrl) throws Exception {
+    /**
+     * 处理请求参数
+     * @param deptReq
+     * @return
+     * @throws Exception
+     */
+    public Map getParamMap(DeptReq deptReq) throws Exception {
+        long timestamp = System.currentTimeMillis();
+        String sign = SignUtil.getSign(String.valueOf(timestamp),deptReq.getData(),signKey);
+        Map param = new HashMap();
+        param.put("access_token", deptReq.getAccessToken());
+        param.put("timestamp", String.valueOf(timestamp));
+        param.put("employee_id", deptReq.getEmployee_id());
+        param.put("employee_type", deptReq.getEmployee_type());
+        param.put("sign", sign);
+        param.put("data", deptReq.getData());
+        return param;
+    }
 
-        String accessToken = deptReq.getAccessToken();
-
-        if (StringUtils.isNotBlank(accessToken)) {
-            long timestamp = System.currentTimeMillis();
-
-            String sign = SignUtil.getSign(String.valueOf(timestamp),deptReq.getData(),signKey);
-
-            Map currentDeptInfoPrama = new HashMap();
-            currentDeptInfoPrama.put("access_token", accessToken);
-            currentDeptInfoPrama.put("timestamp", String.valueOf(timestamp));
-            currentDeptInfoPrama.put("employee_id", deptReq.getEmployee_id());
-            currentDeptInfoPrama.put("employee_type", deptReq.getEmployee_type());
-            currentDeptInfoPrama.put("sign", sign);
-            currentDeptInfoPrama.put("data", deptReq.getData());
-            String deptReturn = tokenService.gatewayRequest(deptInfoUrl, currentDeptInfoPrama);
-            if (deptReturn != null) {
-                JSONObject deptResult = JSONObject.parseObject(deptReturn);
-                if(deptResult.getInteger("code") == 0
-                        && "success".equals(deptResult.getString("msg"))){
-                    return true;
-                }
+    /**
+     * 处理结果
+     * @param result
+     * @return
+     */
+    public boolean doResult(String result){
+        if (result != null) {
+            JSONObject resultObject = JSONObject.parseObject(result);
+            if (resultObject.getInteger("code") == 0
+                    && "success".equals(resultObject.getString("msg"))) {
+                return true;
             }
-
         }
         return false;
     }
 
+    /**
+     * 创建人员或部门
+     * @param deptReq
+     * @param deptInfoUrl
+     * @return
+     * @throws Exception
+     */
+    public boolean createDeptOrEmp(DeptReq deptReq,String deptInfoUrl) throws Exception {
+        String accessToken = deptReq.getAccessToken();
+        if (StringUtils.isNotBlank(accessToken)) {
+            Map currentDeptInfoParam = this.getParamMap(deptReq);
+            String result = tokenService.gatewayRequest(deptInfoUrl, currentDeptInfoParam);
+            return this.doResult(result);
+        }
+        return false;
+    }
+
+    /**
+     * 创建行程申请单
+     * @param deptReq
+     * @param deptInfoUrl
+     * @return
+     * @throws Exception
+     */
+    public boolean travelOrder(DeptReq deptReq,String deptInfoUrl) throws Exception {
+        String accessToken = this.getAccessToken();
+        if (StringUtils.isNotBlank(accessToken)) {
+            deptReq.setAccessToken(accessToken);
+            Map currentTravelOrderParam = this.getParamMap(deptReq);
+            String result = tokenService.gatewayRequest(deptInfoUrl, currentTravelOrderParam);
+            return this.doResult(result);
+        }
+        return false;
+    }
+
+    /**
+     * 获取accessToken
+     * @return
+     * @throws Exception
+     */
     public String getAccessToken() throws Exception {
         Map currentDeptInfoPrama = new HashMap();
         currentDeptInfoPrama.put("app_id", appId);
         currentDeptInfoPrama.put("app_key", appKey);
         String tokenReturn = tokenService.gatewayRequest(path+"/open/api/auth/v1/dispense", currentDeptInfoPrama);
-
         JSONObject tokenResult = JSONObject.parseObject(tokenReturn);
         if (tokenResult != null) {
             if(tokenResult.getInteger("code") == 0
@@ -75,5 +120,4 @@ public class FbtService {
         }
         return null;
     }
-
 }

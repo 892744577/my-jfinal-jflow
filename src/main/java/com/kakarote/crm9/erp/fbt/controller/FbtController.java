@@ -45,8 +45,9 @@ public class FbtController extends Controller {
      * @Date 10:18 2020/11/27
      **/
     public void createDept(@Para("") DeptReq deptReq) throws Exception {
-        if(check(deptReq))
+        if(check(deptReq)) {
             return;
+        }
         boolean result = fbtService.createDeptOrEmp(deptReq,
                 fbtService.getPath()+"/openapi/func/department/create");
         if (result) {
@@ -54,7 +55,6 @@ public class FbtController extends Controller {
         }else {
             renderJson(R.error("调用添加部门接口出错!").put("code","000004"));
         }
-
     }
     
     /*
@@ -65,8 +65,9 @@ public class FbtController extends Controller {
      * @return void
      **/
     public void createEmployee(@Para("") DeptReq deptReq) throws Exception {
-        if(check(deptReq))
+        if(check(deptReq)) {
             return;
+        }
         boolean result = fbtService.createDeptOrEmp(deptReq,
                 fbtService.getPath()+"/openapi/func/employee/create");
 
@@ -75,7 +76,6 @@ public class FbtController extends Controller {
         }else {
             renderJson(R.error("调用添加员工接口出错!").put("code","000004"));
         }
-
     }
 
     /*
@@ -86,12 +86,37 @@ public class FbtController extends Controller {
      * @return void
      **/
     public void updateEmployee(@Para("") DeptReq deptReq) throws Exception {
-
-
-
+        if(check(deptReq)) {
+            return;
+        }
         boolean result = fbtService.createDeptOrEmp(deptReq,
                 fbtService.getPath()+"/openapi/func/employee/update");
+        if (result) {
+            renderJson(R.ok().put("code","000000"));
+        }else {
+            renderJson(R.error("调用更新员工接口出错!").put("code","000004"));
+        }
+    }
 
+    /**
+     * 创建行程单
+     */
+    public void createTravelOrder(@Para("") DeptReq deptReq) throws Exception {
+        boolean result = fbtService.travelOrder(deptReq,
+                fbtService.getPath()+"/openapi/func/apply/trip/create");
+        if (result) {
+            renderJson(R.ok().put("code","000000"));
+        }else {
+            renderJson(R.error("调用更新员工接口出错!").put("code","000004"));
+        }
+    }
+
+    /**
+     * 改变行程单
+     */
+    public void changeTravelOrder(@Para("") DeptReq deptReq) throws Exception {
+        boolean result = fbtService.travelOrder(deptReq,
+                fbtService.getPath()+"/openapi/func/apply/trip/change");
         if (result) {
             renderJson(R.ok().put("code","000000"));
         }else {
@@ -106,15 +131,12 @@ public class FbtController extends Controller {
      * @Date 15:45 2020/11/30
      **/
     public void getAccessToken() throws Exception {
-
         String result = fbtService.getAccessToken();
-
         if (StringUtils.isNotBlank(result)) {
             renderJson(R.ok().put("data",result).put("code","000000"));
         }else {
             renderJson(R.error("调用获取AccessToken接口出错!").put("code","000005"));
         }
-
     }
 
 
