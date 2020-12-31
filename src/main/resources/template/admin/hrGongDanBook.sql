@@ -7,6 +7,9 @@
     #if(search)
       and (a.orderNumber like CONCAT('%',#para(search),'%') or a.contact like CONCAT('%',#para(search),'%') or a.phone like CONCAT('%',#para(search),'%') or a.address like CONCAT('%',#para(search),'%') or a.remark like CONCAT('%',#para(search),'%'))
     #end
+    #if(customerNo)
+      and a.customerNo = #para(customerNo)
+    #end
     #if(open_id)
       and a.open_id = #para(open_id)
     #end
