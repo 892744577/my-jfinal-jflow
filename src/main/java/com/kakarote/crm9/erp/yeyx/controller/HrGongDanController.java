@@ -277,6 +277,14 @@ public class HrGongDanController extends Controller {
         basePageRequest.setJsonObject(basePageRequest.getJsonObject().fluentPut("serviceSystem", "WSF"));
         renderJson(adminSceneService.filterConditionAndGetPageList(basePageRequest));
     }
+    /**
+     * @author tmr
+     * 分页工单查询数据 -- 锁安帮
+     */
+    public void queryPageListSABServiceSystem(BasePageRequest basePageRequest) throws Exception{
+        basePageRequest.setJsonObject(basePageRequest.getJsonObject().fluentPut("serviceSystem", "SAB"));
+        renderJson(adminSceneService.filterConditionAndGetPageList(basePageRequest));
+    }
 
     /**
      * 保存附加费申请

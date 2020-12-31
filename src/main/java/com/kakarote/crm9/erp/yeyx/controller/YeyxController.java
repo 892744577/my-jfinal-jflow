@@ -190,12 +190,15 @@ public class YeyxController extends Controller {
 
                 if(objectResult.getInteger("status") == 200){
                     log.info("==================取消订单成功orderId：" + toCancelOrderRequest.getOrderId());
-                    //将用户状态流转到订单取消，将orderId、serviceNo置空
-                    HrGongdan hrGongdanUpdate = new HrGongdan();
-                    hrGongdanUpdate.setOID(toCancelOrderRequest.getOid());
-                    hrGongdanUpdate.setOrderId("");  //更新新的orderId
-                    hrGongdanUpdate.update();
-                    if("2".equals(toCancelOrderRequest.getCancelType())){//如果取消订单后需要重新发送订单，cancelType==2
+                    if("2".equals(toCancelOrderRequest.getCancelType())){
+                        /***
+                         * type==2 取消订单后且重新发送
+                         */
+                        //将用户状态流转到订单取消，将orderId置空
+                        HrGongdan hrGongdanUpdate = new HrGongdan();
+                        hrGongdanUpdate.setOID(toCancelOrderRequest.getOid());
+                        hrGongdanUpdate.setOrderId("");  //更新新的orderId
+                        hrGongdanUpdate.update();
                         //组装取消并新增的请求参数
                         HrGongdanRequest hrGongdanRequest = new HrGongdanRequest();
                         hrGongdanRequest.setOid(toCancelOrderRequest.getOid());
@@ -217,17 +220,19 @@ public class YeyxController extends Controller {
                             hrGongdanAdd.update();
                             renderJson(R.ok().put("code",0).put("message", "取消成功且重新调用新增订单接口成功"));
                         }else {
-                            //Log.DebugWriteInfo("==============>取消成功后撤回发送："+JSONObject.toJSONString(toCancelOrderRequest));
-                            //BP.WF.Dev2Interface.Flow_DoUnSend(toCancelOrderRequest.getFk_flow(),toCancelOrderRequest.getOid());
+                            Log.DebugWriteInfo("==============>取消成功后撤回发送："+JSONObject.toJSONString(toCancelOrderRequest));
+                            BP.WF.Dev2Interface.Flow_ReSend(toCancelOrderRequest.getOid(),907,"tangmanrong","");
                             Log.DebugWriteInfo("==============>取消成功但重新调用新增订单接口失败:"+addResult);
 
                             renderJson(R.ok().put("code", 502).put("message", "result"));
                         }
                     }else{
-                        //记录取消操作
-                        //录入记录
+                        /***
+                         * type==1 仅取消
+                         */
                         //查询工单
                         HrGongdan hrGongdan = HrGongdan.dao.findById(toCancelOrderRequest.getOid());
+                        //录入日志
                         HrGongdanZmnLog hrGongdanZmnLog = saveHrGongdanZmnLog(
                                 "cancelOrder",
                                 "009-"+toCancelOrderRequest.getOid()+"-"+hrGongdan.getServiceNo(),
@@ -235,9 +240,9 @@ public class YeyxController extends Controller {
                                 new Date().getTime());
                         hrGongdanZmnLog.setCancelRemark("客服主动取消");
                         hrGongdanZmnLog.save();
-                        //取消成功并撤销发送
-                        //Log.DebugWriteInfo("==============>取消成功后撤回发送："+JSONObject.toJSONString(toCancelOrderRequest));
-                        //BP.WF.Dev2Interface.Flow_DoUnSend(toCancelOrderRequest.getFk_flow(),toCancelOrderRequest.getOid());
+                        //取消成功并取消流程
+                        Log.DebugWriteInfo("==============>取消成功后取消流程："+JSONObject.toJSONString(toCancelOrderRequest));
+                        BP.WF.Dev2Interface.Flow_ReSend(toCancelOrderRequest.getOid(),907,hrGongdan.getEmps(),"");
                         renderJson(R.ok().put("code",0).put("message", "取消成功"));
                     }
                 }else{
@@ -255,8 +260,8 @@ public class YeyxController extends Controller {
 
     public void testCancel(@Para("") ToCancelOrderRequest toCancelOrderRequest){
         try{
-            BP.WF.Dev2Interface.Flow_DoUnSend(toCancelOrderRequest.getFk_flow(),toCancelOrderRequest.getOid());
-            renderJson(R.ok().put("code",0).put("message", "取消成功"));
+
+            renderJson(R.ok().put("code",0).put("message", BP.WF.Dev2Interface.Flow_ReSend(toCancelOrderRequest.getOid(),907,"tangmanrong","")));
         } catch (Exception e) {
             renderJson(R.ok().put("code",40000).put("message","未知错误"));
             e.printStackTrace();
