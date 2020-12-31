@@ -1,6 +1,7 @@
 package com.kakarote.crm9.erp.fbt.controller;
 
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
 import com.jfinal.core.paragetter.Para;
@@ -70,7 +71,6 @@ public class FbtController extends Controller {
         }
         boolean result = fbtService.createDeptOrEmp(deptReq,
                 fbtService.getPath()+"/openapi/func/employee/create");
-
         if (result) {
             renderJson(R.ok().put("code","000000"));
         }else {
@@ -102,12 +102,13 @@ public class FbtController extends Controller {
      * 创建行程单
      */
     public void createTravelOrder(@Para("") DeptReq deptReq) throws Exception {
+        log.info("===:"+ JSON.toJSONString(deptReq));
         boolean result = fbtService.travelOrder(deptReq,
                 fbtService.getPath()+"/openapi/func/apply/trip/create");
         if (result) {
             renderJson(R.ok().put("code","000000"));
         }else {
-            renderJson(R.error("调用更新员工接口出错!").put("code","000004"));
+            renderJson(R.error("调用创建行程单出错").put("code","000004"));
         }
     }
 
@@ -122,7 +123,6 @@ public class FbtController extends Controller {
         }else {
             renderJson(R.error("调用更新员工接口出错!").put("code","000004"));
         }
-
     }
 
     /*

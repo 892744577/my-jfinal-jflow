@@ -1,23 +1,26 @@
 package com.kakarote.crm9.erp.fbt.service;
 
 import BP.Difference.SystemConfig;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
+import com.kakarote.crm9.common.service.HttpService;
 import com.kakarote.crm9.erp.fbt.util.SignUtil;
 import com.kakarote.crm9.erp.fbt.vo.DeptReq;
-import com.kakarote.crm9.erp.yzj.service.TokenService;
 import lombok.Data;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Data
+@Slf4j
 public class FbtService {
 
     @Inject
-    private TokenService tokenService;
+    private HttpService httpService;
 
     @Getter
     private String appId = SystemConfig.getCS_AppSettings().get("FBT.appId").toString();
@@ -77,7 +80,8 @@ public class FbtService {
         String accessToken = deptReq.getAccessToken();
         if (StringUtils.isNotBlank(accessToken)) {
             Map currentDeptInfoParam = this.getParamMap(deptReq);
-            String result = tokenService.gatewayRequest(deptInfoUrl, currentDeptInfoParam);
+            String result = httpService.gatewayRequest(deptInfoUrl, currentDeptInfoParam);
+            log.info("=====部门人员调用结果："+JSON.toJSONString(result));
             return this.doResult(result);
         }
         return false;
@@ -95,7 +99,8 @@ public class FbtService {
         if (StringUtils.isNotBlank(accessToken)) {
             deptReq.setAccessToken(accessToken);
             Map currentTravelOrderParam = this.getParamMap(deptReq);
-            String result = tokenService.gatewayRequest(deptInfoUrl, currentTravelOrderParam);
+            String result = httpService.gatewayRequest(deptInfoUrl, currentTravelOrderParam);
+            log.info("=====创建行程单调用结果："+ JSON.toJSONString(result));
             return this.doResult(result);
         }
         return false;
@@ -110,7 +115,7 @@ public class FbtService {
         Map currentDeptInfoPrama = new HashMap();
         currentDeptInfoPrama.put("app_id", appId);
         currentDeptInfoPrama.put("app_key", appKey);
-        String tokenReturn = tokenService.gatewayRequest(path+"/open/api/auth/v1/dispense", currentDeptInfoPrama);
+        String tokenReturn = httpService.gatewayRequest(path+"/open/api/auth/v1/dispense", currentDeptInfoPrama);
         JSONObject tokenResult = JSONObject.parseObject(tokenReturn);
         if (tokenResult != null) {
             if(tokenResult.getInteger("code") == 0
