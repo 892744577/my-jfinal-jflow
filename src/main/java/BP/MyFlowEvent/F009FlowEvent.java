@@ -148,7 +148,7 @@ public class F009FlowEvent extends FlowEventBase {
                                 ",安装附加总费" + serviceExtraCharge + "元"); //服务单备注
                     }
                     currentPrama.put("orderDiscount", currentJson);
-                    currentPrama.put("thirdOrderId", this.getSysPara().get("FK_Flow") + "-" + this.getSysPara().get("OID")+"-" + serviceNo);
+                    currentPrama.put("thirdOrderId", "009-" + this.getSysPara().get("OID")+"-" + serviceNo);
 
                     YeyxService yeyxService = Aop.get(YeyxService.class);
 
@@ -174,7 +174,7 @@ public class F009FlowEvent extends FlowEventBase {
                         //记录日志
                         HrGongdanZmnLog hrGongdanZmnLog = new HrGongdanZmnLog();
                         hrGongdanZmnLog.setFuncId("createOrder");
-                        hrGongdanZmnLog.setThirdOrderId(this.getSysPara().get("FK_Flow") + "-" + this.getSysPara().get("OID")+"-" + serviceNo);
+                        hrGongdanZmnLog.setThirdOrderId("009-" + this.getSysPara().get("OID")+"-" + serviceNo);
                         hrGongdanZmnLog.setOrderId(orderId);
                         hrGongdanZmnLog.setOptTime(new Date().getTime()/1000);
                         hrGongdanZmnLog.save();
@@ -215,7 +215,7 @@ public class F009FlowEvent extends FlowEventBase {
 //                       currentPrama.put("logiscsNo", this.getSysPara().get("trackingNumber").toString()); //物流单号
                    if(!StringUtils.isEmpty(this.getSysPara().get("customArriveStatus")))
                        currentPrama.put("customArriveStatus", this.getSysPara().get("customArriveStatus").toString()); //货物是否到客户家
-                   currentPrama.put("orderId", this.getSysPara().get("FK_Flow") + "-" + this.getSysPara().get("OID")+"-" + serviceNo);
+                   currentPrama.put("orderId", "009-" + this.getSysPara().get("OID")+"-" + serviceNo);
                    //单子是安装还是维修
                    if("DS".equals(this.getSysPara().get("serviceSegmentation").toString())
                            ||"SS".equals(this.getSysPara().get("serviceSegmentation").toString())
@@ -340,7 +340,7 @@ public class F009FlowEvent extends FlowEventBase {
                         //录入记录
                         HrGongdanSabLog hrGongdanSabLog = new HrGongdanSabLog();
                         hrGongdanSabLog.setFuncId("createOrder");
-                        hrGongdanSabLog.setThirdOrderId(this.getSysPara().get("FK_Flow") + "-" + this.getSysPara().get("OID")+"-" + serviceNo);
+                        hrGongdanSabLog.setThirdOrderId("009-" + this.getSysPara().get("OID")+"-" + serviceNo);
                         hrGongdanSabLog.setOrderId(ShowCode);
                         hrGongdanSabLog.setOptTime(new Date().getTime()/1000);
                         hrGongdanSabLog.save();
