@@ -44,7 +44,13 @@
   #end
   #sql ("getHrGongDanListPage")
     #(select) FROM (
-    select a.*,b.FK_Node,b.NodeName,c.name acceptorName from hr_gongdan a left join wf_generworkflow b on a.oid = b.WorkID left join port_emp c on a.acceptor = c.no
+    select a.*,b.FK_Node,b.NodeName,c.name acceptorName,
+     (CASE
+     WHEN a.nextContactTime is null THEN 1
+     WHEN a.nextContactTime is not null and a.nextContactTime < NOW() THEN 1
+     ELSE 0 END) gqzt
+     from hr_gongdan a
+    left join wf_generworkflow b on a.oid = b.WorkID left join port_emp c on a.acceptor = c.no
     where 1=1 and  b.FK_Node != 901
       #if(search)
       and (a.serviceNo like CONCAT('%',#para(search),'%') or a.orderId like CONCAT('%',#para(search),'%') or a.address like CONCAT('%',#para(search),'%') or a.contactName like CONCAT('%',#para(search),'%') or a.telephone like CONCAT('%',#para(search),'%'))
@@ -89,7 +95,13 @@
   #end
   #sql ("queryHrGongDanListCount")
     SELECT count(1) FROM (
-    select a.*,b.FK_Node,b.NodeName,c.name acceptorName from hr_gongdan a left join wf_generworkflow b on a.oid = b.WorkID left join port_emp c on a.acceptor = c.no
+    select a.*,b.FK_Node,b.NodeName,c.name acceptorName,
+     (CASE
+     WHEN a.nextContactTime is null THEN 1
+     WHEN a.nextContactTime is not null and a.nextContactTime < NOW() THEN 1
+     ELSE 0 END) gqzt
+     from hr_gongdan a
+    left join wf_generworkflow b on a.oid = b.WorkID left join port_emp c on a.acceptor = c.no
     where 1=1 and  b.FK_Node != 901
       #if(search)
       and (a.serviceNo like CONCAT('%',#para(search),'%') or a.orderId like CONCAT('%',#para(search),'%') or a.address like CONCAT('%',#para(search),'%') or a.contactName like CONCAT('%',#para(search),'%') or a.telephone like CONCAT('%',#para(search),'%'))
