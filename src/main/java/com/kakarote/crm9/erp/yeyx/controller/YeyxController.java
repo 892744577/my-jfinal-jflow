@@ -401,6 +401,8 @@ public class YeyxController extends Controller {
                                 orderSuspendRequest.getThirdOrderId(),
                                 orderSuspendRequest.getOrderId(),
                                 orderSuspendRequest.getOptTime());
+                        hrGongdanZmnLog.setDutyTime(orderSuspendRequest.getNextContactTime());
+                        hrGongdanZmnLog.setFactoryRemark(orderSuspendRequest.getSuspendReason());
                         hrGongdanZmnLog.save();
 
                         this.order_suspend(orderSuspendRequest);
