@@ -3,7 +3,6 @@ package com.kakarote.crm9.erp;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.kakarote.crm9.erp.admin.entity.*;
 import com.kakarote.crm9.erp.crm.entity.*;
-import com.kakarote.crm9.erp.jxc.entity.JxcOrder;
 import com.kakarote.crm9.erp.jxc.entity.JxcOrderDelivery;
 import com.kakarote.crm9.erp.jxc.entity.JxcOrderDeliveryCode;
 import com.kakarote.crm9.erp.oa.entity.*;
@@ -118,7 +117,6 @@ public class _MappingKit {
 		arp.addMapping("wxcms_activity_lottery", "id", WxcmsActivityLottery.class);
 		arp.addMapping("wxcms_flu_code", "id", WxcmsFluCode.class);
 		//进销存
-		arp.addMapping("jxc_order", "id", JxcOrder.class);
 		arp.addMapping("jxc_order_delivery", "id", JxcOrderDelivery.class);
 		arp.addMapping("jxc_order_delivery_code", "id", JxcOrderDeliveryCode.class);
 	}
