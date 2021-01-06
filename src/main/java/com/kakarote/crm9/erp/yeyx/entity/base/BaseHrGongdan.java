@@ -617,4 +617,12 @@ public abstract class BaseHrGongdan<M extends BaseHrGongdan<M>> extends Model<M>
 		return getStr("productOne");
 	}
 
+	public void setNextContactTime(java.lang.String nextContactTime) {
+		set("nextContactTime", nextContactTime);
+	}
+
+	public java.lang.String getNextContactTime() {
+		return getStr("nextContactTime");
+	}
+
 }

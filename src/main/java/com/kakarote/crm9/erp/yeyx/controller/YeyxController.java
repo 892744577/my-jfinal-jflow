@@ -391,6 +391,23 @@ public class YeyxController extends Controller {
                     }else{
                         renderJson(R.ok().put("code",404).put("message", "订单号为空"));
                     }
+                } else if ("order_suspend".equals(toDoRequest.getFunId())) {
+                    log.info("===================订单挂起：" + toDoRequest.getJsonData());
+                    OrderSuspendRequest orderSuspendRequest = JSONObject.parseObject(toDoRequest.getJsonData(),OrderSuspendRequest.class);
+                    if(StringUtils.isNotEmpty(orderSuspendRequest.getThirdOrderId())){
+                        //录入记录
+                        HrGongdanZmnLog hrGongdanZmnLog = saveHrGongdanZmnLog(
+                                toDoRequest.getFunId(),
+                                orderSuspendRequest.getThirdOrderId(),
+                                orderSuspendRequest.getOrderId(),
+                                orderSuspendRequest.getOptTime());
+                        hrGongdanZmnLog.save();
+
+                        this.order_suspend(orderSuspendRequest);
+                        log.info("==================订单挂起成功" );
+                    }else{
+                        renderJson(R.ok().put("code",404).put("message", "订单号为空"));
+                    }
                 }
                 WebUser.Exit();
                 renderJson(R.ok().put("code",200).put("message", "成功"));
@@ -529,6 +546,17 @@ public class YeyxController extends Controller {
         hrGongdanToUpdate.setOID(hrGongdan.getOID());
         hrGongdanToUpdate.setOtherRemark(factoryRemarkRequest.getRemark());
         hrGongdanToUpdate.update();
+    }
+
+    /**
+     * 挂起，不涉及流程流转
+     */
+    @NotAction
+    public void order_suspend(OrderSuspendRequest orderSuspendRequest){
+        HrGongdan hrGongdan = new HrGongdan();
+        hrGongdan.setOID(Integer.valueOf(orderSuspendRequest.getThirdOrderId().split("-")[1]));
+        hrGongdan.setNextContactTime(DateUtil.changeDateTOStr(new Date(orderSuspendRequest.getNextContactTime().longValue()*1000)));
+        hrGongdan.update();
     }
 
 }
