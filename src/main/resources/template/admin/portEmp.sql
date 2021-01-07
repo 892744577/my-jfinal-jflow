@@ -20,8 +20,11 @@
     SELECT d.* FROM port_activity_emp d where d.tel = ?
   #end
   #sql ("queryFansByFkDeptPageList")
-    select e.* from port_emp a left join wxcms_account_shop b on a.FK_Dept = b.agentNo left join wxcms_account_shop_qrcode c on b.id = c.shop_id left join wxcms_account_qrcode_fans d
-    on c.qrcode_param = d.event_key left join wxcms_account_fans e on d.fromuser_name = e.open_id
+    select e.* from port_emp a
+    left join wxcms_account_shop b on a.FK_Dept = b.agentNo
+    left join wxcms_account_shop_qrcode c on b.id = c.shop_id
+    left join wxcms_account_qrcode_fans d on c.qrcode_param = d.event_key
+    left join wxcms_account_fans e on d.fromuser_name = e.open_id
     where 1=1
     #if(fkDept)
       and a.FK_Dept = #para(fkDept)
