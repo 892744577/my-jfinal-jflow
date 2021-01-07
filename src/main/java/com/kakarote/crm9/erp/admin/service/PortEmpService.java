@@ -6,6 +6,7 @@ import BP.DA.Paras;
 import BP.Difference.SystemConfig;
 import BP.Sys.CCFormAPI;
 import com.jfinal.aop.Inject;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
@@ -207,6 +208,23 @@ public class PortEmpService {
                 basePageRequest.getPage(),
                 basePageRequest.getLimit(),
                 Db.getSqlPara("admin.portEmp.queryPageList")
+        );
+    }
+
+    /*
+     * @Description //根据fkDept查询粉丝信息
+     * @Author wangkaida
+     * @Date 11:45 2021/1/7
+     * @Param [basePageRequest]
+     **/
+    public Page<Record> queryFansByFkDeptPageList(BasePageRequest basePageRequest, String fkDept, String portEmpNo) {
+        //查询条件
+        Kv kv = Kv.by("fkDept",fkDept).set("portEmpNo",portEmpNo);
+
+        return Db.paginate(
+                basePageRequest.getPage(),
+                basePageRequest.getLimit(),
+                Db.getSqlPara("admin.portEmp.queryFansByFkDeptPageList",kv)
         );
     }
 }

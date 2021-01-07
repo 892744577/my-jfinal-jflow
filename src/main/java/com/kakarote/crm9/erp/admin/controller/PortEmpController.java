@@ -718,6 +718,30 @@ public class PortEmpController extends Controller {
     }
 
     /*
+     * @Description //根据fkDept查询粉丝信息接口
+     * @Author wangkaida
+     * @Date 11:31 2021/1/7
+     * @Param [portEmp]
+     * @return void
+     **/
+    public void queryFansByFkDept(BasePageRequest basePageRequest) {
+        String fkDept = basePageRequest.getJsonObject().getString("fkDept");
+        String portEmpNo = basePageRequest.getJsonObject().getString("portEmpNo");
+
+        if(StrUtil.isEmpty(fkDept)){
+            renderJson(R.error("fkDept不能为空!").put("data",null).put("code","000023"));
+            return;
+        }
+
+        if(StrUtil.isEmpty(portEmpNo)){
+            renderJson(R.error("No不能为空!").put("data",null).put("code","000024"));
+            return;
+        }
+
+        renderJson(R.ok().put("data",portEmpService.queryFansByFkDeptPageList(basePageRequest,fkDept,portEmpNo)));
+    }
+
+    /*
      * @Description //待办通过接口
      * @Author wangkaida
      * @Date 12:02 2020/5/23
