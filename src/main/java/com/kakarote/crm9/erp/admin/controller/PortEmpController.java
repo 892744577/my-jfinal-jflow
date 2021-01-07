@@ -697,6 +697,7 @@ public class PortEmpController extends Controller {
      * @Param [agentId]
      * @return void
      **/
+    @Deprecated
     public void queryFansByAgentId(@Para("") PortEmpReq portEmp){
 
         if(StrUtil.isEmpty(portEmp.getAgentId())){
