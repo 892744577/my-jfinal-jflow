@@ -125,7 +125,7 @@ public class WdtService {
             String keyStr = decimalFormat1.format(key.length());
             DecimalFormat decimalFormat2 = new DecimalFormat("0000");
             String valueStr = decimalFormat2.format(value.length());
-            query.append(keyStr).append(":").append(valueStr).append(";");
+            query.append(keyStr).append("-").append(key).append(":").append(valueStr).append("-").append(value).append(";");
         }
         String queryStr = query.toString();
         queryStr = queryStr.substring(0,queryStr.lastIndexOf(";"));
