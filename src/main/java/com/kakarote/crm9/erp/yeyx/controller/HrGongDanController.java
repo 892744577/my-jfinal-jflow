@@ -76,7 +76,7 @@ public class HrGongDanController extends Controller {
     public void saveHrGongdanAppoint(@Para("") HrGongdanRepairRequest hrGongdanRepairRequest) throws Exception  {
         log.info("=======保存预约单");
         HrGongdanBook hrGongdanBook = getModel(HrGongdanBook.class,"",true);
-        String serialNum = (new DecimalFormat("00")).format(hrGongdanAppointService.getAppointByOrderNum());//流水号格式化
+        String serialNum = (new DecimalFormat("00")).format(hrGongdanAppointService.getCountByOrderNum());//流水号格式化
         hrGongdanBook.setOrderNumber("YY"+DateUtil.changeDateTOStr2(new Date())+ThreadLocalRandom.current().nextInt(10, 100)+serialNum);
         String photos = "";
         if(getFiles().size()>0){
@@ -131,7 +131,7 @@ public class HrGongDanController extends Controller {
     public void saveHrGongdanRepair(@Para("") HrGongdanRepairRequest hrGongdanRepairRequest) throws Exception  {
         log.info("=======保存报修单");
         HrGongdanRepair hrGongdanRepair = getModel(HrGongdanRepair.class,"",true);
-        String serialNum = (new DecimalFormat("00")).format(hrGongdanRepairService.getRepairByOrderNum());//流水号格式化
+        String serialNum = (new DecimalFormat("00")).format(hrGongdanRepairService.getCountByOrderNum());//流水号格式化
         hrGongdanRepair.setOrderNumber("BX"+ DateUtil.changeDateTOStr2(new Date())+ThreadLocalRandom.current().nextInt(10, 100)+serialNum);
         String photos = "";
         if(getFiles().size()>0){

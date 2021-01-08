@@ -6,20 +6,30 @@ import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Page;
 import com.jfinal.plugin.activerecord.Record;
+import com.jfinal.plugin.activerecord.SqlPara;
 import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
+import com.kakarote.crm9.erp.yeyx.entity.HrGongdanRepair;
 
 import java.util.Date;
 
 public class HrGongdanRepairService {
     /**
+     * 根据orderNumber获取记录
+     * @return
+     */
+    public HrGongdanRepair getByOrderNumber(Kv kv) {
+        SqlPara sqlPara = Db.getSqlPara("admin.hrGongDanRepair.getRepairByOrderNumber",kv);
+        return HrGongdanRepair.dao.findFirst(sqlPara);
+    }
+    /**
      * 获取记录条数
      * @return
      */
-    public int getRepairByOrderNum() {
+    public int getCountByOrderNum() {
         String today = DateUtil.changeDateTOStr2(new Date());
         Kv kv= Kv.by("today", today);
-        return  Db.queryInt(Db.getSqlPara("admin.hrGongDanRepair.getHrGongDanRepairInitNum",kv).getSql(),today);
+        return  Db.queryInt(Db.getSqlPara("admin.hrGongDanRepair.getRepairInitNum",kv).getSql(),today);
     }
     /**
      * 根据orderId获取记录

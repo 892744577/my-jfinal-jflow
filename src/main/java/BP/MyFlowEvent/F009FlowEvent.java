@@ -7,6 +7,7 @@ import BP.WF.FlowEventBase;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Aop;
+import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
 import com.kakarote.crm9.erp.admin.entity.PortEmp;
 import com.kakarote.crm9.erp.admin.service.PortEmpService;
@@ -15,9 +16,7 @@ import com.kakarote.crm9.erp.wx.service.MpService;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.kakarote.crm9.erp.wx.vo.MpMsgSendReq;
 import com.kakarote.crm9.erp.yeyx.entity.*;
-import com.kakarote.crm9.erp.yeyx.service.SabService;
-import com.kakarote.crm9.erp.yeyx.service.WanService;
-import com.kakarote.crm9.erp.yeyx.service.YeyxService;
+import com.kakarote.crm9.erp.yeyx.service.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
@@ -26,6 +25,12 @@ import java.util.*;
 
 @Slf4j
 public class F009FlowEvent extends FlowEventBase {
+
+    //预约单service
+    HrGongdanAppointService hrGongdanAppointService = Aop.get(HrGongdanAppointService .class);
+    //保修单service
+    HrGongdanRepairService hrGongdanRepairService = Aop.get(HrGongdanRepairService .class);
+
     @Override
     public String getFlowMark() {
         return "aptenon_wf_gdsq";
@@ -87,14 +92,13 @@ public class F009FlowEvent extends FlowEventBase {
                 //1.2若是预约单或报修单将旧单改为已生成工单
                 if(this.getSysPara().get("preServiceNo") != null){
                     String preServiceNo = this.getSysPara().get("preServiceNo") == null ? "" : this.getSysPara().get("preServiceNo").toString(); //预约单或报修单号
+                    Kv kv = Kv.by("orderNumber",preServiceNo);
                     if(preServiceNo.contains("YY")){
-                        HrGongdanBook hrGongdanBook = new HrGongdanBook();
-                        hrGongdanBook.setOrderNumber(preServiceNo);
+                        HrGongdanBook hrGongdanBook = hrGongdanAppointService.getByOrderNumber(kv);
                         hrGongdanBook.setIsGenerate(1);
                         hrGongdanBook.update();
                     }else if(preServiceNo.contains("BX")){
-                        HrGongdanRepair hrGongdanRepair = new HrGongdanRepair();
-                        hrGongdanRepair.setOrderNumber(preServiceNo);
+                        HrGongdanRepair hrGongdanRepair = hrGongdanRepairService.getByOrderNumber(kv);
                         hrGongdanRepair.setIsGenerate(1);
                         hrGongdanRepair.update();
                     }

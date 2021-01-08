@@ -1,6 +1,9 @@
 #namespace("admin.hrGongDanRepair")
-  #sql ("getHrGongDanRepairInitNum")
+  #sql ("getRepairInitNum")
     select count(*) from hr_gongdan_repair a where DATE_FORMAT(a.create_time, '%Y%m%d') = #para(today)
+  #end
+  #sql ("getRepairByOrderNumber")
+    select * from hr_gongdan_repair a where a.orderNumber = #para(orderNumber)
   #end
   #sql ("queryPageList")
     select * from (
