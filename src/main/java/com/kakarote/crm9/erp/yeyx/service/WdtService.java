@@ -97,16 +97,7 @@ public class WdtService {
         StringBuilder query = new StringBuilder();
         for (String key : keys) {
             Object objValue = params.get(key);
-            String value = null;
-            if(objValue instanceof Integer){
-                value = String.valueOf(objValue);
-            }else if(objValue instanceof Long){
-                value = String.valueOf(objValue);
-            }else if(objValue instanceof Date){
-                value = DateUtil.changeDateTOStr((Date)objValue);
-            }else if(objValue instanceof String){
-                value = String.valueOf(objValue);
-            }
+            String value = (String) params.get(key);
             //循环对每个键值进行处理
             DecimalFormat decimalFormat1 = new DecimalFormat("00");
             String keyStr = decimalFormat1.format(key.length());
