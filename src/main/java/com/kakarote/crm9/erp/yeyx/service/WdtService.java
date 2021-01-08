@@ -44,9 +44,9 @@ public class WdtService {
         try {
             //Base64 加密
             long timestamp =  System.currentTimeMillis()/1000;
-            map.put("timestamp",timestamp);
             map.put("sid",this.sid);
             map.put("appkey", this.appkey);
+            map.put("timestamp",timestamp);
             map.put("page_no", 0);
             map.put("page_size",500);
             map.put("start_time", moreMapData.get("start_time"));
