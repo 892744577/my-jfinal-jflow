@@ -106,7 +106,7 @@ public class WdtService {
 
         // 第二步：把所有参数名和参数值串在一起
         StringBuilder query = new StringBuilder();
-        query.append(this.appsecret);
+//        query.append(this.appsecret);
         for (String key : keys) {
             Object objValue = params.get(key);
             String value = null;
@@ -119,19 +119,41 @@ public class WdtService {
             }else if(objValue instanceof String){
                 value = String.valueOf(objValue);
             }
-            query.append(key).append(value);
+            //循环对每个键值进行处理
+            String keyStr = "";
+            String valueStr = "";
+            int keyLen = key.length();
+            int valueLen = value.length();
+            if (keyLen < 10) {
+                keyStr = "0"+keyLen+"-"+key;
+            }else {
+                keyStr = keyLen+"-"+key;
+            }
 
+            if (999 < valueLen) {
+                valueStr = valueLen+"-"+value;
+            }else if (99 < valueLen && valueLen < 1000) {
+                valueStr = "0"+valueLen+"-"+value;
+            }else if (9 < valueLen && valueLen < 100) {
+                valueStr = "00"+valueLen+"-"+value;
+            }else if (valueLen < 10) {
+                valueStr = "000"+valueLen+"-"+value;
+            }
+            query.append(keyStr).append(":").append(valueStr).append(";");
         }
+        String queryStr = query.toString();
+        queryStr = queryStr.substring(0,queryStr.lastIndexOf(";"));
+
         // 第三步：使用MD5加密
         byte[] bytes = new byte[0];
 //        query.append(this.appsecret);
+        queryStr = queryStr + this.appsecret;
         try {
-            bytes = EncodeUtil.getMD5(query.toString());
+            bytes = EncodeUtil.getMD5(queryStr);
         } catch (Exception e) {
             e.printStackTrace();
         }
         return new String(bytes);
-
     }
 
     /**
