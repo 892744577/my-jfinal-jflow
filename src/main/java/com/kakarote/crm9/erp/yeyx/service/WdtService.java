@@ -1,7 +1,6 @@
 package com.kakarote.crm9.erp.yeyx.service;
 
 import BP.Difference.SystemConfig;
-import com.alibaba.fastjson.JSON;
 import com.kakarote.crm9.common.util.EncodeUtil;
 import com.kakarote.crm9.common.util.HttpHelper;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
@@ -40,33 +39,22 @@ public class WdtService {
      * @param moreMapData
      * @return
      */
-    public String getJsonData(Map moreMapData) {
+    public Map getJsonData(Map moreMapData) {
         Map map = new HashMap();
         try {
-            //Base64 加密
             long timestamp =  System.currentTimeMillis()/1000;
             map.put("sid",this.sid);
             map.put("appkey", this.appkey);
-            map.put("timestamp",timestamp);
-            map.put("page_no", 0);
-            map.put("page_size",500);
-            map.put("start_time", moreMapData.get("start_time"));
-            map.put("end_time", moreMapData.get("end_time"));
+            map.put("timestamp", String.valueOf(timestamp));
+            map.put("page_no", "0");
+            map.put("page_size","500");
             map.putAll(moreMapData);
-
-            //1、计算长度，并拼接
-//            for(String key : (String [])map.keySet().toArray()){
-//                String value = String.valueOf(map.get(key));
-//                value.length();
-//            }
-            //2、排序
-
             map.put("sign",this.getSign(map));
-            return JSON.toJSONString(map);
+            return map;
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return "";
+        return null;
     }
 
     /**
@@ -107,7 +95,6 @@ public class WdtService {
 
         // 第二步：把所有参数名和参数值串在一起
         StringBuilder query = new StringBuilder();
-//        query.append(this.appsecret);
         for (String key : keys) {
             Object objValue = params.get(key);
             String value = null;
@@ -128,18 +115,14 @@ public class WdtService {
             query.append(keyStr).append("-").append(key).append(":").append(valueStr).append("-").append(value).append(";");
         }
         String queryStr = query.toString();
-        queryStr = queryStr.substring(0,queryStr.lastIndexOf(";"));
-
-        // 第三步：使用MD5加密
-        byte[] bytes = new byte[0];
-//        query.append(this.appsecret);
-        queryStr = queryStr + this.appsecret;
+        queryStr = queryStr.substring(0,queryStr.lastIndexOf(";"))+this.appsecret;
         try {
-            bytes = EncodeUtil.getMD5(queryStr);
+            // 第三步：使用MD5加密
+            return EncodeUtil.get32md5(queryStr);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new String(bytes);
+        return null;
     }
 
     /**
