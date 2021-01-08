@@ -36,34 +36,31 @@ public class WdtService {
 
     /**
      * 获取参数的json字符串
-     * @param start_time
-     * @param end_time
      * @param moreMapData
      * @return
      */
-    public String getJsonData(String start_time,String end_time,Map moreMapData) {
-
+    public String getJsonData(Map moreMapData) {
+        Map map = new HashMap();
         try {
             //Base64 加密
-            Map map = new HashMap();
-            long timestamp =  System.currentTimeMillis();
+            long timestamp =  System.currentTimeMillis()/1000;
             map.put("timestamp",timestamp);
             map.put("sid",this.sid);
             map.put("appkey", this.appkey);
-            map.put("start_time", this.appkey);
-            map.put("end_time", this.appkey);
             map.put("page_no", 0);
             map.put("page_size",500);
+            map.put("start_time", moreMapData.get("start_time"));
+            map.put("end_time", moreMapData.get("end_time"));
             map.putAll(moreMapData);
 
             //1、计算长度，并拼接
-            for(String key : (String [])map.keySet().toArray()){
-                String value = String.valueOf(map.get(key));
-                value.length();
-            }
+//            for(String key : (String [])map.keySet().toArray()){
+//                String value = String.valueOf(map.get(key));
+//                value.length();
+//            }
             //2、排序
 
-            //map.put("sign",);
+            map.put("sign",this.getSign(map));
             return JSON.toJSONString(map);
         } catch (Exception e) {
             e.printStackTrace();
@@ -111,13 +108,23 @@ public class WdtService {
         StringBuilder query = new StringBuilder();
         query.append(this.appsecret);
         for (String key : keys) {
-            String value = (String) params.get(key);
+            Object objValue = params.get(key);
+            String value = null;
+            if(objValue instanceof Integer){
+                value = String.valueOf(objValue);
+            }else if(objValue instanceof Long){
+                value = String.valueOf(objValue);
+            }else if(objValue instanceof Date){
+                value = DateUtil.changeDateTOStr((Date)objValue);
+            }else if(objValue instanceof String){
+                value = String.valueOf(objValue);
+            }
             query.append(key).append(value);
 
         }
         // 第三步：使用MD5加密
         byte[] bytes = new byte[0];
-        query.append(this.appsecret);
+//        query.append(this.appsecret);
         try {
             bytes = EncodeUtil.getMD5(query.toString());
         } catch (Exception e) {
