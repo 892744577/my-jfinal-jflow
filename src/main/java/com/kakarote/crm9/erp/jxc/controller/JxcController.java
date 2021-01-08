@@ -82,26 +82,36 @@ public class JxcController extends Controller {
         renderJson(R.ok().put("data",jxcService.getCodeByDocno(jxcOrderDeliveryCode)));
     }
     /**
+     * 判断是否入库
+     */
+    public void isCreateOtherDeliveryCode(@Para("") JxcCodeRequest jxcCodeRequest){
+        log.info("=======是否已入库");
+        JxcOrderDeliveryCode jxcOrderDeliveryCode = new JxcOrderDeliveryCode();
+        jxcOrderDeliveryCode.setCode(jxcCodeRequest.getCode());
+        jxcOrderDeliveryCode = jxcService.getByCode(jxcOrderDeliveryCode);;
+        renderJson(R.ok().put("data",jxcOrderDeliveryCode));
+    }
+    /**
      * 创建其他机身码信息
      */
-    public void createOtherDeliveryCode(@Para("") JxcCodeRequest JxcCodeRequest){
+    public void createOtherDeliveryCode(@Para("") JxcCodeRequest jxcCodeRequest){
         log.info("=======创建其他入库锁");
         JxcOrderDeliveryCode jxcOrderDeliveryCode = new JxcOrderDeliveryCode();
         jxcOrderDeliveryCode.setDocno("other");
-        jxcOrderDeliveryCode.setCode(JxcCodeRequest.getCode());
-        jxcOrderDeliveryCode.setColor(JxcCodeRequest.getColor());
-        jxcOrderDeliveryCode.setModel(JxcCodeRequest.getModel());
-        jxcOrderDeliveryCode.setCustomer(JxcCodeRequest.getCustomer());
+        jxcOrderDeliveryCode.setCode(jxcCodeRequest.getCode());
+        jxcOrderDeliveryCode.setColor(jxcCodeRequest.getColor());
+        jxcOrderDeliveryCode.setModel(jxcCodeRequest.getModel());
+        jxcOrderDeliveryCode.setCustomer(jxcCodeRequest.getCustomer());
         jxcOrderDeliveryCode.save();
         renderJson(R.ok().put("data",jxcOrderDeliveryCode));
     }
     /**
      * 更新机身码入库状态
      */
-    public void updateDeliveryCode(@Para("") JxcCodeRequest JxcCodeRequest){
+    public void updateDeliveryCode(@Para("") JxcCodeRequest jxcCodeRequest){
         log.info("=======更新机身码状态");
         JxcOrderDeliveryCode jxcOrderDeliveryCode = new JxcOrderDeliveryCode();
-        jxcOrderDeliveryCode.setCode(JxcCodeRequest.getCode());
+        jxcOrderDeliveryCode.setCode(jxcCodeRequest.getCode());
         jxcOrderDeliveryCode = jxcService.getByCode(jxcOrderDeliveryCode);
         jxcOrderDeliveryCode.setZt(1);
         jxcOrderDeliveryCode.update();
@@ -122,6 +132,35 @@ public class JxcController extends Controller {
         });
         renderJson(R.ok().put("data",jxcOrderDeliveryCode));
     }
-
+    /**
+     * 出库
+     */
+    public void updateOutDeliveryCode(@Para("") JxcCodeRequest jxcCodeRequest){
+        log.info("=======更新机身码出库状态");
+        JxcOrderDeliveryCode jxcOrderDeliveryCode = new JxcOrderDeliveryCode();
+        jxcOrderDeliveryCode.setCode(jxcCodeRequest.getCode());
+        jxcOrderDeliveryCode = jxcService.getByCode(jxcOrderDeliveryCode);
+        if("other".equals(jxcOrderDeliveryCode.getDocno())){
+            jxcOrderDeliveryCode.setOutType(jxcCodeRequest.getOutType());
+            jxcOrderDeliveryCode.setShop(jxcCodeRequest.getShop());
+        }
+        jxcOrderDeliveryCode.setSfck(1);
+        jxcOrderDeliveryCode.update();
+        renderJson(R.ok().put("data",jxcOrderDeliveryCode));
+    }
+    /**
+     * 销售
+     */
+    public void updateSaleDeliveryCode(@Para("") JxcCodeRequest jxcCodeRequest){
+        log.info("=======销售");
+        JxcOrderDeliveryCode jxcOrderDeliveryCode = new JxcOrderDeliveryCode();
+        jxcOrderDeliveryCode.setCode(jxcCodeRequest.getCode());
+        jxcOrderDeliveryCode = jxcService.getByCode(jxcOrderDeliveryCode);
+        jxcOrderDeliveryCode.setSalePrice(jxcCodeRequest.getSalePrice());
+        jxcOrderDeliveryCode.setSalor(jxcCodeRequest.getSalor());
+        jxcOrderDeliveryCode.setSfck(1);
+        jxcOrderDeliveryCode.update();
+        renderJson(R.ok().put("data",jxcOrderDeliveryCode));
+    }
 
 }

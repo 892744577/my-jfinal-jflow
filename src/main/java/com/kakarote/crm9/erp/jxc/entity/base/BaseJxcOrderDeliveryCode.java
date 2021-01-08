@@ -73,4 +73,44 @@ public abstract class BaseJxcOrderDeliveryCode<M extends BaseJxcOrderDeliveryCod
 		return getStr("customer");
 	}
 
+	public void setSfck(Integer sfck) {
+		set("sfck", sfck);
+	}
+	
+	public Integer getSfck() {
+		return getInt("sfck");
+	}
+
+	public void setSalePrice(java.math.BigDecimal salePrice) {
+		set("salePrice", salePrice);
+	}
+	
+	public java.math.BigDecimal getSalePrice() {
+		return get("salePrice");
+	}
+
+	public void setSalor(String salor) {
+		set("salor", salor);
+	}
+	
+	public String getSalor() {
+		return getStr("salor");
+	}
+
+	public void setOutType(String outType) {
+		set("outType", outType);
+	}
+	
+	public String getOutType() {
+		return getStr("outType");
+	}
+
+	public void setShop(String shop) {
+		set("shop", shop);
+	}
+	
+	public String getShop() {
+		return getStr("shop");
+	}
+
 }
