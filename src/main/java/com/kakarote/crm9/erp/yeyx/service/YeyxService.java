@@ -2,13 +2,11 @@ package com.kakarote.crm9.erp.yeyx.service;
 
 
 import BP.Difference.SystemConfig;
+import com.kakarote.crm9.common.util.EncodeUtil;
 import com.kakarote.crm9.common.util.HttpHelper;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.math.BigInteger;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,24 +27,12 @@ public class YeyxService {
     @Getter
     private String path = SystemConfig.getCS_AppSettings().get("GD.path").toString();
 
-    public String getMd5(String jsonStr,long timestamp,String version) {
-
-        return getMd5(this.appId,this.secret,jsonStr,timestamp,version );
+    public String getYeyxMd5(String jsonStr,long timestamp,String version) {
+        return getYeyxMd5(this.appId,this.secret,jsonStr,timestamp,version );
     }
 
-    public String getMd5(String appId,String secret,String jsonData,long timestamp,String version){
-        byte[] secretBytes = null;
-        try {
-            secretBytes = MessageDigest.getInstance("md5").digest(
-                    ("appId"+appId + "jsonData" + jsonData + "timestamp" + timestamp+ "version" + version + secret).getBytes());
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("没有这个md5算法！");
-        }
-        String md5code = new BigInteger(1, secretBytes).toString(16);
-        for (int i = 0; i < 32 - md5code.length(); i++) {
-            md5code = "0" + md5code;
-        }
-        return md5code;
+    public String getYeyxMd5(String appId,String secret,String jsonData,long timestamp,String version){
+        return EncodeUtil.get32md5("appId" + appId + "jsonData" + jsonData + "timestamp" + timestamp + "version" + version + secret);
     }
 
     /**

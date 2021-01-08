@@ -120,7 +120,7 @@ public class YeyxController extends Controller {
 
             long timestamp = System.currentTimeMillis()/1000;
             String jsonStr = JSONObject.toJSONString(currentPrama);
-            String md5Str = yeyxService.getMd5(jsonStr,timestamp,"1");
+            String md5Str = yeyxService.getYeyxMd5(jsonStr,timestamp,"1");
 
             //调用新增订单接口
             Map param = new LinkedHashMap();
@@ -177,7 +177,7 @@ public class YeyxController extends Controller {
                 //调用新增订单接口
                 long timestamp = System.currentTimeMillis()/1000;
                 String jsonStr = JSONObject.toJSONString(currentPrama);
-                String md5Str = yeyxService.getMd5(jsonStr,timestamp,"1");
+                String md5Str = yeyxService.getYeyxMd5(jsonStr,timestamp,"1");
                 Map param = new LinkedHashMap();
                 param.put("appId",yeyxService.getAppId());
                 param.put("sign",md5Str);

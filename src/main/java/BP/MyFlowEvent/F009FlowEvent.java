@@ -158,7 +158,7 @@ public class F009FlowEvent extends FlowEventBase {
 
                     long timestamp = System.currentTimeMillis()/1000;
                     String jsonStr = JSONObject.toJSONString(currentPrama);
-                    String md5Str = yeyxService.getMd5(jsonStr,timestamp,"1");
+                    String md5Str = yeyxService.getYeyxMd5(jsonStr,timestamp,"1");
 
                     //调用新增订单接口
                     Map param = new LinkedHashMap();
