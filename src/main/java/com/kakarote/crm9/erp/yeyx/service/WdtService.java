@@ -8,6 +8,7 @@ import com.kakarote.crm9.erp.wx.util.DateUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -120,25 +121,10 @@ public class WdtService {
                 value = String.valueOf(objValue);
             }
             //循环对每个键值进行处理
-            String keyStr = "";
-            String valueStr = "";
-            int keyLen = key.length();
-            int valueLen = value.length();
-            if (keyLen < 10) {
-                keyStr = "0"+keyLen+"-"+key;
-            }else {
-                keyStr = keyLen+"-"+key;
-            }
-
-            if (999 < valueLen) {
-                valueStr = valueLen+"-"+value;
-            }else if (99 < valueLen && valueLen < 1000) {
-                valueStr = "0"+valueLen+"-"+value;
-            }else if (9 < valueLen && valueLen < 100) {
-                valueStr = "00"+valueLen+"-"+value;
-            }else if (valueLen < 10) {
-                valueStr = "000"+valueLen+"-"+value;
-            }
+            DecimalFormat decimalFormat1 = new DecimalFormat("00");
+            String keyStr = decimalFormat1.format(key.length());
+            DecimalFormat decimalFormat2 = new DecimalFormat("0000");
+            String valueStr = decimalFormat2.format(value.length());
             query.append(keyStr).append(":").append(valueStr).append(";");
         }
         String queryStr = query.toString();
