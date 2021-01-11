@@ -57,36 +57,6 @@ public class WdtService {
         return null;
     }
 
-    /**
-     * 奇门获取订单数据
-     * @param moreMapData
-     * @return
-     */
-    public Map getQmJsonData(Map moreMapData) {
-        Map map = new HashMap();
-        try {
-            map.put("app_key",this.qmAppkey);
-            map.put("method","taobao.crm.order.detail.get");
-            map.put("target_app_key", this.appkey);
-
-            map.put("session", this.session);
-            map.put("timestamp", DateUtil.changeDateTOStr(new Date()));
-            map.put("format", "json");
-            map.put("v", "2.0");
-
-            //业务参数
-//            map.put("start_time", moreMapData.get("start_time"));
-//            map.put("end_time", moreMapData.get("end_time"));
-            map.put("page_no", "0");
-            map.put("page_size","500");
-            map.putAll(moreMapData);
-            map.put("sign", this.getSign(map));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return map;
-    }
-
     //获取签名
     public String getSign(Map params){
         // 第一步：检查参数是否已经排序
@@ -114,6 +84,64 @@ public class WdtService {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * 奇门获取订单数据
+     * @param moreMapData
+     * @return
+     */
+    public Map getQmJsonData(Map moreMapData) {
+        Map map = new HashMap();
+        try {
+            map.put("sid",this.sid);
+            map.put("app_key",this.qmAppkey);
+            map.put("timestamp", DateUtil.changeDateTOStr(new Date()));
+            map.put("method","wdt.trade.query");
+            map.put("target_app_key", this.appkey);
+
+//            map.put("session", this.session);
+
+            map.put("format", "json");
+            map.put("sign_method", "md5");
+            map.put("v", "2.0");
+
+            //业务参数
+//            map.put("start_time", moreMapData.get("start_time"));
+//            map.put("end_time", moreMapData.get("end_time"));
+            map.put("page_no", "0");
+            map.put("page_size","500");
+            map.putAll(moreMapData);
+            map.put("sign", this.getQmSign(map));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return map;
+    }
+
+    //获取签名
+    public String getQmSign(Map params){
+        // 第一步：检查参数是否已经排序
+        String[] keys = (String[]) params.keySet().toArray(new String[0]);
+        Arrays.sort(keys);
+
+        // 第二步：把所有参数名和参数值串在一起
+        StringBuilder query = new StringBuilder();
+        query.append(this.appsecret);
+        for (String key : keys) {
+            String value = (String) params.get(key);
+            query.append(key).append(value);
+
+        }
+        // 第三步：使用MD5加密
+        byte[] bytes = new byte[0];
+        query.append(this.appsecret);
+        try {
+            bytes = EncodeUtil.getMD5(query.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return new String(bytes);
     }
 
     /**
