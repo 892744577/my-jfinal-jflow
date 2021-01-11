@@ -57,28 +57,12 @@ public abstract class BaseJxcOrderDeliveryCode<M extends BaseJxcOrderDeliveryCod
 		return getStr("model");
 	}
 
-	public void setZt(Integer zt) {
-		set("zt", zt);
-	}
-	
-	public Integer getZt() {
-		return getInt("zt");
-	}
-
 	public void setCustomer(String customer) {
 		set("customer", customer);
 	}
 	
 	public String getCustomer() {
 		return getStr("customer");
-	}
-
-	public void setSfck(Integer sfck) {
-		set("sfck", sfck);
-	}
-	
-	public Integer getSfck() {
-		return getInt("sfck");
 	}
 
 	public void setSalePrice(java.math.BigDecimal salePrice) {
@@ -111,6 +95,62 @@ public abstract class BaseJxcOrderDeliveryCode<M extends BaseJxcOrderDeliveryCod
 	
 	public String getShop() {
 		return getStr("shop");
+	}
+
+	public void setCreateTime(java.util.Date createTime) {
+		set("createTime", createTime);
+	}
+	
+	public java.util.Date getCreateTime() {
+		return get("createTime");
+	}
+
+	public void setCkTime(java.util.Date ckTime) {
+		set("ckTime", ckTime);
+	}
+	
+	public java.util.Date getCkTime() {
+		return get("ckTime");
+	}
+
+	public void setRkTime(java.util.Date rkTime) {
+		set("rkTime", rkTime);
+	}
+	
+	public java.util.Date getRkTime() {
+		return get("rkTime");
+	}
+
+	public void setSaleTime(java.util.Date saleTime) {
+		set("saleTime", saleTime);
+	}
+	
+	public java.util.Date getSaleTime() {
+		return get("saleTime");
+	}
+
+	public void setRkZt(Integer rkZt) {
+		set("rkZt", rkZt);
+	}
+	
+	public Integer getRkZt() {
+		return getInt("rkZt");
+	}
+
+	public void setCkZt(Integer ckZt) {
+		set("ckZt", ckZt);
+	}
+	
+	public Integer getCkZt() {
+		return getInt("ckZt");
+	}
+
+	public void setXsZt(Integer xsZt) {
+		set("xsZt", xsZt);
+	}
+	
+	public Integer getXsZt() {
+		return getInt("xsZt");
 	}
 
 }

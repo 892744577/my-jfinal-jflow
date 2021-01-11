@@ -33,8 +33,16 @@ public class JxcService {
      * @param entity
      * @return
      */
-    public JxcOrderDeliveryCode getByCode(JxcOrderDeliveryCode entity) {
-        return JxcOrderDeliveryCode.dao.findFirst(Db.getSqlPara("admin.jxc.getByCode",entity).getSql(),entity.getCode());
+    public List<JxcOrderDeliveryCode> getByCode(JxcOrderDeliveryCode entity) {
+        return JxcOrderDeliveryCode.dao.find(Db.getSqlPara("admin.jxc.getByCode",entity).getSql(),entity.getCode());
+    }
+    /**
+     * 获取机身码信息
+     * @param entity
+     * @return
+     */
+    public JxcOrderDeliveryCode getByCodeAndCustomer(JxcOrderDeliveryCode entity) {
+        return JxcOrderDeliveryCode.dao.findFirst(Db.getSqlPara("admin.jxc.getByCodeAndCustomer",entity).getSql(),entity.getCode(),entity.getCustomer());
     }
     /**
      * 分页查询出货单
