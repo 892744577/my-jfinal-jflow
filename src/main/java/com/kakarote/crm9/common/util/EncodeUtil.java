@@ -39,6 +39,15 @@ public class EncodeUtil {
     }
 
     /**
+     * 生成md532位 大写
+     * @param srcString
+     * @return
+     */
+    public static String get32md5Big(String srcString){
+        return get32md5(srcString).toUpperCase();
+    }
+
+    /**
      * 生成base64
      * @param key
      * @return

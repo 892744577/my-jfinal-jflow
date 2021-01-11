@@ -30,6 +30,8 @@ public class WdtService {
     @Getter
     private String qmAppkey = SystemConfig.getCS_AppSettings().get("WDT.qm.appkey").toString();
     @Getter
+    private String targetAppkey = SystemConfig.getCS_AppSettings().get("WDT.qm.targetAppkey").toString();
+    @Getter
     private String appsecret = SystemConfig.getCS_AppSettings().get("WDT.appsecret").toString();
     @Getter
     private String session = SystemConfig.getCS_AppSettings().get("WDT.session").toString();
@@ -98,17 +100,10 @@ public class WdtService {
             map.put("app_key",this.qmAppkey);
             map.put("timestamp", DateUtil.changeDateTOStr(new Date()));
             map.put("method","wdt.trade.query");
-            map.put("target_app_key", this.appkey);
-
-//            map.put("session", this.session);
-
+            map.put("target_app_key", this.targetAppkey);
             map.put("format", "json");
             map.put("sign_method", "md5");
             map.put("v", "2.0");
-
-            //业务参数
-//            map.put("start_time", moreMapData.get("start_time"));
-//            map.put("end_time", moreMapData.get("end_time"));
             map.put("page_no", "0");
             map.put("page_size","500");
             map.putAll(moreMapData);
@@ -134,14 +129,15 @@ public class WdtService {
 
         }
         // 第三步：使用MD5加密
-        byte[] bytes = new byte[0];
         query.append(this.appsecret);
+        String queryStr = query.toString();
         try {
-            bytes = EncodeUtil.getMD5(query.toString());
+            // 第三步：使用MD5加密
+            return EncodeUtil.get32md5Big(queryStr);
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new String(bytes);
+        return null;
     }
 
     /**
