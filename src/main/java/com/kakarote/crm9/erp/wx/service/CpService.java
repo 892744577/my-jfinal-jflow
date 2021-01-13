@@ -125,4 +125,16 @@ public class CpService {
         }
         return null;
     }
+
+    /*
+     * @Description //企业微信userid转换成openid接口
+     * @Author wangkaida
+     * @Date 11:56 2021/1/13
+     * @Param [userId]
+     * @return java.lang.String
+     **/
+    public String getOpenidByUserId(String userId) throws Exception {
+        WxCpService wxCpService = WxCpConfiguration.getCpService(WxCpAgentIdEmun.agent2.getCode());
+        return wxCpService.getUserService().userId2Openid(userId,null).get("openid");
+    }
 }

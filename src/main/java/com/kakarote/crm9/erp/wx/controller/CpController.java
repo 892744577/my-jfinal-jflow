@@ -1,6 +1,7 @@
 package com.kakarote.crm9.erp.wx.controller;
 
 import BP.WF.Dev2Interface;
+import cn.hutool.core.util.StrUtil;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
 import com.jfinal.core.paragetter.Para;
@@ -76,4 +77,27 @@ public class CpController extends Controller {
                 .put("data",cpService.getJsapiConfig(url,WxCpAgentIdEmun.agent2.getCode()))
                 .put("agentId", WxCpAgentIdEmun.agent2.getCode()));
     }
+
+    /*
+     * @Description //企业微信userid转换成openid接口
+     * @Author wangkaida
+     * @Date 11:26 2021/1/13
+     * @Param [userId]
+     * @return void
+     **/
+    public void changeUserIdToOpenId(String userId) throws Exception {
+        if(StrUtil.isEmpty(userId)){
+            renderJson(R.error("userId不能为空!").put("data",null).put("code","000001"));
+            return;
+        }
+
+        String openId = cpService.getOpenidByUserId(userId);
+
+        if (StrUtil.isNotBlank(openId)) {
+            renderJson(R.ok().put("data",openId).put("code","000000"));
+        }else {
+            renderJson(R.error().put("msg","企业微信userid转换成openid失败!").put("code","000002"));
+        }
+    }
+
 }
