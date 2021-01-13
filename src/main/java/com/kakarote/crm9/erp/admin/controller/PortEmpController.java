@@ -66,7 +66,7 @@ public class PortEmpController extends Controller {
      * @Param [portEmp]
      * @return void
      **/
-    public void agentLogin(@Para("") PortEmpReq portEmpReq){
+    public void agentLogin(@Para("") PortEmpReq portEmpReq) throws Exception{
 
         //第三方登陆判断--小程序
         PortEmp portEmp = new PortEmp();
@@ -76,11 +76,7 @@ public class PortEmpController extends Controller {
         if (portEmpDb != null) {
             if("1".equals(portEmpDb.getAccountType())){
                 if (StrUtil.isNotEmpty(portEmpDb.getWxOpenId())) {
-                    try {
-                        BP.WF.Dev2Interface.Port_Login(portEmpDb.getNo());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    BP.WF.Dev2Interface.Port_Login(portEmpDb.getNo());
                     //代理商已经创建账号直接登录
                     renderJson(R.ok().put("msg","登录成功!").put("code","000000"));
                 }else {
@@ -104,7 +100,7 @@ public class PortEmpController extends Controller {
      * @Param [portEmp]
      * @return void
      **/
-    public void staffLogin(@Para("") PortEmpReq portEmpReq){
+    public void staffLogin(@Para("") PortEmpReq portEmpReq) throws Exception{
 
         //第三方登陆判断--小程序
         PortEmp portEmp = new PortEmp();
@@ -114,11 +110,7 @@ public class PortEmpController extends Controller {
         if (portEmpDb != null) {
             if("2".equals(portEmpDb.getAccountType())){
                 if (StrUtil.isNotEmpty(portEmpDb.getWxOpenId())) {
-                    try {
-                        BP.WF.Dev2Interface.Port_Login(portEmpDb.getNo());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
+                    BP.WF.Dev2Interface.Port_Login(portEmpDb.getNo());
                     //代理商已经创建账号直接登录
                     renderJson(R.ok().put("msg","登录成功!").put("code","000000"));
                 }else {
