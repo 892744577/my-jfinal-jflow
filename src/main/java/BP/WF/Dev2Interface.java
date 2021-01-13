@@ -2,20 +2,32 @@ package BP.WF;
 
 import BP.DA.*;
 import BP.Difference.SystemConfig;
-import BP.En.*;
-import BP.Port.*;
+import BP.En.QueryObject;
+import BP.Port.Emp;
+import BP.Port.Emps;
 import BP.Sys.*;
-import BP.Tools.*;
-import BP.Web.*;
-import BP.WF.Data.*;
+import BP.Tools.AesEncodeUtil;
+import BP.Tools.DateUtils;
+import BP.Tools.FtpUtil;
+import BP.Tools.SftpUtil;
+import BP.WF.Data.GERpt;
+import BP.WF.Data.GERptAttr;
+import BP.WF.Data.NDXRptBaseAttr;
 import BP.WF.Port.WFEmp;
 import BP.WF.Port.WFEmpAttr;
 import BP.WF.Port.WFEmps;
 import BP.WF.Template.*;
-import java.util.*;
-import java.io.*;
+import BP.Web.WebUser;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
-import java.time.*;
+import java.time.DayOfWeek;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Hashtable;
 
 /** 
  此接口为程序员二次开发使用,在阅读代码前请注意如下事项.
@@ -7949,7 +7961,7 @@ public class Dev2Interface
 	 * @throws Exception 
 	 * @throws NumberFormatException 
 	*/
-	public static SendReturnObjs Node_SendWork(String fk_flow, long workID, Hashtable htWork, DataSet workDtls, int toNodeID, String toEmps, String execUserNo, String execUserName, String execUserDeptNo, String execUserDeptName, String title) throws  Exception
+	public static synchronized SendReturnObjs Node_SendWork(String fk_flow, long workID, Hashtable htWork, DataSet workDtls, int toNodeID, String toEmps, String execUserNo, String execUserName, String execUserDeptNo, String execUserDeptName, String title) throws  Exception
 	{
 
 		//给临时的发送变量赋值，解决带有参数的转向。
