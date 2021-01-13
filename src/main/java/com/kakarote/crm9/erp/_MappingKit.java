@@ -119,6 +119,9 @@ public class _MappingKit {
 		//进销存
 		arp.addMapping("jxc_order_delivery", "id", JxcOrderDelivery.class);
 		arp.addMapping("jxc_order_delivery_code", "id", JxcOrderDeliveryCode.class);
+		//旺店通
+		arp.addMapping("hr_gongdan_wdt_trade", "trade_no", HrGongdanWdtTrade.class);
+		arp.addMapping("hr_gongdan_wdt_trade_goods", "rec_id", HrGongdanWdtTradeGoods.class);
 	}
 }
 
