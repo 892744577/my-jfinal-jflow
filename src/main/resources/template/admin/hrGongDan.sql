@@ -81,7 +81,11 @@
       and b.FK_Node in (903,913) and timestampadd(day, 1, (select max(c.rdt) from wf_generworkerlist c where c.FK_Node = b.FK_Node)) < #para(overtime)
       #end
       #if(toBeCompleted)
-      and b.FK_Node != #para(toBeCompleted)
+      and b.FK_Node not in (
+                #for(x:toBeCompleted)
+                        #(for.index == 0 ? "" : ",")  #para(x)
+                #end
+            )
       #end
       #if(serviceSp)
       and a.serviceSp = #para(serviceSp)
@@ -132,7 +136,11 @@
       and b.FK_Node in (903,913) and timestampadd(day, 1, (select max(c.rdt) from wf_generworkerlist c where c.FK_Node = b.FK_Node)) < #para(overtime)
       #end
       #if(toBeCompleted)
-      and b.FK_Node != #para(toBeCompleted)
+      and b.FK_Node not in (
+                #for(x:toBeCompleted)
+                        #(for.index == 0 ? "" : ",")  #para(x)
+                #end
+            )
       #end
       #if(serviceSp)
       and a.serviceSp = #para(serviceSp)

@@ -409,7 +409,10 @@ public class AdminSceneService{
             String overtime = com.kakarote.crm9.erp.wx.util.DateUtil.changeDateTOStr3(new Date());
             kv.set("overtime", overtime);
         }else if(status==3) {
-            kv.set("toBeCompleted", "906");
+            List list = new ArrayList();
+            list.add("906");
+            list.add("907");
+            kv.set("toBeCompleted", list);
         }else if(status==4) {
             kv.set("serviceSp", 2);
         }
