@@ -331,7 +331,7 @@ public class PortEmpController extends Controller {
                 myht.put("XingMing", portEmpReq.getName());
                 myht.put("LeiBie", "1");
                 myht.put("TB_RDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
-                myht.put("TB_Title", URLEncoder.encode("亚太天能-admin,admin在"+ DataType.getCurrentDateTime()+"发起.", "UTF-8"));
+                myht.put("TB_Title", URLEncoder.encode(portEmpReq.getName()+"在"+ DataType.getCurrentDateTime()+"发起.", "UTF-8"));
                 myht.put("TB_FID", 0);
                 myht.put("TB_CDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
                 myht.put("TB_Rec", "admin");
@@ -351,7 +351,7 @@ public class PortEmpController extends Controller {
                 myhtSend.put("LeiBie", "1");
                 myhtSend.put("TB_OID", workID);
                 myhtSend.put("TB_RDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
-                myhtSend.put("TB_Title", URLEncoder.encode("亚太天能-admin,admin在"+DataType.getCurrentDateTime()+"发起.", "UTF-8"));
+                myhtSend.put("TB_Title", URLEncoder.encode(portEmpReq.getName()+"在"+DataType.getCurrentDateTime()+"发起.", "UTF-8"));
                 myhtSend.put("TB_FID", 0);
                 myhtSend.put("TB_CDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
                 myhtSend.put("TB_Rec", "admin");
