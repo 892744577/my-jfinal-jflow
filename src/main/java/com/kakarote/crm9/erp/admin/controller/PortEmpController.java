@@ -10,6 +10,7 @@ import BP.Tools.StringUtils;
 import BP.WF.SendReturnObjs;
 import BP.Web.WebUser;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
@@ -282,6 +283,47 @@ public class PortEmpController extends Controller {
 
     }
 
+    /**
+     * 发起注册流程
+     * @param portEmpReq
+     * @return
+     */
+    @NotAction
+    public String  createRegisterFlow(PortEmpReq portEmpReq,String lb,String parentNo){
+        //开始调用注册审批流程
+        Hashtable myht = new Hashtable();
+        Hashtable myhtSend = new Hashtable();
+        try {
+            myht.put("TB_RDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
+            myht.put("TB_Title", URLEncoder.encode(portEmpReq.getName()+"在"+ DataType.getCurrentDateTime()+"发起.", "UTF-8"));
+            myht.put("TB_FID", 0);
+            myht.put("TB_CDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
+            myht.put("TB_Rec", "admin");
+            myht.put("TB_Emps", "admin");
+            myht.put("TB_FK_Dept", 100);
+            myht.put("TB_FK_NY", DataType.getCurrentYearMonth());
+            myht.put("TB_MyNum", 1);
+            myht.put("ShouJiHaoMa", portEmpReq.getTel());
+            myht.put("appOpenId", portEmpReq.getWxAppOpenId());
+            myht.put("XingMing", portEmpReq.getName());
+            if("2".equals(lb)){ //员工发起的注册申请需要父级no
+                myht.put("ParentNo", parentNo);
+            }
+            myht.put("LeiBie", lb);
+            myhtSend.putAll(myht);
+            WebUser.SignInOfGenerAuth(new Emp("admin"), "admin");
+            long workID = BP.WF.Dev2Interface.Node_CreateBlankWork("008",myht,null,"admin",
+                    null,0,0,null,0,null,0,null,null,null);
+            //发送流程
+            myhtSend.put("TB_OID", workID);
+            SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork("008",workID,myhtSend,null,0,null);
+            return "父流程自动运行到下一个节点，发送过程如下：\n @接收人" + returnObjs.getVarAcceptersName() + "\n @下一步[" + returnObjs.getVarCurrNodeName() + "]启动";
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     /*
      * @Description //代理商小程序openId绑定手机号
      * @Author wangkaida
@@ -314,55 +356,12 @@ public class PortEmpController extends Controller {
         PortEmp portEmpDb = portEmpService.getPortEmp(portEmp);
 
         if (portEmpDb != null) {
-            //开始调用注册审批流程
-            Hashtable myht = new Hashtable();
-            Hashtable myhtSend = new Hashtable();
-            try {
-                myht.put("ShouJiHaoMa", portEmpReq.getTel());
-                myht.put("appOpenId", portEmpReq.getWxAppOpenId());
-                myht.put("XingMing", portEmpReq.getName());
-                myht.put("LeiBie", "1");
-                myht.put("TB_RDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
-                myht.put("TB_Title", URLEncoder.encode(portEmpReq.getName()+"在"+ DataType.getCurrentDateTime()+"发起.", "UTF-8"));
-                myht.put("TB_FID", 0);
-                myht.put("TB_CDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
-                myht.put("TB_Rec", "admin");
-                myht.put("TB_Emps", "admin");
-                myht.put("TB_FK_Dept", 100);
-                myht.put("TB_FK_NY", DataType.getCurrentYearMonth());
-                myht.put("TB_MyNum", 1);
-                //新建流程
-//            WebUser.SignInOfGener(new Emp("admin"));
-//            BP.WF.Dev2Interface.Port_Login("admin");
-                WebUser.SignInOfGenerAuth(new Emp("admin"), "admin");
-                long workID = BP.WF.Dev2Interface.Node_CreateBlankWork("008",myht,null,"admin",null,0,0,null,0,null,0,null,null,null);
-                //发送流程
-                myhtSend.put("ShouJiHaoMa", portEmpReq.getTel());
-                myhtSend.put("appOpenId", portEmpReq.getWxAppOpenId());
-                myhtSend.put("XingMing", portEmpReq.getName());
-                myhtSend.put("LeiBie", "1");
-                myhtSend.put("TB_OID", workID);
-                myhtSend.put("TB_RDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
-                myhtSend.put("TB_Title", URLEncoder.encode(portEmpReq.getName()+"在"+DataType.getCurrentDateTime()+"发起.", "UTF-8"));
-                myhtSend.put("TB_FID", 0);
-                myhtSend.put("TB_CDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
-                myhtSend.put("TB_Rec", "admin");
-                myhtSend.put("TB_Emps", "admin");
-                myhtSend.put("TB_FK_Dept", 100);
-                myhtSend.put("TB_FK_NY", DataType.getCurrentYearMonth());
-                myhtSend.put("TB_MyNum", 1);
-                SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork("008",workID,myhtSend,null,0,null);
-                String sendSuccess = "父流程自动运行到下一个节点，发送过程如下：\n @接收人" + returnObjs.getVarAcceptersName() + "\n @下一步[" + returnObjs.getVarCurrNodeName() + "]启动";
-
-                renderJson(R.ok().put("msg","注册成功，请等待审核!").put("code","000000"));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
+            log.info("=======appBind接口,代理商绑定，根据手机查账号已存在："+ JSON.toJSONString(portEmpReq));
+            //创建并发起注册审批流程
+            createRegisterFlow(portEmpReq,"1",null);
+            renderJson(R.ok().put("msg","注册成功，请等待审核!").put("code","000000"));
         }else {
-
+            log.info("=======appBind接口,代理商绑定，根据手机查账号不存在："+ JSON.toJSONString(portEmpReq));
             PortEmp portEmpTel = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? and accountType = '1' LIMIT 0,1", portEmpReq.getTel());
             if(portEmpTel != null){
                 renderJson(R.error("该手机号已经被注册!").put("data",null).put("code","000036"));
@@ -374,59 +373,9 @@ public class PortEmpController extends Controller {
                 renderJson(R.error("该姓名已经被注册!").put("data",null).put("code","000037"));
                 return;
             }
-
-//            Regist regist = getModel(Regist.class);
-//            regist.setMyPK(UUID.randomUUID().toString().replace("-", ""));
-//            regist.setPhone(portEmp.getTel());
-//            regist.setAppOpenId(portEmp.getWxAppOpenId());
-//            regist.setName(portEmp.getName());
-//            regist.save();
-
-            //开始调用注册审批流程
-            Hashtable myht = new Hashtable();
-            Hashtable myhtSend = new Hashtable();
-            try {
-                myht.put("ShouJiHaoMa", portEmpReq.getTel());
-                myht.put("appOpenId", portEmpReq.getWxAppOpenId());
-                myht.put("XingMing", portEmpReq.getName());
-                myht.put("LeiBie", "1");
-                myht.put("TB_RDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
-                myht.put("TB_Title", URLEncoder.encode("亚太天能-admin,admin在"+ DataType.getCurrentDateTime()+"发起.", "UTF-8"));
-                myht.put("TB_FID", 0);
-                myht.put("TB_CDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
-                myht.put("TB_Rec", "admin");
-                myht.put("TB_Emps", "admin");
-                myht.put("TB_FK_Dept", 100);
-                myht.put("TB_FK_NY", DataType.getCurrentYearMonth());
-                myht.put("TB_MyNum", 1);
-                //新建流程
-//            WebUser.SignInOfGener(new Emp("admin"));
-//            BP.WF.Dev2Interface.Port_Login("admin");
-                WebUser.SignInOfGenerAuth(new Emp("admin"), "admin");
-                long workID = BP.WF.Dev2Interface.Node_CreateBlankWork("008",myht,null,"admin",null,0,0,null,0,null,0,null,null,null);
-                //发送流程
-                myhtSend.put("ShouJiHaoMa", portEmpReq.getTel());
-                myhtSend.put("appOpenId", portEmpReq.getWxAppOpenId());
-                myhtSend.put("XingMing", portEmpReq.getName());
-                myhtSend.put("LeiBie", "1");
-                myhtSend.put("TB_OID", workID);
-                myhtSend.put("TB_RDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
-                myhtSend.put("TB_Title", URLEncoder.encode("亚太天能-admin,admin在"+DataType.getCurrentDateTime()+"发起.", "UTF-8"));
-                myhtSend.put("TB_FID", 0);
-                myhtSend.put("TB_CDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
-                myhtSend.put("TB_Rec", "admin");
-                myhtSend.put("TB_Emps", "admin");
-                myhtSend.put("TB_FK_Dept", 100);
-                myhtSend.put("TB_FK_NY", DataType.getCurrentYearMonth());
-                myhtSend.put("TB_MyNum", 1);
-                SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork("008",workID,myhtSend,null,0,null);
-                String sendSuccess = "父流程自动运行到下一个节点，发送过程如下：\n @接收人" + returnObjs.getVarAcceptersName() + "\n @下一步[" + returnObjs.getVarCurrNodeName() + "]启动";
-                renderJson(R.ok().put("msg","更新成功!").put("code","000000"));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            //创建并发起注册审批流程
+            createRegisterFlow(portEmpReq,"1",null);
+            renderJson(R.ok().put("msg","更新成功!").put("code","000000"));
         }
         renderJson(R.ok().put("msg","发起成功，请等待审核!").put("code","000000"));
     }
@@ -439,8 +388,6 @@ public class PortEmpController extends Controller {
      * @return void
      **/
     public void staffAppBind(@Para("") PortEmpReq portEmp){
-//        PortEmp portEmp = getModel(PortEmp.class,"");
-
         if(StrUtil.isEmpty(portEmp.getParentTel())){
             renderJson(R.error("请输入上级手机号!").put("data",null).put("code","000007"));
             return;
@@ -479,6 +426,7 @@ public class PortEmpController extends Controller {
         //判断账号是否已经存在,
         PortEmp portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? LIMIT 0,1", portEmp.getTel());
         if (portEmpDb != null) {
+            log.info("=======staffAppBind接口,团员绑定，根据手机查账号已存在："+ JSON.toJSONString(portEmpDb));
             //1、更新小程序openid
             portEmpDb.setWxAppOpenId(portEmp.getWxAppOpenId());
             portEmpDb.update();
@@ -495,59 +443,12 @@ public class PortEmpController extends Controller {
             portEmpRelation.setParentNo(portEmpParent.getNo());
             Boolean flag = portEmpRelation.save();
             renderJson(R.ok("绑定成功,可直接登陆!").put("data","0").put("code","000000"));
-
-
-
         }else {
-            //非代理商账号不存在，发流程给代理商
-            //开始调用注册审批流程
-            Hashtable myht = new Hashtable();
-            Hashtable myhtSend = new Hashtable();
-            try {
-                myht.put("ShouJiHaoMa", portEmp.getTel());
-                myht.put("appOpenId", portEmp.getWxAppOpenId());
-                myht.put("XingMing", portEmp.getName());
-                myht.put("ParentNo", portEmpParent.getNo());
-                myht.put("LeiBie", "2");
-                myht.put("TB_RDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
-                myht.put("TB_Title", URLEncoder.encode("亚太天能-admin,admin在"+ DataType.getCurrentDateTime()+"发起.", "UTF-8"));
-                myht.put("TB_FID", 0);
-                myht.put("TB_CDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
-                myht.put("TB_Rec", "admin");
-                myht.put("TB_Emps", "admin");
-                myht.put("TB_FK_Dept", 100);
-                myht.put("TB_FK_NY", DataType.getCurrentYearMonth());
-                myht.put("TB_MyNum", 1);
-                //新建流程
-                WebUser.SignInOfGenerAuth(new Emp("admin"), "admin");
-                long workID = BP.WF.Dev2Interface.Node_CreateBlankWork("008",myht,null,"admin",null,0,0,null,0,null,0,portEmpParent.getNo(),null,null);
-                //发送流程
-                myhtSend.put("ShouJiHaoMa", portEmp.getTel());
-                myhtSend.put("appOpenId", portEmp.getWxAppOpenId());
-                myhtSend.put("XingMing", portEmp.getName());
-                myhtSend.put("ParentNo", portEmpParent.getNo());
-                myhtSend.put("LeiBie", "2");
-                myhtSend.put("TB_OID", workID);
-                myhtSend.put("TB_RDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
-                myhtSend.put("TB_Title", URLEncoder.encode("亚太天能-admin,admin在"+DataType.getCurrentDateTime()+"发起.", "UTF-8"));
-                myhtSend.put("TB_FID", 0);
-                myhtSend.put("TB_CDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
-                myhtSend.put("TB_Rec", "admin");
-                myhtSend.put("TB_Emps", "admin");
-                myhtSend.put("TB_FK_Dept", 100);
-                myhtSend.put("TB_FK_NY", DataType.getCurrentYearMonth());
-                myhtSend.put("TB_MyNum", 1);
-                SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork("008",workID,myhtSend,null,0,portEmpParent.getNo());
-                String sendSuccess = "父流程自动运行到下一个节点，发送过程如下：\n @接收人" + returnObjs.getVarAcceptersName() + "\n @下一步[" + returnObjs.getVarCurrNodeName() + "]启动";
-
-                renderJson(R.ok().put("msg","绑定流程已发起,请等待负责人审核通过!").put("data","1").put("code","000000"));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            log.info("=======staffAppBind接口,团员绑定，根据手机查账号不存在，发起流程给代理商："+ JSON.toJSONString(portEmp));
+            //创建并发起注册审批流程
+            createRegisterFlow(portEmp,"1",portEmpParent.getNo());
+            renderJson(R.ok().put("msg","绑定流程已发起,请等待负责人审核通过!").put("data","1").put("code","000000"));
         }
-
     }
 
     /*
@@ -764,7 +665,7 @@ public class PortEmpController extends Controller {
             myhtSend.put("LeiBie", "2");
             myhtSend.put("TB_OID", portEmp.getWorkID());
             myhtSend.put("TB_RDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
-            myhtSend.put("TB_Title", URLEncoder.encode("亚太天能-admin,admin在"+DataType.getCurrentDateTime()+"发起.", "UTF-8"));
+            myhtSend.put("TB_Title", URLEncoder.encode(portEmp.getName()+"在"+DataType.getCurrentDateTime()+"发起.", "UTF-8"));
             myhtSend.put("TB_FID", 0);
             myhtSend.put("TB_CDT", URLEncoder.encode(DataType.getCurrentDateTime(), "UTF-8"));
             myhtSend.put("TB_Rec", "admin");
