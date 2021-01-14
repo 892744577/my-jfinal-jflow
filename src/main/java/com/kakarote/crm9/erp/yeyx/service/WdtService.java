@@ -207,8 +207,12 @@ public class WdtService {
                     hrGongdanWdtTrade.setRefundStatus(tradeInfo.getInteger("refund_status"));
                     hrGongdanWdtTrade.setFenxiaoType(tradeInfo.getInteger("fenxiao_type"));
                     hrGongdanWdtTrade.setFenxiaoNick(tradeInfo.getString("fenxiao_nick"));
-                    hrGongdanWdtTrade.setTradeTime(tradeInfo.getDate("trade_time"));
-                    hrGongdanWdtTrade.setPayTime(tradeInfo.getDate("pay_time"));
+                    if (!"0000-00-00 00:00:00".equals(tradeInfo.getString("trade_time"))) {
+                        hrGongdanWdtTrade.setTradeTime(tradeInfo.getDate("trade_time"));
+                    }
+                    if (!"0000-00-00 00:00:00".equals(tradeInfo.getString("pay_time"))) {
+                        hrGongdanWdtTrade.setPayTime(tradeInfo.getDate("pay_time"));
+                    }
                     hrGongdanWdtTrade.setCustomerName(tradeInfo.getString("customer_name"));
                     hrGongdanWdtTrade.setCustomerNo(tradeInfo.getString("customer_no"));
                     hrGongdanWdtTrade.setPayAccount(tradeInfo.getString("pay_account"));
@@ -305,8 +309,12 @@ public class WdtService {
                     hrGongdanWdtTrade.setSplitPackageNum(tradeInfo.getInteger("split_package_num"));
                     hrGongdanWdtTrade.setInvoiceId(tradeInfo.getInteger("invoice_id"));
                     hrGongdanWdtTrade.setVersionId(tradeInfo.getInteger("version_id"));
-                    hrGongdanWdtTrade.setModified(tradeInfo.getDate("modified"));
-                    hrGongdanWdtTrade.setCreated(tradeInfo.getDate("created"));
+                    if (!"0000-00-00 00:00:00".equals(tradeInfo.getString("modified"))) {
+                        hrGongdanWdtTrade.setModified(tradeInfo.getDate("modified"));
+                    }
+                    if (!"0000-00-00 00:00:00".equals(tradeInfo.getString("created"))) {
+                        hrGongdanWdtTrade.setCreated(tradeInfo.getDate("created"));
+                    }
                     hrGongdanWdtTrade.setIdCardType(tradeInfo.getInteger("id_card_type"));
                     hrGongdanWdtTrade.setIdCard(tradeInfo.getString("id_card"));
                     if (wdtTradeInfoDb == null) {
@@ -387,14 +395,20 @@ public class WdtService {
             hrGongdanWdtTradeGoods.setFromMask(goodsInfo.getInteger("from_mask"));
             hrGongdanWdtTradeGoods.setCid(goodsInfo.getInteger("cid"));
             hrGongdanWdtTradeGoods.setRemark(goodsInfo.getString("remark"));
-            hrGongdanWdtTradeGoods.setModified(goodsInfo.getDate("modified"));
-            hrGongdanWdtTradeGoods.setCreated(goodsInfo.getDate("created"));
+            if (!"0000-00-00 00:00:00".equals(goodsInfo.getString("modified"))) {
+                hrGongdanWdtTradeGoods.setModified(goodsInfo.getDate("modified"));
+            }
+            if (!"0000-00-00 00:00:00".equals(goodsInfo.getString("created"))) {
+                hrGongdanWdtTradeGoods.setCreated(goodsInfo.getDate("created"));
+            }
             hrGongdanWdtTradeGoods.setTaxRate(goodsInfo.getBigDecimal("tax_rate"));
             hrGongdanWdtTradeGoods.setBaseUnitId(goodsInfo.getInteger("base_unit_id"));
             hrGongdanWdtTradeGoods.setUnitName(goodsInfo.getString("unit_name"));
             hrGongdanWdtTradeGoods.setPayId(goodsInfo.getString("pay_id"));
             hrGongdanWdtTradeGoods.setPayStatus(goodsInfo.getInteger("pay_status"));
-            hrGongdanWdtTradeGoods.setPayTime(goodsInfo.getDate("pay_time"));
+            if (!"0000-00-00 00:00:00".equals(goodsInfo.getString("pay_time"))) {
+                hrGongdanWdtTradeGoods.setPayTime(goodsInfo.getDate("pay_time"));
+            }
             if (hrGongdanWdtTradeGoodsDb == null) {
                 hrGongdanWdtTradeGoods.save();
             }else {
@@ -402,4 +416,5 @@ public class WdtService {
             }
         }
     }
+
 }
