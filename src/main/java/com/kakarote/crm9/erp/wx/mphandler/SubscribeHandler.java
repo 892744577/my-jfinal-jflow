@@ -9,6 +9,7 @@ import com.kakarote.crm9.erp.wx.service.HandlerService;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountFans;
 import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountShopQrcode;
+import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountTeamQrcode;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -85,10 +86,12 @@ public class SubscribeHandler extends AbstractHandler {
                     logger.info(fromUserName+"关注亚太天能公众号");
                     eventKey = eventKey.substring(eventKey.lastIndexOf("_")+1);
                     if (StringUtils.isNotBlank(eventKey)){
-                        //判断是新码还是旧码，新码直接保存到qrcode_fans表
+                        //判断是团队新码、店铺新码还是旧码，新码直接保存到qrcode_fans表
                         WxcmsAccountShopQrcode wxcmsAccountShopQrcodeDb = WxcmsAccountShopQrcode.dao.findFirst(Db.getSql("admin.wxcmsAccountShopQrcode.getShopByQrcodeParam")
                                 ,eventKey);
-                        if (wxcmsAccountShopQrcodeDb == null) {
+                        WxcmsAccountTeamQrcode wxcmsAccountTeamQrcodeDb = WxcmsAccountTeamQrcode.dao.findFirst(Db.getSql("admin.wxcmsAccountTeamQrcode.getTeamByQrcodeParam")
+                                ,eventKey);
+                        if (wxcmsAccountShopQrcodeDb == null && wxcmsAccountTeamQrcodeDb == null) {
                             //说明新码表里面不存在，则是旧码，用旧码去换取新码保存
                             List<Record> recordList = Db.find(Db.getSqlPara("admin.wxcmsAccount.getNewQrcode", Kv.by("search",eventKey)));
                             if (recordList != null && recordList.size() > 0 && recordList.get(0) != null

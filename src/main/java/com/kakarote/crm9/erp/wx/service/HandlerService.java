@@ -28,20 +28,20 @@ public class HandlerService {
      * @return boolean
      **/
     public boolean saveToQrcodeFans(String fromUserName,String eventKey,String toUserName){
-        WxcmsAccountQrcodeFans wxcmsAccountQrcodeFansDb = WxcmsAccountQrcodeFans.dao.findFirst(Db.getSql("admin.wxcmsAccountQrcodeFans.getFansByFromUserName")
+        WxcmsAccountQrcodeFans wxcmsAccountQrcodeFans1 = WxcmsAccountQrcodeFans.dao.findFirst(Db.getSql("admin.wxcmsAccountQrcodeFans.getFansByFromUserName")
                 ,fromUserName);
 
-        WxcmsAccountQrcodeFans wxcmsAccountQrcodeFans = WxcmsAccountQrcodeFans.dao.findFirst(Db.getSql("admin.wxcmsAccountQrcodeFans.getFansByQrcodeParam")
+        WxcmsAccountQrcodeFans wxcmsAccountQrcodeFans2 = WxcmsAccountQrcodeFans.dao.findFirst(Db.getSql("admin.wxcmsAccountQrcodeFans.getFansByQrcodeParam")
                 ,fromUserName,eventKey);
 
-        if (wxcmsAccountQrcodeFansDb != null) {
-            if (wxcmsAccountQrcodeFans != null) {
+        if (wxcmsAccountQrcodeFans1 != null) {
+            if (wxcmsAccountQrcodeFans2 != null) {
                 log.debug("用户"+fromUserName+"已经关注过亚太天能公众号,参数:"+eventKey);
             }else {
                 //更新到表qrcode_fans
                 if (StringUtils.isNotBlank(eventKey)) {
                     WxcmsAccountQrcodeFans wxcmsAccountQrcodeFansUpdate = new WxcmsAccountQrcodeFans();
-                    wxcmsAccountQrcodeFansUpdate.setId(wxcmsAccountQrcodeFansDb.getId());
+                    wxcmsAccountQrcodeFansUpdate.setId(wxcmsAccountQrcodeFans1.getId());
                     wxcmsAccountQrcodeFansUpdate.setEventKey(eventKey);
                     wxcmsAccountQrcodeFansUpdate.update();
 
