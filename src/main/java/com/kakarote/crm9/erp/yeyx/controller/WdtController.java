@@ -12,6 +12,7 @@ import com.kakarote.crm9.utils.R;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,7 +50,18 @@ public class WdtController extends Controller {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
         DecimalFormat decimalFormat = new DecimalFormat("00");
-        for (int i = 1; i <= 12; i++) {
+
+        Calendar rightNow = Calendar.getInstance();
+        Integer yearNow = rightNow.get(Calendar.YEAR);
+        Integer monthNow = rightNow.get(Calendar.MONTH)+1;
+        int monthInt = 1;
+        if (yearNow == Integer.valueOf(year)) {
+            monthInt = monthNow;
+        }else if (yearNow > Integer.valueOf(year)) {
+            monthInt = 12;
+        }
+
+        for (int i = 1; i <= monthInt; i++) {
             String month = decimalFormat.format(i);
             int days = DateUtil.getDaysOfMonth(sdf.parse(year+"-"+month));
             for (int j = 1; j <= days; j++) {
