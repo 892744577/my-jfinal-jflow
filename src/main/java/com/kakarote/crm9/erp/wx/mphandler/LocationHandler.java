@@ -1,18 +1,25 @@
 package com.kakarote.crm9.erp.wx.mphandler;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.jfinal.aop.Aop;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.SqlPara;
+import com.kakarote.crm9.erp.admin.entity.PortEmp;
 import com.kakarote.crm9.erp.wx.service.HandlerService;
+import com.kakarote.crm9.erp.wx.service.MpService;
 import com.kakarote.crm9.erp.wx.util.BaiduMapUtils;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.kakarote.crm9.erp.wx.util.MyComparator;
+import com.kakarote.crm9.erp.wx.vo.MpMsgSendReq;
+import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountFans;
 import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountQrcodeFans;
 import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountShop;
 import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountShopQrcode;
+import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpService;
 import me.chanjar.weixin.mp.bean.message.WxMpXmlMessage;
@@ -24,6 +31,7 @@ import java.util.*;
 /**
  * @author Binary Wang(https://github.com/binarywang)
  */
+@Slf4j
 public class LocationHandler extends AbstractHandler {
     @Inject
     private HandlerService handlerService;
@@ -271,7 +279,56 @@ public class LocationHandler extends AbstractHandler {
                 }
             }
         }
+
+        //进行代理商的新增关注粉丝数量信息推送
+        //根据eventKey找到负责人
+        WxcmsAccountFans fans = WxcmsAccountFans.dao.findFirst(Db.getSql("admin.wxcmsAccountFans.getAccountFansByOpenId")
+                ,fromUserName);
+        PortEmp portEmpDb = null;
+        if (shopId != 0L) {
+            portEmpDb = PortEmp.dao.findFirst(
+                    Db.getSql("admin.portEmp.getPortEmpByShopId"),
+                    shopId);
+        }
+        if (portEmpDb != null && StrUtil.isNotBlank(portEmpDb.getWxOpenId())) {
+            String tmpResult = sendMpMsgFans(portEmpDb,fans);
+            log.debug("进行代理商的新增关注粉丝数量信息推送结果:"+tmpResult);
+        }
         return true;
+    }
+
+    /**
+     * @Description 粉丝消息推送-进行公众号信息推送
+     * @Author wangkaida
+     * @Date 11:30 2021/1/19
+     * @Param [portEmp]
+     * @return void
+     **/
+    public String sendMpMsgFans(PortEmp portEmp, WxcmsAccountFans fans) {
+        String openId = portEmp.getWxOpenId();
+        String acceptor = portEmp.getNo();
+
+        if(!BP.Tools.StringUtils.isEmpty(openId)) {
+            //进行信息推送
+            MpMsgSendReq mpReq = new MpMsgSendReq();
+            mpReq.setTouser(openId);
+            mpReq.setTemplate_id("eqcV0LREo7RN4uPKEcE_4JQa2fAQCjAkScKfNvmXtzU");
+            mpReq.setPage("pages/index/index");
+
+            JSONArray jsonArray=new JSONArray();
+            String title = "你有新的粉丝关注! "+ fans.getHeadImgUrl()+" "+fans.getCountry()+" "+fans.getProvince()+" "+fans.getCity();
+            jsonArray.add(new JSONObject().fluentPut("name","first").fluentPut("value",title));
+            jsonArray.add(new JSONObject().fluentPut("name","keyword1").fluentPut("value",fans.getNickName()));
+            jsonArray.add(new JSONObject().fluentPut("name","keyword2").fluentPut("value",fans.getSubscribeTime()));
+            jsonArray.add(new JSONObject().fluentPut("name","remark").fluentPut("value",fans.getRemark()));
+
+            mpReq.setData(jsonArray.toJSONString());
+            log.info("=====================发送通知请求参数："+jsonArray.toJSONString());
+            return Aop.get(MpService.class).send(mpReq);
+        }else {
+            log.info("进行公众号信息推送获取到的openId为空!"+openId);
+        }
+        return null;
     }
 
 }

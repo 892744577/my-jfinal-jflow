@@ -33,4 +33,10 @@
       and a.No = #para(portEmpNo)
     #end
   #end
+  #sql ("getPortEmpByTeamNo")
+    SELECT d.* FROM port_emp d where d.teamNo = ?
+  #end
+  #sql ("getPortEmpByShopId")
+    SELECT d.* FROM port_emp d left join wxcms_account_shop s on d.teamNo = s.agentNo where s.id = ?
+  #end
 #end
