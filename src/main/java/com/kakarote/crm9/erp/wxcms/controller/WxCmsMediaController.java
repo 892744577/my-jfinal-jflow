@@ -68,6 +68,35 @@ public class WxCmsMediaController extends Controller {
         list7.add("局部2-http://app.aptenon.com/crm/shop/D7.jpg");
         list7.add("正门头-http://app.aptenon.com/crm/shop/D8.jpg");
         map.put("DU",list7);
+
+        List list8 = new ArrayList();
+        list8.add("平面图-http://app.aptenon.com/crm/shop/APL.jpg");
+        map.put("APL",list8);
+
+        List list9 = new ArrayList();
+        list9.add("平面图-http://app.aptenon.com/crm/shop/APU.jpg");
+        map.put("APU",list9);
+
+        List list10 = new ArrayList();
+        list10.add("平面图-http://app.aptenon.com/crm/shop/BPL.jpg");
+        map.put("BPL",list10);
+
+        List list11 = new ArrayList();
+        list11.add("平面图-http://app.aptenon.com/crm/shop/BPL.jpg");
+        map.put("BPU",list11);
+
+        List list12 = new ArrayList();
+        list12.add("平面图-http://app.aptenon.com/crm/shop/CPL.jpg");
+        map.put("CPL",list12);
+
+        List list13 = new ArrayList();
+        list13.add("平面图-http://app.aptenon.com/crm/shop/DPL.jpg");
+        map.put("DPL",list13);
+
+        List list14 = new ArrayList();
+        list14.add("平面图-http://app.aptenon.com/crm/shop/DPU.jpg");
+        map.put("DPU",list14);
+
         renderJson(R.ok().put("data",map));
     }
 }
