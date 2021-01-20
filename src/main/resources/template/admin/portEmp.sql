@@ -34,9 +34,9 @@
     #end
   #end
   #sql ("getPortEmpByTeamNo")
-    SELECT d.* FROM port_emp d where d.teamNo = ?
+    SELECT d.* FROM port_emp d where d.accountType='1' and d.teamNo = ?
   #end
   #sql ("getPortEmpByShopId")
-    SELECT d.* FROM port_emp d left join wxcms_account_shop s on d.teamNo = s.agentNo where s.id = ?
+    SELECT d.* FROM port_emp d left join wxcms_account_shop s on d.teamNo = s.agentNo where d.accountType='1' and s.id = ?
   #end
 #end
