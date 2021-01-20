@@ -182,7 +182,6 @@ public class PortEmpService {
             portEmp.setFkDept("100");
             portEmp.setSignType(0);
             portEmp.setIdx(0);
-            portEmp.setAccountType("2");
 
             Boolean flag = portEmp.save();
 

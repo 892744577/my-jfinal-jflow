@@ -531,6 +531,7 @@ public class PortEmpController extends Controller {
      * @Param [no]
      * @return void
      **/
+    @Deprecated
     public void getStaffEmpList(@Para("parentNo") String parentNo){
 
         if(StrUtil.isEmpty(parentNo)){
@@ -544,7 +545,27 @@ public class PortEmpController extends Controller {
             renderJson(R.ok().put("data",portEmpList).put("code","000000"));
         }else {
             renderJson(R.error("上下级关系表查无记录!").put("parentNo",parentNo).put("data",null).put("code","000017"));
-            return;
+        }
+    }
+
+    /*
+     * @Description //获取团队成员列表接口
+     * @Author wangkaida
+     * @Date 9:56 2020/5/21
+     * @Param [no]
+     * @return void
+     **/
+    public void getStaffEmpListByTeamNo(@Para("teamNo") String teamNo){
+
+        List<PortEmp> list = PortEmp.dao.find("select a.* from port_emp a where a.accountType='1' and a.teamNo=?",teamNo);
+        list.stream().forEach(item->{
+            List<PortEmp> portEmpList = PortEmp.dao.find("select a.* from port_emp a left join port_emp_relation b on a.No = b.FK_No where b.ParentNo = ?", item.getNo());
+            item.put("teamList",portEmpList);
+        });
+        if (list.size() > 0) {
+            renderJson(R.ok().put("data",list).put("code","000000"));
+        }else {
+            renderJson(R.error("上下级关系表查无记录!").put("parentNo",teamNo).put("data",null).put("code","000017"));
         }
 
     }

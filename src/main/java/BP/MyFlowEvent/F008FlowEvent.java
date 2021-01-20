@@ -40,7 +40,6 @@ public class F008FlowEvent extends FlowEventBase {
             regist.setName((String) this.getSysPara().get("XingMing"));
             regist.setParentNo((String) this.getSysPara().get("ParentNo"));
             Aop.get(PortEmpService.class).savePortEmpStaff(regist);
-
             //进行小程序信息推送
             sendMaMsg();
 
