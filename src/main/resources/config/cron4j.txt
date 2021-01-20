@@ -1,4 +1,4 @@
-cron4j=customerCron,taskCron,fbtEmployeeCron
+cron4j=customerCron,taskCron,fbtEmployeeCron,wdtTradeCron
 customerCron.cron=*/5 * * * *
 customerCron.class=com.kakarote.crm9.erp.crm.cron.CrmCustomerCron
 customerCron.daemon=true
@@ -13,4 +13,9 @@ fbtEmployeeCron.cron=* 0/12 * * *
 fbtEmployeeCron.class=com.kakarote.crm9.erp.fbt.cron.FbtEmployeeCron
 fbtEmployeeCron.daemon=true
 fbtEmployeeCron.enable=true
+
+wdtTradeCron.cron=* 0/1 * * *
+wdtTradeCron.class=com.kakarote.crm9.erp.yeyx.cron.WdtTradeCron
+wdtTradeCron.daemon=true
+wdtTradeCron.enable=true
 

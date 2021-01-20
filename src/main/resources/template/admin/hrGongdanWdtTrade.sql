@@ -11,4 +11,8 @@
     #end
     order by a.created desc
   #end
+
+  #sql ("getLatestWdtTradeInfo")
+    SELECT d.* FROM hr_gongdan_wdt_trade d order by d.modified desc
+  #end
 #end
