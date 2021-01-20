@@ -110,7 +110,13 @@ public class PortEmpService {
             Paras ps = new Paras();
             ps.Add("WxAppOpenId", regist.getAppOpenId());
             ps.Add("Tel", regist.getPhone());
-            String sql = "UPDATE port_emp SET WxAppOpenId="+ SystemConfig.getAppCenterDBVarStr()+"WxAppOpenId,accountType = '1' WHERE Tel=" + SystemConfig.getAppCenterDBVarStr()
+            String teamNo = "";
+            if (portEmpDb.getFkDept().contains("ZN")){
+                teamNo = ",teamNo='" +portEmpDb.getFkDept()+"'";
+            }
+            String sql = "UPDATE port_emp SET WxAppOpenId="+ SystemConfig.getAppCenterDBVarStr() +
+                    "WxAppOpenId,accountType = '1'"+ teamNo +
+                    " WHERE Tel=" + SystemConfig.getAppCenterDBVarStr()
                     + "Tel";
             int num = DBAccess.RunSQL(sql, ps);
             return R.ok().put("msg","更新成功!").put("code","000000");
