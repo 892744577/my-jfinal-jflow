@@ -1,17 +1,14 @@
 package com.kakarote.crm9.erp.wx.mphandler;
 
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSON;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.Record;
-import com.kakarote.crm9.erp.admin.entity.PortEmp;
 import com.kakarote.crm9.erp.wx.service.HandlerService;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountFans;
 import com.kakarote.crm9.erp.wxcms.entity.WxcmsAccountShopQrcode;
-import lombok.extern.slf4j.Slf4j;
 import me.chanjar.weixin.common.error.WxErrorException;
 import me.chanjar.weixin.common.session.WxSessionManager;
 import me.chanjar.weixin.mp.api.WxMpService;
@@ -28,7 +25,6 @@ import java.util.Map;
 /**
  * @author Binary Wang(https://github.com/binarywang)
  */
-@Slf4j
 public class SubscribeHandler extends AbstractHandler {
     @Inject
     private HandlerService handlerService;
@@ -93,39 +89,23 @@ public class SubscribeHandler extends AbstractHandler {
                         WxcmsAccountShopQrcode wxcmsAccountShopQrcodeDb = WxcmsAccountShopQrcode.dao.findFirst(Db.getSql("admin.wxcmsAccountShopQrcode.getShopByQrcodeParam")
                                 ,eventKey);
                         if (wxcmsAccountShopQrcodeDb == null && !eventKey.contains("ZN")) {
+                            logger.info("旧码直接保存");
                             //说明新码表里面不存在，则是旧码，用旧码去换取新码保存
                             List<Record> recordList = Db.find(Db.getSqlPara("admin.wxcmsAccount.getNewQrcode", Kv.by("search",eventKey)));
                             if (recordList != null && recordList.size() > 0 && recordList.get(0) != null
                                     && recordList.get(0).getStr("shop_qrcode_param") != null) {
                                 //旧码换新码成功
-                                handlerService.saveToQrcodeFans(fromUserName,recordList.get(0).getStr("shop_qrcode_param"),toUserName);
+                                handlerService.saveToQrcodeFans(fromUserName,recordList.get(0).getStr("shop_qrcode_param"),toUserName,fans);
                             }else {
                                 //旧码换新码失败
-                                handlerService.saveToQrcodeFans(fromUserName,eventKey,toUserName);
+                                handlerService.saveToQrcodeFans(fromUserName,eventKey,toUserName,fans);
                             }
                         }else {
                             //新码直接保存
-                            handlerService.saveToQrcodeFans(fromUserName,eventKey,toUserName);
+                            logger.info("新码直接保存");
+                            handlerService.saveToQrcodeFans(fromUserName,eventKey,toUserName,fans);
                         }
-
-                        //进行代理商的新增关注粉丝数量信息推送
-                        //根据eventKey找到负责人
-                        PortEmp portEmpDb = PortEmp.dao.findFirst(
-                                Db.getSql("admin.portEmp.getPortEmpByTeamNo"),
-                                eventKey);
-                        if (portEmpDb != null && StrUtil.isNotBlank(portEmpDb.getWxOpenId())) {
-                            //发送通知
-                            String tmpResult = handlerService.sendMpMsgFans(portEmpDb,fans);
-                            log.debug("进行代理商的新增关注粉丝数量信息推送结果:"+tmpResult);
-                        }
-                    }/*
-                    //若不是扫码进来，使用地理位置上报来确定新码，所以码先设置为空
-                    else{
-                        //eventkey为空，挂到亚太天能
-                        WxcmsAccountShopQrcode wxcmsAccountShopQrcode = WxcmsAccountShopQrcode.dao.findFirst(Db.getSql("admin.wxcmsAccountShopQrcode.getQrcodeParamByShopId")
-                                ,1);
-                        handlerService.saveToQrcodeFans(fromUserName,wxcmsAccountShopQrcode.getQrcodeParam(),toUserName);
-                    }*/
+                    }
                 }
             }
         } catch (WxErrorException e) {

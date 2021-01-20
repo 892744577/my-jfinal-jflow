@@ -1,13 +1,11 @@
 package com.kakarote.crm9.erp.wx.mphandler;
 
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
 import com.jfinal.plugin.activerecord.SqlPara;
-import com.kakarote.crm9.erp.admin.entity.PortEmp;
 import com.kakarote.crm9.erp.wx.service.HandlerService;
 import com.kakarote.crm9.erp.wx.util.BaiduMapUtils;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
@@ -214,6 +212,8 @@ public class LocationHandler extends AbstractHandler {
             //把信息保存到qrcode_fans表,进行划分
             WxcmsAccountShopQrcode wxcmsAccountShopQrcode = WxcmsAccountShopQrcode.dao.findFirst(Db.getSql("admin.wxcmsAccountShopQrcode.getQrcodeParamByShopId")
                     ,shopId);
+            WxcmsAccountFans fans = WxcmsAccountFans.dao.findFirst(Db.getSql("admin.wxcmsAccountFans.getAccountFansByOpenId")
+                    ,fromUserName);
             handlerService.saveToQrcodeFans(fromUserName,wxcmsAccountShopQrcode.getQrcodeParam(),toUserName);
         } else {
             //区下面无店铺
@@ -275,21 +275,6 @@ public class LocationHandler extends AbstractHandler {
                     handlerService.saveToQrcodeFans(fromUserName,wxcmsAccountShopQrcode.getQrcodeParam(),toUserName);
                 }
             }
-        }
-
-        //进行代理商的新增关注粉丝数量信息推送
-        //根据eventKey找到负责人
-        WxcmsAccountFans fans = WxcmsAccountFans.dao.findFirst(Db.getSql("admin.wxcmsAccountFans.getAccountFansByOpenId")
-                ,fromUserName);
-        PortEmp portEmpDb = null;
-        if (shopId != 0L) {
-            portEmpDb = PortEmp.dao.findFirst(
-                    Db.getSql("admin.portEmp.getPortEmpByShopId"),
-                    shopId);
-        }
-        if (portEmpDb != null && StrUtil.isNotBlank(portEmpDb.getWxOpenId())) {
-            String tmpResult = handlerService.sendMpMsgFans(portEmpDb,fans);
-            log.debug("进行代理商的新增关注粉丝数量信息推送结果:"+tmpResult);
         }
         return true;
     }

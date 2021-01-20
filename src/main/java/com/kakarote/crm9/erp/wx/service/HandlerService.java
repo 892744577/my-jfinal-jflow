@@ -26,6 +26,10 @@ import java.util.List;
 public class HandlerService {
 
     //region 业务1：划分粉丝到店二维码
+    public boolean saveToQrcodeFans(String fromUserName,String eventKey,String toUserName){
+        WxcmsAccountFans fans = WxcmsAccountFans.dao.findFirst(Db.getSql("admin.wxcmsAccountFans.getAccountFansByOpenId"),fromUserName);
+        return saveToQrcodeFans(fromUserName,eventKey,toUserName,fans);
+    }
     /*
      * @Description //保存到qrcode_fans表
      * @Author wangkaida
@@ -33,16 +37,17 @@ public class HandlerService {
      * @Param [fromUserName, eventKey, toUserName]
      * @return boolean
      **/
-    public boolean saveToQrcodeFans(String fromUserName,String eventKey,String toUserName){
+    public boolean saveToQrcodeFans(String fromUserName,String eventKey,String toUserName, WxcmsAccountFans fans){
         WxcmsAccountQrcodeFans wxcmsAccountQrcodeFans1 = WxcmsAccountQrcodeFans.dao.findFirst(Db.getSql("admin.wxcmsAccountQrcodeFans.getFansByFromUserName")
                 ,fromUserName);
-
-        WxcmsAccountQrcodeFans wxcmsAccountQrcodeFans2 = WxcmsAccountQrcodeFans.dao.findFirst(Db.getSql("admin.wxcmsAccountQrcodeFans.getFansByQrcodeParam")
-                ,fromUserName,eventKey);
-
+        log.info("debug1："+JSON.toJSONString(wxcmsAccountQrcodeFans1));
         if (wxcmsAccountQrcodeFans1 != null) {
+            log.info("debug2："+JSON.toJSONString(wxcmsAccountQrcodeFans1));
+            WxcmsAccountQrcodeFans wxcmsAccountQrcodeFans2 = WxcmsAccountQrcodeFans.dao.findFirst(Db.getSql("admin.wxcmsAccountQrcodeFans.getFansByQrcodeParam")
+                    ,fromUserName,eventKey);
+            log.info("debug3："+JSON.toJSONString(wxcmsAccountQrcodeFans2));
             if (wxcmsAccountQrcodeFans2 != null) {
-                log.debug("用户"+fromUserName+"已经关注过亚太天能公众号,参数:"+eventKey);
+                log.info("用户"+fromUserName+"已经关注过亚太天能公众号,参数:"+eventKey);
             }else {
                 //更新到表qrcode_fans
                 if (StringUtils.isNotBlank(eventKey)) {
@@ -52,8 +57,7 @@ public class HandlerService {
                     wxcmsAccountQrcodeFansUpdate.update();
 
                     //进行代理商的新增关注粉丝数量信息推送
-//                                        String tmpResult = sendTemplateMessageToAgent(agentId);
-//                                        logger.debug("进行代理商的新增关注粉丝数量信息推送结果:"+tmpResult);
+                    this.sendTemplateMessageToAgent(eventKey,fans);
                 }
             }
         }else {
@@ -64,16 +68,29 @@ public class HandlerService {
                 wxcmsAccountQrcodeFansSave.setEventKey(eventKey);
                 wxcmsAccountQrcodeFansSave.setTouserName(toUserName);
                 wxcmsAccountQrcodeFansSave.setCreateTime(new Date());
+                log.info("debug4:"+eventKey+JSON.toJSONString(fans));
                 Boolean flag = wxcmsAccountQrcodeFansSave.save();
 
 //              进行代理商的新增关注粉丝数量信息推送
-                //String tmpResult = sendTemplateMessageToAgent();
-                //log.debug("进行代理商的新增关注粉丝数量信息推送结果:"+tmpResult);
+                log.info("进行代理商的新增关注粉丝数量信息推送参数:"+eventKey+JSON.toJSONString(fans));
+                this.sendTemplateMessageToAgent(eventKey,fans);
             }
         }
         return true;
     }
 
+    /**
+     *
+     *
+     */
+    public void sendTemplateMessageToAgent(String eventKey,WxcmsAccountFans fans){
+        //进行代理商的新增关注粉丝数量信息推送
+        //根据eventKey找到负责人,发送通知
+        List<PortEmp> list = PortEmp.dao.find(
+                Db.getSql("admin.portEmp.getPortEmpByTeamNo"),eventKey);
+        log.info("进行代理商的新增关注粉丝接收人:"+JSON.toJSONString(list));
+        sendMpMsgFans(list,fans);
+    }
     /**
      * @Description 粉丝消息推送-进行公众号信息推送
      * @Author wangkaida
@@ -81,31 +98,30 @@ public class HandlerService {
      * @Param [portEmp]
      * @return void
      **/
-    public String sendMpMsgFans(PortEmp portEmp, WxcmsAccountFans fans) {
-        String openId = portEmp.getWxOpenId();
-        String acceptor = portEmp.getNo();
+    public void sendMpMsgFans(List<PortEmp> portEmpList, WxcmsAccountFans fans) {
+        for (PortEmp portEmp: portEmpList) {
+            String openId = portEmp.getWxOpenId();
+            if (!BP.Tools.StringUtils.isEmpty(openId)) {
+                //进行信息推送
+                MpMsgSendReq mpReq = new MpMsgSendReq();
+                mpReq.setTouser(openId);
+                mpReq.setTemplate_id("eqcV0LREo7RN4uPKEcE_4JQa2fAQCjAkScKfNvmXtzU");
+                mpReq.setPage("pages/index/index");
 
-        if(!BP.Tools.StringUtils.isEmpty(openId)) {
-            //进行信息推送
-            MpMsgSendReq mpReq = new MpMsgSendReq();
-            mpReq.setTouser(openId);
-            mpReq.setTemplate_id("eqcV0LREo7RN4uPKEcE_4JQa2fAQCjAkScKfNvmXtzU");
-            mpReq.setPage("pages/index/index");
+                JSONArray jsonArray = new JSONArray();
+                String title = "你有新的粉丝关注! " + fans.getHeadImgUrl() + " " + fans.getCountry() + " " + fans.getProvince() + " " + fans.getCity();
+                jsonArray.add(new JSONObject().fluentPut("name", "first").fluentPut("value", title));
+                jsonArray.add(new JSONObject().fluentPut("name", "keyword1").fluentPut("value", fans.getNickName()));
+                jsonArray.add(new JSONObject().fluentPut("name", "keyword2").fluentPut("value", fans.getSubscribeTime()));
+                jsonArray.add(new JSONObject().fluentPut("name", "remark").fluentPut("value", fans.getRemark()));
 
-            JSONArray jsonArray=new JSONArray();
-            String title = "你有新的粉丝关注! "+ fans.getHeadImgUrl()+" "+fans.getCountry()+" "+fans.getProvince()+" "+fans.getCity();
-            jsonArray.add(new JSONObject().fluentPut("name","first").fluentPut("value",title));
-            jsonArray.add(new JSONObject().fluentPut("name","keyword1").fluentPut("value",fans.getNickName()));
-            jsonArray.add(new JSONObject().fluentPut("name","keyword2").fluentPut("value",fans.getSubscribeTime()));
-            jsonArray.add(new JSONObject().fluentPut("name","remark").fluentPut("value",fans.getRemark()));
-
-            mpReq.setData(jsonArray.toJSONString());
-            log.info("=====================发送通知请求参数："+jsonArray.toJSONString());
-            return Aop.get(MpService.class).send(mpReq);
-        }else {
-            log.info("进行公众号信息推送获取到的openId为空!"+openId);
+                mpReq.setData(jsonArray.toJSONString());
+                log.info("=====================发送通知请求参数：" + jsonArray.toJSONString());
+                Aop.get(MpService.class).send(mpReq);
+            } else {
+                log.info("进行公众号信息推送获取到的openId为空!" + openId);
+            }
         }
-        return null;
     }
     //endregion
 
