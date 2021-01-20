@@ -82,7 +82,7 @@ public class WxCmsMediaController extends Controller {
         map.put("BPL",list10);
 
         List list11 = new ArrayList();
-        list11.add("平面图-http://app.aptenon.com/crm/shop/BPL.jpg");
+        list11.add("平面图-http://app.aptenon.com/crm/shop/BPU.jpg");
         map.put("BPU",list11);
 
         List list12 = new ArrayList();
