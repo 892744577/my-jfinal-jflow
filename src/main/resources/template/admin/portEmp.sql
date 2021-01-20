@@ -26,8 +26,11 @@
     left join wxcms_account_qrcode_fans d on c.qrcode_param = d.event_key
     left join wxcms_account_fans e on d.fromuser_name = e.open_id
     where 1=1
-    #if(fkDept)
-      and a.FK_Dept = #para(fkDept)
+    #if(fk_dept)
+      and a.FK_Dept = #para(fk_dept)
+    #end
+    #if(teamNo)
+      and a.teamNo = #para(teamNo)
     #end
     #if(portEmpNo)
       and a.No = #para(portEmpNo)

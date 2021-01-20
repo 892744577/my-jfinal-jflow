@@ -640,11 +640,11 @@ public class PortEmpController extends Controller {
      * @return void
      **/
     public void queryFansByFkDept(BasePageRequest basePageRequest) {
-        String fkDept = basePageRequest.getJsonObject().getString("fkDept");
+        String teamNo = basePageRequest.getJsonObject().getString("teamNo");
         String portEmpNo = basePageRequest.getJsonObject().getString("portEmpNo");
 
-        if(StrUtil.isEmpty(fkDept)){
-            renderJson(R.error("fkDept不能为空!").put("data",null).put("code","000023"));
+        if(StrUtil.isEmpty(teamNo)){
+            renderJson(R.error("teamNo不能为空!").put("data",null).put("code","000023"));
             return;
         }
 
@@ -653,7 +653,7 @@ public class PortEmpController extends Controller {
             return;
         }
 
-        renderJson(R.ok().put("data",portEmpService.queryFansByFkDeptPageList(basePageRequest,fkDept,portEmpNo)));
+        renderJson(R.ok().put("data",portEmpService.queryFansByFkDeptPageList(basePageRequest,teamNo,portEmpNo)));
     }
 
     /*
