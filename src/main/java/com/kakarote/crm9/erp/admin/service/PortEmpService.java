@@ -224,7 +224,7 @@ public class PortEmpService {
      **/
     public Page<Record> queryFansByFkDeptPageList(BasePageRequest basePageRequest, String fkDept, String portEmpNo) {
         //查询条件
-        Kv kv = Kv.by("teamNo",fkDept).set("portEmpNo",portEmpNo);
+        Kv kv = Kv.by("teamNo1",fkDept).set("portEmpNo1",portEmpNo).set("teamNo2",fkDept).set("portEmpNo2",portEmpNo);
 
         return Db.paginate(
                 basePageRequest.getPage(),

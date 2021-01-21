@@ -20,21 +20,31 @@
     SELECT d.* FROM port_activity_emp d where d.tel = ?
   #end
   #sql ("queryFansByFkDeptPageList")
-    select e.* from port_emp a
-    left join wxcms_account_shop b on a.FK_Dept = b.agentNo
-    left join wxcms_account_shop_qrcode c on b.id = c.shop_id
-    left join wxcms_account_qrcode_fans d on c.qrcode_param = d.event_key
-    left join wxcms_account_fans e on d.fromuser_name = e.open_id
-    where 1=1
-    #if(fk_dept)
-      and a.FK_Dept = #para(fk_dept)
+  select g.* from (
+    SELECT e.*,a.fk_dept,a.teamNo,a.No FROM port_emp a
+        LEFT JOIN wxcms_account_shop b ON a.teamNo = b.agentNo
+        LEFT JOIN wxcms_account_shop_qrcode c ON b.id = c.shop_id
+        LEFT JOIN wxcms_account_qrcode_fans d ON c.qrcode_param = d.event_key
+        LEFT JOIN wxcms_account_fans e ON d.fromuser_name = e.open_id
+        WHERE 1=1 AND e.open_id IS NOT NULL
+        #if(teamNo1)
+          and a.teamNo = #para(teamNo1)
+        #end
+        #if(portEmpNo1)
+          and a.No = #para(portEmpNo1)
+        #end
+    UNION
+     SELECT c.*,a.fk_dept,a.teamNo,a.No FROM port_emp a
+    LEFT JOIN wxcms_account_qrcode_fans b ON a.teamNo = b.event_key
+    LEFT JOIN wxcms_account_fans c ON b.fromuser_name = c.open_id
+    WHERE 1=1 AND c.open_id IS NOT NULL
+    #if(teamNo2)
+      and a.teamNo = #para(teamNo2)
     #end
-    #if(teamNo)
-      and a.teamNo = #para(teamNo)
+    #if(portEmpNo2)
+      and a.No = #para(portEmpNo2)
     #end
-    #if(portEmpNo)
-      and a.No = #para(portEmpNo)
-    #end
+    ) g
   #end
   #sql ("getPortEmpByTeamNo")
     SELECT d.* FROM port_emp d where d.accountType='1' and d.teamNo = ?
