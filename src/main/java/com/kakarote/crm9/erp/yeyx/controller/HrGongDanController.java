@@ -105,7 +105,8 @@ public class HrGongDanController extends Controller {
      */
     public void queryPageListAppointAgent(BasePageRequest basePageRequest) throws Exception  {
         log.info("=======代理商预约单查询");
-        basePageRequest.setJsonObject(basePageRequest.getJsonObject().fluentPut("customerNo",WebUser.getFK_Dept()));
+        PortEmp portEmp = PortEmp.dao.findById(WebUser.getNo());
+        basePageRequest.setJsonObject(basePageRequest.getJsonObject().fluentPut("customerNo",portEmp.getTeamNo()));
         renderJson(R.ok().put("data",hrGongdanAppointService.queryPageList(basePageRequest)));
     }
     /**

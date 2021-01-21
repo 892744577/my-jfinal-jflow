@@ -96,10 +96,12 @@ public class F009FlowEvent extends FlowEventBase {
                     if(preServiceNo.contains("YY")){
                         HrGongdanBook hrGongdanBook = hrGongdanAppointService.getByOrderNumber(kv);
                         hrGongdanBook.setIsGenerate(1);
+                        hrGongdanBook.setDeal("1");
                         hrGongdanBook.update();
                     }else if(preServiceNo.contains("BX")){
                         HrGongdanRepair hrGongdanRepair = hrGongdanRepairService.getByOrderNumber(kv);
                         hrGongdanRepair.setIsGenerate(1);
+                        hrGongdanRepair.setDeal("1");
                         hrGongdanRepair.update();
                     }
                 }
