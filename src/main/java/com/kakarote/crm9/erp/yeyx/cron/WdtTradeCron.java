@@ -41,6 +41,9 @@ public class WdtTradeCron implements Runnable {
             int hourAdd = (mStart+mEnd) / 60;
             try {
                 int dayDiff = DateUtil.dayDiff(DateUtil.changeDateTOStr(cStart.getTime()), DateUtil.changeDateTOStr(cEnd.getTime()))-1;
+                if (dayDiff < 0) {
+                    dayDiff = 0;
+                }
                 int totalHour = hourStart + dayDiff * 24 + hourEnd + hourAdd;
 
                 for (int i = 0; i < totalHour; i++) {
