@@ -109,9 +109,9 @@ public class HandlerService {
                 mpReq.setPage("pages/index/index");
 
                 JSONArray jsonArray = new JSONArray();
-                String title = "你有新的粉丝关注! " + fans.getHeadImgUrl() + " " + fans.getCountry() + " " + fans.getProvince() + " " + fans.getCity();
+                String title = "你有新的粉丝关注! " + " " + fans.getCountry() + " " + fans.getProvince() + " " + fans.getCity();
                 jsonArray.add(new JSONObject().fluentPut("name", "first").fluentPut("value", title));
-                jsonArray.add(new JSONObject().fluentPut("name", "keyword1").fluentPut("value", fans.getNickName()));
+                jsonArray.add(new JSONObject().fluentPut("name", "keyword1").fluentPut("value",new String(fans.getNickName())));
                 jsonArray.add(new JSONObject().fluentPut("name", "keyword2").fluentPut("value", fans.getSubscribeTime()));
                 jsonArray.add(new JSONObject().fluentPut("name", "remark").fluentPut("value", fans.getRemark()));
 
