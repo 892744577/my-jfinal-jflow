@@ -46,31 +46,62 @@ public class WdtTradeCron implements Runnable {
                 }
                 int totalHour = hourStart + dayDiff * 24 + hourEnd + hourAdd;
 
+                WdtService wdtService = Aop.get(WdtService.class);
+                Map map = new HashMap();
                 for (int i = 0; i < totalHour; i++) {
-                    Map map = new HashMap();
                     map.put("start_time", DateUtil.changeDateTOStr(startDate));
                     map.put("end_time", DateUtil.changeDateTOStr(modifiedDate));
                     log.info(DateUtil.changeDateTOStr(startDate));
                     log.info(DateUtil.changeDateTOStr(modifiedDate));
+
+                    if(modifiedDate.getTime() > new Date().getTime()){
+                        //按5分钟执行
+                        long minutes = DateUtil.pastMinutes(startDate);
+                        long mCount = minutes / 5;
+                        cStart.setTime(startDate);
+                        cStart.set(Calendar.MINUTE, cStart.get(Calendar.MINUTE) + 5);
+                        modifiedDate = cStart.getTime();
+                        for(int j = 0; j < mCount; j++){
+                            map.put("start_time", DateUtil.changeDateTOStr(startDate));
+                            map.put("end_time", DateUtil.changeDateTOStr(modifiedDate));
+                            log.info(DateUtil.changeDateTOStr(startDate));
+                            log.info(DateUtil.changeDateTOStr(modifiedDate));
+                            if(modifiedDate.getTime() > new Date().getTime()){
+                                //不足5分钟不执行
+                                break;
+                            }
+                            sendWdtRequest(wdtService,map);
+                            //计算下一次的执行时间差
+                            cStart.setTime(modifiedDate);
+                            cStart.set(Calendar.MINUTE, cStart.get(Calendar.MINUTE) + 5);
+                            startDate = modifiedDate;
+                            modifiedDate = cStart.getTime();
+                        }
+                        break;
+                    }
+
+                    sendWdtRequest(wdtService,map);
+                    //计算下一次的执行时间差
                     cStart.setTime(modifiedDate);
                     cStart.set(Calendar.HOUR_OF_DAY, cStart.get(Calendar.HOUR_OF_DAY) + 1);
                     startDate = modifiedDate;
                     modifiedDate = cStart.getTime();
-                    WdtService wdtService = Aop.get(WdtService.class);
-                    String result = wdtService.gatewayRequest("http://hu3cgwt0tc.api.taobao.com/router/qm",wdtService.getQmJsonData(map));
-                    boolean saveResult = wdtService.saveTradeInfo(result);
-                    if (saveResult == true) {
-                        log.info("遍历保存销售订单信息到数据库成功!"+map.get("start_time")+"到"+map.get("end_time"));
-                    }else {
-                        log.info("遍历保存销售订单信息到数据库失败!"+map.get("start_time")+"到"+map.get("end_time"));
-                    }
-
                 }
             } catch (ParseException e) {
                 e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void sendWdtRequest(WdtService wdtService, Map map) throws Exception {
+        String result = wdtService.gatewayRequest("http://hu3cgwt0tc.api.taobao.com/router/qm",wdtService.getQmJsonData(map));
+        boolean saveResult = wdtService.saveTradeInfo(result);
+        if (saveResult == true) {
+            log.info("遍历保存销售订单信息到数据库成功!"+map.get("start_time")+"到"+map.get("end_time"));
+        }else {
+            log.info("遍历保存销售订单信息到数据库失败!"+map.get("start_time")+"到"+map.get("end_time"));
         }
     }
 }
