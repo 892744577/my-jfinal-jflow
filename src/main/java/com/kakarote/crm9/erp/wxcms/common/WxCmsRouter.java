@@ -1,10 +1,7 @@
 package com.kakarote.crm9.erp.wxcms.common;
 
 import com.jfinal.config.Routes;
-import com.kakarote.crm9.erp.wxcms.controller.WxCmsController;
-import com.kakarote.crm9.erp.wxcms.controller.WxCmsMediaController;
-import com.kakarote.crm9.erp.wxcms.controller.WxCmsPrizeController;
-import com.kakarote.crm9.erp.wxcms.controller.WxcmsFluCodeController;
+import com.kakarote.crm9.erp.wxcms.controller.*;
 
 public class WxCmsRouter extends Routes {
     @Override
@@ -14,5 +11,6 @@ public class WxCmsRouter extends Routes {
         add("/media", WxCmsMediaController.class);
         add("/prize", WxCmsPrizeController.class);
         add("/flu", WxcmsFluCodeController.class);
+        add("/competitive", WxCmsCompetitiveController.class);
     }
 }

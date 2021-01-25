@@ -123,6 +123,9 @@ public class _MappingKit {
 		//旺店通
 		arp.addMapping("hr_gongdan_wdt_trade", "trade_no", HrGongdanWdtTrade.class);
 		arp.addMapping("hr_gongdan_wdt_trade_goods", "rec_id", HrGongdanWdtTradeGoods.class);
+
+		arp.addMapping("wxcms_competitive", "id", WxcmsCompetitive.class);
+		arp.addMapping("wxcms_competitive_news", "id", WxcmsCompetitiveNews.class);
 	}
 }
 
