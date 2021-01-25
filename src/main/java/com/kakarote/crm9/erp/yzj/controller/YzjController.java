@@ -2,20 +2,15 @@ package com.kakarote.crm9.erp.yzj.controller;
 
 import BP.DA.DBAccess;
 import BP.DA.DataType;
-import BP.DA.Paras;
-import BP.Difference.SystemConfig;
 import BP.Tools.StringUtils;
 import com.alibaba.fastjson.JSON;
-import com.kakarote.crm9.erp.admin.entity.PortEmp;
-import com.kakarote.crm9.erp.admin.entity.PortDept;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
 import com.jfinal.core.paragetter.Para;
+import com.kakarote.crm9.erp.admin.entity.PortDept;
 import com.kakarote.crm9.erp.admin.entity.PortEmp;
-import com.kakarote.crm9.erp.oa.entity.OaEvent;
-import com.kakarote.crm9.erp.sms.util.StringUtil;
 import com.kakarote.crm9.erp.yzj.service.TokenService;
 import com.kakarote.crm9.erp.yzj.vo.ClockInRequest;
 import com.kakarote.crm9.utils.R;
@@ -166,6 +161,9 @@ public class YzjController extends Controller {
                     portEmp3.setYzjOpenId(emp.getString("openId"));
                     portEmp3.setZt(emp.getString("status"));
                     portEmp3.setYzjJobTitle(emp.getString("jobTitle").trim());
+                    if(deptId.contains("ZN")){
+                        portEmp3.setTeamNo(deptId);
+                    }
                     portEmp3.save();
                 }
             }
