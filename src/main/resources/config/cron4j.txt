@@ -14,7 +14,7 @@ fbtEmployeeCron.class=com.kakarote.crm9.erp.fbt.cron.FbtEmployeeCron
 fbtEmployeeCron.daemon=true
 fbtEmployeeCron.enable=true
 
-wdtTradeCron.cron=* 0/1 * * *
+wdtTradeCron.cron=*/10 * * * *
 wdtTradeCron.class=com.kakarote.crm9.erp.yeyx.cron.WdtTradeCron
 wdtTradeCron.daemon=true
 wdtTradeCron.enable=true
