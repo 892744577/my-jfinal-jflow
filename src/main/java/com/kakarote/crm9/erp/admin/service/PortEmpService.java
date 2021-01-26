@@ -113,6 +113,8 @@ public class PortEmpService {
             String teamNo = "";
             if (portEmpDb.getFkDept().contains("ZN")){
                 teamNo = ",teamNo='" +portEmpDb.getFkDept()+"'";
+            }else{
+                teamNo = ",teamNo='ZN3099'";
             }
             String sql = "UPDATE port_emp SET WxAppOpenId="+ SystemConfig.getAppCenterDBVarStr() +
                     "WxAppOpenId,accountType = '1'"+ teamNo +
@@ -138,7 +140,6 @@ public class PortEmpService {
             portEmp.setFkDept("100");
             portEmp.setSignType(0);
             portEmp.setIdx(0);
-
             //1、代理商标志
             portEmp.setAccountType("1");
 
