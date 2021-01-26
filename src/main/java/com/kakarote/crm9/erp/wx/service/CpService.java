@@ -60,15 +60,26 @@ public class CpService {
         }
         return "ok";
     }
-
+    /**
+     * 获取部门byid
+     */
+    public List<WxCpDepart> getDeptById(Long dept_id){
+        return this.getAllDept(dept_id);
+    }
     /**
      * 获取所有部门
      */
     public List<WxCpDepart> getAllDept(){
+        return this.getAllDept(null);
+    }
+    /**
+     * 获取所有部门
+     */
+    public List<WxCpDepart> getAllDept(Long dept_id){
         WxCpService wxCpService =WxCpConfiguration.getCpService(WxCpAgentIdEmun.agent0.getCode());
         List<WxCpDepart> list=new ArrayList<>();
         try {
-            list= wxCpService.getDepartmentService().list(null);
+            list= wxCpService.getDepartmentService().list(dept_id);
         } catch (WxErrorException e) {
             e.getError().getJson();
         }
