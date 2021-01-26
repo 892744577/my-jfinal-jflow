@@ -446,7 +446,7 @@ public class PortEmpController extends Controller {
         }else {
             log.info("=======staffAppBind接口,团员绑定，根据手机查账号不存在，发起流程给代理商："+ JSON.toJSONString(portEmp));
             //创建并发起注册审批流程
-            createRegisterFlow(portEmp,"1",portEmpParent.getNo());
+            createRegisterFlow(portEmp,"2",portEmpParent.getNo());
             renderJson(R.ok().put("msg","绑定流程已发起,请等待负责人审核通过!").put("data","1").put("code","000000"));
         }
     }
