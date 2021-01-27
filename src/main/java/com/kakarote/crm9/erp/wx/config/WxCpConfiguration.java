@@ -76,11 +76,18 @@ public class WxCpConfiguration {
         config3.setAesKey("");
         config3.setToken("");
 
+        WxCpProperties.AppConfig config4 = new WxCpProperties.AppConfig();
+        config4.setAgentId(WxCpAgentIdEmun.agent4.getCode());
+        config4.setSecret(WxCpAgentIdEmun.agent4.getScret());
+        config4.setAesKey("");
+        config4.setToken("");
+
         List<WxCpProperties.AppConfig> configs = new ArrayList<WxCpProperties.AppConfig>();
         configs.add(config);
         configs.add(config1);
         configs.add(config2);
         configs.add(config3);
+        configs.add(config4);
 
         this.properties.setAppConfigs(configs);
         if (configs == null) {
