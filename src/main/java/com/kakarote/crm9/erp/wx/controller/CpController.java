@@ -11,8 +11,11 @@ import com.kakarote.crm9.erp.wx.config.WxCpAgentIdEmun;
 import com.kakarote.crm9.erp.wx.service.CpService;
 import com.kakarote.crm9.erp.wx.vo.WxCpMessageReq;
 import com.kakarote.crm9.utils.R;
+import me.chanjar.weixin.cp.bean.WxCpDepart;
 import me.chanjar.weixin.cp.bean.WxCpOauth2UserInfo;
 import me.chanjar.weixin.cp.bean.WxCpUser;
+
+import java.util.List;
 
 public class CpController extends Controller {
 
@@ -69,6 +72,28 @@ public class CpController extends Controller {
             renderJson(R.ok().put("data",wxCpUser).put("code","000000"));
         }else{
             renderJson(R.ok().put("data",null).put("code","000001"));
+        }
+    }
+
+    /*
+     * @Description //根据部门Id部门信息
+     * @Author wangkaida
+     * @Date 17:50 2021/1/26
+     * @Param [deptId]
+     * @return void
+     **/
+    public void getUserDeptByDeptId(String deptId) {
+        if(StrUtil.isEmpty(deptId)){
+            renderJson(R.error("deptId不能为空!").put("data",null).put("code","000001"));
+            return;
+        }
+
+        List<WxCpDepart> wxCpDepartList = cpService.getDeptById(Long.valueOf(deptId));
+
+        if (wxCpDepartList.size() > 0) {
+            renderJson(R.ok().put("data",wxCpDepartList.get(0)).put("code","000000"));
+        }else {
+            renderJson(R.error().put("data",null).put("code","000001"));
         }
     }
 
