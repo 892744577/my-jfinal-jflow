@@ -91,8 +91,14 @@ public class CpService {
      * @param code
      * @return
      */
-    public WxCpOauth2UserInfo autoLoginByCode(String code) {
-        WxCpService wxCpService =WxCpConfiguration.getCpService(WxCpAgentIdEmun.agent2.getCode());
+    public WxCpOauth2UserInfo autoLoginByCodeAgent2(String code) {
+        return autoLoginByCode(code,WxCpAgentIdEmun.agent2.getCode());
+    }
+    public WxCpOauth2UserInfo autoLoginByCodeAgent4(String code) {
+        return autoLoginByCode(code,WxCpAgentIdEmun.agent4.getCode());
+    }
+    public WxCpOauth2UserInfo autoLoginByCode(String code,Integer agentid) {
+        WxCpService wxCpService =WxCpConfiguration.getCpService(agentid);
         WxCpOauth2UserInfo wxCpOauth2UserInfo = new WxCpOauth2UserInfo();
         try {
             wxCpOauth2UserInfo = wxCpService.getOauth2Service().getUserInfo(code);
@@ -109,8 +115,14 @@ public class CpService {
      * @param wxCpOauth2UserInfo
      * @return
      */
-    public WxCpUser getById(WxCpOauth2UserInfo wxCpOauth2UserInfo) {
-        WxCpService wxCpService =WxCpConfiguration.getCpService(WxCpAgentIdEmun.agent2.getCode());
+    public WxCpUser getByIdAgent2(WxCpOauth2UserInfo wxCpOauth2UserInfo) {
+        return getById(wxCpOauth2UserInfo,WxCpAgentIdEmun.agent2.getCode());
+    }
+    public WxCpUser getByIdAgent4(WxCpOauth2UserInfo wxCpOauth2UserInfo) {
+        return getById(wxCpOauth2UserInfo,WxCpAgentIdEmun.agent4.getCode()) ;
+    }
+    public WxCpUser getById(WxCpOauth2UserInfo wxCpOauth2UserInfo,Integer agentid) {
+        WxCpService wxCpService =WxCpConfiguration.getCpService(agentid);
         WxCpUser wxCpUser = new WxCpUser();
         try {
             wxCpUser = wxCpService.getUserService().getById(wxCpOauth2UserInfo.getUserId());

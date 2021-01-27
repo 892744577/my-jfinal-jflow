@@ -44,8 +44,13 @@ public class CpController extends Controller {
         renderJson(R.ok().put("data",cpService.getAllDept()));
     }
 
+    /**
+     * 无忧登陆
+     * @param code
+     * @throws Exception
+     */
     public void autoLoginByCode(String code) throws Exception {
-        WxCpOauth2UserInfo wxCpOauth2UserInfo = cpService.autoLoginByCode(code);
+        WxCpOauth2UserInfo wxCpOauth2UserInfo = cpService.autoLoginByCodeAgent2(code);
         if(wxCpOauth2UserInfo!=null && wxCpOauth2UserInfo.getUserId()!=null){
             //获取emp信息
             PortEmp emp = PortEmp.dao.findFirst(Db.getSql("admin.portEmp.getEmpByTel"),
@@ -64,11 +69,26 @@ public class CpController extends Controller {
      * @Param [code]
      * @return void
      **/
-    public void getUserInfoByCode(String code) throws Exception {
-        WxCpOauth2UserInfo wxCpOauth2UserInfo = cpService.autoLoginByCode(code);
+    public void getUserInfoByCodeAgent2(String code) throws Exception {
+        WxCpOauth2UserInfo wxCpOauth2UserInfo = cpService.autoLoginByCodeAgent2(code);
         if(wxCpOauth2UserInfo!=null && wxCpOauth2UserInfo.getUserId()!=null){
-            WxCpUser wxCpUser = cpService.getById(wxCpOauth2UserInfo);
-
+            WxCpUser wxCpUser = cpService.getByIdAgent2(wxCpOauth2UserInfo);
+            renderJson(R.ok().put("data",wxCpUser).put("code","000000"));
+        }else{
+            renderJson(R.ok().put("data",null).put("code","000001"));
+        }
+    }
+    /*
+     * @Description //根据code获取用户信息
+     * @Author wangkaida
+     * @Date 14:39 2020/9/24
+     * @Param [code]
+     * @return void
+     **/
+    public void getUserInfoByCodeAgent4(String code) throws Exception {
+        WxCpOauth2UserInfo wxCpOauth2UserInfo = cpService.autoLoginByCodeAgent4(code);
+        if(wxCpOauth2UserInfo!=null && wxCpOauth2UserInfo.getUserId()!=null){
+            WxCpUser wxCpUser = cpService.getByIdAgent4(wxCpOauth2UserInfo);
             renderJson(R.ok().put("data",wxCpUser).put("code","000000"));
         }else{
             renderJson(R.ok().put("data",null).put("code","000001"));

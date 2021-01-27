@@ -15,7 +15,9 @@ public enum WxCpAgentIdEmun {
   agent2(Integer.parseInt(SystemConfig.getCS_AppSettings().get("CP2.AGENTID").toString()),
           SystemConfig.getCS_AppSettings().get("CP2.APPSECRET").toString(),"无忧服务"),
   agent3(Integer.parseInt(SystemConfig.getCS_AppSettings().get("CP3.AGENTID").toString()),
-          SystemConfig.getCS_AppSettings().get("CP3.APPSECRET").toString(),"工程项目");
+          SystemConfig.getCS_AppSettings().get("CP3.APPSECRET").toString(),"工程项目"),
+  agent4(Integer.parseInt(SystemConfig.getCS_AppSettings().get("CP4.AGENTID").toString()),
+          SystemConfig.getCS_AppSettings().get("CP4.APPSECRET").toString(),"工时排行"),;
 
   private Integer code;
   private String scret;
