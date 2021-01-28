@@ -57,7 +57,27 @@ public class FbtController extends Controller {
             renderJson(R.error("调用添加部门接口出错!").put("code","000004"));
         }
     }
-    
+
+    /*
+     * @Description //更新部门接口
+     * @Author wangkaida
+     * @Date 9:45 2021/1/28
+     * @Param [deptReq]
+     * @return void
+     **/
+    public void updateDept(@Para("") DeptReq deptReq) throws Exception {
+        if(check(deptReq)) {
+            return;
+        }
+        boolean result = fbtService.createDeptOrEmp(deptReq,
+                fbtService.getPath()+"/openapi/func/department/update");
+        if (result) {
+            renderJson(R.ok().put("code","000000"));
+        }else {
+            renderJson(R.error("调用更新部门接口出错!").put("code","000004"));
+        }
+    }
+
     /*
      * @Description //添加员工接口
      * @Author wangkaida
