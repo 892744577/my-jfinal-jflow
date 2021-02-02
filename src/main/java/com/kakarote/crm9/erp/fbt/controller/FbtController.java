@@ -155,7 +155,7 @@ public class FbtController extends Controller {
         if (result) {
             renderJson(R.ok().put("code","000000"));
         }else {
-            renderJson(R.error("调用创建行程单出错").put("code","000004"));
+            renderJson(R.error("调用创建用餐审批出错").put("code","000004"));
         }
     }
 
