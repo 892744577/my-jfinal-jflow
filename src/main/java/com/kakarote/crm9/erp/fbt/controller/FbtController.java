@@ -145,6 +145,20 @@ public class FbtController extends Controller {
         }
     }
 
+    /**
+     * 创建用餐审批
+     */
+    public void createHaveDinner(@Para("") DeptReq deptReq) throws Exception {
+        log.info("===:"+ JSON.toJSONString(deptReq));
+        boolean result = fbtService.travelOrder(deptReq,
+                fbtService.getPath()+"/openapi/func/apply/dinner/create");
+        if (result) {
+            renderJson(R.ok().put("code","000000"));
+        }else {
+            renderJson(R.error("调用创建行程单出错").put("code","000004"));
+        }
+    }
+
     /*
      * @Description //获取AccessToken接口
      * @Author wangkaida
