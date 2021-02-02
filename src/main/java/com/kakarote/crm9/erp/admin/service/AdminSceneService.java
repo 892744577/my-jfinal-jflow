@@ -1027,6 +1027,7 @@ public class AdminSceneService{
                     .add("dutyTime", "预约时间", "datetime", settingArr)
                     .add("dutyTime1", "预约日期", "date", settingArr)
                     .add("dutyTime2", "预约时间段", "select", dutyTimeList)
+                    .add("CDT", "下单时间", "datetime", settingArr)
                     .add("productId", "言而有信产品id", "number", settingArr)
                     .add("facProductId", "厂商产品id", "text", settingArr)
                     .add("productCount", "产品数量", "number", settingArr)
