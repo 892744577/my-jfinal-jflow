@@ -7,7 +7,8 @@
     select * from hr_gongdan_wdt_trade a
     where 1=1
     #if(search)
-      and (a.trade_no like CONCAT('%',#para(search),'%'))
+      and (a.trade_no like CONCAT('%',#para(search),'%') or a.receiver_telno like CONCAT('%',#para(search),'%')
+      or a.receiver_name like CONCAT('%',#para(search),'%') or a.customer_name like CONCAT('%',#para(search),'%'))
     #end
     order by a.created desc
   #end
