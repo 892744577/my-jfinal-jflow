@@ -11,7 +11,7 @@ import com.kakarote.crm9.erp.wxcms.entity.*;
 import com.kakarote.crm9.erp.yeyx.entity.*;
 
 public class _MappingKit {
-
+	//数据源1
 	public static void mapping(ActiveRecordPlugin arp) {
 		arp.addMapping("aptenon_admin_dept", "dept_id", AdminDept.class);
 		arp.addMapping("aptenon_admin_examine", "examine_id", AdminExamine.class);
@@ -126,6 +126,11 @@ public class _MappingKit {
 
 		arp.addMapping("wxcms_competitive", "id", WxcmsCompetitive.class);
 		arp.addMapping("wxcms_competitive_news", "id", WxcmsCompetitiveNews.class);
+	}
+
+	//数据源2
+	public static void mapping2(ActiveRecordPlugin arp) {
+
 	}
 }
 

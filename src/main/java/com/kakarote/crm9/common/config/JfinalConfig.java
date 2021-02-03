@@ -108,10 +108,15 @@ public class JfinalConfig extends JFinalConfig {
      */
     @Override
     public void configPlugin(Plugins me) {
-        //crm的数据连接池
+        /**
+         * 注册参数类型处理器
+         */
         ParaProcessorBuilder.me.regist(BasePageRequest.class, PageParaGetter.class, null);
         ParaProcessorBuilder.me.regist(Map.class, MapParaGetter.class, null);
-        // 配置 druid 数据库连接池插件
+        /**
+         *  配置数据源1
+         */
+        // 1、配置druid数据库连接池
         DruidPlugin druidPlugin = JFinalUtils.getDruidPlugin();//modify by tangmanrong 20200409
         druidPlugin.setInitialSize(1);
         druidPlugin.setMinIdle(1);
@@ -123,38 +128,55 @@ public class JfinalConfig extends JFinalConfig {
         druidPlugin.setFilters("stat");
         //druidPlugin.setFilters("stat,wall");//modify by tangmanrong 20200409，stat是收集各种信息的,wall是sql防注入的，防sql注入导致jflow很多sql报错
         me.add(druidPlugin);
-        // 配置ActiveRecord插件
+        //2、配置ActiveRecord插件
         ActiveRecordPlugin arp = new ActiveRecordPlugin("druidPlugin1",druidPlugin);
         arp.setCache(CaffeineCache.ME);
-        arp.setDialect(new MysqlDialect());
+        arp.setDialect(new MysqlDialect()); //配置数据库方言
         arp.setShowSql(true);
         arp.getEngine().addDirective("fori", CrmDirective.class,true);
-        arp.setTransactionLevel(Connection.TRANSACTION_READ_COMMITTED); //modify by tangmanrong 20200409
+        arp.setTransactionLevel(Connection.TRANSACTION_READ_COMMITTED); //配置事务级别为读已提交,modify by tangmanrong 20200409
         me.add(arp);
-        //扫描sql模板
-        getSqlTemplate(PathKit.getRootClassPath() + "/template", arp);
-        //Redis以及缓存插件
-        RedisPlugin redisPlugin=new RedisPlugin();
-        me.add(redisPlugin);
-        //cron定时器
-        me.add(new Cron4jPlugin(PropKit.use("config/cron4j.txt")));
-
-        //model映射
+        //3、配置model映射
         _MappingKit.mapping(arp);
 
         /**
-         * 流程的数据连接池
+         * 配置数据源2
          */
-        /*DruidPlugin druidPlugin2 = JFinalUtils.getDruidPlugin();
+        DruidPlugin druidPlugin2 = JFinalUtils.getDruidPlugin2();//modify by tangmanrong 20200409
+        druidPlugin2.setInitialSize(1);
+        druidPlugin2.setMinIdle(1);
+        druidPlugin2.setMaxActive(2000);
+        druidPlugin2.setTimeBetweenEvictionRunsMillis(5000);
+        druidPlugin2.setValidationQuery("select 1");
+        druidPlugin2.setTimeBetweenEvictionRunsMillis(60000);
+        druidPlugin2.setMinEvictableIdleTimeMillis(30000);
+        druidPlugin2.setFilters("stat");
         me.add(druidPlugin2);
 
-        ActiveRecordPlugin wfPlugin = new ActiveRecordPlugin("druidPlugin2",druidPlugin2);
-        //配置事务级别为读已提交
-        wfPlugin.setTransactionLevel(Connection.TRANSACTION_READ_COMMITTED);
-        //配置数据库方言
-        wfPlugin.setDialect(new MysqlDialect());
+        ActiveRecordPlugin arp2 = new ActiveRecordPlugin("druidPlugin2",druidPlugin);
+        arp2.setCache(CaffeineCache.ME);
+        arp2.setDialect(new MysqlDialect());
+        arp2.setShowSql(true);
+        arp2.getEngine().addDirective("fori", CrmDirective.class,true);
+        arp2.setTransactionLevel(Connection.TRANSACTION_READ_COMMITTED); //modify by tangmanrong 20200409
+        me.add(arp2);
+        //3、配置model映射
+        _MappingKit.mapping2(arp2);
 
-        me.add(wfPlugin);*/
+
+        /**
+         * 扫描sql模板
+         */
+        getSqlTemplate(PathKit.getRootClassPath() + "/template", arp);
+        /**
+         * Redis以及缓存插件
+         */
+        RedisPlugin redisPlugin=new RedisPlugin();
+        me.add(redisPlugin);
+        /**
+         * cron定时器
+         */
+        me.add(new Cron4jPlugin(PropKit.use("config/cron4j.txt")));
     }
 
     /**
