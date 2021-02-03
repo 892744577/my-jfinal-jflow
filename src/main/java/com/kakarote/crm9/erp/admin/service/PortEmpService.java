@@ -218,6 +218,21 @@ public class PortEmpService {
     }
 
     /*
+     * @Description //获取所有已审批通过的负责人
+     * @Author wangkaida
+     * @Date 15:19 2020/8/18
+     * @Param [portEmp]
+     * @return com.kakarote.crm9.erp.admin.entity.PortEmp
+     **/
+    public Page<Record> getPortEmpByAccountType(BasePageRequest basePageRequest) {
+        return Db.paginate(
+                basePageRequest.getPage(),
+                basePageRequest.getLimit(),
+                Db.getSqlPara("admin.portEmp.getPortEmpByAccountType")
+        );
+    }
+
+    /*
      * @Description //根据fkDept查询粉丝信息
      * @Author wangkaida
      * @Date 11:45 2021/1/7
