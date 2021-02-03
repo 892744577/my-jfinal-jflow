@@ -53,4 +53,15 @@ public class JFinalUtils {
 		}
 		return druidPlugin;
 	}
+	/**
+	 * 获取Druid插件
+	 * @return
+	 */
+	public static DruidPlugin getDruidPlugin2() {
+		loadConfig();
+		if(druidPlugin == null) {
+			druidPlugin = new DruidPlugin(prop.get("mysql2.AppCenterDSN"), prop.get("mysql2.JflowUser"), prop.get("mysql2.JflowPassword"));
+		}
+		return druidPlugin;
+	}
 }
