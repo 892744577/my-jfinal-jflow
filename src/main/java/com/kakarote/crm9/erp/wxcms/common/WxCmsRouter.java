@@ -8,6 +8,7 @@ public class WxCmsRouter extends Routes {
     public void config() {
         addInterceptor(new WxCmsInterceptor());
         add("/wxcms", WxCmsController.class);
+        add("/agent", WxAgentController.class);
         add("/media", WxCmsMediaController.class);
         add("/prize", WxCmsPrizeController.class);
         add("/flu", WxcmsFluCodeController.class);
