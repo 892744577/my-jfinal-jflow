@@ -19,6 +19,11 @@ fbtDeptCron.class=com.kakarote.crm9.erp.fbt.cron.FbtDeptCron
 fbtDeptCron.daemon=true
 fbtDeptCron.enable=true
 
+fbtDeptCron.cron=* */60 * * *
+fbtDeptCron.class=com.kakarote.crm9.erp.fbt.cron.FbtHotelOrderCron
+fbtDeptCron.daemon=true
+fbtDeptCron.enable=true
+
 wdtTradeCron.cron=*/10 * * * *
 wdtTradeCron.class=com.kakarote.crm9.erp.yeyx.cron.WdtTradeCron
 wdtTradeCron.daemon=true

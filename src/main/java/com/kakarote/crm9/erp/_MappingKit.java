@@ -3,6 +3,8 @@ package com.kakarote.crm9.erp;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.kakarote.crm9.erp.admin.entity.*;
 import com.kakarote.crm9.erp.crm.entity.*;
+import com.kakarote.crm9.erp.fbt.vo.CheckDataAnalysis2;
+import com.kakarote.crm9.erp.fbt.vo.CheckDataHotelOrder;
 import com.kakarote.crm9.erp.jxc.entity.JxcOrderDelivery;
 import com.kakarote.crm9.erp.jxc.entity.JxcOrderDeliveryCode;
 import com.kakarote.crm9.erp.oa.entity.*;
@@ -123,9 +125,12 @@ public class _MappingKit {
 		//旺店通
 		arp.addMapping("hr_gongdan_wdt_trade", "trade_no", HrGongdanWdtTrade.class);
 		arp.addMapping("hr_gongdan_wdt_trade_goods", "rec_id", HrGongdanWdtTradeGoods.class);
-
+		//竞品分析
 		arp.addMapping("wxcms_competitive", "id", WxcmsCompetitive.class);
 		arp.addMapping("wxcms_competitive_news", "id", WxcmsCompetitiveNews.class);
+		//分贝通
+		arp.addMapping("check_data_analysis_2", "id", CheckDataAnalysis2.class);
+		arp.addMapping("check_data_hotel_order", "order_id", CheckDataHotelOrder.class);
 	}
 
 	//数据源2

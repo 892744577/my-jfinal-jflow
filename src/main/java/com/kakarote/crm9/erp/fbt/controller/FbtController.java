@@ -159,6 +159,16 @@ public class FbtController extends Controller {
         }
     }
 
+    /**
+     * 获取酒店用餐
+     */
+    public void getHotelOrder(@Para("") DeptReq deptReq) throws Exception {
+        log.info("===:"+ JSON.toJSONString(deptReq));
+        String result = fbtService.getHotelOrder(deptReq,
+                fbtService.getPath()+"/openapi/func/orders/hotel/list");
+        renderJson(R.ok().put("code","000000").put("data",result));
+    }
+
     /*
      * @Description //获取AccessToken接口
      * @Author wangkaida

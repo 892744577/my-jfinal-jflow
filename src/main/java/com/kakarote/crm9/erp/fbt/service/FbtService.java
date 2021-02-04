@@ -54,7 +54,7 @@ public class FbtService {
     }
 
     /**
-     * 处理结果
+     * 处理结果--返回boolean
      * @param result
      * @return
      */
@@ -67,6 +67,22 @@ public class FbtService {
             }
         }
         return false;
+    }
+
+    /**
+     * 处理结果--返回Map
+     * @param result
+     * @return
+     */
+    public String doResultReturnData(String result){
+        if (result != null) {
+            JSONObject resultObject = JSONObject.parseObject(result);
+            if (resultObject.getInteger("code") == 0
+                    && "success".equals(resultObject.getString("msg"))) {
+                return resultObject.getString("data");
+            }
+        }
+        return null;
     }
 
     /**
@@ -104,6 +120,25 @@ public class FbtService {
             return this.doResult(result);
         }
         return false;
+    }
+
+    /**
+     * 获取酒店订单
+     * @param deptReq
+     * @param deptInfoUrl
+     * @return
+     * @throws Exception
+     */
+    public String getHotelOrder(DeptReq deptReq,String deptInfoUrl) throws Exception {
+        String accessToken = this.getAccessToken();
+        if (StringUtils.isNotBlank(accessToken)) {
+            deptReq.setAccessToken(accessToken);
+            Map currentTravelOrderParam = this.getParamMap(deptReq);
+            String result = httpService.gatewayRequest(deptInfoUrl, currentTravelOrderParam);
+            log.info("=====获取酒店订单："+ JSON.toJSONString(result));
+            return this.doResultReturnData(result);
+        }
+        return null;
     }
 
     /**
