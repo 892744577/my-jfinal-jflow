@@ -11,6 +11,8 @@ import com.kakarote.crm9.erp.fbt.vo.CheckDataCarOrder;
 import com.kakarote.crm9.erp.fbt.vo.DeptReq;
 import lombok.extern.slf4j.Slf4j;
 
+import java.text.ParseException;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +30,15 @@ public class FbtCarOrderCron implements Runnable {
         //开始时间按表中最大结束时间。若为空，则不填
         String maxCheckoutDate = Db.queryStr(Db.getSql("admin.checkDataCarOrder.maxCheckoutDate"));
         if(maxCheckoutDate != null){
-            map.put("create_time_begin", maxCheckoutDate);
+            try {
+                Date date = DateUtils.parse(maxCheckoutDate,DateUtils.YMDHMS_PATTERN);
+                Calendar maxCheckoutCalendar = Calendar.getInstance();
+                maxCheckoutCalendar.setTime(date);
+                maxCheckoutCalendar.add(Calendar.SECOND,1);
+                map.put("create_time_begin",DateUtils.format(maxCheckoutCalendar.getTime(),DateUtils.YEAR_MONTH_DAY_PATTERN_MIDLINE) );
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
 
         map.put("create_time_end",DateUtils.format(new Date(),DateUtils.YEAR_MONTH_DAY_PATTERN_MIDLINE));

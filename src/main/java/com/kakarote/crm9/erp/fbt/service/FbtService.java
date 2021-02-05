@@ -134,6 +134,7 @@ public class FbtService {
         if (StringUtils.isNotBlank(accessToken)) {
             deptReq.setAccessToken(accessToken);
             Map currentTravelOrderParam = this.getParamMap(deptReq);
+            log.info("=====参数："+ JSON.toJSONString(currentTravelOrderParam));
             String result = httpService.gatewayRequest(deptInfoUrl, currentTravelOrderParam);
             log.info("=====获取酒店/用车订单："+ JSON.toJSONString(result));
             return this.doResultReturnData(result);
