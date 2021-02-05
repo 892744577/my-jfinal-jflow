@@ -1,4 +1,7 @@
 #namespace("admin.portEmp")
+  #sql ("queryPageList")
+    SELECT d.* FROM port_emp d where 1=1
+  #end
   #sql ("getEmpByWxAppOpenId")
     SELECT d.* FROM port_emp d where d.WxAppOpenId = ?
   #end
@@ -8,8 +11,25 @@
   #sql ("getEmpByTel")
     SELECT d.* FROM port_emp d where d.tel = ?
   #end
-  #sql ("queryPageList")
-    SELECT d.* FROM port_emp d
+  #sql ("getPortEmpByTeamNo")
+    SELECT d.* FROM port_emp d where 1=1 and d.accountType=1 and d.teamNo = ?
+  #end
+  #sql ("getPortEmpByAccountType")
+    SELECT d.*,
+      (
+      SELECT COUNT(*) FROM wxcms_account_qrcode_fans a
+      LEFT JOIN wxcms_account_shop b ON a.event_key=b.shopNo
+      WHERE d.teamNo=b.agentNo
+      ) teamFansNum,
+      (
+      SELECT COUNT(*) FROM wxcms_account_qrcode_fans a
+      LEFT JOIN wxcms_account_shop b ON a.event_key=b.shopNo
+      WHERE DATE_FORMAT(a.create_time, '%y-%m-%d' )=DATE_FORMAT(NOW(), '%y-%m-%d' ) AND d.teamNo=b.agentNo
+      ) todayTeamFansNum
+    FROM port_emp d WHERE 1=1 AND d.accountType=1
+  #end
+  #sql ("getPortEmpByShopId")
+    SELECT d.* FROM port_emp d left join wxcms_account_shop s on d.teamNo = s.agentNo where d.accountType='1' and s.id = ?
   #end
   #sql ("queryAfterSalePortEmpList")
     select a.* from port_emp a left join gpm_groupemp b on a.No = b.FK_Emp left join gpm_group c on b.FK_Group = c.No where b.FK_Group in ('02','03')
@@ -45,11 +65,5 @@
       and a.No = #para(portEmpNo2)
     #end
     ) g
-  #end
-  #sql ("getPortEmpByTeamNo")
-    SELECT d.* FROM port_emp d where d.accountType='1' and d.teamNo = ?
-  #end
-  #sql ("getPortEmpByShopId")
-    SELECT d.* FROM port_emp d left join wxcms_account_shop s on d.teamNo = s.agentNo where d.accountType='1' and s.id = ?
   #end
 #end
