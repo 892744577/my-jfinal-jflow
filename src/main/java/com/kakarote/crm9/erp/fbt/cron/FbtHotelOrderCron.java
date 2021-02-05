@@ -114,14 +114,18 @@ public class FbtHotelOrderCron implements Runnable {
                             }
                             hotelName = hotelName.substring(indexOf+1,indexOf+3);
                             if(oneAnalysis!=null){
-                                oneAnalysis.setStayPrice(stayPrice);
-                                oneAnalysis.setStayCity(hotelInfo.getString("city_name"));
+                                if(orderInfo.getInteger("status").equals(2800) || orderInfo.getInteger("status").equals(2801)){
+                                    BigDecimal oneAnalysisStayPrice = oneAnalysis.getStayPrice();
+                                    stayPrice = oneAnalysisStayPrice.add(stayPrice);
+                                    oneAnalysis.setStayPrice(stayPrice);
+                                }
+                                //oneAnalysis.setStayCity(hotelInfo.getString("city_name"));
                                 oneAnalysis.setStayCity(hotelName);
                                 oneAnalysis.update();
                             }else{
                                 analysis.setUserName(userInfo.getString("name"));
                                 analysis.setStayPrice(stayPrice);
-                                analysis.setStayCity(hotelInfo.getString("city_name"));
+                                //analysis.setStayCity(hotelInfo.getString("city_name"));
                                 analysis.setCreateTime(new Date());
                                 analysis.setStayCity(hotelName);
                                 analysis.save();
