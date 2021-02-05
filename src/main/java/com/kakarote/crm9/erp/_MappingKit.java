@@ -131,7 +131,7 @@ public class _MappingKit {
 		arp.addMapping("wxcms_competitive_news", "id", WxcmsCompetitiveNews.class);
 		//分贝通
 		arp.addMapping("check_data_analysis_2", "id", CheckDataAnalysis2.class);
-		arp.addMapping("check_data_car_order", "order_id", CheckDataCarOrder.class);
+		arp.addMapping("check_data_car_order", "id", CheckDataCarOrder.class);
 		arp.addMapping("check_data_hotel_order", "order_id", CheckDataHotelOrder.class);
 	}
 
