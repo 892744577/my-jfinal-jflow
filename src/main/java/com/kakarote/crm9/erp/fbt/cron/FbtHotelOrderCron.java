@@ -83,7 +83,7 @@ public class FbtHotelOrderCron implements Runnable {
 
                     //固化结果，没啥意义
                     //计算天数
-                    if(orderInfo.getInteger("status").equals(2501) || orderInfo.getInteger("status").equals(2800)){
+                    if(orderInfo.getInteger("status").equals(2501) || orderInfo.getInteger("status").equals(2800) || orderInfo.getInteger("status").equals(2801)){
                         Calendar start= Calendar.getInstance();
                         Calendar end= Calendar.getInstance();
                         start.setTime(hotelInfo.getDate("checkin_date"));
@@ -93,6 +93,7 @@ public class FbtHotelOrderCron implements Runnable {
                         BigDecimal dayBigDecimal = new BigDecimal(day);
                         BigDecimal stayPrice = priceInfo.getBigDecimal("total_price").divide(dayBigDecimal);
                         log.info(userInfo.getString("name")+"相差天数："+day);
+                        log.info(userInfo.getString("name")+"平均金钱："+stayPrice);
                         for(int j=0;j<day;j++){
                             //保存或更新
                             CheckDataAnalysis2 analysis = new CheckDataAnalysis2();
@@ -100,6 +101,7 @@ public class FbtHotelOrderCron implements Runnable {
                             start.add(Calendar.DATE,1);
                             String stayDay = DateUtils.format(start.getTime(),DateUtils.YEAR_MONTH_DAY_PATTERN_MIDLINE);
                             analysis.setStayDay(stayDay);
+                            log.info(userInfo.getString("name")+"时间："+stayDay);
                             CheckDataAnalysis2 oneAnalysis = CheckDataAnalysis2.dao.findFirst(
                                     Db.getSql("admin.checkDataAnalysis.getAnalysisByPhoneAndDate"),
                                     userInfo.getString("phone"),
@@ -114,7 +116,13 @@ public class FbtHotelOrderCron implements Runnable {
                             }
                             hotelName = hotelName.substring(indexOf+1,indexOf+3);
                             if(oneAnalysis!=null){
-                                if(orderInfo.getInteger("status").equals(2800) || orderInfo.getInteger("status").equals(2801)){
+                                log.info(userInfo.getString("name")+"状态："+orderInfo.getInteger("status"));
+                                log.info(userInfo.getString("name")+"状态："+orderInfo.getInteger("status"));
+                                if(orderInfo.getInteger("status").equals(2800) || orderInfo.getInteger("status").equals(2801)) {
+                                    BigDecimal oneAnalysisStayPrice = oneAnalysis.getStayPrice();
+                                    stayPrice = oneAnalysisStayPrice.subtract(stayPrice.abs());
+                                    oneAnalysis.setStayPrice(stayPrice);
+                                }else if(orderInfo.getInteger("status").equals(2501) ){
                                     BigDecimal oneAnalysisStayPrice = oneAnalysis.getStayPrice();
                                     stayPrice = oneAnalysisStayPrice.add(stayPrice);
                                     oneAnalysis.setStayPrice(stayPrice);
@@ -124,7 +132,11 @@ public class FbtHotelOrderCron implements Runnable {
                                 oneAnalysis.update();
                             }else{
                                 analysis.setUserName(userInfo.getString("name"));
-                                analysis.setStayPrice(stayPrice);
+                                if(orderInfo.getInteger("status").equals(2800) || orderInfo.getInteger("status").equals(2801)) {
+                                    analysis.setStayPrice(BigDecimal.ZERO.subtract(stayPrice.abs()));
+                                }else if(orderInfo.getInteger("status").equals(2501) ){
+                                    analysis.setStayPrice(stayPrice.abs());
+                                }
                                 //analysis.setStayCity(hotelInfo.getString("city_name"));
                                 analysis.setCreateTime(new Date());
                                 analysis.setStayCity(hotelName);
