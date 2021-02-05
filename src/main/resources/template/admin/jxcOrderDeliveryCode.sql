@@ -1,11 +1,12 @@
-#namespace("admin.jxc")
-  #sql ("getCodeByDocno")
-    select * from jxc_order_delivery_code a where a.docno=#para(docno)
-  #end
-  #sql ("getByCode")
-    select * from jxc_order_delivery_code a where a.code=#para(code)
-  #end
-  #sql ("getByCodeAndCustomer")
-    select * from jxc_order_delivery_code a where a.code=#para(code) and a.customer=#para(customer)
+#namespace("admin.jxcCode")
+  #sql ("queryPageList")
+    select * from jxc_order_delivery_code a where 1=1
+    #if(search)
+      and (a.code=#para(search) or a.docno=#para(search))
+    #end
+    #if(customer)
+      and a.customer=#para(customer)
+    #end
+    order by a.createTime
   #end
 #end
