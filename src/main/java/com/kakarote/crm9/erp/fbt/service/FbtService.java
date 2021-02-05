@@ -123,19 +123,19 @@ public class FbtService {
     }
 
     /**
-     * 获取酒店订单
+     * 获取酒店/用车订单
      * @param deptReq
      * @param deptInfoUrl
      * @return
      * @throws Exception
      */
-    public String getHotelOrder(DeptReq deptReq,String deptInfoUrl) throws Exception {
+    public String getOrder(DeptReq deptReq,String deptInfoUrl) throws Exception {
         String accessToken = this.getAccessToken();
         if (StringUtils.isNotBlank(accessToken)) {
             deptReq.setAccessToken(accessToken);
             Map currentTravelOrderParam = this.getParamMap(deptReq);
             String result = httpService.gatewayRequest(deptInfoUrl, currentTravelOrderParam);
-            log.info("=====获取酒店订单："+ JSON.toJSONString(result));
+            log.info("=====获取酒店/用车订单："+ JSON.toJSONString(result));
             return this.doResultReturnData(result);
         }
         return null;

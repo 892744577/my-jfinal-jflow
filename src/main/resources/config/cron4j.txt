@@ -1,4 +1,4 @@
-cron4j=customerCron,taskCron,fbtEmployeeCron,wdtTradeCron,fbtDeptCron
+cron4j=customerCron,taskCron,fbtEmployeeCron,wdtTradeCron,fbtDeptCron,fbtHotelCron,fbtCarCron
 customerCron.cron=*/5 * * * *
 customerCron.class=com.kakarote.crm9.erp.crm.cron.CrmCustomerCron
 customerCron.daemon=true
@@ -19,10 +19,15 @@ fbtDeptCron.class=com.kakarote.crm9.erp.fbt.cron.FbtDeptCron
 fbtDeptCron.daemon=true
 fbtDeptCron.enable=true
 
-fbtDeptCron.cron=* */60 * * *
-fbtDeptCron.class=com.kakarote.crm9.erp.fbt.cron.FbtHotelOrderCron
-fbtDeptCron.daemon=true
-fbtDeptCron.enable=true
+fbtHotelCron.cron=* */5 * * *
+fbtHotelCron.class=com.kakarote.crm9.erp.fbt.cron.FbtHotelOrderCron
+fbtHotelCron.daemon=true
+fbtHotelCron.enable=true
+
+fbtCarCron.cron=* */1 * * *
+fbtCarCron.class=com.kakarote.crm9.erp.fbt.cron.FbtCarOrderCron
+fbtCarCron.daemon=true
+fbtCarCron.enable=true
 
 wdtTradeCron.cron=*/10 * * * *
 wdtTradeCron.class=com.kakarote.crm9.erp.yeyx.cron.WdtTradeCron

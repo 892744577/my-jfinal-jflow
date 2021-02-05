@@ -38,7 +38,7 @@ public class FbtHotelOrderCron implements Runnable {
         map.put("page_size",500);
         deptReq.setData(JSON.toJSONString(map));
         try {
-            String result = fbtService.getHotelOrder(deptReq,
+            String result = fbtService.getOrder(deptReq,
                     fbtService.getPath()+"/openapi/func/orders/hotel/list");
             JSONObject resultObject = JSONObject.parseObject(result);
             if(resultObject.getJSONArray("results") != null){
