@@ -9,14 +9,6 @@ import com.jfinal.plugin.activerecord.Model;
 @SuppressWarnings("serial")
 public abstract class BaseCheckDataCarOrder<M extends BaseCheckDataCarOrder<M>> extends Model<M> implements IBean {
 
-	public void setId(Long id) {
-		set("id", id);
-	}
-	
-	public Long getId() {
-		return getLong("id");
-	}
-
 	public void setOrderId(String orderId) {
 		set("order_id", orderId);
 	}
