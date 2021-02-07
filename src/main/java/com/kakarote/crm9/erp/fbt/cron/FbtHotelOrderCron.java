@@ -13,6 +13,7 @@ import com.kakarote.crm9.erp.fbt.vo.DeptReq;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,8 +35,23 @@ public class FbtHotelOrderCron implements Runnable {
             map.put("create_time_begin", maxCheckoutDate);
         }
 
-        map.put("create_time_end",DateUtils.format(new Date(),DateUtils.YEAR_MONTH_DAY_PATTERN_MIDLINE));
+        //获取到前一天的数据
+        Calendar ca = Calendar.getInstance();
+        ca.setTime(new Date());
+        ca.add(Calendar.DATE, -1); //天数减1
+        Date lastDate = ca.getTime();
+        map.put("create_time_end",DateUtils.format(lastDate,DateUtils.YEAR_MONTH_DAY_PATTERN_MIDLINE));
         map.put("page_size",500);
+        try {
+            Date beginDate = DateUtils.parse(maxCheckoutDate,DateUtils.YEAR_MONTH_DAY_PATTERN_MIDLINE);
+            //如果当前日期-1大于最大日期，则拉取
+            if(lastDate.before(beginDate) || lastDate.equals(beginDate) ){
+                log.info("如果当前日期等于最大日期，不拉取");
+                return;
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         deptReq.setData(JSON.toJSONString(map));
         try {
             String result = fbtService.getOrder(deptReq,
