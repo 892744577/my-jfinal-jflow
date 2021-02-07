@@ -54,20 +54,23 @@ public class FbtEmployeeCron implements Runnable {
                         String id = jsonObject.getString("id");
                         JSONObject customProps = jsonObject.getJSONObject("customProps");
                         String fenbeiquanxian = customProps.getString("fenbeiquanxian");
-                        //根据人员权限保存或者更新人员权限表
-                        CheckDataPermission checkDataPermissionDb = CheckDataPermission.dao.findFirst(Db.getSql("admin.checkDataPermission.getCheckDataPermissionByPhone"),mobileNo);
 
-                        if (checkDataPermissionDb == null) {
-                            CheckDataPermission checkDataPermission = new CheckDataPermission();
-                            checkDataPermission.setPhone(mobileNo);
-                            checkDataPermission.setUserName(name);
-                            checkDataPermission.setLevel(Integer.valueOf(fenbeiquanxian));
-                            checkDataPermission.setCreateTime(new Date());
-                            checkDataPermission.save();
-                        }else {
-                            checkDataPermissionDb.setLevel(Integer.valueOf(fenbeiquanxian));
-                            checkDataPermissionDb.setCreateTime(new Date());
-                            checkDataPermissionDb.update();
+                        if (StringUtils.isNotBlank(fenbeiquanxian) && StringUtils.isNotBlank(mobileNo)) {
+                            //根据人员权限保存或者更新人员权限表
+                            CheckDataPermission checkDataPermissionDb = CheckDataPermission.dao.findFirst(Db.getSql("admin.checkDataPermission.getCheckDataPermissionByPhone"),mobileNo);
+
+                            if (checkDataPermissionDb == null) {
+                                CheckDataPermission checkDataPermission = new CheckDataPermission();
+                                checkDataPermission.setPhone(mobileNo);
+                                checkDataPermission.setUserName(name);
+                                checkDataPermission.setLevel(Integer.valueOf(fenbeiquanxian));
+                                checkDataPermission.setCreateTime(new Date());
+                                checkDataPermission.save();
+                            }else {
+                                checkDataPermissionDb.setLevel(Integer.valueOf(fenbeiquanxian));
+                                checkDataPermissionDb.setCreateTime(new Date());
+                                checkDataPermissionDb.update();
+                            }
                         }
 
                         String alterTimeResult = DateUtil.getDateDetail(alterTime);
