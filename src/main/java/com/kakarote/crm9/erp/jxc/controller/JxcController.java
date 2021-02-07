@@ -7,6 +7,7 @@ import com.jfinal.core.Controller;
 import com.jfinal.core.NotAction;
 import com.jfinal.core.paragetter.Para;
 import com.kakarote.crm9.common.config.paragetter.BasePageRequest;
+import com.kakarote.crm9.erp.admin.service.PortEmpService;
 import com.kakarote.crm9.erp.jxc.entity.JxcOrderDelivery;
 import com.kakarote.crm9.erp.jxc.entity.JxcOrderDeliveryCode;
 import com.kakarote.crm9.erp.jxc.entity.vo.JxcCodeRequest;
@@ -26,6 +27,8 @@ public class JxcController extends Controller {
     private JxcService jxcService;
     @Inject
     private JxcCodeService jxcCodeService;
+    @Inject
+    private PortEmpService portEmpService;
 
     /**
      * 初始化JxcOrderDeliveryCode
@@ -203,5 +206,13 @@ public class JxcController extends Controller {
         jxcOrderDeliveryCode.update();
         renderJson(R.ok().put("data",jxcOrderDeliveryCode));
     }
+
+    /**
+     * 根据团队编码查负责人
+     */
+    public void getPortEmpByTeamNo(String teamNo){
+        renderJson(R.ok().put("data",portEmpService.getPortEmpByTeamNo(teamNo)));
+    }
+
 
 }

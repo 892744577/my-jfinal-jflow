@@ -17,6 +17,8 @@ import com.kakarote.crm9.erp.admin.entity.Regist;
 import com.kakarote.crm9.erp.yzj.service.TokenService;
 import com.kakarote.crm9.utils.R;
 
+import java.util.List;
+
 public class PortEmpService {
 
     @Inject
@@ -248,4 +250,15 @@ public class PortEmpService {
                 Db.getSqlPara("admin.portEmp.queryFansByFkDeptPageList",kv)
         );
     }
+
+    /*
+     * @Description //根据
+     * @Author wangkaida
+     * @Date 11:45 2021/1/7
+     * @Param [basePageRequest]
+     **/
+    public List<PortEmp> getPortEmpByTeamNo(String teamNo){
+        return PortEmp.dao.find(Db.getSql("admin.portEmp.getPortEmpByTeamNo"),teamNo);
+    }
+
 }
