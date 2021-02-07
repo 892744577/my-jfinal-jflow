@@ -3,6 +3,7 @@ package com.kakarote.crm9.erp;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.kakarote.crm9.erp.admin.entity.*;
 import com.kakarote.crm9.erp.crm.entity.*;
+import com.kakarote.crm9.erp.fbt.vo.CheckDataAddress;
 import com.kakarote.crm9.erp.fbt.vo.CheckDataAnalysis2;
 import com.kakarote.crm9.erp.fbt.vo.CheckDataCarOrder;
 import com.kakarote.crm9.erp.fbt.vo.CheckDataHotelOrder;
@@ -130,6 +131,7 @@ public class _MappingKit {
 		arp.addMapping("wxcms_competitive", "id", WxcmsCompetitive.class);
 		arp.addMapping("wxcms_competitive_news", "id", WxcmsCompetitiveNews.class);
 		//分贝通
+		arp.addMapping("check_data_address", "mobile", CheckDataAddress.class);
 		arp.addMapping("check_data_analysis_2", "id", CheckDataAnalysis2.class);
 		arp.addMapping("check_data_car_order", "order_id", CheckDataCarOrder.class);
 		arp.addMapping("check_data_hotel_order", "order_id", CheckDataHotelOrder.class);
