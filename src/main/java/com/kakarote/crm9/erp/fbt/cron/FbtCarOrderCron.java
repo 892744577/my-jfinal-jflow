@@ -27,28 +27,33 @@ public class FbtCarOrderCron implements Runnable {
         deptReq.setEmployee_id("5fa9f84969fb75d268dc4071");
         deptReq.setEmployee_type("1");
         Map map =new HashMap<>();
-        //开始时间按表中最大结束时间。若为空，则不填
-        String maxCheckoutDate = Db.queryStr(Db.getSql("admin.checkDataCarOrder.maxCheckoutDate"));
-        if(maxCheckoutDate != null){
-            try {
-                Date date = DateUtils.parse(maxCheckoutDate,DateUtils.YMDHMS_PATTERN);
-                Calendar maxCheckoutCalendar = Calendar.getInstance();
-                maxCheckoutCalendar.setTime(date);
-                maxCheckoutCalendar.add(Calendar.SECOND,1);
-                maxCheckoutCalendar.add(Calendar.DATE,-1);
-                String maxCheckoutFormat = DateUtils.format(maxCheckoutCalendar.getTime(),DateUtils.YEAR_MONTH_DAY_PATTERN_MIDLINE);
-                map.put("create_time_begin", maxCheckoutFormat);
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
-        }
-
+        //结束时间
+        try {
         Calendar currentCalendar = Calendar.getInstance();
         currentCalendar.add(Calendar.DATE,-1);
         String currentDateFormat = DateUtils.format(currentCalendar.getTime(),DateUtils.YEAR_MONTH_DAY_PATTERN_MIDLINE);
+        Date endDate = DateUtils.parse(currentDateFormat,DateUtils.YEAR_MONTH_DAY_PATTERN_MIDLINE);
         map.put("create_time_end",currentDateFormat);
+        //页数
         map.put("page_size",500);
-
+        //开始时间按表中最大结束时间。若为空，则不填
+        String maxCheckoutDate = Db.queryStr(Db.getSql("admin.checkDataCarOrder.maxCheckoutDate"));
+            if(maxCheckoutDate != null){
+                Date date = DateUtils.parse(maxCheckoutDate,DateUtils.YMDHMS_PATTERN);
+                Calendar maxCheckoutCalendar = Calendar.getInstance();
+                maxCheckoutCalendar.setTime(date);
+                String maxCheckoutFormat = DateUtils.format(maxCheckoutCalendar.getTime(),DateUtils.YEAR_MONTH_DAY_PATTERN_MIDLINE);
+                Date beginDate = DateUtils.parse(maxCheckoutFormat,DateUtils.YEAR_MONTH_DAY_PATTERN_MIDLINE);
+                map.put("create_time_begin", maxCheckoutFormat);
+                //如果当前日期-1大于最大日期，则拉取
+                if(endDate.before(beginDate) || endDate.equals(beginDate) ){
+                    log.info("如果当前日期等于最大日期，不拉取");
+                    return;
+                }
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         deptReq.setData(JSON.toJSONString(map));
         try {
