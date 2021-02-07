@@ -35,14 +35,21 @@ public class FbtCarOrderCron implements Runnable {
                 Calendar maxCheckoutCalendar = Calendar.getInstance();
                 maxCheckoutCalendar.setTime(date);
                 maxCheckoutCalendar.add(Calendar.SECOND,1);
-                map.put("create_time_begin",DateUtils.format(maxCheckoutCalendar.getTime(),DateUtils.YMDHMS_PATTERN) );
+                maxCheckoutCalendar.add(Calendar.DATE,-1);
+                String maxCheckoutFormat = DateUtils.format(maxCheckoutCalendar.getTime(),DateUtils.YEAR_MONTH_DAY_PATTERN_MIDLINE);
+                map.put("create_time_begin", maxCheckoutFormat);
             } catch (ParseException e) {
                 e.printStackTrace();
             }
         }
 
-        map.put("create_time_end",DateUtils.format(new Date(),DateUtils.YMDHMS_PATTERN));
+        Calendar currentCalendar = Calendar.getInstance();
+        currentCalendar.add(Calendar.DATE,-1);
+        String currentDateFormat = DateUtils.format(currentCalendar.getTime(),DateUtils.YEAR_MONTH_DAY_PATTERN_MIDLINE);
+        map.put("create_time_end",currentDateFormat);
         map.put("page_size",500);
+
+
         deptReq.setData(JSON.toJSONString(map));
         try {
             String result = fbtService.getOrder(deptReq,
