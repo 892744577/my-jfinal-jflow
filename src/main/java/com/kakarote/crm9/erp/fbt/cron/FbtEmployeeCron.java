@@ -4,7 +4,9 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Aop;
+import com.jfinal.plugin.activerecord.Db;
 import com.kakarote.crm9.erp.fbt.service.FbtService;
+import com.kakarote.crm9.erp.fbt.vo.CheckDataPermission;
 import com.kakarote.crm9.erp.fbt.vo.DeptReq;
 import com.kakarote.crm9.erp.wx.util.DateUtil;
 import com.landray.kmss.sys.organization.client.WebServiceClient;
@@ -13,6 +15,8 @@ import com.landray.kmss.sys.organization.webservice.out.ISysSynchroGetOrgWebServ
 import com.landray.kmss.sys.organization.webservice.out.SysSynchroGetOrgInfoContext;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Date;
 
 /*
  * @Description //分贝通同步人员定时任务
@@ -50,6 +54,22 @@ public class FbtEmployeeCron implements Runnable {
                         String id = jsonObject.getString("id");
                         JSONObject customProps = jsonObject.getJSONObject("customProps");
                         String fenbeiquanxian = customProps.getString("fenbeiquanxian");
+                        //根据人员权限保存或者更新人员权限表
+                        CheckDataPermission checkDataPermissionDb = CheckDataPermission.dao.findFirst(Db.getSql("admin.checkDataPermission.getCheckDataPermissionByPhone"),mobileNo);
+
+                        if (checkDataPermissionDb == null) {
+                            CheckDataPermission checkDataPermission = new CheckDataPermission();
+                            checkDataPermission.setPhone(mobileNo);
+                            checkDataPermission.setUserName(name);
+                            checkDataPermission.setLevel(Integer.valueOf(fenbeiquanxian));
+                            checkDataPermission.setCreateTime(new Date());
+                            checkDataPermission.save();
+                        }else {
+                            checkDataPermissionDb.setLevel(Integer.valueOf(fenbeiquanxian));
+                            checkDataPermissionDb.setCreateTime(new Date());
+                            checkDataPermissionDb.update();
+                        }
+
                         String alterTimeResult = DateUtil.getDateDetail(alterTime);
                         if (alterTimeResult != null) {
                             if (StringUtils.isNotBlank(parent) && StringUtils.isNotBlank(mobileNo)) {
@@ -58,7 +78,8 @@ public class FbtEmployeeCron implements Runnable {
                                 item.put("phone",StringUtils.isNotBlank(mobileNo)?mobileNo:"");
                                 item.put("third_org_unit_id",parent);
                                 item.put("third_employee_id",id);
-                                item.put("role_type",customProps != null && StringUtils.isNotBlank(fenbeiquanxian)?Integer.parseInt(fenbeiquanxian):"6");
+                                //外勤总监8与总监2参数相同,工程外勤7与外勤员工5参数相同
+                                item.put("role_type",customProps != null && StringUtils.isNotBlank(fenbeiquanxian)?Integer.parseInt("8".equals(fenbeiquanxian)?"2":"7".equals(fenbeiquanxian)?"5":fenbeiquanxian):"6");
                                 employeeList.add(item);
                             }
                         }

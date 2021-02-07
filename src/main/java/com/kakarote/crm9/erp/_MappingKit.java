@@ -6,6 +6,7 @@ import com.kakarote.crm9.erp.crm.entity.*;
 import com.kakarote.crm9.erp.fbt.vo.CheckDataAnalysis2;
 import com.kakarote.crm9.erp.fbt.vo.CheckDataCarOrder;
 import com.kakarote.crm9.erp.fbt.vo.CheckDataHotelOrder;
+import com.kakarote.crm9.erp.fbt.vo.CheckDataPermission;
 import com.kakarote.crm9.erp.jxc.entity.JxcOrderDelivery;
 import com.kakarote.crm9.erp.jxc.entity.JxcOrderDeliveryCode;
 import com.kakarote.crm9.erp.oa.entity.*;
@@ -133,6 +134,7 @@ public class _MappingKit {
 		arp.addMapping("check_data_analysis_2", "id", CheckDataAnalysis2.class);
 		arp.addMapping("check_data_car_order", "order_id", CheckDataCarOrder.class);
 		arp.addMapping("check_data_hotel_order", "order_id", CheckDataHotelOrder.class);
+		arp.addMapping("check_data_permission", "phone", CheckDataPermission.class);
 	}
 
 	//数据源2
