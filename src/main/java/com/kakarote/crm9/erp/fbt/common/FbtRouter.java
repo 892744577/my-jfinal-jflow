@@ -1,6 +1,7 @@
 package com.kakarote.crm9.erp.fbt.common;
 
 import com.jfinal.config.Routes;
+import com.kakarote.crm9.erp.fbt.controller.AddressController;
 import com.kakarote.crm9.erp.fbt.controller.FbtController;
 
 public class FbtRouter extends Routes {
@@ -8,5 +9,6 @@ public class FbtRouter extends Routes {
     public void config() {
         addInterceptor(new FbtInterceptor());
         add("/fbt", FbtController.class);
+        add("/address", AddressController.class);
     }
 }
