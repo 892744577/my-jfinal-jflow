@@ -31,9 +31,6 @@ public class FbtHotelOrderCron implements Runnable {
         Map map =new HashMap<>();
         //开始时间按表中最大结束时间。若为空，则不填
         String maxCheckoutDate = Db.queryStr(Db.getSql("admin.checkDataHotelOrder.maxCheckoutDate"));
-        if(maxCheckoutDate != null){
-            map.put("create_time_begin", maxCheckoutDate);
-        }
 
         //获取到前一天的数据
         Calendar ca = Calendar.getInstance();
@@ -43,11 +40,14 @@ public class FbtHotelOrderCron implements Runnable {
         map.put("create_time_end",DateUtils.format(lastDate,DateUtils.YEAR_MONTH_DAY_PATTERN_MIDLINE));
         map.put("page_size",500);
         try {
-            Date beginDate = DateUtils.parse(maxCheckoutDate,DateUtils.YEAR_MONTH_DAY_PATTERN_MIDLINE);
-            //如果当前日期-1大于最大日期，则拉取
-            if(lastDate.before(beginDate) || lastDate.equals(beginDate) ){
-                log.info("如果当前日期等于最大日期，不拉取");
-                return;
+            if(maxCheckoutDate != null){
+                map.put("create_time_begin", maxCheckoutDate);
+                Date beginDate = DateUtils.parse(maxCheckoutDate,DateUtils.YEAR_MONTH_DAY_PATTERN_MIDLINE);
+                //如果当前日期-1大于最大日期，则拉取
+                if(lastDate.before(beginDate) || lastDate.equals(beginDate) ){
+                    log.info("如果当前日期等于最大日期，不拉取");
+                    return;
+                }
             }
         } catch (ParseException e) {
             e.printStackTrace();
@@ -125,10 +125,12 @@ public class FbtHotelOrderCron implements Runnable {
                             //处理地址
                             String hotelName = hotelInfo.getString("hotel_name");
                             int indexOf=0;
-                            if(hotelName.indexOf("(")==0){
+                            if(hotelName.indexOf("(")>=0){
+                                indexOf = hotelName.indexOf("(");
+                            }else if(hotelName.indexOf("（")>=0){
                                 indexOf = hotelName.indexOf("（");
                             }else{
-                                indexOf = hotelName.indexOf("(");
+                                indexOf=-1;
                             }
                             hotelName = hotelName.substring(indexOf+1,indexOf+3);
                             if(oneAnalysis!=null){

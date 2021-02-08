@@ -12,7 +12,7 @@ public class AddressController extends Controller {
         CheckDataAddress checkDataAddress = getModel(CheckDataAddress.class,"",true);
         CheckDataAddress oneAddress = CheckDataAddress.dao.findById(checkDataAddress.getMobile());
         if(oneAddress!=null && oneAddress.getMobile()!=null){
-            oneAddress.update();
+            checkDataAddress.update();
             renderJson(R.ok().put("msg", "更新常驻地成功！").put("code", "000000"));
         }else{
             checkDataAddress.save();
