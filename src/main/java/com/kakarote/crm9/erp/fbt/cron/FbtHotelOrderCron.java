@@ -141,12 +141,10 @@ public class FbtHotelOrderCron implements Runnable {
                                 log.info(userInfo.getString("name")+"状态："+orderInfo.getInteger("status"));
                                 if(orderInfo.getInteger("status").equals(2800) || orderInfo.getInteger("status").equals(2801)) {
                                     BigDecimal oneAnalysisStayPrice = oneAnalysis.getStayPrice();
-                                    stayPrice = oneAnalysisStayPrice.subtract(stayPrice.abs());
-                                    oneAnalysis.setStayPrice(stayPrice);
+                                    oneAnalysis.setStayPrice(oneAnalysisStayPrice.subtract(stayPrice.abs()));
                                 }else if(orderInfo.getInteger("status").equals(2501) ){
                                     BigDecimal oneAnalysisStayPrice = oneAnalysis.getStayPrice();
-                                    stayPrice = oneAnalysisStayPrice.add(stayPrice.abs());
-                                    oneAnalysis.setStayPrice(stayPrice);
+                                    oneAnalysis.setStayPrice(oneAnalysisStayPrice.add(stayPrice.abs()));
                                 }
                                 //oneAnalysis.setStayCity(hotelInfo.getString("city_name"));
                                 oneAnalysis.setStayCity(hotelName);
