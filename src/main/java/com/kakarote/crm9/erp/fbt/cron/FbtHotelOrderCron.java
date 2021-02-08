@@ -145,7 +145,7 @@ public class FbtHotelOrderCron implements Runnable {
                                     oneAnalysis.setStayPrice(stayPrice);
                                 }else if(orderInfo.getInteger("status").equals(2501) ){
                                     BigDecimal oneAnalysisStayPrice = oneAnalysis.getStayPrice();
-                                    stayPrice = oneAnalysisStayPrice.add(stayPrice);
+                                    stayPrice = oneAnalysisStayPrice.add(stayPrice.abs());
                                     oneAnalysis.setStayPrice(stayPrice);
                                 }
                                 //oneAnalysis.setStayCity(hotelInfo.getString("city_name"));
