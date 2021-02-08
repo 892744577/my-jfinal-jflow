@@ -97,9 +97,8 @@ public class FbtHotelOrderCron implements Runnable {
                     checkDataHotelOrder.setDeal(0);
                     checkDataHotelOrder.save();
 
-                    //固化结果，没啥意义
-                    //计算天数
                     if(orderInfo.getInteger("status").equals(2501) || orderInfo.getInteger("status").equals(2800) || orderInfo.getInteger("status").equals(2801)){
+                        //1、计算天数
                         Calendar start= Calendar.getInstance();
                         Calendar end= Calendar.getInstance();
                         start.setTime(hotelInfo.getDate("checkin_date"));
@@ -107,12 +106,15 @@ public class FbtHotelOrderCron implements Runnable {
                         long difference=end.getTimeInMillis()-start.getTimeInMillis();
                         long day=difference/(60*60*24*1000);
                         BigDecimal dayBigDecimal = new BigDecimal(day);
+                        //2、计算平均每天费用
                         BigDecimal stayPrice = priceInfo.getBigDecimal("total_price").divide(dayBigDecimal);
                         log.info(userInfo.getString("name")+"相差天数："+day);
                         log.info(userInfo.getString("name")+"平均金钱："+stayPrice);
+
+                        //3、计算明细
                         start.add(Calendar.DATE,-1);
                         for(int j=0;j<day;j++){
-                            //保存或更新
+                            //4、保存或更新
                             CheckDataAnalysis2 analysis = new CheckDataAnalysis2();
                             analysis.setPhone(userInfo.getString("phone"));
                             start.add(Calendar.DATE,1);
@@ -123,7 +125,7 @@ public class FbtHotelOrderCron implements Runnable {
                                     Db.getSql("admin.checkDataAnalysis.getAnalysisByPhoneAndDate"),
                                     userInfo.getString("phone"),
                                     stayDay);
-                            //处理地址
+                            //5、处理地址
                             String hotelName = hotelInfo.getString("hotel_name");
                             int indexOf=0;
                             if(hotelName.indexOf("(")>=0){
