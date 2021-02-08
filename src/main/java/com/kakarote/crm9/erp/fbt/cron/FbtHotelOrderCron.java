@@ -110,6 +110,7 @@ public class FbtHotelOrderCron implements Runnable {
                         BigDecimal stayPrice = priceInfo.getBigDecimal("total_price").divide(dayBigDecimal);
                         log.info(userInfo.getString("name")+"相差天数："+day);
                         log.info(userInfo.getString("name")+"平均金钱："+stayPrice);
+                        start.add(Calendar.DATE,-1);
                         for(int j=0;j<day;j++){
                             //保存或更新
                             CheckDataAnalysis2 analysis = new CheckDataAnalysis2();
