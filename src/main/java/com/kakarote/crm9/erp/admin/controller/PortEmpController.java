@@ -283,6 +283,191 @@ public class PortEmpController extends Controller {
 
     }
 
+    /*
+     * @Description //代理商小程序openId绑定手机号
+     * @Author wangkaida
+     * @Date 17:11 2020/5/12
+     * @Param [portEmp]
+     * @return void
+     **/
+    public void appBind(@Para("") PortEmpReq portEmpReq){
+//        PortEmp portEmp = getModel(PortEmp.class,"");
+
+        if(StrUtil.isEmpty(portEmpReq.getTel())){
+            renderJson(R.error("请输入手机号!").put("data",null).put("code","000003"));
+            return;
+        }
+
+        //判断流程是否在进行中
+//        HrRegister hrRegister = HrRegister.dao.findFirst("SELECT * FROM hr_register WHERE ShouJiHaoMa = ? and appOpenId = ? and LeiBie = '1' AND WFState!='3' order by rdt desc  LIMIT 0,1", portEmpReq.getTel(),portEmpReq.getWxAppOpenId());
+        HrRegister hrRegister = HrRegister.dao.findFirst(Db.getSql("admin.portEmp.getHrRegisterByWxAppOpenId"), portEmpReq.getTel(),portEmpReq.getWxAppOpenId());
+
+        if (hrRegister != null) {
+            int wfState = hrRegister.getWFState();
+            if (wfState == 2) { //流程进行中
+                renderJson(R.error("微信小程序绑定手机号流程已经发起,请勿重复提交!").put("data",null).put("code","000005"));
+                return;
+            }
+        }
+
+        //手机号获取用户数据信息
+        PortEmp portEmp = new PortEmp();
+        portEmp.setTel(portEmpReq.getTel());
+        PortEmp portEmpDb = portEmpService.getPortEmp(portEmp);
+
+        if (portEmpDb != null) {
+            log.info("=======appBind接口,代理商绑定，根据手机查账号已存在："+ JSON.toJSONString(portEmpReq));
+            //创建并发起注册审批流程
+            createRegisterFlow(portEmpReq,"1",null);
+            renderJson(R.ok().put("msg","注册成功，请等待审核!").put("code","000000"));
+        }else {
+            log.info("=======appBind接口,代理商绑定，根据手机查账号不存在："+ JSON.toJSONString(portEmpReq));
+//            PortEmp portEmpTel = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? and accountType = '1' LIMIT 0,1", portEmpReq.getTel());
+            PortEmp portEmpTel = PortEmp.dao.findFirst(Db.getSql("admin.portEmp.getPortEmpByTel"), portEmpReq.getTel());
+            if(portEmpTel != null){
+                renderJson(R.error("该手机号已经被注册!").put("data",null).put("code","000036"));
+                return;
+            }
+
+//            PortEmp portEmpName = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Name = ? LIMIT 0,1", portEmpReq.getName());
+            PortEmp portEmpName = PortEmp.dao.findFirst(Db.getSql("admin.portEmp.getPortEmpByName"), portEmpReq.getName());
+            if(portEmpName != null){
+                renderJson(R.error("该姓名已经被注册!").put("data",null).put("code","000037"));
+                return;
+            }
+            //创建并发起注册审批流程
+            createRegisterFlow(portEmpReq,"1",null);
+            renderJson(R.ok().put("msg","更新成功!").put("code","000000"));
+        }
+        renderJson(R.ok().put("msg","发起成功，请等待审核!").put("code","000000"));
+    }
+
+    /*
+     * @Description //普通员工小程序openId绑定手机号
+     * @Author wangkaida
+     * @Date 11:52 2020/5/15
+     * @Param []
+     * @return void
+     **/
+    public void staffAppBind(@Para("") PortEmpReq portEmp){
+        if(StrUtil.isEmpty(portEmp.getParentTel())){
+            renderJson(R.error("请输入上级手机号!").put("data",null).put("code","000007"));
+            return;
+        }
+
+        if(StrUtil.isEmpty(portEmp.getTel())){
+            renderJson(R.error("请输入手机号!").put("data",null).put("code","000003"));
+            return;
+        }
+
+        //判断上级是否为代理商
+//        PortEmp portEmpParent = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? and accountType = '1' LIMIT 0,1", portEmp.getParentTel());
+        PortEmp portEmpParent = PortEmp.dao.findFirst(Db.getSql("admin.portEmp.getPortEmpByTel"), portEmp.getParentTel());
+        if (portEmpParent == null) {
+            renderJson(R.error("上级手机号为非代理商,不支持绑定!").put("data",null).put("code","000008"));
+            return;
+        }
+
+        //注册手机号必须为非代理商手机号
+//        PortEmp portEmpTel = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? and accountType = '1' LIMIT 0,1", portEmp.getTel());
+        PortEmp portEmpTel = PortEmp.dao.findFirst(Db.getSql("admin.portEmp.getPortEmpByTel"), portEmp.getTel());
+        if (portEmpTel != null) {
+            renderJson(R.error("注册手机号为代理商,不支持绑定!").put("data",null).put("code","000009"));
+            return;
+        }
+
+        //判断流程是否在进行中
+//        HrRegister hrRegister = HrRegister.dao.findFirst("SELECT * FROM hr_register WHERE ShouJiHaoMa = ? and appOpenId = ? and LeiBie = '2' AND WFState!='3' order by rdt desc LIMIT 0,1", portEmp.getTel(),portEmp.getWxAppOpenId());
+        HrRegister hrRegister = HrRegister.dao.findFirst(Db.getSql("admin.portEmp.getHrRegisterByWxAppOpenId2"), portEmp.getTel(),portEmp.getWxAppOpenId());
+
+        if (hrRegister != null) {
+            int wfState = hrRegister.getWFState();
+            if (wfState == 2) { //流程进行中
+                renderJson(R.error("微信小程序绑定手机号流程已经发起,请勿重复提交!").put("data",null).put("code","000005"));
+                return;
+            }
+        }
+
+        //判断账号是否已经存在,
+//        PortEmp portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? LIMIT 0,1", portEmp.getTel());
+        PortEmp portEmpDb = PortEmp.dao.findFirst(Db.getSql("admin.portEmp.getPortEmpByTel2"), portEmp.getTel());
+        if (portEmpDb != null) {
+            log.info("=======staffAppBind接口,团员绑定，根据手机查账号已存在："+ JSON.toJSONString(portEmpDb));
+            //1、更新小程序openid
+            portEmpDb.setWxAppOpenId(portEmp.getWxAppOpenId());
+            portEmpDb.update();
+
+            //2、判断是否已经存在上下级关系,若已经存在返回，若不存在关系直接保存上下级关系
+//            PortEmpRelation portEmpRelationDb = PortEmpRelation.dao.findFirst("SELECT * FROM port_emp_relation WHERE FK_No = ? and ParentNo = ? LIMIT 0,1", portEmpDb.getNo(),portEmpParent.getNo());
+            PortEmpRelation portEmpRelationDb = PortEmpRelation.dao.findFirst(Db.getSql("admin.portEmp.getPortEmpRelationByNo"), portEmpDb.getNo(),portEmpParent.getNo());
+            if (portEmpRelationDb != null) {
+                renderJson(R.error("上下级关系已经存在,请勿重复提交!").put("data",null).put("code","000011"));
+                return;
+            }
+
+            PortEmpRelation portEmpRelation = new PortEmpRelation();
+            portEmpRelation.setFkNo(portEmpDb.getNo());
+            portEmpRelation.setParentNo(portEmpParent.getNo());
+            Boolean flag = portEmpRelation.save();
+            renderJson(R.ok("绑定成功,可直接登陆!").put("data","0").put("code","000000"));
+        }else {
+            log.info("=======staffAppBind接口,团员绑定，根据手机查账号不存在，发起流程给代理商："+ JSON.toJSONString(portEmp));
+            //创建并发起注册审批流程
+            createRegisterFlow(portEmp,"2",portEmpParent.getNo());
+            renderJson(R.ok().put("msg","绑定流程已发起,请等待负责人审核通过!").put("data","1").put("code","000000"));
+        }
+    }
+
+    /*
+     * @Description //微信openId绑定手机号临时接口
+     * @Author wangkaida
+     * @Date 10:16 2020/6/19
+     * @Param [portEmpReq]
+     * @return void
+     **/
+    public void wechatBindTmp(@Para("") PortEmpReq portEmpReq){
+//        PortEmp portEmp = getModel(PortEmp.class,"");
+
+        if(StrUtil.isEmpty(portEmpReq.getTel())){
+            renderJson(R.error("请输入手机号!").put("data",null).put("code","000003"));
+            return;
+        }
+
+        //判断手机验证码是否正确
+        LoginRequestDto loginRequestDto = new LoginRequestDto();
+        loginRequestDto.setMobile(portEmpReq.getTel());
+        String result = smsService.getSmsByMobile(loginRequestDto);
+
+        if (!portEmpReq.getValiCode().equals(result)) {
+            renderJson(R.error("请输入正确的验证码!").put("data",null).put("code","000024"));
+            return;
+        }
+
+        //手机号获取数据信息
+//        PortActivityEmp portEmpDb = PortActivityEmp.dao.findFirst("SELECT * FROM port_activity_emp WHERE Tel = ? LIMIT 0,1", portEmpReq.getTel());
+        PortActivityEmp portEmpDb = PortActivityEmp.dao.findFirst(Db.getSql("admin.portActivityEmp.getActivityEmpByTel"), portEmpReq.getTel());
+
+        if (portEmpDb != null) {
+            if (StrUtil.isEmpty(portEmpDb.getWxOpenId())) {
+                Paras ps = new Paras();
+                ps.Add("WxOpenId", portEmpReq.getWxOpenId());
+                ps.Add("Tel", portEmpReq.getTel());
+                String sql = "UPDATE port_activity_emp SET WxOpenId="+SystemConfig.getAppCenterDBVarStr()+"WxOpenId WHERE Tel=" + SystemConfig.getAppCenterDBVarStr()
+                        + "Tel";
+                int num = DBAccess.RunSQL(sql, ps);
+                renderJson(R.ok().put("msg","更新成功!").put("code","000000"));
+            }else {
+                renderJson(R.error("该手机号已经绑定，请勿重复绑定!").put("data",null).put("code","000004"));
+                return;
+            }
+
+        }else {
+            renderJson(R.error("查无此人,请先进行手机号绑定!").put("data",null).put("code","000001"));
+            return;
+        }
+
+    }
+
     /**
      * 发起注册流程
      * @param portEmpReq
@@ -325,133 +510,6 @@ public class PortEmpController extends Controller {
     }
 
     /*
-     * @Description //代理商小程序openId绑定手机号
-     * @Author wangkaida
-     * @Date 17:11 2020/5/12
-     * @Param [portEmp]
-     * @return void
-     **/
-    public void appBind(@Para("") PortEmpReq portEmpReq){
-//        PortEmp portEmp = getModel(PortEmp.class,"");
-
-        if(StrUtil.isEmpty(portEmpReq.getTel())){
-            renderJson(R.error("请输入手机号!").put("data",null).put("code","000003"));
-            return;
-        }
-
-        //判断流程是否在进行中
-        HrRegister hrRegister = HrRegister.dao.findFirst("SELECT * FROM hr_register WHERE ShouJiHaoMa = ? and appOpenId = ? and LeiBie = '1' AND WFState!='3' order by rdt desc  LIMIT 0,1", portEmpReq.getTel(),portEmpReq.getWxAppOpenId());
-
-        if (hrRegister != null) {
-            int wfState = hrRegister.getWFState();
-            if (wfState == 2) { //流程进行中
-                renderJson(R.error("微信小程序绑定手机号流程已经发起,请勿重复提交!").put("data",null).put("code","000005"));
-                return;
-            }
-        }
-
-        //手机号获取用户数据信息
-        PortEmp portEmp = new PortEmp();
-        portEmp.setTel(portEmpReq.getTel());
-        PortEmp portEmpDb = portEmpService.getPortEmp(portEmp);
-
-        if (portEmpDb != null) {
-            log.info("=======appBind接口,代理商绑定，根据手机查账号已存在："+ JSON.toJSONString(portEmpReq));
-            //创建并发起注册审批流程
-            createRegisterFlow(portEmpReq,"1",null);
-            renderJson(R.ok().put("msg","注册成功，请等待审核!").put("code","000000"));
-        }else {
-            log.info("=======appBind接口,代理商绑定，根据手机查账号不存在："+ JSON.toJSONString(portEmpReq));
-            PortEmp portEmpTel = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? and accountType = '1' LIMIT 0,1", portEmpReq.getTel());
-            if(portEmpTel != null){
-                renderJson(R.error("该手机号已经被注册!").put("data",null).put("code","000036"));
-                return;
-            }
-
-            PortEmp portEmpName = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Name = ? LIMIT 0,1", portEmpReq.getName());
-            if(portEmpName != null){
-                renderJson(R.error("该姓名已经被注册!").put("data",null).put("code","000037"));
-                return;
-            }
-            //创建并发起注册审批流程
-            createRegisterFlow(portEmpReq,"1",null);
-            renderJson(R.ok().put("msg","更新成功!").put("code","000000"));
-        }
-        renderJson(R.ok().put("msg","发起成功，请等待审核!").put("code","000000"));
-    }
-
-    /*
-     * @Description //普通员工小程序openId绑定手机号
-     * @Author wangkaida
-     * @Date 11:52 2020/5/15
-     * @Param []
-     * @return void
-     **/
-    public void staffAppBind(@Para("") PortEmpReq portEmp){
-        if(StrUtil.isEmpty(portEmp.getParentTel())){
-            renderJson(R.error("请输入上级手机号!").put("data",null).put("code","000007"));
-            return;
-        }
-
-        if(StrUtil.isEmpty(portEmp.getTel())){
-            renderJson(R.error("请输入手机号!").put("data",null).put("code","000003"));
-            return;
-        }
-
-        //判断上级是否为代理商
-        PortEmp portEmpParent = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? and accountType = '1' LIMIT 0,1", portEmp.getParentTel());
-        if (portEmpParent == null) {
-            renderJson(R.error("上级手机号为非代理商,不支持绑定!").put("data",null).put("code","000008"));
-            return;
-        }
-
-        //注册手机号必须为非代理商手机号
-        PortEmp portEmpTel = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? and accountType = '1' LIMIT 0,1", portEmp.getTel());
-        if (portEmpTel != null) {
-            renderJson(R.error("注册手机号为代理商,不支持绑定!").put("data",null).put("code","000009"));
-            return;
-        }
-
-        //判断流程是否在进行中
-        HrRegister hrRegister = HrRegister.dao.findFirst("SELECT * FROM hr_register WHERE ShouJiHaoMa = ? and appOpenId = ? and LeiBie = '2' AND WFState!='3' order by rdt desc LIMIT 0,1", portEmp.getTel(),portEmp.getWxAppOpenId());
-
-        if (hrRegister != null) {
-            int wfState = hrRegister.getWFState();
-            if (wfState == 2) { //流程进行中
-                renderJson(R.error("微信小程序绑定手机号流程已经发起,请勿重复提交!").put("data",null).put("code","000005"));
-                return;
-            }
-        }
-
-        //判断账号是否已经存在,
-        PortEmp portEmpDb = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE Tel = ? LIMIT 0,1", portEmp.getTel());
-        if (portEmpDb != null) {
-            log.info("=======staffAppBind接口,团员绑定，根据手机查账号已存在："+ JSON.toJSONString(portEmpDb));
-            //1、更新小程序openid
-            portEmpDb.setWxAppOpenId(portEmp.getWxAppOpenId());
-            portEmpDb.update();
-
-            //2、判断是否已经存在上下级关系,若已经存在返回，若不存在关系直接保存上下级关系
-            PortEmpRelation portEmpRelationDb = PortEmpRelation.dao.findFirst("SELECT * FROM port_emp_relation WHERE FK_No = ? and ParentNo = ? LIMIT 0,1", portEmpDb.getNo(),portEmpParent.getNo());
-            if (portEmpRelationDb != null) {
-                renderJson(R.error("上下级关系已经存在,请勿重复提交!").put("data",null).put("code","000011"));
-                return;
-            }
-
-            PortEmpRelation portEmpRelation = new PortEmpRelation();
-            portEmpRelation.setFkNo(portEmpDb.getNo());
-            portEmpRelation.setParentNo(portEmpParent.getNo());
-            Boolean flag = portEmpRelation.save();
-            renderJson(R.ok("绑定成功,可直接登陆!").put("data","0").put("code","000000"));
-        }else {
-            log.info("=======staffAppBind接口,团员绑定，根据手机查账号不存在，发起流程给代理商："+ JSON.toJSONString(portEmp));
-            //创建并发起注册审批流程
-            createRegisterFlow(portEmp,"2",portEmpParent.getNo());
-            renderJson(R.ok().put("msg","绑定流程已发起,请等待负责人审核通过!").put("data","1").put("code","000000"));
-        }
-    }
-
-    /*
      * @Description //已经注册员工扫码二维码接口
      * @Author wangkaida
      * @Date 18:20 2020/5/18
@@ -471,21 +529,24 @@ public class PortEmpController extends Controller {
         }
 
         //判断上级是否为代理商
-        PortEmp portEmpParent = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE No = ? and accountType = '1' LIMIT 0,1", portEmp.getParentNo());
+//        PortEmp portEmpParent = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE No = ? and accountType = '1' LIMIT 0,1", portEmp.getParentNo());
+        PortEmp portEmpParent = PortEmp.dao.findFirst(Db.getSql("admin.portEmp.getPortEmpByNo"), portEmp.getParentNo());
         if (portEmpParent == null) {
             renderJson(R.error("上级手机号为非代理商,不支持绑定!").put("data",null).put("code","000008"));
             return;
         }
 
         //注册手机号必须为非代理商手机号
-        PortEmp portEmpTel = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE No = ? and accountType = '1' LIMIT 0,1", portEmp.getNo());
+//        PortEmp portEmpTel = PortEmp.dao.findFirst("SELECT * FROM port_emp WHERE No = ? and accountType = '1' LIMIT 0,1", portEmp.getNo());
+        PortEmp portEmpTel = PortEmp.dao.findFirst(Db.getSql("admin.portEmp.getPortEmpByNo"), portEmp.getNo());
         if (portEmpTel != null) {
             renderJson(R.error("注册手机号为代理商,不支持绑定!").put("data",null).put("code","000009"));
             return;
         }
 
         //判断是否已经存在上下级关系
-        PortEmpRelation portEmpRelationDb = PortEmpRelation.dao.findFirst("SELECT * FROM port_emp_relation WHERE FK_No = ? and ParentNo = ? LIMIT 0,1", portEmp.getNo(),portEmp.getParentNo());
+//        PortEmpRelation portEmpRelationDb = PortEmpRelation.dao.findFirst("SELECT * FROM port_emp_relation WHERE FK_No = ? and ParentNo = ? LIMIT 0,1", portEmp.getNo(),portEmp.getParentNo());
+        PortEmpRelation portEmpRelationDb = PortEmpRelation.dao.findFirst(Db.getSql("admin.portEmp.getPortEmpRelationByNo"), portEmp.getNo(),portEmp.getParentNo());
         if (portEmpRelationDb != null) {
             renderJson(R.error("上下级关系已经存在,请勿重复提交!").put("data",null).put("code","000014"));
             return;
@@ -514,7 +575,8 @@ public class PortEmpController extends Controller {
             return;
         }
 
-        PortEmpRelation portEmpRelationDb = PortEmpRelation.dao.findFirst("SELECT * FROM port_emp_relation WHERE FK_No = ? LIMIT 0,1", no);
+//        PortEmpRelation portEmpRelationDb = PortEmpRelation.dao.findFirst("SELECT * FROM port_emp_relation WHERE FK_No = ? LIMIT 0,1", no);
+        PortEmpRelation portEmpRelationDb = PortEmpRelation.dao.findFirst(Db.getSql("admin.portEmp.getPortEmpRelationByNo2"), no);
         if (portEmpRelationDb != null) {
             renderJson(R.ok().put("parentNo",portEmpRelationDb.getParentNo()).put("code","000000"));
         }else {
@@ -539,7 +601,8 @@ public class PortEmpController extends Controller {
             return;
         }
 
-        List<PortEmp> portEmpList = PortEmp.dao.find("select a.* from port_emp a left join port_emp_relation b on a.No = b.FK_No where b.ParentNo = ?", parentNo);
+//        List<PortEmp> portEmpList = PortEmp.dao.find("select a.* from port_emp a left join port_emp_relation b on a.No = b.FK_No where b.ParentNo = ?", parentNo);
+        List<PortEmp> portEmpList = PortEmp.dao.find(Db.getSql("admin.portEmp.getPortEmpListByParentNo"), parentNo);
 
         if (portEmpList.size() > 0) {
             renderJson(R.ok().put("data",portEmpList).put("code","000000"));
@@ -557,9 +620,11 @@ public class PortEmpController extends Controller {
      **/
     public void getStaffEmpListByTeamNo(@Para("teamNo") String teamNo){
 
-        List<PortEmp> list = PortEmp.dao.find("select a.* from port_emp a where a.accountType='1' and a.teamNo=?",teamNo);
+//        List<PortEmp> list = PortEmp.dao.find("select a.* from port_emp a where a.accountType='1' and a.teamNo=?",teamNo);
+        List<PortEmp> list = PortEmp.dao.find(Db.getSql("admin.portEmp.getPortEmpByTeamNo"),teamNo);
         list.stream().forEach(item->{
-            List<PortEmp> portEmpList = PortEmp.dao.find("select a.* from port_emp a left join port_emp_relation b on a.No = b.FK_No where b.ParentNo = ?", item.getNo());
+//            List<PortEmp> portEmpList = PortEmp.dao.find("select a.* from port_emp a left join port_emp_relation b on a.No = b.FK_No where b.ParentNo = ?", item.getNo());
+            List<PortEmp> portEmpList = PortEmp.dao.find(Db.getSql("admin.portEmp.getPortEmpListByParentNo"), item.getNo());
             item.put("teamList",portEmpList);
         });
         if (list.size() > 0) {
@@ -590,7 +655,8 @@ public class PortEmpController extends Controller {
         }
 
         //判断是否存在上下级关系
-        PortEmpRelation portEmpRelationDb = PortEmpRelation.dao.findFirst("SELECT * FROM port_emp_relation WHERE FK_No = ? and ParentNo = ? LIMIT 0,1", portEmp.getNo(),portEmp.getParentNo());
+//        PortEmpRelation portEmpRelationDb = PortEmpRelation.dao.findFirst("SELECT * FROM port_emp_relation WHERE FK_No = ? and ParentNo = ? LIMIT 0,1", portEmp.getNo(),portEmp.getParentNo());
+        PortEmpRelation portEmpRelationDb = PortEmpRelation.dao.findFirst(Db.getSql("admin.portEmp.getPortEmpRelationByNo"), portEmp.getNo(),portEmp.getParentNo());
 
         if (portEmpRelationDb != null) {
 
@@ -745,55 +811,6 @@ public class PortEmpController extends Controller {
         PortEmp portEmp = new PortEmp();
         portEmp.setTel(portEmpReq.getTel());
         renderJson(R.ok().put("msg","执行成功!").put("data",portEmpService.getPortEmp(portEmp)).put("code","000000"));
-    }
-
-    /*
-     * @Description //微信openId绑定手机号临时接口
-     * @Author wangkaida
-     * @Date 10:16 2020/6/19
-     * @Param [portEmpReq]
-     * @return void
-     **/
-    public void wechatBindTmp(@Para("") PortEmpReq portEmpReq){
-//        PortEmp portEmp = getModel(PortEmp.class,"");
-
-        if(StrUtil.isEmpty(portEmpReq.getTel())){
-            renderJson(R.error("请输入手机号!").put("data",null).put("code","000003"));
-            return;
-        }
-
-        //判断手机验证码是否正确
-        LoginRequestDto loginRequestDto = new LoginRequestDto();
-        loginRequestDto.setMobile(portEmpReq.getTel());
-        String result = smsService.getSmsByMobile(loginRequestDto);
-
-        if (!portEmpReq.getValiCode().equals(result)) {
-            renderJson(R.error("请输入正确的验证码!").put("data",null).put("code","000024"));
-            return;
-        }
-
-        //手机号获取数据信息
-        PortActivityEmp portEmpDb = PortActivityEmp.dao.findFirst("SELECT * FROM port_activity_emp WHERE Tel = ? LIMIT 0,1", portEmpReq.getTel());;
-
-        if (portEmpDb != null) {
-            if (StrUtil.isEmpty(portEmpDb.getWxOpenId())) {
-                Paras ps = new Paras();
-                ps.Add("WxOpenId", portEmpReq.getWxOpenId());
-                ps.Add("Tel", portEmpReq.getTel());
-                String sql = "UPDATE port_activity_emp SET WxOpenId="+SystemConfig.getAppCenterDBVarStr()+"WxOpenId WHERE Tel=" + SystemConfig.getAppCenterDBVarStr()
-                        + "Tel";
-                int num = DBAccess.RunSQL(sql, ps);
-                renderJson(R.ok().put("msg","更新成功!").put("code","000000"));
-            }else {
-                renderJson(R.error("该手机号已经绑定，请勿重复绑定!").put("data",null).put("code","000004"));
-                return;
-            }
-
-        }else {
-            renderJson(R.error("查无此人,请先进行手机号绑定!").put("data",null).put("code","000001"));
-            return;
-        }
-
     }
 
     /*

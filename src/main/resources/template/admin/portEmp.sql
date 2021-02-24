@@ -66,4 +66,32 @@
     #end
     ) g
   #end
+
+  #sql ("getHrRegisterByWxAppOpenId")
+    SELECT * FROM hr_register WHERE ShouJiHaoMa = ? and appOpenId = ? and LeiBie = '1' AND WFState!='3' order by rdt desc  LIMIT 0,1
+  #end
+  #sql ("getHrRegisterByWxAppOpenId2")
+    SELECT * FROM hr_register WHERE ShouJiHaoMa = ? and appOpenId = ? and LeiBie = '2' AND WFState!='3' order by rdt desc LIMIT 0,1
+  #end
+  #sql ("getPortEmpByTel")
+    SELECT * FROM port_emp WHERE Tel = ? and accountType = '1' LIMIT 0,1
+  #end
+  #sql ("getPortEmpByTel2")
+    SELECT * FROM port_emp WHERE Tel = ? LIMIT 0,1
+  #end
+  #sql ("getPortEmpByNo")
+     SELECT * FROM port_emp WHERE No = ? and accountType = '1' LIMIT 0,1
+  #end
+  #sql ("getPortEmpByName")
+    SELECT * FROM port_emp WHERE Name = ? LIMIT 0,1
+  #end
+  #sql ("getPortEmpListByParentNo")
+    select a.* from port_emp a left join port_emp_relation b on a.No = b.FK_No where b.ParentNo = ?
+  #end
+  #sql ("getPortEmpRelationByNo")
+    SELECT * FROM port_emp_relation WHERE FK_No = ? and ParentNo = ? LIMIT 0,1
+  #end
+  #sql ("getPortEmpRelationByNo2")
+    SELECT * FROM port_emp_relation WHERE FK_No = ? LIMIT 0,1
+  #end
 #end
