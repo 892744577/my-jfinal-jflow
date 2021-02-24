@@ -69,4 +69,8 @@
       ) f1 ON a.wxopenid=f1.pb_source_openid
     LEFT JOIN port_activity_address g ON g.id=a.OrgNo where a.accountType=?
   #end
+
+  #sql ("getPortActivityShareByOpenId")
+    SELECT * FROM port_activity_share WHERE sr_pb_id = ? and sr_share_openid = ? and sr_to_share_openid = ? LIMIT 0,1
+  #end
 #end

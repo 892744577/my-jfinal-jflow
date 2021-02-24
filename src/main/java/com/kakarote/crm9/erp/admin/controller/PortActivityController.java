@@ -75,7 +75,8 @@ public class PortActivityController extends Controller {
             return;
         }
 
-        PortActivityPlaybill portActivityPlaybillDb = PortActivityPlaybill.dao.findFirst("SELECT * FROM port_activity_playbill WHERE pb_source_openid = ? and pb_ac_id = ? LIMIT 0,1",portActivityReq.getSourceOpenId(),portActivityReq.getAcId());
+//        PortActivityPlaybill portActivityPlaybillDb = PortActivityPlaybill.dao.findFirst("SELECT * FROM port_activity_playbill WHERE pb_source_openid = ? and pb_ac_id = ? LIMIT 0,1",portActivityReq.getSourceOpenId(),portActivityReq.getAcId());
+        PortActivityPlaybill portActivityPlaybillDb = PortActivityPlaybill.dao.findFirst(Db.getSql("admin.portActivityPlaybill.getActivityPlaybillByWxOpenId1"),portActivityReq.getSourceOpenId(),portActivityReq.getAcId());
 
         if (portActivityPlaybillDb != null) {
             if (StrUtil.isNotEmpty(portActivityPlaybillDb.getPbPlaybill())) {
@@ -249,7 +250,9 @@ public class PortActivityController extends Controller {
 //            return;
 //        }
 
-        PortActivityShare portActivityShareDb = PortActivityShare.dao.findFirst("SELECT * FROM port_activity_share WHERE sr_pb_id = ? and sr_share_openid = ? and sr_to_share_openid = ? LIMIT 0,1",
+//        PortActivityShare portActivityShareDb = PortActivityShare.dao.findFirst("SELECT * FROM port_activity_share WHERE sr_pb_id = ? and sr_share_openid = ? and sr_to_share_openid = ? LIMIT 0,1",
+//                portActivityReq.getPbId(),portActivityReq.getShareOpenId(),portActivityReq.getToShareOpenId());
+        PortActivityShare portActivityShareDb = PortActivityShare.dao.findFirst(Db.getSql("admin.portActivityShare.getPortActivityShareByOpenId"),
                 portActivityReq.getPbId(),portActivityReq.getShareOpenId(),portActivityReq.getToShareOpenId());
 
         if (portActivityShareDb != null) {
@@ -305,7 +308,8 @@ public class PortActivityController extends Controller {
             return;
         }
 
-        Record record = Db.findFirst("SELECT a.*,b.pb_source_openid FROM port_activity a left join port_activity_playbill b on a.id = b.pb_ac_id where b.id = ? LIMIT 0,1",portActivityReq.getPbId());
+//        Record record = Db.findFirst("SELECT a.*,b.pb_source_openid FROM port_activity a left join port_activity_playbill b on a.id = b.pb_ac_id where b.id = ? LIMIT 0,1",portActivityReq.getPbId());
+        Record record = Db.findFirst(Db.getSql("admin.portActivity.getPortActivityByPbId"),portActivityReq.getPbId());
 
         if (record != null) {
             renderJson(R.ok().put("data", record).put("code","000000"));
@@ -331,7 +335,8 @@ public class PortActivityController extends Controller {
             return;
         }
 
-        Record record = Db.findFirst("SELECT a.*,b.id pbId,c.sr_share_openid,c.sr_to_share_openid,c.sr_as_id FROM port_activity a left join port_activity_playbill b on a.id = b.pb_ac_id left join port_activity_share c on b.id = c.sr_pb_id where c.id = ? LIMIT 0,1",portActivityReq.getShareId());
+//        Record record = Db.findFirst("SELECT a.*,b.id pbId,c.sr_share_openid,c.sr_to_share_openid,c.sr_as_id FROM port_activity a left join port_activity_playbill b on a.id = b.pb_ac_id left join port_activity_share c on b.id = c.sr_pb_id where c.id = ? LIMIT 0,1",portActivityReq.getShareId());
+        Record record = Db.findFirst(Db.getSql("admin.portActivity.getPortActivityByShareId"),portActivityReq.getShareId());
 
         if (record != null) {
             renderJson(R.ok().put("data", record).put("code","000000"));
@@ -362,16 +367,19 @@ public class PortActivityController extends Controller {
             return;
         }
 
-        PortActivityPlaybill portActivityPlaybillDb = PortActivityPlaybill.dao.findFirst("SELECT * FROM port_activity_playbill WHERE pb_source_openid = ? and pb_ac_id = ? LIMIT 0,1",portActivityReq.getSourceOpenId(),portActivityReq.getAcId());
+//        PortActivityPlaybill portActivityPlaybillDb = PortActivityPlaybill.dao.findFirst("SELECT * FROM port_activity_playbill WHERE pb_source_openid = ? and pb_ac_id = ? LIMIT 0,1",portActivityReq.getSourceOpenId(),portActivityReq.getAcId());
+        PortActivityPlaybill portActivityPlaybillDb = PortActivityPlaybill.dao.findFirst(Db.getSql("admin.portActivityPlaybill.getActivityPlaybillByWxOpenId1"),portActivityReq.getSourceOpenId(),portActivityReq.getAcId());
 
         if (portActivityPlaybillDb == null) {
             //海报为空就返回活动信息
-            PortActivity portActivityDb = PortActivity.dao.findFirst("SELECT * FROM port_activity WHERE id = ? LIMIT 0,1",portActivityReq.getAcId());
+//            PortActivity portActivityDb = PortActivity.dao.findFirst("SELECT * FROM port_activity WHERE id = ? LIMIT 0,1",portActivityReq.getAcId());
+            PortActivity portActivityDb = PortActivity.dao.findFirst(Db.getSql("admin.portActivity.getPortActivityByAcId"),portActivityReq.getAcId());
             renderJson(R.ok().put("data", portActivityDb).put("code","000000"));
 
         }else {
 
-            Record record = Db.findFirst("SELECT a.*,b.id pbId FROM port_activity a left join port_activity_playbill b on a.id = b.pb_ac_id where b.pb_source_openid = ? and b.pb_ac_id = ? LIMIT 0,1",portActivityReq.getSourceOpenId(),portActivityReq.getAcId());
+//            Record record = Db.findFirst("SELECT a.*,b.id pbId FROM port_activity a left join port_activity_playbill b on a.id = b.pb_ac_id where b.pb_source_openid = ? and b.pb_ac_id = ? LIMIT 0,1",portActivityReq.getSourceOpenId(),portActivityReq.getAcId());
+            Record record = Db.findFirst(Db.getSql("admin.portActivity.getPortActivityBySourceOpenId"),portActivityReq.getSourceOpenId(),portActivityReq.getAcId());
 
             if (record != null) {
                 renderJson(R.ok().put("data", record).put("code","000000"));
@@ -409,7 +417,8 @@ public class PortActivityController extends Controller {
             return;
         }
 
-        PortActivityHelper portActivityHelperDb = PortActivityHelper.dao.findFirst("SELECT * FROM port_activity_helper WHERE assistId = ? and helperOpenId = ? LIMIT 0,1",portActivityReq.getAssistId(),portActivityReq.getHelperOpenId());
+//        PortActivityHelper portActivityHelperDb = PortActivityHelper.dao.findFirst("SELECT * FROM port_activity_helper WHERE assistId = ? and helperOpenId = ? LIMIT 0,1",portActivityReq.getAssistId(),portActivityReq.getHelperOpenId());
+        PortActivityHelper portActivityHelperDb = PortActivityHelper.dao.findFirst(Db.getSql("admin.portActivityHelper.getPortActivityHelperByHelperOpenId"),portActivityReq.getAssistId(),portActivityReq.getHelperOpenId());
 
         if (portActivityHelperDb != null) {
             renderJson(R.error("已经集赞,请勿重复提交!").put("data",null).put("code","000030"));
@@ -489,11 +498,13 @@ public class PortActivityController extends Controller {
         }
 
         //手机号获取数据信息
-        PortActivityEmp portEmpDb = PortActivityEmp.dao.findFirst("SELECT * FROM port_activity_emp WHERE WxOpenId = ? and accountType = ?  LIMIT 0,1", portEmpReq.getWxOpenId(),portEmpReq.getPb_ac_id());
+//        PortActivityEmp portEmpDb = PortActivityEmp.dao.findFirst("SELECT * FROM port_activity_emp WHERE WxOpenId = ? and accountType = ?  LIMIT 0,1", portEmpReq.getWxOpenId(),portEmpReq.getPb_ac_id());
+        PortActivityEmp portEmpDb = PortActivityEmp.dao.findFirst(Db.getSql("admin.portActivity.getPortActivityEmpByWxOpenId"), portEmpReq.getWxOpenId(),portEmpReq.getPb_ac_id());
 
         if (portEmpDb != null) {
             //根据WxOpenId查询海报是否存在，无则生成海报，有则返回
-            PortActivityPlaybill portActivityPlaybillDb = PortActivityPlaybill.dao.findFirst("SELECT * FROM port_activity_playbill WHERE pb_source_openid = ? and pb_ac_id = ? LIMIT 0,1",portEmpReq.getWxOpenId(),portEmpReq.getPb_ac_id());
+//            PortActivityPlaybill portActivityPlaybillDb = PortActivityPlaybill.dao.findFirst("SELECT * FROM port_activity_playbill WHERE pb_source_openid = ? and pb_ac_id = ? LIMIT 0,1",portEmpReq.getWxOpenId(),portEmpReq.getPb_ac_id());
+            PortActivityPlaybill portActivityPlaybillDb = PortActivityPlaybill.dao.findFirst(Db.getSql("admin.portActivityPlaybill.getActivityPlaybillByWxOpenId1"),portEmpReq.getWxOpenId(),portEmpReq.getPb_ac_id());
             if (portActivityPlaybillDb != null) {
                 renderJson(R.ok().put("data", portActivityPlaybillDb).put("code","000000"));
             }else {
@@ -549,7 +560,8 @@ public class PortActivityController extends Controller {
 
         if (portActivityAssistDb != null) {
 
-            List<PortActivityHelper> portActivityHelperList = PortActivityHelper.dao.find("select * from port_activity_helper where assistId = ?", portActivityAssistDb.getId());
+//            List<PortActivityHelper> portActivityHelperList = PortActivityHelper.dao.find("select * from port_activity_helper where assistId = ?", portActivityAssistDb.getId());
+            List<PortActivityHelper> portActivityHelperList = PortActivityHelper.dao.find(Db.getSql("admin.portActivityHelper.getPortActivityHelperByAssistId"), portActivityAssistDb.getId());
 
             renderJson(R.ok().put("portActivityAssist", portActivityAssistDb).put("data", portActivityHelperList).put("code","000000"));
 
