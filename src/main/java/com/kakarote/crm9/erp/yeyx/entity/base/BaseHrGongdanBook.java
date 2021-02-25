@@ -33,6 +33,14 @@ public abstract class BaseHrGongdanBook<M extends BaseHrGongdanBook<M>> extends 
 		return getStr("orderNo");
 	}
 
+	public void setCustomerNo(String customerNo) {
+		set("customerNo", customerNo);
+	}
+	
+	public String getCustomerNo() {
+		return getStr("customerNo");
+	}
+
 	public void setContact(String contact) {
 		set("contact", contact);
 	}
@@ -89,28 +97,12 @@ public abstract class BaseHrGongdanBook<M extends BaseHrGongdanBook<M>> extends 
 		return getStr("remark");
 	}
 
-	public void setOpenId(String openId) {
-		set("open_id", openId);
-	}
-	
-	public String getOpenId() {
-		return getStr("open_id");
-	}
-
 	public void setIsGenerate(Integer isGenerate) {
 		set("is_generate", isGenerate);
 	}
 	
 	public Integer getIsGenerate() {
 		return getInt("is_generate");
-	}
-
-	public void setCreateTime(java.util.Date createTime) {
-		set("create_time", createTime);
-	}
-	
-	public java.util.Date getCreateTime() {
-		return get("create_time");
 	}
 
 	public void setStandardFee(java.math.BigDecimal standardFee) {
@@ -153,20 +145,44 @@ public abstract class BaseHrGongdanBook<M extends BaseHrGongdanBook<M>> extends 
 		return getStr("deal");
 	}
 
-	public void setCustomerNo(String customerNo) {
-		set("customerNo", customerNo);
-	}
-	
-	public String getCustomerNo() {
-		return getStr("customerNo");
-	}
-
 	public void setPhoto(String photo) {
 		set("photo", photo);
 	}
 	
 	public String getPhoto() {
 		return getStr("photo");
+	}
+
+	public void setOpenId(String openId) {
+		set("open_id", openId);
+	}
+	
+	public String getOpenId() {
+		return getStr("open_id");
+	}
+
+	public void setCreateTime(java.util.Date createTime) {
+		set("create_time", createTime);
+	}
+	
+	public java.util.Date getCreateTime() {
+		return get("create_time");
+	}
+
+	public void setCreator(String creator) {
+		set("creator", creator);
+	}
+	
+	public String getCreator() {
+		return getStr("creator");
+	}
+
+	public void setCreatorPhone(String creatorPhone) {
+		set("creatorPhone", creatorPhone);
+	}
+	
+	public String getCreatorPhone() {
+		return getStr("creatorPhone");
 	}
 
 }

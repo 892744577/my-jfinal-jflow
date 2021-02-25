@@ -83,6 +83,14 @@ public class HrGongDanController extends Controller {
             photos = upload(getFiles()).stream().map(item->item.get(FileUploadUtil.ACCESS_PATH)).collect(Collectors.joining(";"));
         }
         hrGongdanBook.setPhoto(photos);
+        if(WebUser.getNo()!=null ){
+            hrGongdanBook.setCreator(WebUser.getNo());
+            PortEmp portEmp = PortEmp.dao.findById(WebUser.getNo());
+            if(portEmp!=null ){
+                hrGongdanBook.setCreatorPhone(portEmp.getTel());
+            }
+        }
+
         hrGongdanBook.setCreateTime(new Date());
         //发送通知
         //获取售后客服的微信公众号openId
