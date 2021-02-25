@@ -8,6 +8,7 @@ import com.kakarote.crm9.erp.fbt.vo.CheckDataAnalysis2;
 import com.kakarote.crm9.erp.fbt.vo.CheckDataCarOrder;
 import com.kakarote.crm9.erp.fbt.vo.CheckDataHotelOrder;
 import com.kakarote.crm9.erp.fbt.vo.CheckDataPermission;
+import com.kakarote.crm9.erp.finance.vo.HrGongdanFinanceCharge;
 import com.kakarote.crm9.erp.jxc.entity.JxcOrderDelivery;
 import com.kakarote.crm9.erp.jxc.entity.JxcOrderDeliveryCode;
 import com.kakarote.crm9.erp.oa.entity.*;
@@ -92,6 +93,7 @@ public class _MappingKit {
 		arp.addMapping("hr_gongdan_sab_log", "id", HrGongdanSabLog.class);
 		arp.addMapping("hr_gongdan_wsf_log", "id", HrGongdanWsfLog.class);
 		arp.addMapping("hr_gongdan_zmn_log", "id", HrGongdanZmnLog.class);
+		arp.addMapping("hr_gongdan_finance_charge", "nmbaucdocno", HrGongdanFinanceCharge.class);
         arp.addMapping("sys_sftable", "No", SysSftable.class);
         arp.addMapping("sys_enummain", "No", SysEnummain.class);
 		//活动
