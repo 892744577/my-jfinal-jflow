@@ -94,6 +94,7 @@ public class _MappingKit {
 		arp.addMapping("hr_gongdan_wsf_log", "id", HrGongdanWsfLog.class);
 		arp.addMapping("hr_gongdan_zmn_log", "id", HrGongdanZmnLog.class);
 		arp.addMapping("hr_gongdan_finance_charge", "nmbaucdocno", HrGongdanFinanceCharge.class);
+		arp.addMapping("hr_gongdan_finance_fee", "id", HrGongdanFinanceFee.class);
         arp.addMapping("sys_sftable", "No", SysSftable.class);
         arp.addMapping("sys_enummain", "No", SysEnummain.class);
 		//活动

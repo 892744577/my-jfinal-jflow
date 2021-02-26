@@ -72,10 +72,11 @@ public class F009FlowEvent extends FlowEventBase {
 
             String serviceSystem = this.getSysPara().get("serviceSystem") == null ? "": this.getSysPara().get("serviceSystem").toString(); //服务单第三方系统
             Row row = this.HisEn.getRow();
+            String serviceNo = "";
             if (isStartNode) {
 
                 //1.1若serviceNo为空,初始化流水号
-                String serviceNo = this.getSysPara().get("serviceNo").toString();
+                serviceNo = this.getSysPara().get("serviceNo").toString();
                 if(this.getSysPara().get("serviceNo") == null || "".equals(this.getSysPara().get("serviceNo").toString())){
 //                    String serviceSystem = this.getSysPara().get("serviceSystem") == null ? "" : this.getSysPara().get("serviceSystem").toString(); //服务单第三方系统
                     String serviceType = this.getSysPara().get("serviceType") == null ? "" : "1".equals(this.getSysPara().get("serviceType"))  ? "A":"S"; //服务单类型
@@ -90,8 +91,9 @@ public class F009FlowEvent extends FlowEventBase {
                     log.info("==============>调用新增订单生成serviceNo:" + serviceNo);
                 }
                 //1.2若是预约单或报修单将旧单改为已生成工单
+                String preServiceNo = "";
                 if(this.getSysPara().get("preServiceNo") != null){
-                    String preServiceNo = this.getSysPara().get("preServiceNo") == null ? "" : this.getSysPara().get("preServiceNo").toString(); //预约单或报修单号
+                    preServiceNo = this.getSysPara().get("preServiceNo") == null ? "" : this.getSysPara().get("preServiceNo").toString(); //预约单或报修单号
                     Kv kv = Kv.by("orderNumber",preServiceNo);
                     if(preServiceNo.contains("YY")){
                         HrGongdanBook hrGongdanBook = hrGongdanAppointService.getByOrderNumber(kv);
@@ -354,6 +356,20 @@ public class F009FlowEvent extends FlowEventBase {
                 }
                 this.HisEn.Update();
                 log.info("==============>服务商更新服务单信息");
+                //保存数据到费用记录表
+                HrGongdanFinanceFee hrGongdanFinanceFee = new HrGongdanFinanceFee();
+                hrGongdanFinanceFee.setServiceNo(serviceNo);
+                hrGongdanFinanceFee.setPreServiceNo(preServiceNo);
+                hrGongdanFinanceFee.setProductCount(Integer.parseInt(this.getSysPara().get("productCount").toString()));
+                hrGongdanFinanceFee.setServicePrice(new BigDecimal(this.getSysPara().get("servicePrice").toString()));
+                hrGongdanFinanceFee.setServiceExtraCharge(new BigDecimal(this.getSysPara().get("serviceExtraCharge").toString()));
+                hrGongdanFinanceFee.setChargeFee(new BigDecimal(this.getSysPara().get("chargeFee").toString()));
+                hrGongdanFinanceFee.setCDT(this.getSysPara().get("CDT").toString());
+                hrGongdanFinanceFee.save();
+            }
+            //工单撤销时删除费用记录表记录
+            if ("907".equals(nextNodeID) && !StringUtils.isEmpty(serviceNo)) {
+                Db.delete("delete from hr_gongdan_finance_fee WHERE serviceNo = ?", serviceNo);
             }
             //发送公众号信息
             sendMpMsg(serviceSystem,nextNodeID,nextNodeName);
