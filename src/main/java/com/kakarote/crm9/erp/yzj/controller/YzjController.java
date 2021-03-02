@@ -15,9 +15,7 @@ import com.kakarote.crm9.erp.yzj.service.TokenService;
 import com.kakarote.crm9.erp.yzj.vo.ClockInRequest;
 import com.kakarote.crm9.utils.R;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class YzjController extends Controller {
 
@@ -199,5 +197,21 @@ public class YzjController extends Controller {
                 .put("deptReturn",JSONObject.parseObject(deptReturn))
                 .put("singleUploadReturn",JSONObject.parseObject(singleUploadReturn)));
 
+    }
+
+    /**
+     * 加班流程获取
+     */
+    public void getWorkOverTime() throws Exception {
+        String listUrl = tokenService.getGatewayHost().concat("/workflow/form/thirdpart/findFlows?accessToken=")
+                .concat(tokenService.getAccessToken(tokenService.getFid(),tokenService.getFlowsecret(), tokenService.getEid(), "team"));
+        Map map = new HashMap();
+        map.put("identifyKey","8ACyQrkXMqDeJTYL");
+        List list = new ArrayList();
+        list.add("45aedb0643814d38b9e365acab352bab");
+        map.put("formCodeIds",list);
+        map.put("pageSize",500);
+        String singleUploadReturn = tokenService.gatewayRequestJson(listUrl, JSON.toJSONString(map));
+        renderJson(R.ok().put("url",listUrl).put("data",singleUploadReturn));
     }
 }

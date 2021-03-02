@@ -40,10 +40,14 @@ public class TokenService {
     @Getter
     private String gatewayHost = SystemConfig.getCS_AppSettings().get("YUNZHIJIA.GATEWAY.HOST").toString();
 
+
+    @Getter
+    private String fid = SystemConfig.getCS_AppSettings().get("FLOW.FID").toString();
+    @Getter
+    private String flowsecret = SystemConfig.getCS_AppSettings().get("FLOW.SECRET").toString();
+
     @Inject
     private TokenDao tokenDao;
-
-
     /**
      * 获取accessToken
      * @author
@@ -62,10 +66,12 @@ public class TokenService {
         final String[] SCOPES = {"app", "team", "resGroupSecret"};
         String timestamp = String.valueOf(System.currentTimeMillis());
         Map parm = new HashMap(5);
-        parm.put("scope", scope); parm.put("timestamp", timestamp);
+        parm.put("scope", scope);
+        parm.put("timestamp", timestamp);
         if(scope.equals(SCOPES[0])) {
             parm.put("appId", appId);
         } else if(scope.equals(SCOPES[1])) {
+            parm.put("appId", appId);
             parm.put("eid", eid);
         }if(scope.equals(SCOPES[2])) {
             // 获取resGroupSecret秘钥
