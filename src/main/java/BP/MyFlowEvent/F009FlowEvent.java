@@ -7,7 +7,6 @@ import BP.WF.FlowEventBase;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Aop;
-import com.jfinal.kit.Kv;
 import com.jfinal.plugin.activerecord.Db;
 import com.kakarote.crm9.erp.admin.entity.PortEmp;
 import com.kakarote.crm9.erp.admin.service.PortEmpService;
@@ -30,6 +29,8 @@ public class F009FlowEvent extends FlowEventBase {
     HrGongdanAppointService hrGongdanAppointService = Aop.get(HrGongdanAppointService .class);
     //保修单service
     HrGongdanRepairService hrGongdanRepairService = Aop.get(HrGongdanRepairService .class);
+    //充值金额
+    HrGongdanChargeService hrGongdanChargeService = Aop.get(HrGongdanChargeService .class);
 
     @Override
     public String getFlowMark() {
@@ -94,14 +95,13 @@ public class F009FlowEvent extends FlowEventBase {
                 String preServiceNo = "";
                 if(this.getSysPara().get("preServiceNo") != null){
                     preServiceNo = this.getSysPara().get("preServiceNo") == null ? "" : this.getSysPara().get("preServiceNo").toString(); //预约单或报修单号
-                    Kv kv = Kv.by("orderNumber",preServiceNo);
                     if(preServiceNo.contains("YY")){
-                        HrGongdanBook hrGongdanBook = hrGongdanAppointService.getByOrderNumber(kv);
+                        HrGongdanBook hrGongdanBook = hrGongdanAppointService.getByOrderNumber(preServiceNo);
                         hrGongdanBook.setIsGenerate(1);
                         hrGongdanBook.setDeal("1");
                         hrGongdanBook.update();
                     }else if(preServiceNo.contains("BX")){
-                        HrGongdanRepair hrGongdanRepair = hrGongdanRepairService.getByOrderNumber(kv);
+                        HrGongdanRepair hrGongdanRepair = hrGongdanRepairService.getByOrderNumber(preServiceNo);
                         hrGongdanRepair.setIsGenerate(1);
                         hrGongdanRepair.setDeal("1");
                         hrGongdanRepair.update();
@@ -352,20 +352,32 @@ public class F009FlowEvent extends FlowEventBase {
                         hrGongdanSabLog.setOrderId(ShowCode);
                         hrGongdanSabLog.setOptTime(new Date().getTime()/1000);
                         hrGongdanSabLog.save();
+                        //新增订单成功，则新增一条扣费
+                        //保存数据到费用记录表
+                        hrGongdanChargeService.saveHrGongdanCharge(
+                                serviceNo,
+                                preServiceNo,
+                                Integer.parseInt(this.getSysPara().get("productCount").toString()),
+                                new BigDecimal(this.getSysPara().get("servicePrice").toString()),
+                                new BigDecimal(this.getSysPara().get("serviceExtraCharge").toString()),
+                                new BigDecimal(this.getSysPara().get("chargeFee").toString()),
+                                this.getSysPara().get("CDT").toString()
+                        );
                     }
+                }else if("FWS".equals(serviceSystem)){
+                    //保存数据到费用记录表
+                    hrGongdanChargeService.saveHrGongdanCharge(
+                            serviceNo,
+                            preServiceNo,
+                            Integer.parseInt(this.getSysPara().get("productCount").toString()),
+                            new BigDecimal(this.getSysPara().get("servicePrice").toString()),
+                            new BigDecimal(this.getSysPara().get("serviceExtraCharge").toString()),
+                            new BigDecimal(this.getSysPara().get("chargeFee").toString()),
+                            this.getSysPara().get("CDT").toString()
+                    );
                 }
                 this.HisEn.Update();
                 log.info("==============>服务商更新服务单信息");
-                //保存数据到费用记录表
-                HrGongdanFinanceFee hrGongdanFinanceFee = new HrGongdanFinanceFee();
-                hrGongdanFinanceFee.setServiceNo(serviceNo);
-                hrGongdanFinanceFee.setPreServiceNo(preServiceNo);
-                hrGongdanFinanceFee.setProductCount(Integer.parseInt(this.getSysPara().get("productCount").toString()));
-                hrGongdanFinanceFee.setServicePrice(new BigDecimal(this.getSysPara().get("servicePrice").toString()));
-                hrGongdanFinanceFee.setServiceExtraCharge(new BigDecimal(this.getSysPara().get("serviceExtraCharge").toString()));
-                hrGongdanFinanceFee.setChargeFee(new BigDecimal(this.getSysPara().get("chargeFee").toString()));
-                hrGongdanFinanceFee.setCDT(this.getSysPara().get("CDT").toString());
-                hrGongdanFinanceFee.save();
             }
             //工单撤销时删除费用记录表记录
             if ("907".equals(nextNodeID) && !StringUtils.isEmpty(serviceNo)) {

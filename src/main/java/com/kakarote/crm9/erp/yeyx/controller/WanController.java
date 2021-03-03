@@ -18,10 +18,12 @@ import com.kakarote.crm9.erp.yeyx.entity.vo.HrGongdanRequest;
 import com.kakarote.crm9.erp.yeyx.entity.vo.ToCancelOrderRequest;
 import com.kakarote.crm9.erp.yeyx.entity.vo.WanGoodsConfigRequest;
 import com.kakarote.crm9.erp.yeyx.service.HrGongDanService;
+import com.kakarote.crm9.erp.yeyx.service.HrGongdanChargeService;
 import com.kakarote.crm9.erp.yeyx.service.WanService;
 import com.kakarote.crm9.utils.R;
 import lombok.extern.slf4j.Slf4j;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -33,6 +35,8 @@ public class WanController extends Controller {
     private HrGongDanService hrGongDanService;
     @Inject
     private WanService wanService;
+    @Inject
+    private HrGongdanChargeService hrGongdanChargeService;
     /**
      * 获取商品类目
      */
@@ -80,13 +84,26 @@ public class WanController extends Controller {
             //更新orderId
             String thirdOrderId = temp.getString("thirdOrderId");
             String wanshifuOrderNo = temp.getString("wanshifuOrderNo");
-            HrGongdan hrGongdan = new HrGongdan();
-            hrGongdan.setOID(Integer.parseInt(thirdOrderId.split("-")[1]));
+            HrGongdan hrGongdan = HrGongdan.dao.findById(Integer.parseInt(thirdOrderId.split("-")[1]));
+            //hrGongdan.setOID(Integer.parseInt(thirdOrderId.split("-")[1]));
             hrGongdan.setOrderId(wanshifuOrderNo);
             hrGongdan.update();
             //记录日志
             HrGongdanWsfLog hrGongdanWsfLog = saveHrGongdanWsfLog("createOrder",thirdOrderId,wanshifuOrderNo,(new Date()).getTime()/1000);
             hrGongdanWsfLog.save();
+
+            //保存数据到费用记录表
+            if(StringUtils.isNotBlank(hrGongdan.getPreServiceNo())){
+                hrGongdanChargeService.saveHrGongdanCharge(
+                        thirdOrderId.split("-")[2],
+                        hrGongdan.getPreServiceNo(),
+                        hrGongdan.getProductCount(),
+                        new BigDecimal(hrGongdan.getServicePrice()),
+                        new BigDecimal(hrGongdan.getServiceExtraCharge()),
+                        new BigDecimal(hrGongdan.getServiceExtraCharge()),
+                        hrGongdan.getCDT()
+                );
+            }
         }
         renderJson();
     }
