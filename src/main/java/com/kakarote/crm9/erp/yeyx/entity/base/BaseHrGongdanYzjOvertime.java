@@ -97,4 +97,12 @@ public abstract class BaseHrGongdanYzjOvertime<M extends BaseHrGongdanYzjOvertim
 		return getStr("status");
 	}
 
+	public void setFormInstId(String formInstId) {
+		set("formInstId", formInstId);
+	}
+	
+	public String getFormInstId() {
+		return getStr("formInstId");
+	}
+
 }

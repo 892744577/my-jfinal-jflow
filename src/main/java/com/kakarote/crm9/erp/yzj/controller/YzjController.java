@@ -213,25 +213,28 @@ public class YzjController extends Controller {
         JSONArray list = jsonObject2.getJSONArray("list");
 
         //从第一页开始循环拉取，并保存到数据库
-        for (int i = 1; i < pages; i++) {
+        for (int i = 1; i <= pages; i++) {
             if (i == 1) {
 
             } else if (i > 1) {
                 JSONObject jsonObjectPage = JSONObject.parseObject(getOvertime(i));
                 list = jsonObjectPage.getJSONArray("list");
             }
-            for (int j = 1; j < list.size(); j++) {
-                JSONObject Overtime =  list.getJSONObject(j);
-                HrGongdanYzjOvertime hrGongdanYzjOvertime = new HrGongdanYzjOvertime();
-                hrGongdanYzjOvertime.setDeptName(Overtime.getString("deptName"));
-                hrGongdanYzjOvertime.setCreator(Overtime.getString("creator"));
-                hrGongdanYzjOvertime.setCreateName(Overtime.getString("createName"));
-                hrGongdanYzjOvertime.setSerialNo(Overtime.getString("serialNo"));
-                hrGongdanYzjOvertime.setFlowInstId(Overtime.getString("serialNo"));
-                hrGongdanYzjOvertime.setTitle(Overtime.getString("title"));
-                hrGongdanYzjOvertime.setStatus(Overtime.getString("status"));
-                hrGongdanYzjOvertime.setFormCodeId(Overtime.getString("formCodeId"));
-                hrGongdanYzjOvertime.save();
+            if(list!=null){
+                for (int j = 0; j < list.size(); j++) {
+                    JSONObject Overtime =  list.getJSONObject(j);
+                    HrGongdanYzjOvertime hrGongdanYzjOvertime = new HrGongdanYzjOvertime();
+                    hrGongdanYzjOvertime.setDeptName(Overtime.getString("deptName"));
+                    hrGongdanYzjOvertime.setCreator(Overtime.getString("creator"));
+                    hrGongdanYzjOvertime.setCreateName(Overtime.getString("createName"));
+                    hrGongdanYzjOvertime.setSerialNo(Overtime.getString("serialNo"));
+                    hrGongdanYzjOvertime.setFlowInstId(Overtime.getString("flowInstId"));
+                    hrGongdanYzjOvertime.setTitle(Overtime.getString("title"));
+                    hrGongdanYzjOvertime.setStatus(Overtime.getString("status"));
+                    hrGongdanYzjOvertime.setFormCodeId(Overtime.getString("formCodeId"));
+                    hrGongdanYzjOvertime.setFormInstId(Overtime.getString("formInstId"));
+                    hrGongdanYzjOvertime.save();
+                }
             }
         }
         renderJson(R.ok());
