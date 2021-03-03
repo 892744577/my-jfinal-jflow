@@ -88,6 +88,7 @@ public class HrGongDanController extends Controller {
             PortEmp portEmp = PortEmp.dao.findById(WebUser.getNo());
             if(portEmp!=null ){
                 hrGongdanBook.setCreatorPhone(portEmp.getTel());
+                hrGongdanBook.setOpenId(portEmp.getWxOpenId());
             }
         }
 
@@ -100,6 +101,19 @@ public class HrGongDanController extends Controller {
             sendCpBook(portEmpList,hrGongdanBook);
         }
         renderJson(R.ok().put("data",hrGongdanBook.save()));
+    }
+    /**
+     * 小程序只支持单张图片循环上传，所以开此预约单上传图片接口
+     */
+    public void uploadPicHrGongdanAppoint(@Para("") HrGongdanRepairRequest hrGongdanRepairRequest) throws Exception  {
+        HrGongdanBook hrGongdanBook = getModel(HrGongdanBook.class,"",true);
+        String photos = "";
+        if(getFiles().size()>0){
+            photos = upload(getFiles()).stream().map(item->item.get(FileUploadUtil.ACCESS_PATH)).collect(Collectors.joining(";"));
+        }
+        HrGongdanBook hrGongdanBookUpdate = hrGongdanAppointService.getByOrderNumber(hrGongdanBook.getOrderNumber());
+        hrGongdanBookUpdate.setPhoto(hrGongdanBook.getPhoto()+";"+photos);
+        renderJson(R.ok().put("data",hrGongdanBookUpdate.update()));
     }
     /**
      * 预约单查询

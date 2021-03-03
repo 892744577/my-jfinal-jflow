@@ -18,6 +18,14 @@ public class HrGongdanAppointService {
      * 根据orderNumber获取记录
      * @return
      */
+    public HrGongdanBook getByOrderNumber(String orderNumber) {
+        Kv kv = Kv.by("orderNumber",orderNumber);
+        return this.getByOrderNumber(kv);
+    }
+    /**
+     * 根据orderNumber获取记录
+     * @return
+     */
     public HrGongdanBook getByOrderNumber(Kv kv) {
         SqlPara sqlPara = Db.getSqlPara("admin.hrGongDanBook.getBookByOrderNumber",kv);
         return HrGongdanBook.dao.findFirst(sqlPara);
