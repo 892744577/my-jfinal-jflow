@@ -1,10 +1,10 @@
 package com.kakarote.crm9.erp.wx.util;
 
 import BP.DA.DataType;
-import BP.Difference.SystemConfig;
 import BP.Tools.HttpClientUtil;
 import BP.Tools.StringUtils;
 import com.alibaba.fastjson.JSONObject;
+import com.kakarote.crm9.erp.wx.config.WxMaAppIdEmun;
 import com.kakarote.crm9.erp.wx.vo.AccessToken;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,8 +26,8 @@ public class MaUtil {
      **/
     public static AccessToken getAccessTokenByInterface() {
         log.info("开始获取微信小程序的accesstoken");
-        String appId = SystemConfig.getCS_AppSettings().get("MA.APPID").toString();
-        String appSecret = SystemConfig.getCS_AppSettings().get("MA.APPSECRET").toString();
+        String appId = WxMaAppIdEmun.ma0.getCode();
+        String appSecret = WxMaAppIdEmun.ma0.getScret();
 
         AccessToken token = null;
         String tokenUrl = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid="+appId+"&secret="+appSecret;
