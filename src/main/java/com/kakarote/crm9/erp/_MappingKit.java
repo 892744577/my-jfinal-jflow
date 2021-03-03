@@ -3,11 +3,7 @@ package com.kakarote.crm9.erp;
 import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.kakarote.crm9.erp.admin.entity.*;
 import com.kakarote.crm9.erp.crm.entity.*;
-import com.kakarote.crm9.erp.fbt.vo.CheckDataAddress;
-import com.kakarote.crm9.erp.fbt.vo.CheckDataAnalysis2;
-import com.kakarote.crm9.erp.fbt.vo.CheckDataCarOrder;
-import com.kakarote.crm9.erp.fbt.vo.CheckDataHotelOrder;
-import com.kakarote.crm9.erp.fbt.vo.CheckDataPermission;
+import com.kakarote.crm9.erp.fbt.vo.*;
 import com.kakarote.crm9.erp.finance.vo.HrGongdanFinanceCharge;
 import com.kakarote.crm9.erp.jxc.entity.JxcOrderDelivery;
 import com.kakarote.crm9.erp.jxc.entity.JxcOrderDeliveryCode;
@@ -95,6 +91,10 @@ public class _MappingKit {
 		arp.addMapping("hr_gongdan_zmn_log", "id", HrGongdanZmnLog.class);
 		arp.addMapping("hr_gongdan_finance_charge", "nmbaucdocno", HrGongdanFinanceCharge.class);
 		arp.addMapping("hr_gongdan_finance_fee", "id", HrGongdanFinanceFee.class);
+		//加班工时
+		arp.addMapping("hr_gongdan_yzj_overtime", "id", HrGongdanYzjOvertime.class);
+		arp.addMapping("hr_gongdan_yzj_overtime_detail", "id", HrGongdanYzjOvertimeDetail.class);
+
         arp.addMapping("sys_sftable", "No", SysSftable.class);
         arp.addMapping("sys_enummain", "No", SysEnummain.class);
 		//活动

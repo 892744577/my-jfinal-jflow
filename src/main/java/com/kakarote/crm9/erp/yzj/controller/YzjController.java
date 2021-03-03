@@ -8,13 +8,17 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.core.Controller;
+import com.jfinal.core.NotAction;
 import com.jfinal.core.paragetter.Para;
 import com.kakarote.crm9.erp.admin.entity.PortDept;
 import com.kakarote.crm9.erp.admin.entity.PortEmp;
+import com.kakarote.crm9.erp.yeyx.entity.HrGongdanYzjOvertime;
 import com.kakarote.crm9.erp.yzj.service.TokenService;
 import com.kakarote.crm9.erp.yzj.vo.ClockInRequest;
 import com.kakarote.crm9.utils.R;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class YzjController extends Controller {
@@ -200,18 +204,63 @@ public class YzjController extends Controller {
     }
 
     /**
-     * 加班流程获取
+     * 加班流程保存数据库
      */
-    public void getWorkOverTime() throws Exception {
+    public void doOvertimeList() throws Exception {
+        JSONObject jsonObject1 = JSONObject.parseObject(this.getOvertime(1));
+        JSONObject jsonObject2 = jsonObject1.getJSONObject("data");
+        int pages = jsonObject2.getIntValue("pages");
+        JSONArray list = jsonObject2.getJSONArray("list");
+
+        //从第一页开始循环拉取，并保存到数据库
+        for (int i = 1; i < pages; i++) {
+            if (i == 1) {
+
+            } else if (i > 1) {
+                JSONObject jsonObjectPage = JSONObject.parseObject(getOvertime(i));
+                list = jsonObjectPage.getJSONArray("list");
+            }
+            for (int j = 1; j < list.size(); j++) {
+                JSONObject Overtime =  list.getJSONObject(j);
+                HrGongdanYzjOvertime hrGongdanYzjOvertime = new HrGongdanYzjOvertime();
+                hrGongdanYzjOvertime.setDeptName(Overtime.getString("deptName"));
+                hrGongdanYzjOvertime.setCreator(Overtime.getString("creator"));
+                hrGongdanYzjOvertime.setCreateName(Overtime.getString("createName"));
+                hrGongdanYzjOvertime.setSerialNo(Overtime.getString("serialNo"));
+                hrGongdanYzjOvertime.setFlowInstId(Overtime.getString("serialNo"));
+                hrGongdanYzjOvertime.setTitle(Overtime.getString("title"));
+                hrGongdanYzjOvertime.setStatus(Overtime.getString("status"));
+                hrGongdanYzjOvertime.setFormCodeId(Overtime.getString("formCodeId"));
+                hrGongdanYzjOvertime.save();
+            }
+        }
+        renderJson(R.ok());
+    }
+    /**
+     * 加班流程分页获取并保存数据库
+     */
+    public void doOvertimeOne() throws Exception {
+        renderJson(R.ok().put("data", this.getOvertime(1)));
+    }
+    /**
+     * 加班流程分页获取
+     */
+    @NotAction
+    public String getOvertime( Integer pageNumber) throws Exception {
         String listUrl = tokenService.getGatewayHost().concat("/workflow/form/thirdpart/findFlows?accessToken=")
                 .concat(tokenService.getAccessToken(tokenService.getFid(),tokenService.getFlowsecret(), tokenService.getEid(), "team"));
         Map map = new HashMap();
         map.put("identifyKey","8ACyQrkXMqDeJTYL");
-        List list = new ArrayList();
-        list.add("45aedb0643814d38b9e365acab352bab");
-        map.put("formCodeIds",list);
+        List list1 = new ArrayList();
+        list1.add("45aedb0643814d38b9e365acab352bab");
+        map.put("formCodeIds",list1);
+        map.put("pageNumber",pageNumber);
         map.put("pageSize",500);
-        String singleUploadReturn = tokenService.gatewayRequestJson(listUrl, JSON.toJSONString(map));
-        renderJson(R.ok().put("url",listUrl).put("data",singleUploadReturn));
+        List list2 = new ArrayList();
+        DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
+        Date myDate1 = dateFormat1.parse("2021-01-01");
+        list2.add(myDate1.getTime());
+        map.put("creatTime",list2);
+        return tokenService.gatewayRequestJson(listUrl, JSON.toJSONString(map));
     }
 }
