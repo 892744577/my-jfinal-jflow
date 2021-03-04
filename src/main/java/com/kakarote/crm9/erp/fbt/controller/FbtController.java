@@ -169,6 +169,15 @@ public class FbtController extends Controller {
         renderJson(R.ok().put("code","000000").put("data",result));
     }
     /**
+     * 获取酒店订单详情
+     */
+    public void getHotelOrderDetail(@Para("") DeptReq deptReq) throws Exception {
+        log.info("===:"+ JSON.toJSONString(deptReq));
+        String result = fbtService.getOrder(deptReq,
+                fbtService.getPath()+"/openapi/func/orders/hotel/detail");
+        renderJson(R.ok().put("code","000000").put("data",result));
+    }
+    /**
      * 获取用车
      */
     public void getCarOrder(@Para("") DeptReq deptReq) throws Exception {

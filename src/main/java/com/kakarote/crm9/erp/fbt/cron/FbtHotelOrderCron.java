@@ -95,6 +95,18 @@ public class FbtHotelOrderCron implements Runnable {
                     checkDataHotelOrder.setHotelAddress(hotelInfo.getString("hotel_address"));
                     checkDataHotelOrder.setRoomType(hotelInfo.getString("room_type"));
                     checkDataHotelOrder.setDeal(0);
+                    //5、处理地址
+                    DeptReq deptReq1 = new DeptReq();
+                    deptReq1.setEmployee_id("5fa9f84969fb75d268dc4071");
+                    deptReq1.setEmployee_type("1");
+                    Map map1 = new HashMap();
+                    map1.put("order_id",orderInfo.getString("order_id"));
+                    deptReq1.setData(JSON.toJSONString(map1));
+                    String orderDetailResult = fbtService.getOrder(deptReq1,
+                            fbtService.getPath()+"/openapi/func/orders/hotel/detail");
+                    JSONObject data = JSON.parseObject(orderDetailResult);
+                    JSONObject hotel_info = data.getJSONObject("hotel_info");
+                    checkDataHotelOrder.setCityName(hotel_info.getString("city_name"));
                     checkDataHotelOrder.save();
 
                     if(orderInfo.getInteger("status").equals(2501) || orderInfo.getInteger("status").equals(2800) || orderInfo.getInteger("status").equals(2801)){
@@ -125,8 +137,7 @@ public class FbtHotelOrderCron implements Runnable {
                                     Db.getSql("admin.checkDataAnalysis.getAnalysisByPhoneAndDate"),
                                     userInfo.getString("phone"),
                                     stayDay);
-                            //5、处理地址
-                            String hotelName = hotelInfo.getString("hotel_name");
+                            /*String hotelName = hotelInfo.getString("hotel_name");
                             int indexOf=0;
                             if(hotelName.indexOf("(")>=0){
                                 indexOf = hotelName.indexOf("(");
@@ -135,7 +146,7 @@ public class FbtHotelOrderCron implements Runnable {
                             }else{
                                 indexOf=-1;
                             }
-                            hotelName = hotelName.substring(indexOf+1,indexOf+3);
+                            hotelName = hotelName.substring(indexOf+1,indexOf+3);*/
                             if(oneAnalysis!=null){
                                 log.info(userInfo.getString("name")+"状态："+orderInfo.getInteger("status"));
                                 log.info(userInfo.getString("name")+"状态："+orderInfo.getInteger("status"));
@@ -146,8 +157,8 @@ public class FbtHotelOrderCron implements Runnable {
                                     BigDecimal oneAnalysisStayPrice = oneAnalysis.getStayPrice();
                                     oneAnalysis.setStayPrice(oneAnalysisStayPrice.add(stayPrice.abs()));
                                 }
-                                //oneAnalysis.setStayCity(hotelInfo.getString("city_name"));
-                                oneAnalysis.setStayCity(hotelName);
+                                oneAnalysis.setStayCity(checkDataHotelOrder.getCityName());
+                                //oneAnalysis.setStayCity(hotelName);
                                 oneAnalysis.update();
                             }else{
                                 analysis.setUserName(userInfo.getString("name"));
@@ -156,9 +167,9 @@ public class FbtHotelOrderCron implements Runnable {
                                 }else if(orderInfo.getInteger("status").equals(2501) ){
                                     analysis.setStayPrice(stayPrice.abs());
                                 }
-                                //analysis.setStayCity(hotelInfo.getString("city_name"));
+                                analysis.setStayCity(checkDataHotelOrder.getCityName());
                                 analysis.setCreateTime(new Date());
-                                analysis.setStayCity(hotelName);
+                                //analysis.setStayCity(hotelName);
                                 analysis.save();
                             }
                         }
