@@ -7,6 +7,7 @@ public class YeyxRouter extends Routes {
     @Override
     public void config() {
         addInterceptor(new YeyxInterceptor());
+        add("/hr/finance", HrGongDanFinanceController.class); //言而有信
         add("/yeyx", YeyxController.class); //言而有信
         add("/wan", WanController.class); //万师傅
         add("/sab", SabController.class); //锁安帮
