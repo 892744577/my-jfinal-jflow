@@ -256,7 +256,7 @@ public class YzjController extends Controller {
         renderJson(R.ok().put("data", this.getOvertime(1)));
     }
     /**
-     * 加班流程分页获取
+     * 加班流程分页获取数据
      */
     @NotAction
     public String getOvertime( Integer pageNumber) throws Exception {
