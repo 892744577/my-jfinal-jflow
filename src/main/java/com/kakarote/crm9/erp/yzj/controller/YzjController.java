@@ -211,17 +211,18 @@ public class YzjController extends Controller {
      */
     public void doOvertimeList() throws Exception {
         JSONObject jsonObject1 = JSONObject.parseObject(this.getOvertime(1));
-        JSONObject jsonObject2 = jsonObject1.getJSONObject("data");
-        int pages = jsonObject2.getIntValue("pages");
-        JSONArray list = jsonObject2.getJSONArray("list");
+        JSONObject data1 = jsonObject1.getJSONObject("data");
+        int pages = data1.getIntValue("pages");
+        JSONArray list = data1.getJSONArray("list");
 
         //从第一页开始循环拉取，并保存到数据库
         for (int i = 1; i <= pages; i++) {
             if (i == 1) {
 
             } else if (i > 1) {
-                JSONObject jsonObjectPage = JSONObject.parseObject(getOvertime(i));
-                list = jsonObjectPage.getJSONArray("list");
+                JSONObject jsonObject2 = JSONObject.parseObject(getOvertime(i));
+                JSONObject data2 = jsonObject2.getJSONObject("data");
+                list = data2.getJSONArray("list");
             }
             if(list!=null){
                 for (int j = 0; j < list.size(); j++) {
