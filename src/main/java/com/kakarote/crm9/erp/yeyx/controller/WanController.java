@@ -18,7 +18,7 @@ import com.kakarote.crm9.erp.yeyx.entity.vo.HrGongdanRequest;
 import com.kakarote.crm9.erp.yeyx.entity.vo.ToCancelOrderRequest;
 import com.kakarote.crm9.erp.yeyx.entity.vo.WanGoodsConfigRequest;
 import com.kakarote.crm9.erp.yeyx.service.HrGongDanService;
-import com.kakarote.crm9.erp.yeyx.service.HrGongdanChargeService;
+import com.kakarote.crm9.erp.yeyx.service.HrGongdanFinanceService;
 import com.kakarote.crm9.erp.yeyx.service.WanService;
 import com.kakarote.crm9.utils.R;
 import lombok.extern.slf4j.Slf4j;
@@ -36,7 +36,7 @@ public class WanController extends Controller {
     @Inject
     private WanService wanService;
     @Inject
-    private HrGongdanChargeService hrGongdanChargeService;
+    private HrGongdanFinanceService hrGongdanChargeService;
     /**
      * 获取商品类目
      */
