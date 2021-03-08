@@ -341,7 +341,7 @@ public class YzjController extends Controller {
                 hrGongdanYzjOvertimeDetail.setOvertimeHours(overtimeHours);
                 hrGongdanYzjOvertimeDetail.setOvertimeBegin(overtimeBeginDate);
                 hrGongdanYzjOvertimeDetail.setOvertimeEnd(overtimeEndDate);
-                hrGongdanYzjOvertimeDetail.setOvertimeReason(overtimeReason);
+                //hrGongdanYzjOvertimeDetail.setOvertimeReason(overtimeReason);
                 hrGongdanYzjOvertimeDetail.setSerialNumWidget(serialNumWidget);
                 if (hrGongdanYzjOvertimeDetailDb == null) {
                     hrGongdanYzjOvertimeDetail.save();
