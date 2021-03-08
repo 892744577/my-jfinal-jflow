@@ -30,7 +30,7 @@ public class F009FlowEvent extends FlowEventBase {
     //保修单service
     HrGongdanRepairService hrGongdanRepairService = Aop.get(HrGongdanRepairService .class);
     //充值金额
-    HrGongdanChargeService hrGongdanChargeService = Aop.get(HrGongdanChargeService .class);
+    HrGongdanFinanceService hrGongdanFinanceService = Aop.get(HrGongdanFinanceService.class);
 
     @Override
     public String getFlowMark() {
@@ -354,7 +354,7 @@ public class F009FlowEvent extends FlowEventBase {
                         hrGongdanSabLog.save();
                         //新增订单成功，则新增一条扣费
                         //保存数据到费用记录表
-                        hrGongdanChargeService.saveHrGongdanCharge(
+                        hrGongdanFinanceService.saveHrGongdanCharge(
                                 serviceNo,
                                 preServiceNo,
                                 Integer.parseInt(this.getSysPara().get("productCount").toString()),
@@ -366,7 +366,7 @@ public class F009FlowEvent extends FlowEventBase {
                     }
                 }else if("FWS".equals(serviceSystem)){
                     //保存数据到费用记录表
-                    hrGongdanChargeService.saveHrGongdanCharge(
+                    hrGongdanFinanceService.saveHrGongdanCharge(
                             serviceNo,
                             preServiceNo,
                             Integer.parseInt(this.getSysPara().get("productCount").toString()),
