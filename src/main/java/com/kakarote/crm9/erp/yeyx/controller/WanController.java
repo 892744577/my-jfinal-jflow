@@ -23,7 +23,6 @@ import com.kakarote.crm9.erp.yeyx.service.WanService;
 import com.kakarote.crm9.utils.R;
 import lombok.extern.slf4j.Slf4j;
 
-import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -93,7 +92,7 @@ public class WanController extends Controller {
             hrGongdanWsfLog.save();
 
             //保存数据到费用记录表
-            if(StringUtils.isNotBlank(hrGongdan.getPreServiceNo())){
+            /*if(StringUtils.isNotBlank(hrGongdan.getPreServiceNo())){
                 hrGongdanChargeService.saveHrGongdanCharge(
                         thirdOrderId.split("-")[2],
                         hrGongdan.getPreServiceNo(),
@@ -103,7 +102,7 @@ public class WanController extends Controller {
                         new BigDecimal(hrGongdan.getServiceExtraCharge()),
                         hrGongdan.getCDT()
                 );
-            }
+            }*/
         }
         renderJson();
     }

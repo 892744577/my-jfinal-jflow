@@ -354,7 +354,7 @@ public class F009FlowEvent extends FlowEventBase {
                         hrGongdanSabLog.save();
                         //新增订单成功，则新增一条扣费
                         //保存数据到费用记录表
-                        hrGongdanFinanceService.saveHrGongdanCharge(
+                        /*hrGongdanFinanceService.saveHrGongdanCharge(
                                 serviceNo,
                                 preServiceNo,
                                 Integer.parseInt(this.getSysPara().get("productCount").toString()),
@@ -362,9 +362,10 @@ public class F009FlowEvent extends FlowEventBase {
                                 new BigDecimal(this.getSysPara().get("serviceExtraCharge").toString()),
                                 new BigDecimal(this.getSysPara().get("chargeFee").toString()),
                                 this.getSysPara().get("CDT").toString()
-                        );
+                        );*/
                     }
-                }else if("FWS".equals(serviceSystem)){
+                }
+                /*else if("FWS".equals(serviceSystem)){
                     //保存数据到费用记录表
                     hrGongdanFinanceService.saveHrGongdanCharge(
                             serviceNo,
@@ -375,7 +376,7 @@ public class F009FlowEvent extends FlowEventBase {
                             new BigDecimal(this.getSysPara().get("chargeFee").toString()),
                             this.getSysPara().get("CDT").toString()
                     );
-                }
+                }*/
                 this.HisEn.Update();
                 log.info("==============>服务商更新服务单信息");
             }
