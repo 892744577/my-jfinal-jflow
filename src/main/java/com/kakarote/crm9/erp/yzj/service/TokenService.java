@@ -26,7 +26,7 @@ public class TokenService {
 
     private static final String APPLICATION_JSON = "application/json";
     private static final String APPLICATION_X_WWW_FORM_URLENCODED = "application/x-www-form-urlencoded";
-    private static final int timeoutMillis = 3000;
+    private static final int timeoutMillis = 300000;
     @Getter
     private String eid = SystemConfig.getCS_AppSettings().get("APP.EID").toString();
     @Getter
