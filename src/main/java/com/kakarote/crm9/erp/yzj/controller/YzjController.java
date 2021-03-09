@@ -275,7 +275,7 @@ public class YzjController extends Controller {
         DateFormat dateFormat1 = new SimpleDateFormat("yyyy-MM-dd");
         Date myDate1 = dateFormat1.parse("2021-01-01");
         list2.add(myDate1.getTime());
-        map.put("creatTime",list2);
+        map.put("createTime",list2);
         return tokenService.gatewayRequestJson(listUrl, JSON.toJSONString(map));
     }
 
