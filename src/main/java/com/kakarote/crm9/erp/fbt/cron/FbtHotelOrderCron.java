@@ -38,7 +38,7 @@ public class FbtHotelOrderCron implements Runnable {
         ca.add(Calendar.DATE, -1); //天数减1
         Date lastDate = ca.getTime();
         map.put("create_time_end",DateUtils.format(lastDate,DateUtils.YEAR_MONTH_DAY_PATTERN_MIDLINE));
-        map.put("page_size",500);
+        map.put("page_size","500");
         try {
             if(maxCheckoutDate != null){
                 map.put("create_time_begin", maxCheckoutDate);
@@ -119,7 +119,7 @@ public class FbtHotelOrderCron implements Runnable {
                         long day=difference/(60*60*24*1000);
                         BigDecimal dayBigDecimal = new BigDecimal(day);
                         //2、计算平均每天费用
-                        BigDecimal stayPrice = priceInfo.getBigDecimal("total_price").divide(dayBigDecimal);
+                        BigDecimal stayPrice = priceInfo.getBigDecimal("total_price").divide(dayBigDecimal,2);
                         log.info(userInfo.getString("name")+"相差天数："+day);
                         log.info(userInfo.getString("name")+"平均金钱："+stayPrice);
 
