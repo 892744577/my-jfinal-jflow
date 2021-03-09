@@ -248,6 +248,7 @@ public class YzjController extends Controller {
                 }
             }
         }
+        System.out.println("执行加班流程保存数据库任务成功!");
         renderJson(R.ok());
     }
     /**
@@ -300,54 +301,62 @@ public class YzjController extends Controller {
                 JSONObject widgetMap = overTimeDetailResult.getJSONObject("data").getJSONObject("formInfo").getJSONObject("widgetMap");
                 JSONObject detailMap = overTimeDetailResult.getJSONObject("data").getJSONObject("formInfo").getJSONObject("detailMap");
                 //加班信息
-                JSONObject widgetValue = (JSONObject)detailMap.getJSONObject("_S_INT_OVERTIME_DETAILED").getJSONArray("widgetValue").get(0);
-                //加班类型
-                String overtimeTypeStr = widgetValue.getString("_S_INT_OVERTIME_TYPE");
+                JSONArray widgetValueArray = detailMap.getJSONObject("_S_INT_OVERTIME_DETAILED").getJSONArray("widgetValue");
 
-                String overtimeType = "0";
-                //加班类型 1.工作日加班 2.周末加班 3.节日加班
-                switch(overtimeTypeStr){
-                    case "_S_INT_OVERTIME_PS":
-                        overtimeType = "1";
-                        break;
-                    case "_S_INT_OVERTIME_ZM":
-                        overtimeType = "2";
-                        break;
-                    case "_S_INT_OVERTIME_JQ":
-                        overtimeType = "3";
-                        break;
-                }
+                for (Object widgetObj: widgetValueArray) {
+                    JSONObject widgetValue = (JSONObject)widgetObj;
+                    //加班类型
+                    String overtimeTypeStr = widgetValue.getString("_S_INT_OVERTIME_TYPE");
 
-                //加班时长
-                String overtimeHours = widgetValue.getString("_S_INT_OVERTIME_HOURS");
-                //加班开始时间
-                String overtimeBegin = widgetValue.getJSONArray("_S_INT_OVERTIME_TIME").get(0).toString();
-                //加班结束时间
-                String overtimeEnd = widgetValue.getJSONArray("_S_INT_OVERTIME_TIME").get(1).toString();
+                    String overtimeType = "0";
+                    //加班类型 1.工作日加班 2.周末加班 3.节日加班
+                    switch(overtimeTypeStr){
+                        case "_S_INT_OVERTIME_PS":
+                            overtimeType = "1";
+                            break;
+                        case "_S_INT_OVERTIME_ZM":
+                            overtimeType = "2";
+                            break;
+                        case "_S_INT_OVERTIME_JQ":
+                            overtimeType = "3";
+                            break;
+                    }
 
-                Date overtimeBeginDate = DateUtil.timestampToDate(overtimeBegin);
+                    //加班时长
+                    String overtimeHours = widgetValue.getString("_S_INT_OVERTIME_HOURS");
+                    //加班开始时间
+                    String overtimeBegin = widgetValue.getJSONArray("_S_INT_OVERTIME_TIME").get(0).toString();
+                    //加班结束时间
+                    String overtimeEnd = widgetValue.getJSONArray("_S_INT_OVERTIME_TIME").get(1).toString();
 
-                Date overtimeEndDate = DateUtil.timestampToDate(overtimeEnd);
+                    Date overtimeBeginDate = DateUtil.timestampToDate(overtimeBegin);
 
-                //加班事由
-                String overtimeReason = widgetMap.getJSONObject("_S_INT_OVERTIME_REASON").getString("value");
-                //流水号
-                String serialNumWidget = widgetMap.getJSONObject("_S_SERIAL").getString("value");
+                    Date overtimeEndDate = DateUtil.timestampToDate(overtimeEnd);
 
-                //保存到加班详细表
-                HrGongdanYzjOvertimeDetail hrGongdanYzjOvertimeDetailDb = HrGongdanYzjOvertimeDetail.dao.findFirst(Db.getSql("admin.hrGongdanYzjOvertime.getHrGongdanYzjOvertimeDetail"),serialNumWidget);
-                HrGongdanYzjOvertimeDetail hrGongdanYzjOvertimeDetail = new HrGongdanYzjOvertimeDetail();
-                hrGongdanYzjOvertimeDetail.setOvertimeType(overtimeType);
-                hrGongdanYzjOvertimeDetail.setOvertimeHours(overtimeHours);
-                hrGongdanYzjOvertimeDetail.setOvertimeBegin(overtimeBeginDate);
-                hrGongdanYzjOvertimeDetail.setOvertimeEnd(overtimeEndDate);
-                //hrGongdanYzjOvertimeDetail.setOvertimeReason(overtimeReason);
-                hrGongdanYzjOvertimeDetail.setSerialNumWidget(serialNumWidget);
-                if (hrGongdanYzjOvertimeDetailDb == null) {
-                    hrGongdanYzjOvertimeDetail.save();
-                }else {
-                    hrGongdanYzjOvertimeDetail.setId(hrGongdanYzjOvertimeDetailDb.getId());
-                    hrGongdanYzjOvertimeDetail.update();
+                    String overtimeBeginStr = DateUtil.changeDateTOStr(overtimeBeginDate);
+
+                    String overtimeEndStr = DateUtil.changeDateTOStr(overtimeEndDate);
+
+                    //加班事由
+                    String overtimeReason = widgetMap.getJSONObject("_S_INT_OVERTIME_REASON").getString("value");
+                    //流水号
+                    String serialNumWidget = widgetMap.getJSONObject("_S_SERIAL").getString("value");
+
+                    //保存到加班详细表
+                    HrGongdanYzjOvertimeDetail hrGongdanYzjOvertimeDetailDb = HrGongdanYzjOvertimeDetail.dao.findFirst(Db.getSql("admin.hrGongdanYzjOvertime.getHrGongdanYzjOvertimeDetail"),serialNumWidget,overtimeBeginStr,overtimeEndStr);
+                    HrGongdanYzjOvertimeDetail hrGongdanYzjOvertimeDetail = new HrGongdanYzjOvertimeDetail();
+                    hrGongdanYzjOvertimeDetail.setOvertimeType(overtimeType);
+                    hrGongdanYzjOvertimeDetail.setOvertimeHours(overtimeHours);
+                    hrGongdanYzjOvertimeDetail.setOvertimeBegin(overtimeBeginDate);
+                    hrGongdanYzjOvertimeDetail.setOvertimeEnd(overtimeEndDate);
+                    //hrGongdanYzjOvertimeDetail.setOvertimeReason(overtimeReason);
+                    hrGongdanYzjOvertimeDetail.setSerialNumWidget(serialNumWidget);
+                    if (hrGongdanYzjOvertimeDetailDb == null) {
+                        hrGongdanYzjOvertimeDetail.save();
+                    }else {
+                        hrGongdanYzjOvertimeDetail.setId(hrGongdanYzjOvertimeDetailDb.getId());
+                        hrGongdanYzjOvertimeDetail.update();
+                    }
                 }
                 return true;
             }
