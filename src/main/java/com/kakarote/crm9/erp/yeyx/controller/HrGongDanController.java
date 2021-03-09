@@ -69,6 +69,8 @@ public class HrGongDanController extends Controller {
     private HrGongdanHistoryService hrGongdanHistoryService;
     @Inject
     private HrGongdanHistoryWsfService hrGongdanHistoryWsfService;
+    @Inject
+    private HrGongdanFinanceService hrGongdanFinanceService;
 
     /**
      * 保存预约单
@@ -78,6 +80,7 @@ public class HrGongDanController extends Controller {
         HrGongdanBook hrGongdanBook = getModel(HrGongdanBook.class,"",true);
         String serialNum = (new DecimalFormat("00")).format(hrGongdanAppointService.getCountByOrderNum());//流水号格式化
         hrGongdanBook.setOrderNumber("YY"+DateUtil.changeDateTOStr2(new Date())+ThreadLocalRandom.current().nextInt(10, 100)+serialNum);
+        hrGongdanBook.setZt("0");
         String photos = "";
         if(getFiles().size()>0){
             photos = upload(getFiles()).stream().map(item->item.get(FileUploadUtil.ACCESS_PATH)).collect(Collectors.joining(";"));
@@ -114,6 +117,33 @@ public class HrGongDanController extends Controller {
         HrGongdanBook hrGongdanBookUpdate = hrGongdanAppointService.getByOrderNumber(hrGongdanBook.getOrderNumber());
         hrGongdanBookUpdate.setPhoto(hrGongdanBook.getPhoto()+";"+photos);
         renderJson(R.ok().put("data",hrGongdanBookUpdate.update()));
+    }
+    /**
+     * 审批预约单提交
+     */
+    public void updateHrGongdanAppointSubmit(@Para("") HrGongdanRepairRequest hrGongdanRepairRequest) throws Exception  {
+        HrGongdanBook hrGongdanBook = new HrGongdanBook();
+        hrGongdanBook.setId(hrGongdanRepairRequest.getId());
+        hrGongdanBook.setZt("1");
+        hrGongdanBook.update();
+    }
+    /**
+     * 审批预约单通过
+     */
+    public void updateHrGongdanAppointPass(@Para("") HrGongdanRepairRequest hrGongdanRepairRequest) throws Exception  {
+        HrGongdanBook hrGongdanBookUpdate = new HrGongdanBook();
+        hrGongdanBookUpdate.setId(hrGongdanRepairRequest.getId());
+        hrGongdanBookUpdate.setZt("2");
+        hrGongdanBookUpdate.update();
+    }
+    /**
+     * 审批预约单退回
+     */
+    public void updateHrGongdanAppointReturn(@Para("") HrGongdanRepairRequest hrGongdanRepairRequest) throws Exception  {
+        HrGongdanBook hrGongdanBookUpdate = new HrGongdanBook();
+        hrGongdanBookUpdate.setId(hrGongdanRepairRequest.getId());
+        hrGongdanBookUpdate.setZt("0");
+        hrGongdanBookUpdate.update();
     }
     /**
      * 预约单查询

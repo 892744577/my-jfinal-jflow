@@ -13,7 +13,17 @@ import java.math.BigDecimal;
 @Data
 public class HrGongdanFinanceService {
 
-    public void saveHrGongdanCharge(String serviceNo,
+    /**
+     * 增加扣费记录
+     * @param serviceNo
+     * @param preServiceNo
+     * @param productCount
+     * @param servicePrice
+     * @param serviceExtraCharge
+     * @param chargeFee
+     * @param CDT
+     */
+    public void saveHrGongdanFee(String serviceNo,
                                     String preServiceNo,
                                     Integer productCount,
                                     BigDecimal servicePrice,
@@ -33,19 +43,26 @@ public class HrGongdanFinanceService {
     }
 
     /**
+     * 删除扣费记录
+     * */
+    public int deleteHrGongdanFee(String serviceNo){
+       return Db.delete("delete from hr_gongdan_finance_fee WHERE serviceNo = ?", serviceNo);
+    }
+    /**
      * 计算信用余额
      * @return
      * @throws Exception
      */
     public BigDecimal getRemaining() throws Exception {
         //已使用费用
-        BigDecimal sumfee = Db.queryBigDecimal(Db.getSql("admin.hrGongdanFinance.sumfee"), WebUser.getNo());
+        //BigDecimal sumFee = Db.queryBigDecimal(Db.getSql("admin.hrGongdanFinance.sumFee"), WebUser.getNo());
+        BigDecimal sumBookFee = Db.queryBigDecimal(Db.getSql("admin.hrGongdanFinance.sumBookFee"), WebUser.getNo());
         //信用额度
-        BigDecimal credit = new BigDecimal(2000);
+        BigDecimal credit = new BigDecimal(200);
         //总充值金额
         PortEmp portEmp = PortEmp.dao.findById(WebUser.getNo());
         BigDecimal sumCharge = Db.queryBigDecimal(Db.getSql("admin.hrGongdanFinance.sumCharge"), portEmp.getTeamNo());
         //计算剩余
-        return sumCharge.add(credit).subtract(sumfee);
+        return sumCharge.add(credit).subtract(sumBookFee);
     }
 }

@@ -89,6 +89,14 @@ public abstract class BaseHrGongdanBook<M extends BaseHrGongdanBook<M>> extends 
 		return getStr("buyType");
 	}
 
+	public void setBuyNum(Integer buyNum) {
+		set("buyNum", buyNum);
+	}
+	
+	public Integer getBuyNum() {
+		return getInt("buyNum");
+	}
+
 	public void setRemark(String remark) {
 		set("remark", remark);
 	}
@@ -183,6 +191,14 @@ public abstract class BaseHrGongdanBook<M extends BaseHrGongdanBook<M>> extends 
 	
 	public String getCreatorPhone() {
 		return getStr("creatorPhone");
+	}
+
+	public void setZt(String zt) {
+		set("zt", zt);
+	}
+	
+	public String getZt() {
+		return getStr("zt");
 	}
 
 }
