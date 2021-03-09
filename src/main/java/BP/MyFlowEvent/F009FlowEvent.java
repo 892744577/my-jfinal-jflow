@@ -381,9 +381,9 @@ public class F009FlowEvent extends FlowEventBase {
                 log.info("==============>服务商更新服务单信息");
             }
             //工单撤销时删除费用记录表记录
-            if ("907".equals(nextNodeID) && !StringUtils.isEmpty(serviceNo)) {
+            /*if ("907".equals(nextNodeID) && !StringUtils.isEmpty(serviceNo)) {
                 Db.delete("delete from hr_gongdan_finance_fee WHERE serviceNo = ?", serviceNo);
-            }
+            }*/
             //发送公众号信息
             sendMpMsg(serviceSystem,nextNodeID,nextNodeName);
         } catch (Exception e) {
