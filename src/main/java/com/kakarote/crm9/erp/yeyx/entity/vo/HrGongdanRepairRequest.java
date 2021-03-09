@@ -17,7 +17,7 @@ public class HrGongdanRepairRequest {
     /**
      * id
      */
-    private Long id;
+    private Integer id;
     /**
      * 报修单号
      */
@@ -83,4 +83,8 @@ public class HrGongdanRepairRequest {
     @JsonFormat(pattern = "yyyy-MM-dd")
     @DateTimeFormat(pattern = "yyyy-MM-dd",iso= DateTimeFormat.ISO.DATE)
     private Date productActivationDate;
+    /**
+     * 状态
+     */
+    private String zt;
 }

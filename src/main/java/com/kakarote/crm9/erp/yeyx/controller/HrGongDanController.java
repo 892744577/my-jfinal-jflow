@@ -126,6 +126,7 @@ public class HrGongDanController extends Controller {
         hrGongdanBook.setId(hrGongdanRepairRequest.getId());
         hrGongdanBook.setZt("1");
         hrGongdanBook.update();
+        renderJson(R.ok());
     }
     /**
      * 审批预约单通过
@@ -135,6 +136,7 @@ public class HrGongDanController extends Controller {
         hrGongdanBookUpdate.setId(hrGongdanRepairRequest.getId());
         hrGongdanBookUpdate.setZt("2");
         hrGongdanBookUpdate.update();
+        renderJson(R.ok());
     }
     /**
      * 审批预约单退回
@@ -144,6 +146,7 @@ public class HrGongDanController extends Controller {
         hrGongdanBookUpdate.setId(hrGongdanRepairRequest.getId());
         hrGongdanBookUpdate.setZt("0");
         hrGongdanBookUpdate.update();
+        renderJson(R.ok());
     }
     /**
      * 预约单查询
