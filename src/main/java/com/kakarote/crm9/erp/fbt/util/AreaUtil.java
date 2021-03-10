@@ -12,7 +12,13 @@ import java.util.Set;
 public class AreaUtil {
     public static String getAreaJson() throws IOException {
         char cbuf[] = new char[200000];
-        InputStreamReader input =new InputStreamReader(new FileInputStream(new File("src//area.json")),"UTF-8");
+        File file;
+        if(System.getProperty("os.name").toLowerCase().indexOf("linux") >= 0){
+            file = new File("/home/crm/crm/config/config/area2.json");
+        }else{
+            file = new File("src//area2.json");
+        }
+        InputStreamReader input =new InputStreamReader(new FileInputStream(file),"UTF-8");
         int len =input.read(cbuf);
         String text =new String(cbuf,0,len);
         return text;
@@ -51,7 +57,7 @@ public class AreaUtil {
     }
 
     /*
-     * @Description //判断是否为地级市测试
+     * @Description //判断是否为地级市
      * @Author wangkaida
      * @Date 18:07 2021/3/9
      * @Param [address]
