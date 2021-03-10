@@ -7,6 +7,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Aop;
 import com.jfinal.plugin.activerecord.Db;
 import com.kakarote.crm9.erp.fbt.service.FbtService;
+import com.kakarote.crm9.erp.fbt.util.AreaUtil;
 import com.kakarote.crm9.erp.fbt.vo.CheckDataAnalysis2;
 import com.kakarote.crm9.erp.fbt.vo.CheckDataHotelOrder;
 import com.kakarote.crm9.erp.fbt.vo.DeptReq;
@@ -91,7 +92,7 @@ public class FbtHotelOrderCron implements Runnable {
                     checkDataHotelOrder.setHotelPhone(hotelInfo.getString("hotel_phone"));
                     checkDataHotelOrder.setCheckinDate(hotelInfo.getDate("checkin_date"));
                     checkDataHotelOrder.setCheckoutDate(hotelInfo.getDate("checkout_date"));
-                    checkDataHotelOrder.setCityName(hotelInfo.getString("city_name"));
+//                    checkDataHotelOrder.setCityName(hotelInfo.getString("city_name"));
                     checkDataHotelOrder.setHotelAddress(hotelInfo.getString("hotel_address"));
                     checkDataHotelOrder.setRoomType(hotelInfo.getString("room_type"));
                     checkDataHotelOrder.setDeal(0);
@@ -108,6 +109,12 @@ public class FbtHotelOrderCron implements Runnable {
                     JSONObject hotel_info = data.getJSONObject("hotel_info");
                     checkDataHotelOrder.setCityName(hotel_info.getString("city_name"));
                     checkDataHotelOrder.save();
+                    //判断是县级市还是地级市，如果是县级市则转为地级市
+                    String cityName = hotel_info.getString("city_name");
+                    if (!AreaUtil.isCity(cityName)) {
+                        String cityNameStr = AreaUtil.getCityByCounty(cityName);
+                        checkDataHotelOrder.setCityName(cityNameStr);
+                    }
 
                     if(orderInfo.getInteger("status").equals(2501) || orderInfo.getInteger("status").equals(2800) || orderInfo.getInteger("status").equals(2801)){
                         //1、计算天数
