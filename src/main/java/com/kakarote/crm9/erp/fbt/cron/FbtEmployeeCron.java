@@ -63,6 +63,7 @@ public class FbtEmployeeCron implements Runnable {
                                 CheckDataPermission checkDataPermission = new CheckDataPermission();
                                 checkDataPermission.setPhone(mobileNo);
                                 checkDataPermission.setUserName(name);
+                                //等级 1.副总级 2.总监 3.行政助理 4.内勤员工 5.外勤员工 6.非员工 7.工程外勤 8.外勤总监
                                 checkDataPermission.setLevel(Integer.valueOf(fenbeiquanxian));
                                 checkDataPermission.setCreateTime(new Date());
                                 checkDataPermission.save();
