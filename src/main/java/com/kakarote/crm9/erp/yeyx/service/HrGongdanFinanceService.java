@@ -1,6 +1,5 @@
 package com.kakarote.crm9.erp.yeyx.service;
 
-import BP.Web.WebUser;
 import com.jfinal.plugin.activerecord.Db;
 import com.kakarote.crm9.erp.admin.entity.PortEmp;
 import com.kakarote.crm9.erp.yeyx.entity.HrGongdanFinanceFee;
@@ -53,14 +52,14 @@ public class HrGongdanFinanceService {
      * @return
      * @throws Exception
      */
-    public BigDecimal getRemaining() throws Exception {
+    public BigDecimal getRemaining(String no) throws Exception {
         //已使用费用
         //BigDecimal sumFee = Db.queryBigDecimal(Db.getSql("admin.hrGongdanFinance.sumFee"), WebUser.getNo());
-        BigDecimal sumBookFee = Db.queryBigDecimal(Db.getSql("admin.hrGongdanFinance.sumBookFee"), WebUser.getNo());
+        BigDecimal sumBookFee = Db.queryBigDecimal(Db.getSql("admin.hrGongdanFinance.sumBookFee"), no);
         //信用额度
         BigDecimal credit = new BigDecimal(200);
         //总充值金额
-        PortEmp portEmp = PortEmp.dao.findById(WebUser.getNo());
+        PortEmp portEmp = PortEmp.dao.findById(no);
         BigDecimal sumCharge = Db.queryBigDecimal(Db.getSql("admin.hrGongdanFinance.sumCharge"), portEmp.getTeamNo());
         //计算剩余
         return sumCharge.add(credit).subtract(sumBookFee);
