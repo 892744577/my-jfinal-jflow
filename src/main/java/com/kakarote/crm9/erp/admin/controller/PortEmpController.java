@@ -498,7 +498,8 @@ public class PortEmpController extends Controller {
             myhtSend.putAll(myht);
             WebUser.SignInOfGenerAuth(new Emp("admin"), "admin");
             long workID = BP.WF.Dev2Interface.Node_CreateBlankWork("008",myht,null,"admin",
-                    null,0,0,null,0,null,0,null,null,null);
+                    portEmpReq.getName()+"在"+ DataType.getCurrentDateTime()+"发起."
+                    ,0,0,null,0,null,0,null,null,null);
             //发送流程
             myhtSend.put("TB_OID", workID);
             SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork("008",workID,myhtSend,null,0,null);
