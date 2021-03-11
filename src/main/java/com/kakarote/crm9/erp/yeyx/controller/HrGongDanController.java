@@ -103,10 +103,11 @@ public class HrGongDanController extends Controller {
             //推送企业微信信息
             sendCpBook(portEmpList,hrGongdanBook);
         }
-        renderJson(R.ok().put("data",hrGongdanBook.save()));
+        hrGongdanBook.save();
+        renderJson(R.ok().put("data",hrGongdanBook));
     }
     /**
-     * 小程序只支持单张图片循环上传，所以开此预约单上传图片接口
+     * 小程序只支持单张图片循环上传，所以开此预约单上传图片接口,供小程序循环调用
      */
     public void uploadPicHrGongdanAppoint(@Para("") HrGongdanRepairRequest hrGongdanRepairRequest) throws Exception  {
         HrGongdanBook hrGongdanBook = getModel(HrGongdanBook.class,"",true);
@@ -115,7 +116,7 @@ public class HrGongDanController extends Controller {
             photos = upload(getFiles()).stream().map(item->item.get(FileUploadUtil.ACCESS_PATH)).collect(Collectors.joining(";"));
         }
         HrGongdanBook hrGongdanBookUpdate = hrGongdanAppointService.getByOrderNumber(hrGongdanBook.getOrderNumber());
-        hrGongdanBookUpdate.setPhoto(hrGongdanBook.getPhoto()+";"+photos);
+        hrGongdanBookUpdate.setPhoto(photos+";"+hrGongdanBookUpdate.getPhoto());
         renderJson(R.ok().put("data",hrGongdanBookUpdate.update()));
     }
     /**
@@ -154,6 +155,13 @@ public class HrGongDanController extends Controller {
     public void queryPageListAppoint(BasePageRequest basePageRequest) throws Exception  {
         log.info("=======预约单查询");
         renderJson(R.ok().put("data",hrGongdanAppointService.queryPageList(basePageRequest)));
+    }
+    /**
+     * 根据预约单号查预约单
+     */
+    public void queryPageListAppointByOrderNumber(@Para("") HrGongdanRepairRequest hrGongdanRepairRequest) throws Exception  {
+        log.info("=======预约单查询");
+        renderJson(R.ok().put("data",hrGongdanAppointService.getByOrderNumber(hrGongdanRepairRequest.getOrderNumber())));
     }
     /**
      * 代理商-预约单查询

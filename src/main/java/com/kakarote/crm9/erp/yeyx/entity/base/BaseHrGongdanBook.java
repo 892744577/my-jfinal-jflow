@@ -129,6 +129,14 @@ public abstract class BaseHrGongdanBook<M extends BaseHrGongdanBook<M>> extends 
 		return get("adjustmentFee");
 	}
 
+	public void setTotalFee(java.math.BigDecimal totalFee) {
+		set("totalFee", totalFee);
+	}
+
+	public java.math.BigDecimal getTotalFee() {
+		return get("totalFee");
+	}
+
 	public void setPayType(Integer payType) {
 		set("payType", payType);
 	}

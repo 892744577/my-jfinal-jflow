@@ -617,12 +617,68 @@ public abstract class BaseHrGongdan<M extends BaseHrGongdan<M>> extends Model<M>
 		return getStr("productOne");
 	}
 
-	public void setNextContactTime(java.lang.String nextContactTime) {
-		set("nextContactTime", nextContactTime);
+	public void setHandlerUrlt(String handlerUrlt) {
+		set("Handler_URLT", handlerUrlt);
+	}
+	
+	public String getHandlerUrlt() {
+		return getStr("Handler_URLT");
 	}
 
-	public java.lang.String getNextContactTime() {
+	public void setHandlerHandlerempst(String handlerHandlerempst) {
+		set("Handler_HandlerEmpsT", handlerHandlerempst);
+	}
+	
+	public String getHandlerHandlerempst() {
+		return getStr("Handler_HandlerEmpsT");
+	}
+
+	public void setTrackingNumber(String trackingNumber) {
+		set("trackingNumber", trackingNumber);
+	}
+	
+	public String getTrackingNumber() {
+		return getStr("trackingNumber");
+	}
+
+	public void setChargeFee(String chargeFee) {
+		set("chargeFee", chargeFee);
+	}
+	
+	public String getChargeFee() {
+		return getStr("chargeFee");
+	}
+
+	public void setChargeWay(String chargeWay) {
+		set("chargeWay", chargeWay);
+	}
+	
+	public String getChargeWay() {
+		return getStr("chargeWay");
+	}
+
+	public void setNextContactTime(String nextContactTime) {
+		set("nextContactTime", nextContactTime);
+	}
+	
+	public String getNextContactTime() {
 		return getStr("nextContactTime");
+	}
+
+	public void setChargePrice(Double chargePrice) {
+		set("chargePrice", chargePrice);
+	}
+	
+	public Double getChargePrice() {
+		return getDouble("chargePrice");
+	}
+
+	public void setChargeExtraPrice(Double chargeExtraPrice) {
+		set("chargeExtraPrice", chargeExtraPrice);
+	}
+	
+	public Double getChargeExtraPrice() {
+		return getDouble("chargeExtraPrice");
 	}
 
 }
