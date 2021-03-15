@@ -45,4 +45,32 @@ public class ProjectManageController  extends Controller {
         }
 
     }
+
+    /*
+     * @Description //进行警报信息企业微信信息推送
+     * @Author wangkaida
+     * @Date 11:49 2021/3/15
+     * @Param [toUser, sendContent]
+     * @return void
+     **/
+    public void sendAlarmCpMsg(String toUser, String sendContent) {
+        WxCpMessageReq wxCpMessageReq = new WxCpMessageReq();
+        wxCpMessageReq.setAgentId(WxCpAgentIdEmun.agent5.getCode());
+        if (StringUtils.isNotBlank(toUser)) {
+            wxCpMessageReq.setUser(toUser);
+        }
+
+        if (StringUtils.isNotBlank(sendContent)) {
+            wxCpMessageReq.setContent(sendContent);
+        }
+
+        String result = Aop.get(CpService.class).sendTextMsg(wxCpMessageReq);
+
+        if ("ok".equals(result)) {
+            renderJson(R.ok("进行警报信息企业微信信息推送成功").put("code","000000"));
+        }else {
+            renderJson(R.error("进行警报信息企业微信信息推送失败").put("code","000001"));
+        }
+
+    }
 }
