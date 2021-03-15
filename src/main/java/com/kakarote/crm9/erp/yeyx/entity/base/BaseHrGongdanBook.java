@@ -65,6 +65,38 @@ public abstract class BaseHrGongdanBook<M extends BaseHrGongdanBook<M>> extends 
 		return getStr("bookDate");
 	}
 
+	public void setProvince(String province) {
+		set("province", province);
+	}
+	
+	public String getProvince() {
+		return getStr("province");
+	}
+
+	public void setCity(String city) {
+		set("city", city);
+	}
+	
+	public String getCity() {
+		return getStr("city");
+	}
+
+	public void setDistrict(String district) {
+		set("district", district);
+	}
+	
+	public String getDistrict() {
+		return getStr("district");
+	}
+
+	public void setSmc(String smc) {
+		set("smc", smc);
+	}
+	
+	public String getSmc() {
+		return getStr("smc");
+	}
+
 	public void setAddress(String address) {
 		set("address", address);
 	}
@@ -132,7 +164,7 @@ public abstract class BaseHrGongdanBook<M extends BaseHrGongdanBook<M>> extends 
 	public void setTotalFee(java.math.BigDecimal totalFee) {
 		set("totalFee", totalFee);
 	}
-
+	
 	public java.math.BigDecimal getTotalFee() {
 		return get("totalFee");
 	}
@@ -207,6 +239,14 @@ public abstract class BaseHrGongdanBook<M extends BaseHrGongdanBook<M>> extends 
 	
 	public String getZt() {
 		return getStr("zt");
+	}
+
+	public void setGoodsType(Integer goodsType) {
+		set("goodsType", goodsType);
+	}
+	
+	public Integer getGoodsType() {
+		return getInt("goodsType");
 	}
 
 }

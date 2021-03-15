@@ -73,14 +73,13 @@ public class HrGongDanController extends Controller {
     private HrGongdanFinanceService hrGongdanFinanceService;
 
     /**
-     * 保存预约单
+     * 新增预约单
      */
     public void saveHrGongdanAppoint(@Para("") HrGongdanRepairRequest hrGongdanRepairRequest) throws Exception  {
         log.info("=======保存预约单");
         HrGongdanBook hrGongdanBook = getModel(HrGongdanBook.class,"",true);
         String serialNum = (new DecimalFormat("00")).format(hrGongdanAppointService.getCountByOrderNum());//流水号格式化
         hrGongdanBook.setOrderNumber("YY"+DateUtil.changeDateTOStr2(new Date())+ThreadLocalRandom.current().nextInt(10, 100)+serialNum);
-        hrGongdanBook.setZt("0");
         String photos = "";
         if(getFiles().size()>0){
             photos = upload(getFiles()).stream().map(item->item.get(FileUploadUtil.ACCESS_PATH)).collect(Collectors.joining(";"));
@@ -105,6 +104,29 @@ public class HrGongDanController extends Controller {
         }
         hrGongdanBook.save();
         renderJson(R.ok().put("data",hrGongdanBook));
+    }
+    /**
+     * 更新预约单
+     */
+    public void updateHrGongdanAppoint(@Para("") HrGongdanRepairRequest hrGongdanRepairRequest) throws Exception  {
+        log.info("=======更新预约单");
+        HrGongdanBook hrGongdanBook = getModel(HrGongdanBook.class,"",true);
+        String photos = "";
+        if(getFiles().size()>0){
+            photos = upload(getFiles()).stream().map(item->item.get(FileUploadUtil.ACCESS_PATH)).collect(Collectors.joining(";"));
+        }
+        hrGongdanBook.setPhoto(photos);
+        hrGongdanBook.setOrderNumber(null);
+        hrGongdanBook.removeNullValueAttrs();
+        hrGongdanBook.update();
+        renderJson(R.ok().put("data",hrGongdanBook));
+    }
+    /**
+     * 删除预约单
+     */
+    public void deleteHrGongdanAppoint(@Para("") HrGongdanRepairRequest hrGongdanRepairRequest) throws Exception  {
+        log.info("=======删除预约单");
+        renderJson(R.ok().put("data",HrGongdanBook.dao.deleteById(hrGongdanRepairRequest.getId())));
     }
     /**
      * 小程序只支持单张图片循环上传，所以开此预约单上传图片接口,供小程序循环调用
