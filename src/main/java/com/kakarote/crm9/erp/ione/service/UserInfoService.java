@@ -28,7 +28,7 @@ public class UserInfoService {
      * 查询单条数据
      * @return
      */
-    public WxcmsIoneUserInfo getWxcmsIoneUserInfo(String uuid) throws Exception {
+    public WxcmsIoneUserInfo getWxcmsIoneUserInfo(String uuid) {
         return WxcmsIoneUserInfo.dao.findById(uuid);
     }
     /**
