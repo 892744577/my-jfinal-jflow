@@ -26,7 +26,7 @@ public class SabController extends Controller {
      */
     public void toDo(@Para("") ToDoRequest toDoRequest){
         if(toDoRequest.getJsonData() == null || "".equals(toDoRequest.getJsonData())) {
-            renderJson(R.ok().put("code",40003).put("message","参数不能为空"));
+            renderJson(R.error(40003,"参数不能为空"));
         }else {
             try {
                 log.info("==================当前登陆人：" + WebUser.getNo());
