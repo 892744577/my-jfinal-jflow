@@ -926,6 +926,7 @@ public class AdminSceneService{
         FieldUtil fieldUtil = new FieldUtil(recordList);
         String[] settingArr = new String[]{};
         if(WorkOrderEnum.WorkOrder_NULL.getType() == label){
+            List<Record> nodeNameList = new ArrayList<>();
             List<Record> serviceTypeList = new ArrayList<>();
             List<Record> serviceSystemList = new ArrayList<>();
             List<Record> serviceSegmentationList = new ArrayList<>();
@@ -1010,9 +1011,16 @@ public class AdminSceneService{
 
             }
 
+            //服务单状态
+            nodeNameList.add(new Record().set("name","确认订单").set("value","确认订单"));
+            nodeNameList.add(new Record().set("name","成功派单").set("value","成功派单"));
+            nodeNameList.add(new Record().set("name","预约确认").set("value","预约确认"));
+            nodeNameList.add(new Record().set("name","服务完成").set("value","服务完成"));
+            nodeNameList.add(new Record().set("name","服务取消").set("value","服务取消"));
+
             fieldUtil.add("serviceSystem", "服务单第三方系统", "select", serviceSystemList)
                     .add("serviceType", "服务单类型", "select", serviceTypeList)
-                    .add("serviceZt", "服务单状态", "text", settingArr)
+                    .add("NodeName", "工单状态", "select", nodeNameList)
                     .add("reworkId", "返修原单号", "text", settingArr)
                     .add("factory", "厂商单标志", "number", settingArr)
                     .add("facInWarranty", "标识产品是否在保", "number", settingArr)
@@ -1027,7 +1035,7 @@ public class AdminSceneService{
                     .add("dutyTime", "预约时间", "datetime", settingArr)
                     .add("dutyTime1", "预约日期", "date", settingArr)
                     .add("dutyTime2", "预约时间段", "select", dutyTimeList)
-                    .add("CDT", "下单时间", "datetime", settingArr)
+                    .add("CDT", "下单时间", "datetime", dutyTimeList)
                     .add("productId", "言而有信产品id", "number", settingArr)
                     .add("facProductId", "厂商产品id", "text", settingArr)
                     .add("productCount", "产品数量", "number", settingArr)
