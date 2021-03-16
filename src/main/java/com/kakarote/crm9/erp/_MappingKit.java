@@ -6,6 +6,7 @@ import com.kakarote.crm9.erp.crm.entity.*;
 import com.kakarote.crm9.erp.fbt.vo.*;
 import com.kakarote.crm9.erp.finance.vo.HrGongdanFinanceCharge;
 import com.kakarote.crm9.erp.ione.entity.WxcmsIoneUserInfo;
+import com.kakarote.crm9.erp.ione.entity.WxcmsIoneWarrantyCard;
 import com.kakarote.crm9.erp.jxc.entity.JxcOrderDelivery;
 import com.kakarote.crm9.erp.jxc.entity.JxcOrderDeliveryCode;
 import com.kakarote.crm9.erp.oa.entity.*;
@@ -143,6 +144,7 @@ public class _MappingKit {
 		arp.addMapping("check_data_permission", "phone", CheckDataPermission.class);
 		//ione
 		arp.addMapping("wxcms_ione_user_info", "uuid", WxcmsIoneUserInfo.class);
+		arp.addMapping("wxcms_ione_warranty_card", "uuid", WxcmsIoneWarrantyCard.class);
 	}
 
 	//数据源2
