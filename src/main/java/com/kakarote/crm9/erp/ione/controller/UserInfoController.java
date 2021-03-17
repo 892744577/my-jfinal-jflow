@@ -18,8 +18,11 @@ public class UserInfoController extends Controller {
     public void getWxcmsIoneUserInfo(@Para("") String uuid){
         renderJson(R.ok().put("data",userInfoService.getWxcmsIoneUserInfo(uuid)));
     }
+    public void deleteByOpenidAndCode(@Para("") String openId,@Para("") String mcuId){
+        renderJson(R.ok().put("data",userInfoService.deleteByOpenidAndCode(openId,mcuId)));
+    }
 
-    public void syncUserInfo() throws Exception {
-        renderJson(R.ok().put("data",userInfoService.syncUserInfo()));
+    public void syncUserInfo(@Para("") String createDate) throws Exception {
+        renderJson(R.ok().put("data",userInfoService.syncUserInfo(createDate)));
     }
 }

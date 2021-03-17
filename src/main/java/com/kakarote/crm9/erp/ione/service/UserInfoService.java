@@ -28,6 +28,13 @@ public class UserInfoService {
         return Db.queryDate(Db.getSql("admin.ioneUserInfo.maxCreateDate"));
     }
     /**
+     * 查询最大创建时间
+     * @return
+     */
+    public int deleteByOpenidAndCode(String openId,String mcuId) {
+        return Db.delete(Db.getSql("admin.ioneUserInfo.deleteByOpenidAndCode"),openId,mcuId);
+    }
+    /**
      * 查询单条数据
      * @return
      */

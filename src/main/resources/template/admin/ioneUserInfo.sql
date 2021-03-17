@@ -3,6 +3,6 @@
     SELECT max(a.create_date) FROM wxcms_ione_user_info a
   #end
   #sql ("deleteByOpenidAndCode")
-    delete FROM wxcms_ione_user_info a where a.openid=? and
+    delete FROM wxcms_ione_user_info a where a.openid=? and a.mucid =?
   #end
 #end
