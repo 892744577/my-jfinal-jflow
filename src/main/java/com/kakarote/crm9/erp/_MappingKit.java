@@ -5,6 +5,7 @@ import com.kakarote.crm9.erp.admin.entity.*;
 import com.kakarote.crm9.erp.crm.entity.*;
 import com.kakarote.crm9.erp.fbt.vo.*;
 import com.kakarote.crm9.erp.finance.vo.HrGongdanFinanceCharge;
+import com.kakarote.crm9.erp.finance.vo.HrGongdanFinanceChargeService;
 import com.kakarote.crm9.erp.ione.entity.WxcmsIoneUserInfo;
 import com.kakarote.crm9.erp.ione.entity.WxcmsIoneWarrantyCard;
 import com.kakarote.crm9.erp.jxc.entity.JxcOrderDelivery;
@@ -92,6 +93,7 @@ public class _MappingKit {
 		arp.addMapping("hr_gongdan_wsf_log", "id", HrGongdanWsfLog.class);
 		arp.addMapping("hr_gongdan_zmn_log", "id", HrGongdanZmnLog.class);
 		arp.addMapping("hr_gongdan_finance_charge", "nmbaucdocno", HrGongdanFinanceCharge.class);
+		arp.addMapping("hr_gongdan_finance_charge_service", "nmbaucdocno", HrGongdanFinanceChargeService.class);
 		arp.addMapping("hr_gongdan_finance_fee", "id", HrGongdanFinanceFee.class);
 		//加班工时
 		arp.addMapping("hr_gongdan_yzj_overtime", "id", HrGongdanYzjOvertime.class);
