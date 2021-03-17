@@ -111,12 +111,6 @@ public class HrGongDanController extends Controller {
     public void updateHrGongdanAppoint(@Para("") HrGongdanRepairRequest hrGongdanRepairRequest) throws Exception  {
         log.info("=======更新预约单");
         HrGongdanBook hrGongdanBook = getModel(HrGongdanBook.class,"",true);
-        String photos = "";
-        if(getFiles().size()>0){
-            photos = upload(getFiles()).stream().map(item->item.get(FileUploadUtil.ACCESS_PATH)).collect(Collectors.joining(";"));
-        }
-        hrGongdanBook.setPhoto(photos);
-        hrGongdanBook.setOrderNumber(null);
         hrGongdanBook.removeNullValueAttrs();
         hrGongdanBook.update();
         renderJson(R.ok().put("data",hrGongdanBook));
@@ -162,12 +156,22 @@ public class HrGongDanController extends Controller {
         renderJson(R.ok());
     }
     /**
-     * 审批预约单退回
+     * 审批预约单取消
      */
     public void updateHrGongdanAppointReturn(@Para("") HrGongdanRepairRequest hrGongdanRepairRequest) throws Exception  {
         HrGongdanBook hrGongdanBookUpdate = new HrGongdanBook();
         hrGongdanBookUpdate.setId(hrGongdanRepairRequest.getId());
         hrGongdanBookUpdate.setZt("0");
+        hrGongdanBookUpdate.update();
+        renderJson(R.ok());
+    }
+    /**
+     * 审批预约单退回
+     */
+    public void updateHrGongdanAppointNotPass(@Para("") HrGongdanRepairRequest hrGongdanRepairRequest) throws Exception  {
+        HrGongdanBook hrGongdanBookUpdate = new HrGongdanBook();
+        hrGongdanBookUpdate.setId(hrGongdanRepairRequest.getId());
+        hrGongdanBookUpdate.setZt("3");
         hrGongdanBookUpdate.update();
         renderJson(R.ok());
     }

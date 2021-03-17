@@ -6,7 +6,9 @@
     select * from hr_gongdan_book a where a.orderNumber = #para(orderNumber)
   #end
   #sql ("queryPageList")
-    select a.*,(case when a.deal='2' then '2' when (SELECT COUNT(*)>0 FROM hr_gongdan_log t1 WHERE t1.preServiceNo=a.orderNumber)=1 then '1' else '0' end) deal_1 from hr_gongdan_book a where 1=1
+    SELECT a.*,(CASE WHEN a.deal='2' THEN '2' WHEN (SELECT COUNT(*)>0 FROM hr_gongdan_log t1 WHERE t1.preServiceNo=a.orderNumber)=1
+    THEN '1' ELSE '0' END) deal_1,(SELECT t1.remark FROM hr_gongdan_log t1 WHERE t1.preServiceNo=a.orderNumber
+    ORDER BY t1.create_time DESC LIMIT 1) returnReason FROM hr_gongdan_book a WHERE 1=1
     #if(search)
       and (a.orderNumber like CONCAT('%',#para(search),'%') or a.contact like CONCAT('%',#para(search),'%') or a.phone like CONCAT('%',#para(search),'%') or a.address like CONCAT('%',#para(search),'%') or a.remark like CONCAT('%',#para(search),'%'))
     #end
