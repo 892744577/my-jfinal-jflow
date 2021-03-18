@@ -152,13 +152,10 @@ public class ChargeService {
 
     /**
      * 调用T100保修机身码接口-全部
-     * @param customerNo 团队编号
-     * @param no  报备流程单号
-     * @param num 数量
      * @return
      * @throws Exception
      */
-    public JSONObject callT100ChargeApi7(String customerNo, String no, String num, JSONArray detailListJson) throws Exception {
+    public JSONObject callT100ChargeApi7() throws Exception {
         JSONObject paramJson = new JSONObject().fluentPut("type", 7);
         String t100Return = httpService.gatewayRequestJson(path, getT100PublicParam1(paramJson).toJSONString());
         JSONObject t100Result = JSONObject.parseObject(t100Return);
