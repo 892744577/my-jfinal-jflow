@@ -8,6 +8,7 @@ import com.jfinal.plugin.activerecord.Db;
 import com.kakarote.crm9.common.service.HttpService;
 import com.kakarote.crm9.erp.finance.vo.HrGongdanFinanceCharge;
 import com.kakarote.crm9.erp.finance.vo.HrGongdanFinanceChargeService;
+import com.kakarote.crm9.erp.jxc.entity.JxcOrderMcuid;
 import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -155,16 +156,36 @@ public class ChargeService {
      * @return
      * @throws Exception
      */
-    public JSONObject callT100ChargeApi7() throws Exception {
+    public boolean callT100ChargeApi7() throws Exception {
         JSONObject paramJson = new JSONObject().fluentPut("type", 7);
         String t100Return = httpService.gatewayRequestJson(path, getT100PublicParam1(paramJson).toJSONString());
         JSONObject t100Result = JSONObject.parseObject(t100Return);
+
         if (t100Result != null) {
             //code = "0"表示查询成功
-            return t100Result.getJSONObject("payload").getJSONObject("std_data");
-        }else{
-            return null;
+            String code = t100Result.getJSONObject("payload").getJSONObject("std_data").getJSONObject("execution").getString("code");
+            if (!"0".equals(code)) {
+                log.info("调用T100费用接口失败!");
+                return false ;
+            }else {
+                //先删除表数据
+                Db.delete("delete from jxc_order_mcuid");
+                JSONArray jsonArray = t100Result.getJSONObject("payload").getJSONObject("std_data").getJSONObject("parameter").getJSONArray("rows");
+                for (Object mcuIdObject : jsonArray) {
+                    JSONObject mcuIdJson = (JSONObject)mcuIdObject;
+                    //遍历保存到数据库
+                    String mcuIdCode = mcuIdJson.getString("code");
+                    String[] mcuIdArray = mcuIdCode.split("\\|");
+
+                    JxcOrderMcuid jxcOrderMcuid = new JxcOrderMcuid();
+                    jxcOrderMcuid.setMcuid(mcuIdArray[0]);
+                    jxcOrderMcuid.setZt(mcuIdArray[1]);
+                    jxcOrderMcuid.save();
+                }
+                return true;
+            }
         }
+        return false;
     }
 
 }
