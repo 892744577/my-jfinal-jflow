@@ -33,6 +33,7 @@ import com.kakarote.crm9.erp.admin.common.AdminRouter;
 import com.kakarote.crm9.erp.bi.common.BiRouter;
 import com.kakarote.crm9.erp.crm.common.CrmRouter;
 import com.kakarote.crm9.erp.fbt.common.FbtRouter;
+import com.kakarote.crm9.erp.finance.common.T100Router;
 import com.kakarote.crm9.erp.ione.common.IoneRouter;
 import com.kakarote.crm9.erp.jxc.common.JxcRouter;
 import com.kakarote.crm9.erp.oa.common.OaRouter;
@@ -90,6 +91,7 @@ public class JfinalConfig extends JFinalConfig {
         me.add(new OaRouter());
         me.add(new WorkRouter());
         me.add(new IoneRouter()); //ione集成
+        me.add(new T100Router()); //t100集成
         me.add(new FbtRouter()); //分贝通接口
         me.add(new JxcRouter()); //进销存
         me.add(new JflowRouter());//流程
