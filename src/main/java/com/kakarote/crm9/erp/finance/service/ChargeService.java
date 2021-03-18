@@ -6,8 +6,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.jfinal.aop.Inject;
 import com.jfinal.plugin.activerecord.Db;
 import com.kakarote.crm9.common.service.HttpService;
-import com.kakarote.crm9.erp.finance.vo.HrGongdanFinanceCharge;
-import com.kakarote.crm9.erp.finance.vo.HrGongdanFinanceChargeService;
+import com.kakarote.crm9.erp.finance.entity.HrGongdanFinanceCharge;
+import com.kakarote.crm9.erp.finance.entity.HrGongdanFinanceChargeService;
 import com.kakarote.crm9.erp.jxc.entity.JxcOrderMcuid;
 import lombok.Data;
 import lombok.Getter;
@@ -156,11 +156,10 @@ public class ChargeService {
      * @return
      * @throws Exception
      */
-    public boolean callT100ChargeApi7() throws Exception {
+    public Boolean callT100ChargeApi7() throws Exception {
         JSONObject paramJson = new JSONObject().fluentPut("type", 7);
         String t100Return = httpService.gatewayRequestJson(path, getT100PublicParam1(paramJson).toJSONString());
         JSONObject t100Result = JSONObject.parseObject(t100Return);
-
         if (t100Result != null) {
             //code = "0"表示查询成功
             String code = t100Result.getJSONObject("payload").getJSONObject("std_data").getJSONObject("execution").getString("code");
@@ -184,8 +183,9 @@ public class ChargeService {
                 }
                 return true;
             }
+        }else{
+            return false;
         }
-        return false;
     }
 
 }

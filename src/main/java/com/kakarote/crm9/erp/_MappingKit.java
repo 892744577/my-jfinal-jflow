@@ -4,13 +4,11 @@ import com.jfinal.plugin.activerecord.ActiveRecordPlugin;
 import com.kakarote.crm9.erp.admin.entity.*;
 import com.kakarote.crm9.erp.crm.entity.*;
 import com.kakarote.crm9.erp.fbt.vo.*;
-import com.kakarote.crm9.erp.finance.vo.HrGongdanFinanceCharge;
-import com.kakarote.crm9.erp.finance.vo.HrGongdanFinanceChargeService;
+import com.kakarote.crm9.erp.finance.entity.HrGongdanFinanceCharge;
+import com.kakarote.crm9.erp.finance.entity.HrGongdanFinanceChargeService;
 import com.kakarote.crm9.erp.ione.entity.WxcmsIoneUserInfo;
 import com.kakarote.crm9.erp.ione.entity.WxcmsIoneWarrantyCard;
-import com.kakarote.crm9.erp.jxc.entity.JxcOrderDelivery;
-import com.kakarote.crm9.erp.jxc.entity.JxcOrderDeliveryCode;
-import com.kakarote.crm9.erp.jxc.entity.JxcOrderMcuid;
+import com.kakarote.crm9.erp.jxc.entity.*;
 import com.kakarote.crm9.erp.oa.entity.*;
 import com.kakarote.crm9.erp.work.entity.*;
 import com.kakarote.crm9.erp.wxcms.entity.*;
@@ -133,7 +131,9 @@ public class _MappingKit {
 		//进销存
 		arp.addMapping("jxc_order_delivery", "id", JxcOrderDelivery.class);
 		arp.addMapping("jxc_order_delivery_code", "id", JxcOrderDeliveryCode.class);
-		arp.addMapping("jxc_order_mcuid", "mcuid", JxcOrderMcuid.class);
+        arp.addMapping("jxc_order_mcuid", "mcuid", JxcOrderMcuid.class);
+        arp.addMapping("jxc_order_report", "OID", JxcOrderReport.class);
+        arp.addMapping("jxc_order_report_detail", "id", JxcOrderReportDetail.class);
 		//旺店通
 		arp.addMapping("hr_gongdan_wdt_trade", "trade_no", HrGongdanWdtTrade.class);
 		arp.addMapping("hr_gongdan_wdt_trade_goods", "rec_id", HrGongdanWdtTradeGoods.class);
