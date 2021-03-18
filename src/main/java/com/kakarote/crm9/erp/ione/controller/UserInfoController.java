@@ -18,7 +18,7 @@ public class UserInfoController extends Controller {
     public void getWxcmsIoneUserInfo(@Para("") String uuid){
         renderJson(R.ok().put("data",userInfoService.getWxcmsIoneUserInfo(uuid)));
     }
-    public void deleteByOpenidAndCode(@Para("") String openId,@Para("") String mcuId){
+    public void deleteByOpenidAndCode(@Para("openId") String openId,@Para("mcuId") String mcuId){
         renderJson(R.ok().put("data",userInfoService.deleteByOpenidAndCode(openId,mcuId)));
     }
 
