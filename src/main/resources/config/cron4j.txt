@@ -1,4 +1,4 @@
-cron4j=customerCron,taskCron,fbtEmployeeCron,wdtTradeCron,fbtDeptCron,fbtHotelCron,fbtCarCron,chargeCron
+cron4j=customerCron,taskCron,fbtEmployeeCron,wdtTradeCron,fbtDeptCron,fbtHotelCron,fbtCarCron,chargeCron,mcuIdCron
 customerCron.cron=*/5 * * * *
 customerCron.class=com.kakarote.crm9.erp.crm.cron.CrmCustomerCron
 customerCron.daemon=true
@@ -38,4 +38,9 @@ chargeCron.cron=*/5 * * * *
 chargeCron.class=com.kakarote.crm9.erp.finance.cron.ChargeCron
 chargeCron.daemon=true
 chargeCron.enable=true
+
+mcuIdCron.cron=* * */1 * *
+mcuIdCron.class=com.kakarote.crm9.erp.finance.cron.McuIdCron
+mcuIdCron.daemon=true
+mcuIdCron.enable=true
 
