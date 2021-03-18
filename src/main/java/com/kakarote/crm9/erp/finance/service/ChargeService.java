@@ -161,7 +161,7 @@ public class ChargeService {
         JSONObject t100Result = JSONObject.parseObject(t100Return);
         if (t100Result != null) {
             //code = "0"表示查询成功
-            return t100Result.getJSONObject("payload").getJSONObject("std_data").getJSONObject("execution");
+            return t100Result.getJSONObject("payload").getJSONObject("std_data");
         }else{
             return null;
         }
