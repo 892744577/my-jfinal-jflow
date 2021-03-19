@@ -53,7 +53,7 @@ public class JxcReportController extends Controller {
         myht.put("totalFee",ja.size()*20);
         myht.put("num",ja.size());
         WebUser.SignInOfGenerAuth(new Emp(portEmp.getNo()), portEmp.getNo());
-        long workID = BP.WF.Dev2Interface.Node_CreateBlankWork("010",myht,null,"admin",
+        long workID = BP.WF.Dev2Interface.Node_CreateBlankWork("010",myht,null,portEmp.getNo(),
                 portEmp.getName()+"在"+ DataType.getCurrentDateTime()+"发起."
                 ,0,0,null,0,null,0,null,null,null);
         SendReturnObjs returnObjs = BP.WF.Dev2Interface.Node_SendWork("010",workID,myht,null,0,null);
@@ -65,6 +65,7 @@ public class JxcReportController extends Controller {
             jxcOrderReportDetail.setCreateTime(DateUtils.format(new Date(),DateUtils.YMDHMS_PATTERN));
             jxcOrderReportDetail.setReportNumber(reportNumber);
             jxcOrderReportDetail.setRefPK(String.valueOf(workID));
+            jxcOrderReportDetail.setRec(portEmp.getNo());
             jxcOrderReportDetail.save();
         }
         renderJson(R.ok().put("data",returnObjs));
