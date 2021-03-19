@@ -1,4 +1,4 @@
-cron4j=customerCron,taskCron,fbtEmployeeCron,wdtTradeCron,fbtDeptCron,fbtHotelCron,fbtCarCron,chargeCron,mcuIdCron
+cron4j=customerCron,taskCron,fbtEmployeeCron,wdtTradeCron,fbtDeptCron,fbtHotelCron,fbtCarCron,chargeCron,mcuIdCron,userInfoCron,warrantyCardCron
 customerCron.cron=*/5 * * * *
 customerCron.class=com.kakarote.crm9.erp.crm.cron.CrmCustomerCron
 customerCron.daemon=true
@@ -43,4 +43,14 @@ mcuIdCron.cron=* * */1 * *
 mcuIdCron.class=com.kakarote.crm9.erp.finance.cron.McuIdCron
 mcuIdCron.daemon=true
 mcuIdCron.enable=true
+
+userInfoCron.cron=* * */1 * *
+userInfoCron.class=com.kakarote.crm9.erp.ione.cron.UserInfoCron
+userInfoCron.daemon=true
+userInfoCron.enable=true
+
+warrantyCardCron.cron=* * */1 * *
+warrantyCardCron.class=com.kakarote.crm9.erp.ione.cron.WarrantyCardCron
+warrantyCardCron.daemon=true
+warrantyCardCron.enable=true
 

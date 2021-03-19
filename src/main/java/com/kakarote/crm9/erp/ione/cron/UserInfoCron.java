@@ -12,9 +12,9 @@ public class UserInfoCron implements Runnable {
             UserInfoService userInfoService = Aop.get(UserInfoService.class);
             boolean result = userInfoService.syncUserInfo("2018-01-01");
             if (result) {
-                log.info("调用T100费用接口并保存更新数据成功!");
+                log.info("调用T100费用接口并保存更新绑定用户数据成功!");
             }else {
-                log.info("调用T100费用接口并保存更新数据出错!");
+                log.info("调用T100费用接口并保存更新绑定用户数据出错!");
             }
         } catch (Exception e) {
             e.printStackTrace();
