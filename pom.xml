@@ -16,7 +16,7 @@
         <slf4j.version>1.7.12</slf4j.version>
         <javax.transaction.version>1.0.1B</javax.transaction.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <org.apache.poi.version>3.17</org.apache.poi.version>
+        <org.apache.poi.version>5.2.1</org.apache.poi.version>
         <org.apache.ant.version>1.9.7</org.apache.ant.version>
         <dom4j.version>1.6.1</dom4j.version>
         <pinyin4j.version>2.5.0</pinyin4j.version>
